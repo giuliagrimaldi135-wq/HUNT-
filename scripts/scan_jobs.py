@@ -177,21 +177,30 @@ for b in brands:
             scored=score_job(title,meta.get("text",""),location_ok)
             if not scored:continue
             score,reasons,family=scored
+            core_family=family in {"Merchandising","Buying","Planning/Allocation","Product","Wholesale"}
+            decision="strong" if junior_fit and core_family else ("adjacent" if junior_fit else "review")
+            fit_explanation="Ruolo coerente con il profilo di Giulia."
             if location=="Milano":
                 score=min(100,score+6);reasons.append("Priorità Milano")
             if score<55:continue
             if years is not None:
                 reasons.append(f"Esperienza richiesta rilevata: {years}+ anni")
-                if years >= 2:
-                    score = min(score - 30, 64)
-                    reasons.append("Fuori dal profilo junior prioritario")
+                if years==2:
+                    if junior_by_title and core_family:
+                        decision="stretch_apply"
+                        score=max(68,min(score-12,79))
+                        reasons.append("Stretch sensato: 2 anni richiesti, ma ruolo junior/assistant e funzione core")
+                        fit_explanation="Candidatura comunque sensata: chiede 2 anni, ma il titolo è junior/assistant e il lavoro è molto vicino a merchandising, buying, planning, product o wholesale."
+                    else:
+                        continue
             if not junior_fit and not junior_by_title:
-                score = min(score, 72)
-            if score < 55:
-                continue
+                score=min(score,70)
+                decision="review"
+                fit_explanation="Da valutare: funzione coerente, ma la seniority non è chiaramente junior."
+            if score<55:continue
             final_url=meta["url"];seen_urls.add(final_url.split("#")[0]);k=canonical_key(final_url,b["name"],title)
             prev=next((x for x in old if x.get("url","").split("#")[0]==final_url.split("#")[0] or x.get("key")==k),None)
-            found.append({"key":k,"brand":b["name"],"title":title,"location":location,"score":score,"reasons":reasons,"role_family":family,"recommended_cv":"fashion_mgmt" if family=="Brand/Business" else "merch_buying","url":final_url,"source_name":b["name"]+" careers","provider":"career_page","published_at":meta.get("published_at"),"years_required":years,"junior_fit":junior_fit,"first_seen_at":prev.get("first_seen_at") if prev else now,"last_seen_at":now})
+            found.append({"key":k,"brand":b["name"],"title":title,"location":location,"score":score,"reasons":reasons,"role_family":family,"decision":decision,"fit_explanation":fit_explanation,"recommended_cv":"fashion_mgmt" if family=="Brand/Business" else "merch_buying","url":final_url,"source_name":b["name"]+" careers","provider":"career_page","published_at":meta.get("published_at"),"years_required":years,"junior_fit":junior_fit,"first_seen_at":prev.get("first_seen_at") if prev else now,"last_seen_at":now})
         status[b["id"]]={"ok":True,"http":last_status,"items":sum(1 for x in found if x["source_name"]==b["name"]+" careers"),"checked_at":now}
     except Exception as e:status[b["id"]]={"ok":False,"error":str(e)[:160],"checked_at":now}
 
