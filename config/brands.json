@@ -736,5 +736,225 @@
     "location_scope": "Italy",
     "url": null,
     "tier": "growth"
+  },
+  {
+    "id": "cavia",
+    "name": "Cavia",
+    "market": "Emerging / CNMI",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "dennj",
+    "name": "Dennj",
+    "market": "Emerging / CNMI",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "domenico-orefice",
+    "name": "Domenico Orefice",
+    "market": "Emerging / CNMI",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "marco-rambaldi",
+    "name": "Marco Rambaldi",
+    "market": "Independent / CNMI",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "la-pacifico",
+    "name": "La Pacifico",
+    "market": "Emerging / CNMI",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "durazzi-milano",
+    "name": "Durazzi Milano",
+    "market": "Independent / Milan",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "federico-cina",
+    "name": "Federico Cina",
+    "market": "Independent / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "francesco-murano",
+    "name": "Francesco Murano",
+    "market": "Independent / Milan",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "institution",
+    "name": "Institution",
+    "market": "Emerging / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "niccolo-pasqualetti",
+    "name": "Niccolò Pasqualetti",
+    "market": "Independent / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "cascinelli",
+    "name": "Cascinelli",
+    "market": "Emerging / Milan",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "be-nina",
+    "name": "Be Nina",
+    "market": "Emerging / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "fiallo",
+    "name": "Fiallo",
+    "market": "Emerging footwear / Milan",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "galib-gassanoff",
+    "name": "Galib Gassanoff",
+    "market": "Independent / Milan",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "act-n1",
+    "name": "ACT N°1",
+    "market": "Independent / Milan",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "pecoranera",
+    "name": "Pecoranera",
+    "market": "Emerging knitwear",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "venerdi-pomeriggio",
+    "name": "Venerdì Pomeriggio",
+    "market": "Emerging / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "materia",
+    "name": "Materia",
+    "market": "Emerging / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "moja-rowa",
+    "name": "Moja Rowa",
+    "market": "Emerging / Milan Fashion Week",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "iindaco",
+    "name": "IINDACO",
+    "market": "Emerging footwear / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "nico-giani",
+    "name": "Nico Giani",
+    "market": "Independent accessories / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "les-petits-joueurs",
+    "name": "Les Petits Joueurs",
+    "market": "Independent accessories / Italy",
+    "type": "emerging intelligence watchlist",
+    "enabled": false,
+    "location_scope": "Italy / Milan",
+    "url": null,
+    "tier": "emerging"
   }
 ]
