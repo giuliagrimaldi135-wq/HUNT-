@@ -226,7 +226,9 @@ for b in brands:
     target_hits=sum(1 for s in ss if any(x in (s.get("headline") or "").lower() for x in TARGET_TERMS))
     strong_types={"store_opening","expansion","hiring_velocity"}
     if len(types)<2 and not (types & strong_types and target_hits>0):continue
-    score=22+sum(weights.get(t,0) for t in types)+min(16,target_hits*8)
+    location_bonus=min(24,target_hits*12)
+    if len(types)==1 and "store_opening" in types and target_hits:location_bonus=24
+    score=22+sum(weights.get(t,0) for t in types)+location_bonus
     open_roles=job_counts.get(b["name"],0)
     if open_roles:score+=8
     score=min(score,97)
@@ -245,7 +247,7 @@ spontaneous=sorted(spontaneous,key=lambda x:x["score"],reverse=True)[:25]
 
 # Fresh high-value items eligible for push notifications.
 new_intel=[s for s in signals if age_days(s.get("published_at"))<=7 and s.get("score",0)>=84 and s.get("signal_type") in {"store_opening","expansion","hiring_velocity","management_change","social_signal"}]
-new_spont=[x for x in spontaneous if x.get("score",0)>=80]
+new_spont=[x for x in spontaneous if x.get("score",0)>=75]
 new_fashion=[x for x in fashion if age_days(x.get("published_at"))<=2 and x.get("topic") in {"store_opening","expansion","management_change","financial_momentum","category_launch","social_signal"}]
 new_market=[x for x in market if age_days(x.get("published_at"))<=2][:6]
 
