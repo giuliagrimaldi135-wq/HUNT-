@@ -191,14 +191,14 @@ signals=sorted(signals,key=lambda x:x.get("published_at") or x.get("detected_at"
 
 MARKET_DAYS=10
 market_specs=[
- ("luxury_market",f'"luxury market" fashion Europe Italy growth decline when:{MARKET_DAYS}d'),
- ("luxury_market",f'"luxury goods" demand Europe China Italy when:{MARKET_DAYS}d'),
- ("energy",f'energy prices Europe Italy retail industry when:{MARKET_DAYS}d'),
- ("consumer",f'consumer confidence Italy retail spending when:{MARKET_DAYS}d'),
- ("consumer",f'consumer spending luxury Europe fashion when:{MARKET_DAYS}d'),
- ("currency",f'EUR CHF GBP luxury retail tourism when:{MARKET_DAYS}d'),
- ("sourcing",f'fashion textile leather cotton costs sourcing Europe when:{MARKET_DAYS}d'),
- ("trade",f'fashion tariffs trade Europe luxury when:{MARKET_DAYS}d')
+ ("luxury_market",f'"luxury goods" market sales growth decline Europe Italy when:{MARKET_DAYS}d'),
+ ("luxury_market",f'"luxury sector" demand fashion Europe China Italy when:{MARKET_DAYS}d'),
+ ("energy",f'energy prices (fashion OR textile OR retail OR logistics) Italy Europe when:{MARKET_DAYS}d'),
+ ("consumer",f'consumer spending luxury fashion Italy Europe when:{MARKET_DAYS}d'),
+ ("consumer",f'consumer confidence retail fashion Italy when:{MARKET_DAYS}d'),
+ ("currency",f'(EUR OR CHF OR GBP) luxury fashion tourism retail Europe when:{MARKET_DAYS}d'),
+ ("sourcing",f'(leather OR textile OR cotton OR wool) prices fashion Europe when:{MARKET_DAYS}d'),
+ ("trade",f'(tariffs OR trade) fashion luxury Europe when:{MARKET_DAYS}d')
 ]
 market=[];market_seen=set()
 for topic,q in market_specs:
