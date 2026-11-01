@@ -163,6 +163,8 @@ for b in brands:
                     reasons.append("Fuori dal profilo junior prioritario")
             if not junior_fit and not junior_by_title:
                 score = min(score, 72)
+            if score < 55:
+                continue
             final_url=meta["url"];seen_urls.add(final_url.split("#")[0]);k=canonical_key(final_url,b["name"],title)
             prev=next((x for x in old if x.get("url","").split("#")[0]==final_url.split("#")[0] or x.get("key")==k),None)
             found.append({"key":k,"brand":b["name"],"title":title,"location":location,"score":score,"reasons":reasons,"role_family":family,"recommended_cv":"fashion_mgmt" if family=="Brand/Business" else "merch_buying","url":final_url,"source_name":b["name"]+" careers","provider":"career_page","published_at":meta.get("published_at"),"years_required":years,"junior_fit":junior_fit,"first_seen_at":prev.get("first_seen_at") if prev else now,"last_seen_at":now})
