@@ -1,1 +1,110 @@
-{"target_roles":["merchandising","retail merchandising","buying","buyer","product","retail planning","planning","allocation","wholesale","brand","business","e-commerce merchandising","omnichannel"],"preferred_locations":["milano","milan","italy","italia"],"junior_terms":["intern","internship","stage","junior","assistant","graduate","trainee"],"avoid_titles":["sales assistant","client advisor","style advisor","sales associate","store assistant"],"skills":["excel","assortment","pricing","competitor","sell-through","otb","kpi","retail","merchandising"],"preferred_cv":{"merchandising":"merch_buying","buying":"merch_buying","planning":"merch_buying","allocation":"merch_buying","product":"merch_buying","brand":"fashion_mgmt","business":"fashion_mgmt"}}
+{
+  "target_roles": [
+    "merchandising",
+    "retail merchandising",
+    "buying",
+    "buyer",
+    "product",
+    "retail planning",
+    "planning",
+    "allocation",
+    "wholesale",
+    "brand",
+    "business",
+    "e-commerce merchandising",
+    "omnichannel"
+  ],
+  "preferred_locations": [
+    "milano",
+    "milan",
+    "firenze",
+    "florence",
+    "scandicci",
+    "roma",
+    "rome",
+    "london",
+    "londra",
+    "switzerland",
+    "svizzera",
+    "zurich",
+    "zürich",
+    "geneva",
+    "genève",
+    "lugano",
+    "basel",
+    "lausanne"
+  ],
+  "junior_terms": [
+    "intern",
+    "internship",
+    "stage",
+    "junior",
+    "assistant",
+    "graduate",
+    "trainee"
+  ],
+  "avoid_titles": [
+    "sales assistant",
+    "client advisor",
+    "style advisor",
+    "sales associate",
+    "store assistant"
+  ],
+  "skills": [
+    "excel",
+    "assortment",
+    "pricing",
+    "competitor",
+    "sell-through",
+    "otb",
+    "kpi",
+    "retail",
+    "merchandising"
+  ],
+  "preferred_cv": {
+    "merchandising": "merch_buying",
+    "buying": "merch_buying",
+    "planning": "merch_buying",
+    "allocation": "merch_buying",
+    "product": "merch_buying",
+    "brand": "fashion_mgmt",
+    "business": "fashion_mgmt"
+  },
+  "priority_locations": [
+    "milano",
+    "milan"
+  ],
+  "profile_name": "Giulia",
+  "role_strategy": {
+    "strong": [
+      "merchandising",
+      "retail merchandising",
+      "buying",
+      "buyer",
+      "product development",
+      "retail planning",
+      "allocation",
+      "wholesale"
+    ],
+    "adjacent": [
+      "e-commerce merchandising",
+      "retail performance",
+      "trade marketing",
+      "retail operations",
+      "commercial"
+    ],
+    "exclude": [
+      "business intelligence",
+      "business analyst",
+      "data analyst",
+      "data science",
+      "analytics",
+      "pure sales"
+    ]
+  },
+  "experience_rule": {
+    "2": "keep only if junior/assistant and core-role; label stretch_apply",
+    "0-1": "priority",
+    "3+": "exclude"
+  }
+}
