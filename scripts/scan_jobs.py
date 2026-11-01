@@ -22,8 +22,13 @@ IRRELEVANT = ["compliance", "security", "internal audit", "controlling", "non-me
 CORE_PATTERNS = [r"\bmerchand\w*",r"\bbuying\b",r"\bbuyer\b",r"\bretail planning\b",r"\bplanning\b",r"\ballocation\b",r"\bwholesale\b",r"\bproduct development\b",r"\bomnichannel\b",r"\be-?commerce\b",r"\btrade marketing\b",r"\bretail performance\b"]
 ADJACENT_PATTERNS = [r"\bbrand management\b",r"\bbrand strategy\b",r"\bretail operations\b",r"\bcommercial\b",r"\bdigital marketing\b"]
 SKILLS = [x.lower() for x in profile.get("skills", [])]
-ITALY = ["milano","milan","italy","italia","firenze","florence","roma","rome","scandicci"]
-FOREIGN = ["united states","switzerland","france","germany","spain","united kingdom","china","japan","korea","uae","dubai"]
+TARGET_MILAN = ["milano","milan"]
+TARGET_FLORENCE = ["firenze","florence","scandicci"]
+TARGET_ROME = ["roma","rome"]
+TARGET_LONDON = ["london","londra"]
+TARGET_SWISS = ["switzerland","svizzera","zurich","zürich","geneva","genève","lugano","mendrisio","basel","bâle","lausanne"]
+TARGET_ALL = TARGET_MILAN + TARGET_FLORENCE + TARGET_ROME + TARGET_LONDON + TARGET_SWISS
+OUT_OF_SCOPE = ["paris","france","germany","spain","united states","china","japan","korea","uae","dubai"]
 
 session = requests.Session()
 session.headers.update({"User-Agent":"Mozilla/5.0 HUNT-Radar/1.2 (+public career monitoring)"})
@@ -93,10 +98,14 @@ def detail_metadata(url,card_context):
         if not is_direct_job_url(final_url):return None
         soup=BeautifulSoup(r.text,"html.parser");text=clean(soup.get_text(" ",strip=True))
         meta={"url":final_url,"published_at":parse_posted_date(card_context) or parse_posted_date(text[:2500]),"years_required":extract_years_required(text),"text":text[:12000],"location":None}
-        low=text[:1400].lower()
-        if any(x in low for x in FOREIGN) and not any(x in low for x in ITALY):meta["location"]="FOREIGN"
-        elif "milano" in low or "milan" in low:meta["location"]="Milano"
-        elif "italy" in low or "italia" in low:meta["location"]="Italy"
+        low=(card_context+" "+text[:4500]).lower()
+        if any(x in low for x in TARGET_MILAN):meta["location"]="Milano"
+        elif any(x in low for x in TARGET_FLORENCE):meta["location"]="Firenze"
+        elif any(x in low for x in TARGET_ROME):meta["location"]="Roma"
+        elif any(x in low for x in TARGET_LONDON):meta["location"]="Londra"
+        elif any(x in low for x in TARGET_SWISS):meta["location"]="Svizzera"
+        elif any(x in low for x in OUT_OF_SCOPE):meta["location"]="OUT_OF_SCOPE"
+        else:meta["location"]="UNVERIFIED"
         return meta
     except:return None
 
@@ -112,7 +121,7 @@ def score_job(title,detail_text,location_ok):
     if core:score+=34;reasons.append("Ruolo coerente dal titolo")
     elif adjacent:score+=22;reasons.append("Ruolo adiacente coerente")
     if junior:score+=18;reasons.append("Seniority junior/intern")
-    if location_ok:score+=14;reasons.append("Italia/Milano coerente")
+    if location_ok:score+=14;reasons.append("Località target coerente")
     skill_hits=[s for s in SKILLS if s in c]
     if skill_hits:score+=min(10,2*len(skill_hits));reasons.append("Competenze: "+", ".join(skill_hits[:4]))
     fam=role_family(title)
@@ -159,15 +168,17 @@ for b in brands:
             if ub in local_seen or ub in seen_urls:continue
             local_seen.add(ub)
             meta=detail_metadata(url,context)
-            if not meta or meta.get("location")=="FOREIGN":continue
+            if not meta or meta.get("location") in {"OUT_OF_SCOPE","UNVERIFIED"}:continue
             years=meta.get("years_required");junior_by_title=any(x in title.lower() for x in JUNIOR)
             if years is not None and years>=3:continue
             junior_fit = junior_by_title and (years is None or years <= 1)
-            location=meta.get("location") or ("Italy" if b.get("location_scope","").lower()=="italy" else "Location to verify")
-            location_ok=location in {"Milano","Italy"}
+            location=meta.get("location")
+            location_ok=location in {"Milano","Firenze","Roma","Londra","Svizzera"}
             scored=score_job(title,meta.get("text",""),location_ok)
             if not scored:continue
             score,reasons,family=scored
+            if location=="Milano":
+                score=min(100,score+6);reasons.append("Priorità Milano")
             if score<55:continue
             if years is not None:
                 reasons.append(f"Esperienza richiesta rilevata: {years}+ anni")
