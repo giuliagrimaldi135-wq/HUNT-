@@ -1,22 +1,672 @@
 [
-{"id":"gucci","name":"Gucci","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Gucci&countriesList=Italy"},
-{"id":"bottega-veneta","name":"Bottega Veneta","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Bottega+Veneta&countriesList=Italy"},
-{"id":"saint-laurent","name":"Saint Laurent","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Saint+Laurent&countriesList=Italy"},
-{"id":"kering","name":"Kering","market":"Luxury group","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?countriesList=Italy"},
-{"id":"prada-group","name":"Prada Group / Miu Miu","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Mixed","url":"https://www.pradagroup.com/it/talents/job-opportunities.html"},
-{"id":"zegna","name":"Zegna","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Mixed","url":"https://careers.zegnagroup.com/"},
-{"id":"louis-vuitton","name":"Louis Vuitton","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Mixed","url":null},
-{"id":"valentino","name":"Valentino","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Mixed","url":null},
-{"id":"moncler","name":"Moncler","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Mixed","url":null},
-{"id":"missoni","name":"Missoni","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Italy","url":null},
-{"id":"armarium","name":"ARMARIUM","market":"Emerging","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"paris-texas","name":"Paris Texas","market":"Emerging","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"the-attico","name":"The Attico","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"n21","name":"N°21","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"gcds","name":"GCDS","market":"Contemporary","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"sunnei","name":"SUNNEI","market":"Contemporary","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"blaze","name":"BLAZÉ Milano","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"giuseppe-di-morabito","name":"Giuseppe Di Morabito","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"themoire","name":"THEMOIRè","market":"Contemporary","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
-{"id":"retori","name":"Retori","market":"Emerging","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null}
+  {
+    "id": "gucci",
+    "name": "Gucci",
+    "market": "Luxury",
+    "type": "official career page",
+    "enabled": true,
+    "location_scope": "Italy",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Gucci&countriesList=Italy",
+    "tier": "core"
+  },
+  {
+    "id": "bottega-veneta",
+    "name": "Bottega Veneta",
+    "market": "Luxury",
+    "type": "official career page",
+    "enabled": true,
+    "location_scope": "Italy",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Bottega+Veneta&countriesList=Italy",
+    "tier": "core"
+  },
+  {
+    "id": "saint-laurent",
+    "name": "Saint Laurent",
+    "market": "Luxury",
+    "type": "official career page",
+    "enabled": true,
+    "location_scope": "Italy",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Saint+Laurent&countriesList=Italy",
+    "tier": "core"
+  },
+  {
+    "id": "kering",
+    "name": "Kering",
+    "market": "Luxury group",
+    "type": "official career page",
+    "enabled": true,
+    "location_scope": "Italy",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/?countriesList=Italy",
+    "tier": "core"
+  },
+  {
+    "id": "prada-group",
+    "name": "Prada Group / Miu Miu",
+    "market": "Luxury",
+    "type": "official career page",
+    "enabled": true,
+    "location_scope": "Mixed",
+    "url": "https://www.pradagroup.com/it/talents/job-opportunities.html",
+    "tier": "core"
+  },
+  {
+    "id": "zegna",
+    "name": "Zegna",
+    "market": "Luxury",
+    "type": "official career page",
+    "enabled": true,
+    "location_scope": "Mixed",
+    "url": "https://careers.zegnagroup.com/",
+    "tier": "core"
+  },
+  {
+    "id": "louis-vuitton",
+    "name": "Louis Vuitton",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "dior",
+    "name": "Dior",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "fendi",
+    "name": "Fendi",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "loro-piana",
+    "name": "Loro Piana",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "bulgari",
+    "name": "Bulgari",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "celine",
+    "name": "Celine",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "loewe",
+    "name": "Loewe",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "givenchy",
+    "name": "Givenchy",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "valentino",
+    "name": "Valentino",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "moncler",
+    "name": "Moncler",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "stone-island",
+    "name": "Stone Island",
+    "market": "Luxury / sportswear",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "ferragamo",
+    "name": "Ferragamo",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "armani",
+    "name": "Giorgio Armani",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "dolce-gabbana",
+    "name": "Dolce & Gabbana",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "versace",
+    "name": "Versace",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "brunello-cucinelli",
+    "name": "Brunello Cucinelli",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "tods",
+    "name": "Tod's",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "hogan",
+    "name": "Hogan",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "roger-vivier",
+    "name": "Roger Vivier",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "etro",
+    "name": "Etro",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "marni",
+    "name": "Marni",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "jil-sander",
+    "name": "Jil Sander",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "maison-margiela",
+    "name": "Maison Margiela",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "diesel",
+    "name": "Diesel",
+    "market": "Premium / luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "moschino",
+    "name": "Moschino",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "pucci",
+    "name": "Pucci",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "max-mara",
+    "name": "Max Mara",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "sportmax",
+    "name": "Sportmax",
+    "market": "Luxury",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "missoni",
+    "name": "Missoni",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "golden-goose",
+    "name": "Golden Goose",
+    "market": "Luxury / lifestyle",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "bally",
+    "name": "Bally",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "burberry",
+    "name": "Burberry",
+    "market": "Luxury",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "core"
+  },
+  {
+    "id": "onitsuka-tiger",
+    "name": "Onitsuka Tiger",
+    "market": "Luxury / sportswear",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "pinko",
+    "name": "Pinko",
+    "market": "Premium",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "coccinelle",
+    "name": "Coccinelle",
+    "market": "Premium accessories",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "furla",
+    "name": "Furla",
+    "market": "Premium accessories",
+    "type": "career source to connect",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "elisabetta-franchi",
+    "name": "Elisabetta Franchi",
+    "market": "Premium",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "twinset",
+    "name": "Twinset",
+    "market": "Premium",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "patrizia-pepe",
+    "name": "Patrizia Pepe",
+    "market": "Premium",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "armarium",
+    "name": "ARMARIUM",
+    "market": "Emerging",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "paris-texas",
+    "name": "Paris Texas",
+    "market": "Emerging luxury",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "the-attico",
+    "name": "The Attico",
+    "market": "Luxury independent",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "n21",
+    "name": "N°21",
+    "market": "Luxury independent",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "gcds",
+    "name": "GCDS",
+    "market": "Contemporary",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "sunnei",
+    "name": "SUNNEI",
+    "market": "Contemporary",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "blaze",
+    "name": "BLAZÉ Milano",
+    "market": "Luxury independent",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "giuseppe-di-morabito",
+    "name": "Giuseppe Di Morabito",
+    "market": "Luxury independent",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "themoire",
+    "name": "THEMOIRè",
+    "market": "Contemporary",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "retori",
+    "name": "Retori",
+    "market": "Emerging",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "plan-c",
+    "name": "Plan C",
+    "market": "Luxury independent",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "magliano",
+    "name": "Magliano",
+    "market": "Luxury independent",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "msgm",
+    "name": "MSGM",
+    "market": "Contemporary",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "palm-angels",
+    "name": "Palm Angels",
+    "market": "Luxury streetwear",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "la-doublej",
+    "name": "La DoubleJ",
+    "market": "Luxury independent",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "des-phemmes",
+    "name": "Des Phemmes",
+    "market": "Emerging",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "dhruv-kapoor",
+    "name": "Dhruv Kapoor",
+    "market": "Emerging",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "fivefourfive",
+    "name": "FiveFourFive",
+    "market": "Emerging",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "emerging"
+  },
+  {
+    "id": "cp-company",
+    "name": "C.P. Company",
+    "market": "Premium / sportswear",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "philosophy",
+    "name": "Philosophy di Lorenzo Serafini",
+    "market": "Luxury contemporary",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "alberta-ferretti",
+    "name": "Alberta Ferretti",
+    "market": "Luxury",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  },
+  {
+    "id": "blumarine",
+    "name": "Blumarine",
+    "market": "Luxury contemporary",
+    "type": "signal watchlist",
+    "enabled": false,
+    "location_scope": "Italy",
+    "url": null,
+    "tier": "growth"
+  }
 ]
