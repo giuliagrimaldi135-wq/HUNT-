@@ -65,11 +65,11 @@
   {
     "brand_id": "plan-c",
     "brand": "Plan C",
-    "email": "customercare@plan-c.com",
-    "kind": "Customer care",
-    "recommended": false,
-    "note": "Email pubblica ufficiale, ma è customer care: non usarla come prima scelta per inviare il CV.",
-    "source_url": "https://plan-c.com/pages/privacy-policy"
+    "email": "info@plan-c.com",
+    "kind": "General corporate",
+    "recommended": true,
+    "note": "Contatto generale ufficiale del brand. Non è un indirizzo recruiting, ma è preferibile al customer care per una candidatura spontanea.",
+    "source_url": "https://plan-c.com/it/pages/contact"
   },
   {
     "brand_id": "the-attico",
@@ -88,5 +88,41 @@
     "recommended": false,
     "note": "Email ufficiale di customer service, non recruiting.",
     "source_url": "https://the-moire.com/it/pages/condizioni-generali-di-vendita"
+  },
+  {
+    "brand_id": "armarium",
+    "brand": "ARMARIUM",
+    "email": "marketingcommunication@armariumbrand.com",
+    "kind": "General / marketing",
+    "recommended": true,
+    "note": "Contatto ufficiale per richieste generali. Non è HR, ma per un brand emergente è un canale sensato per un outreach spontaneo mirato.",
+    "source_url": "https://www.armariumbrand.com/pages/contact-us"
+  },
+  {
+    "brand_id": "paris-texas",
+    "brand": "Paris Texas",
+    "email": "customercare@paristexas.it",
+    "kind": "Customer care",
+    "recommended": false,
+    "note": "Contatto ufficiale pubblico, ma è customer care: non usarlo come prima scelta per inviare il CV.",
+    "source_url": "https://paristexasbrand.com/pages/faq"
+  },
+  {
+    "brand_id": "retori",
+    "brand": "Retori",
+    "email": "customerservice@retori.com",
+    "kind": "Customer service",
+    "recommended": false,
+    "note": "Contatto ufficiale pubblico, ma è customer service: usalo solo come fallback se non troviamo un canale corporate/recruiting.",
+    "source_url": "https://retori.com/pages/faqs"
+  },
+  {
+    "brand_id": "sunnei",
+    "brand": "SUNNEI",
+    "email": "sales@sunnei.it",
+    "kind": "Sales / wholesale",
+    "recommended": false,
+    "note": "Contatto pubblico CNMI per il brand. È sales, non recruiting: può essere utile per networking/wholesale, non come prima scelta HR.",
+    "source_url": "https://www.cameramoda.it/it/associazione/cnmi/"
   }
 ]
