@@ -1,1 +1,26 @@
-{}
+{
+  "gucci": {
+    "last_count": 4,
+    "updated_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  "bottega-veneta": {
+    "last_count": 6,
+    "updated_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  "saint-laurent": {
+    "last_count": 3,
+    "updated_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  "kering": {
+    "last_count": 5,
+    "updated_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  "prada-group": {
+    "last_count": 0,
+    "updated_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  "zegna": {
+    "last_count": 4,
+    "updated_at": "2026-11-01T18:33:30.537130+00:00"
+  }
+}

@@ -1,1 +1,416 @@
-[]
+[
+  {
+    "key": "f17fbc3a5a72893cf40e",
+    "brand": "Zegna",
+    "title": "Temp Sales Assistant Cabazon , United States",
+    "location": "Milano",
+    "score": 90,
+    "reasons": [
+      "Ruolo coerente: merchandising, brand, business",
+      "Seniority junior/intern",
+      "Italia/Milano coerente",
+      "Competenze: retail, merchandising"
+    ],
+    "role_family": "Adjacent",
+    "recommended_cv": "merch_buying",
+    "url": "https://careers.zegnagroup.com/jobs/job-details?JobID=278805060&Team=231361273",
+    "source_name": "Zegna careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "1406982b182d2ff5e86c",
+    "brand": "Zegna",
+    "title": "Zegna Brand HQ Controlling Intern Stabio , Switzerland",
+    "location": "Milano",
+    "score": 90,
+    "reasons": [
+      "Ruolo coerente: merchandising, brand, business",
+      "Seniority junior/intern",
+      "Italia/Milano coerente",
+      "Competenze: retail, merchandising"
+    ],
+    "role_family": "Brand/Business",
+    "recommended_cv": "fashion_mgmt",
+    "url": "https://careers.zegnagroup.com/jobs/job-details?JobID=278658815&Team=242459886",
+    "source_name": "Zegna careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "33da5ca921be83d12113",
+    "brand": "Zegna",
+    "title": "Visual Merchandising Business Analyst & Projects Coordinator Milano , Italy",
+    "location": "Milano",
+    "score": 90,
+    "reasons": [
+      "Ruolo coerente: merchandising, brand, business",
+      "Seniority junior/intern",
+      "Italia/Milano coerente",
+      "Competenze: retail, merchandising"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://careers.zegnagroup.com/jobs/job-details?JobID=278245523&Team=231360963",
+    "source_name": "Zegna careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "d37feeebe78c9bf1dc56",
+    "brand": "Gucci",
+    "title": "GUCCI Women's Shoes Retail Merchandising Intern",
+    "location": "Italy",
+    "score": 86,
+    "reasons": [
+      "Ruolo coerente: merchandising, retail merchandising",
+      "Seniority junior/intern",
+      "Italia/Milano coerente",
+      "Competenze: retail, merchandising"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-womens-shoes-retail-merchandising-intern/",
+    "source_name": "Gucci careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "7dd6a811ed20faa2e60c",
+    "brand": "Gucci",
+    "title": "GUCCI Costume Jewelry Merchandising Intern",
+    "location": "Italy",
+    "score": 79,
+    "reasons": [
+      "Ruolo coerente: merchandising",
+      "Seniority junior/intern",
+      "Italia/Milano coerente",
+      "Competenze: merchandising"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-costume-jewelry-merchandising-intern/",
+    "source_name": "Gucci careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "e647748d316684e4e63f",
+    "brand": "Gucci",
+    "title": "GUCCI WRTW Collection Merchandising Assistant",
+    "location": "Italy",
+    "score": 79,
+    "reasons": [
+      "Ruolo coerente: merchandising",
+      "Seniority junior/intern",
+      "Italia/Milano coerente",
+      "Competenze: merchandising"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-wrtw-collection-merchandising-assistant/",
+    "source_name": "Gucci careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "0481637e6871b7cf2559",
+    "brand": "Zegna",
+    "title": "Brands",
+    "location": "Milano",
+    "score": 79,
+    "reasons": [
+      "Ruolo coerente: brand",
+      "Seniority junior/intern",
+      "Italia/Milano coerente",
+      "Competenze: retail"
+    ],
+    "role_family": "Brand/Business",
+    "recommended_cv": "fashion_mgmt",
+    "url": "https://www.zegnagroup.com/en/our-brands/",
+    "source_name": "Zegna careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "150077074ad0bb03ef41",
+    "brand": "Bottega Veneta",
+    "title": "BOTTEGA VENETA Digital Business Analyst Intern (Curricular Internship)",
+    "location": "Italy",
+    "score": 76,
+    "reasons": [
+      "Ruolo coerente: business",
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Brand/Business",
+    "recommended_cv": "fashion_mgmt",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-digital-business-analyst-intern-curricular-internship/",
+    "source_name": "Bottega Veneta careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "b2dcab6d4ff2da57b3e3",
+    "brand": "Bottega Veneta",
+    "title": "BOTTEGA VENETA Business Intelligence Intern",
+    "location": "Italy",
+    "score": 76,
+    "reasons": [
+      "Ruolo coerente: business",
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Brand/Business",
+    "recommended_cv": "fashion_mgmt",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-business-intelligence-intern/",
+    "source_name": "Bottega Veneta careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "834a3ab3ca6e88392123",
+    "brand": "Kering",
+    "title": "KERING Merchandising & Planning Data Domain Owner",
+    "location": "Italy",
+    "score": 65,
+    "reasons": [
+      "Ruolo coerente: merchandising, planning",
+      "Italia/Milano coerente",
+      "Competenze: merchandising"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/kering-merchandising-planning-data-domain-owner/",
+    "source_name": "Kering careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "efd3e0224dbf25350145",
+    "brand": "Kering",
+    "title": "KERING Integrated Business Planning Project Lead",
+    "location": "Italy",
+    "score": 62,
+    "reasons": [
+      "Ruolo coerente: planning, business",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Planning/Allocation",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/kering-integrated-business-planning-project-lead/",
+    "source_name": "Kering careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "0baee5b01cbdf154f726",
+    "brand": "Gucci",
+    "title": "GUCCI WRTW Collection Merchandising Manager",
+    "location": "Italy",
+    "score": 61,
+    "reasons": [
+      "Ruolo coerente: merchandising",
+      "Italia/Milano coerente",
+      "Competenze: merchandising"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-wrtw-collection-merchandising-manager/",
+    "source_name": "Gucci careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "f07829398ae13c4c0e49",
+    "brand": "Bottega Veneta",
+    "title": "BOTTEGA VENETA Supply Chain and Logistics Non-Merchandise Intern",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-supply-chain-and-logistics-non-merchandise-intern/",
+    "source_name": "Bottega Veneta careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "7320c71ada34bd3ec6aa",
+    "brand": "Bottega Veneta",
+    "title": "BOTTEGA VENETA Purchasing & Production Jewelry Specialist",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Ruolo coerente: product",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Product",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-purchasing-production-jewelry-specialist/",
+    "source_name": "Bottega Veneta careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "5f95da4b18ad7b7ff403",
+    "brand": "Bottega Veneta",
+    "title": "BOTTEGA VENETA Industrial Security Intern",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Adjacent",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-industrial-security-intern/",
+    "source_name": "Bottega Veneta careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "a0cc750d73c7b31aef94",
+    "brand": "Bottega Veneta",
+    "title": "BOTTEGA VENETA Global Omnichannel Specialist",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Ruolo coerente: omnichannel",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Brand/Business",
+    "recommended_cv": "fashion_mgmt",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-global-omnichannel-specialist/",
+    "source_name": "Bottega Veneta careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "04f0884baa4a32df2a01",
+    "brand": "Saint Laurent",
+    "title": "SAINT LAURENT Soft Accessories Product Development",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Ruolo coerente: product",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Product",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/saint-laurent-soft-accessories-product-development/",
+    "source_name": "Saint Laurent careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "006440d19bc843d9ef30",
+    "brand": "Saint Laurent",
+    "title": "SAINT LAURENT Stage Compliance",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Adjacent",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/saint-laurent-stage-compliance/",
+    "source_name": "Saint Laurent careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "303ced98dd1bc896e257",
+    "brand": "Saint Laurent",
+    "title": "SAINT LAURENT - Industrial Product Compliance",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Ruolo coerente: product",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Product",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/saint-laurent-industrial-product-compliance/",
+    "source_name": "Saint Laurent careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "1f352a6b4baba811fcc5",
+    "brand": "Kering",
+    "title": "KERING Group Internal Audit Manager (fixed term)",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Adjacent",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/kering-group-internal-audit-manager-fixed-term/",
+    "source_name": "Kering careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "2ba25043541f77a15803",
+    "brand": "Kering",
+    "title": "BOTTEGA VENETA Supply Chain and Logistics Non-Merchandise Intern",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Merchandising",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-supply-chain-and-logistics-non-merchandise-intern/",
+    "source_name": "Kering careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  },
+  {
+    "key": "ea2ed757e29740a45473",
+    "brand": "Kering",
+    "title": "KERING EYEWEAR Trade Marketing Intern",
+    "location": "Italy",
+    "score": 58,
+    "reasons": [
+      "Seniority junior/intern",
+      "Italia/Milano coerente"
+    ],
+    "role_family": "Adjacent",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/kering-eyewear-trade-marketing-intern-2/",
+    "source_name": "Kering careers",
+    "provider": "career_page",
+    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
+    "last_seen_at": "2026-11-01T18:33:30.537130+00:00"
+  }
+]
