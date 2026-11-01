@@ -38,6 +38,11 @@ jobs:
         run: python scripts/notify_github.py
       - name: Persist radar data
         run: |
+          mkdir -p /tmp/hunt-data
+          cp data/*.json /tmp/hunt-data/
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/hunt-data/*.json data/
           git config user.name "HUNT Radar"
           git config user.email "actions@users.noreply.github.com"
           git add data/
@@ -45,7 +50,5 @@ jobs:
             echo "No data changes"
           else
             git commit -m "radar: update opportunities"
-            git fetch origin main
-            git rebase origin/main
             git push origin HEAD:main
           fi
