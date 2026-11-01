@@ -175,11 +175,18 @@
     "id": "stone-island",
     "name": "Stone Island",
     "market": "Luxury / sportswear",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official Moncler Group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://jobs.monclergroup.com/stone-island-departments?lang=it-IT",
+    "tier": "core",
+    "urls": [
+      "https://jobs.monclergroup.com/stone-island-collection-visual-merchandising?lang=it-IT",
+      "https://jobs.monclergroup.com/stone-island-digital?lang=it-IT",
+      "https://jobs.monclergroup.com/stone-island-wholesale?lang=it-IT",
+      "https://jobs.monclergroup.com/stone-island-omnichannel-planning-allocation?lang=it-IT",
+      "https://jobs.monclergroup.com/stone-island-product-development?lang=it-IT"
+    ]
   },
   {
     "id": "ferragamo",
@@ -391,11 +398,12 @@
     "id": "sportmax",
     "name": "Sportmax",
     "market": "Luxury",
-    "type": "signal watchlist",
-    "enabled": false,
+    "type": "official Max Mara Group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "growth"
+    "url": "https://www.maxmarafashiongroup.com/join-us?mode=list&showSearchUrl=1",
+    "tier": "growth",
+    "require_brand_in_context": true
   },
   {
     "id": "missoni",
@@ -701,21 +709,23 @@
     "id": "philosophy",
     "name": "Philosophy di Lorenzo Serafini",
     "market": "Luxury contemporary",
-    "type": "signal watchlist",
-    "enabled": false,
+    "type": "official Aeffe group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "growth"
+    "url": "https://careers.aeffe.com/?cngLanguage=ITA",
+    "tier": "growth",
+    "require_brand_in_context": true
   },
   {
     "id": "alberta-ferretti",
     "name": "Alberta Ferretti",
     "market": "Luxury",
-    "type": "signal watchlist",
-    "enabled": false,
+    "type": "official Aeffe group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "growth"
+    "url": "https://careers.aeffe.com/?cngLanguage=ITA",
+    "tier": "growth",
+    "require_brand_in_context": true
   },
   {
     "id": "blumarine",
