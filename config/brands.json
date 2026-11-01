@@ -63,10 +63,10 @@
     "id": "louis-vuitton",
     "name": "Louis Vuitton",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official career page",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=louis%20vuitton&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
@@ -143,21 +143,33 @@
     "id": "valentino",
     "name": "Valentino",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official career page",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://jobs.valentino.com/go/INTERNSHIP/5411201/",
+    "tier": "core",
+    "urls": [
+      "https://jobs.valentino.com/go/INTERNSHIP/5411201/",
+      "https://jobs.valentino.com/go/RETAIL%2C-ECOMMERCE%2C-WHOLESALE-%26-OUTLET/5505601/",
+      "https://jobs.valentino.com/go/CORPORATE-%26-STAFF-FUNCTIONS/5411101/"
+    ]
   },
   {
     "id": "moncler",
     "name": "Moncler",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official career page",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://jobs.monclergroup.com/moncler-digital?lang=it-IT",
+    "tier": "core",
+    "urls": [
+      "https://jobs.monclergroup.com/moncler-digital?lang=it-IT",
+      "https://jobs.monclergroup.com/moncler-collection-visual-merchandising?lang=it-IT",
+      "https://jobs.monclergroup.com/moncler-marketing-brand-communication?lang=it-IT",
+      "https://jobs.monclergroup.com/moncler-omnichannel-retail-development/?lang=it-IT",
+      "https://jobs.monclergroup.com/moncler-wholesale?lang=it-IT"
+    ]
   },
   {
     "id": "stone-island",
