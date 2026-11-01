@@ -1417,6 +1417,19 @@
     "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOVkxHcFpnQXlzNXJ1S2NITjlRRmVKbk1vRGJLWmQzc1JWLWJrcFRQSklKcUl0RGlWM2p6VkhxcVRxRjAxRzZUTnhyTDAxeWxQSEtON3R6NjNkS3NzdFR3UHJ6dmFNNncwdm9pU3VHQTJobHh5RDZIMDk3QVRHWlA0SE54ek12R3lE?oc=5"
   },
   {
+    "key": "c7bab99902eb130f9769",
+    "brand": "Versace",
+    "headline": "Le top fashion news della settimana: l’ultima sfilata Diesel di Glenn Martens e il nuovo brand di Donatella Versace - Hypebeast",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-01T22:25:20.980065+00:00",
+    "published_at": "2026-09-25T07:00:00+00:00",
+    "source": "Hypebeast",
+    "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNOC1sZ3RKLUs5aklrUUJ5bmE2QTZFZVRmQ1pyZmp3eFBZMUhyYUdWUG5iX0ZrVVlEcGlZYi04WkFBZlhlWnNCRkxpNW9SZmowOEp4TW82N1NQZ09wU29LQ2ZJaDNDZVIyQ2NQVzd4eG9kMlJTNGdyc2ZRY3ZrSWtDUkJpNldOVzRkM18xMVlnaHlfZ21CbUpIY21vQlBTZGZ5V3p2S1NjNmVpYUFaQ291Q1dSZkpxU3A5VHA3V1MwdkhoeGVRY09qckpjYzJPMUV4VGJnRA?oc=5"
+  },
+  {
     "key": "222837c5251d0c6c88f2",
     "brand": "Onitsuka Tiger",
     "headline": "Onitsuka Tiger - FashionNetwork Italia",
@@ -1935,6 +1948,19 @@
     "published_at": "2026-09-21T07:00:00+00:00",
     "source": "HUB Style Magazine",
     "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOU0tOY256WExhMnhKVjIxck14aUlsX29LR0p4VEZQSGFOTXZwWmxoWndZbGwyTUNDYkpnVXBmZ0dHRUxXNE1Uam5McVZ2X0FldXhyQ2NuV2dwdWVUNHAzNWtXQkxONXI4RTN1THNKQVE3TTcwNWFjNWM4SUkwQTFFTGNqRXFsUHFQOGlpTFNBWGZLb3BFZUFwdEZaMFZfTE1YT2c?oc=5"
+  },
+  {
+    "key": "1ecd31a42b0c48530627",
+    "brand": "Versace",
+    "headline": "Donatella Versace lancerà un nuovo brand - Outpump",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-01T22:25:20.980065+00:00",
+    "published_at": "2026-09-21T07:00:00+00:00",
+    "source": "Outpump",
+    "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1lc1daNkpkTXl3N0NJem1BNEw0WVhNWGNhSHBsWlR2cDU2UmJ1a21GU1dpaTRDYTRhODE4MHFPOXYydVE2RW5FdzRXQ3dJMUxhY3lRbXhGTHlwV1RWb19MVVBZZXU3X0ltakE?oc=5"
   },
   {
     "key": "a54c69f234f4bd099497",
