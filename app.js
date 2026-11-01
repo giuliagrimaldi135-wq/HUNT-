@@ -68,7 +68,7 @@ document.getElementById("addApplication").onclick=addApplication;
 function switchView(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));document.getElementById("sectionEyebrow").textContent=views[id][0];document.getElementById("sectionTitle").textContent=views[id][1]}
 async function getJSON(path,fallback){try{const r=await fetch(path+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;return await r.json()}catch{return fallback}}
 async function load(){const [jobs,signals,brands,status,fashion]=await Promise.all([getJSON("./data/jobs.json",[]),getJSON("./data/signals.json",[]),getJSON("./config/brands.json",[]),getJSON("./data/source_status.json",{}),getJSON("./data/fashion_news.json",[])]);state={jobs:jobs.filter(validItalyJob),signals,brands,status,fashion};renderAll()}
-function validItalyJob(j){const t=(j.title+" "+(j.location||"")).toLowerCase();const bad=["united states","switzerland","france","germany","spain","united kingdom","china","japan","korea","dubai","uae"];return !bad.some(x=>t.includes(x))}
+function validItalyJob(j){const l=(j.location||"").toLowerCase();const allowed=["milano","milan","firenze","florence","scandicci","roma","rome","londra","london","svizzera","switzerland","zurich","zürich","geneva","genève","lugano","mendrisio","basel","bâle"];return allowed.some(x=>l.includes(x))}
 function renderAll(){renderStats();renderAlerts();renderHidden();renderFashion();renderBrands();renderApplications();const t=state.status.generated_at;document.getElementById("lastScan").textContent=t?"Ultimo controllo "+relative(t):"In attesa del controllo"}
 
 function cleanJobTitle(j){let t=(j.title||"").trim();const b=(j.brand||"").trim();if(!b)return t;const norm=s=>s.toLowerCase().replace(/[^a-z0-9]+/g," ").trim();const bt=norm(b),tt=norm(t);if(tt.startsWith(bt+" ")){const words=b.split(/\s+/).length;t=t.split(/\s+/).slice(words).join(" ").replace(/^[-–—:·]+\s*/,"")}return t||j.title}
@@ -79,17 +79,46 @@ function alertLabel(j){const d=publishedAgeDays(j);if(d!==null&&d<=3)return"NUOV
 
 function renderStats(){const high=state.jobs.filter(x=>x.score>=85).length;const fresh=state.jobs.filter(x=>{const d=publishedAgeDays(x);return d!==null&&d<=7}).length;const sources=Object.values(state.status.sources||{}).filter(x=>x.ok).length;document.getElementById("stats").innerHTML=[["Opportunità",state.jobs.length],["Alta priorità",high],["Pubblicate ≤7g",fresh],["Fonti live",sources]].map(([a,b])=>`<div class="stat"><strong>${b}</strong><span>${a}</span></div>`).join("")}
 
+function readAlerts(){return new Set(JSON.parse(localStorage.getItem("hunt-read-alerts")||"[]"))}
+function markAlertRead(key){
+  const s=readAlerts();
+  if(s.has(key))return;
+  s.add(key);
+  localStorage.setItem("hunt-read-alerts",JSON.stringify([...s]));
+  updateAlertBadge();
+}
+function updateAlertBadge(){
+  const read=readAlerts(),ignored=ignoredJobs(),apps=applications(),appliedUrls=new Set(apps.map(a=>a.url).filter(Boolean));
+  const unread=state.jobs.filter(j=>j.score>=85&&!read.has(j.key)&&!ignored.has(j.key)&&!appliedUrls.has(j.url)).length;
+  document.querySelectorAll('[data-badge-for="alerts"]').forEach(x=>{x.textContent=unread||"";x.style.display=unread?"inline-flex":"none"});
+}
+let alertObserver=null;
+function observeAlertReads(){
+  if(alertObserver)alertObserver.disconnect();
+  alertObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const el=entry.target;
+      clearTimeout(el._readTimer);
+      el._readTimer=setTimeout(()=>{
+        if(el.isConnected){markAlertRead(el.dataset.alertKey);alertObserver.unobserve(el)}
+      },900);
+    });
+  },{threshold:.65});
+  document.querySelectorAll("[data-alert-key]").forEach(el=>alertObserver.observe(el));
+}
 function ignoredJobs(){return new Set(JSON.parse(localStorage.getItem("hunt-ignored-jobs")||"[]"))}
-function ignoreJob(key){const s=ignoredJobs();s.add(key);localStorage.setItem("hunt-ignored-jobs",JSON.stringify([...s]));renderAlerts()}
+function ignoreJob(key){const s=ignoredJobs();s.add(key);localStorage.setItem("hunt-ignored-jobs",JSON.stringify([...s]));markAlertRead(key);renderAlerts()}
 window.ignoreJob=ignoreJob;
 function restoreIgnored(){localStorage.removeItem("hunt-ignored-jobs");renderAlerts()}
 window.restoreIgnored=restoreIgnored;
-function renderAlerts(){const q=document.getElementById("searchInput").value.toLowerCase();const min=+document.getElementById("scoreFilter").value;const apps=applications();const appliedUrls=new Set(apps.map(a=>a.url).filter(Boolean));const ignored=ignoredJobs();let jobs=[...state.jobs].filter(j=>!ignored.has(j.key)&&j.score>=min&&(`${j.brand} ${j.title} ${j.location||""}`.toLowerCase().includes(q))).sort((a,b)=>{const af=publishedAgeDays(a),bf=publishedAgeDays(b);const ap=af!==null&&af<=7?1:0,bp=bf!==null&&bf<=7?1:0;return bp-ap||b.score-a.score||new Date(b.published_at||0)-new Date(a.published_at||0)});
+function renderAlerts(){const q=document.getElementById("searchInput").value.toLowerCase();const min=+document.getElementById("scoreFilter").value;const apps=applications();const appliedUrls=new Set(apps.map(a=>a.url).filter(Boolean));const ignored=ignoredJobs();let jobs=[...state.jobs].filter(j=>!ignored.has(j.key)&&!appliedUrls.has(j.url)&&j.score>=min&&(`${j.brand} ${j.title} ${j.location||""}`.toLowerCase().includes(q))).sort((a,b)=>{const milano=x=>(x.location||"").toLowerCase().includes("milano")||(x.location||"").toLowerCase().includes("milan");const ap=milano(a)?1:0,bp=milano(b)?1:0;const af=publishedAgeDays(a),bf=publishedAgeDays(b);const ar=af!==null&&af<=7?1:0,br=bf!==null&&bf<=7?1:0;return bp-ap||br-ar||b.score-a.score||new Date(b.published_at||0)-new Date(a.published_at||0)});
 document.getElementById("alertCount").textContent=jobs.length;
-document.querySelectorAll('[data-badge-for="alerts"]').forEach(x=>{x.textContent=jobs.filter(j=>j.score>=85).length||"";x.style.display=x.textContent?"inline-flex":"none"});
-document.getElementById("alertsList").innerHTML=jobs.length?jobs.map(j=>alertCard(j,appliedUrls.has(j.url))).join(""):`<div class="empty">Nessun avviso corrisponde ai filtri.</div>`}
+updateAlertBadge();
+document.getElementById("alertsList").innerHTML=jobs.length?jobs.map(j=>alertCard(j)).join(""):`<div class="empty">Nessun avviso corrisponde ai filtri.</div>`;
+observeAlertReads()}
 
-function alertCard(j,isApplied){const title=cleanJobTitle(j);const stretch=j.junior_fit===false||((j.years_required||0)>=2);return `<article class="alert-card ${isApplied?"seen":""}"><div class="alert-top"><span class="alert-label">${isApplied?"APPLICATO":alertLabel(j)}</span><span class="alert-score">${j.score}% MATCH</span></div><h3>${esc(j.brand)}</h3><h4>${esc(title)}</h4><div class="alert-location">📍 ${esc(j.location||"Italia")}</div><div class="meta">${publishedText(j)} · ${detectedText(j)}</div><p>${esc((j.reasons||[]).slice(0,4).join(" · "))}</p><div class="chips"><span class="chip">${esc(j.role_family||"Fashion")}</span>${stretch?'<span class="chip">STRETCH</span>':'<span class="chip high">JUNIOR FIT</span>'}</div><div class="alert-actions">${isApplied?'<button class="secondary" onclick="switchView(\'applications\')">Apri agenda</button>':`<button class="secondary" onclick="markApplied('${j.key}')">Ho applicato</button><button class="secondary" onclick="ignoreJob('${j.key}')">Ignora</button>`}<a href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri annuncio</a></div></article>`}
+function alertCard(j){const title=cleanJobTitle(j);const stretch=j.junior_fit===false||((j.years_required||0)>=2);return `<article class="alert-card" data-alert-key="${j.key}"><div class="alert-top"><span class="alert-label">${alertLabel(j)}</span><span class="alert-score">${j.score}% MATCH</span></div><h3>${esc(j.brand)}</h3><h4>${esc(title)}</h4><div class="alert-location">📍 ${esc(j.location||"")}</div><div class="meta">${publishedText(j)} · ${detectedText(j)}</div><p>${esc((j.reasons||[]).slice(0,4).join(" · "))}</p><div class="chips"><span class="chip">${esc(j.role_family||"Fashion")}</span>${stretch?'<span class="chip">STRETCH</span>':'<span class="chip high">JUNIOR FIT</span>'}</div><div class="alert-actions"><button class="secondary" onclick="markApplied('${j.key}')">Ho applicato</button><button class="secondary" onclick="ignoreJob('${j.key}')">Ignora</button><a href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri annuncio</a></div></article>`}
 
 function signalTypeLabel(t){return({store_opening:"Apertura / retail",expansion:"Espansione",category_launch:"Nuovo prodotto/categoria",hiring_velocity:"Hiring",management_change:"Management",financial_momentum:"Business"})[t]||"Segnale"}
 function renderHidden(){const s=[...state.signals].sort((a,b)=>new Date(b.published_at||b.detected_at||0)-new Date(a.published_at||a.detected_at||0));const recent=s.slice(0,24);const counts={};recent.forEach(x=>counts[x.signal_type]=(counts[x.signal_type]||0)+1);const topTypes=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${signalTypeLabel(k)} (${v})`).join(" · ");const topBrands=[...new Set(recent.map(x=>x.brand).filter(Boolean))].slice(0,5).join(", ");document.getElementById("hiddenSummary").innerHTML=`<span class="hero-kicker">HUNT READOUT</span><p><strong>${recent.length} segnali recenti</strong>${topTypes?" · "+esc(topTypes):""}.</p><p>${topBrands?"Brand da tenere d'occhio: "+esc(topBrands)+". ":""}Qui HUNT riassume movimenti che possono anticipare opportunità: aperture, crescita, hiring, lanci e cambi manageriali.</p>`;document.getElementById("signals").innerHTML=recent.length?recent.map(x=>`<article class="news-card"><div><span class="news-topic">${esc(signalTypeLabel(x.signal_type))}</span><h3>${esc(x.brand||"Fashion")} — ${esc(x.headline)}</h3><div class="meta">${x.source?esc(x.source)+" · ":""}${relative(x.published_at||x.detected_at)}</div><p>${esc(x.reason||"Segnale pubblico da monitorare.")}</p></div>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</article>`).join(""):`<div class="empty">Nessun segnale ancora.</div>`}
@@ -100,7 +129,7 @@ function renderBrands(){const q=document.getElementById("brandSearch").value.toL
 
 function applications(){return JSON.parse(localStorage.getItem("hunt-applications")||"[]")}
 function saveApplications(x){localStorage.setItem("hunt-applications",JSON.stringify(x));renderApplications();renderAlerts()}
-function markApplied(key){const j=state.jobs.find(x=>x.key===key);if(!j)return;const a=applications();if(!a.some(x=>x.url===j.url)){a.unshift({id:Date.now(),key:j.key,brand:j.brand,role:cleanJobTitle(j),url:j.url,status:"Applied",applied_at:new Date().toISOString(),updated_at:new Date().toISOString(),source:"HUNT"})}saveApplications(a);switchView("applications")}
+function markApplied(key){const j=state.jobs.find(x=>x.key===key);if(!j)return;markAlertRead(key);const a=applications();if(!a.some(x=>x.url===j.url)){a.unshift({id:Date.now(),key:j.key,brand:j.brand,role:cleanJobTitle(j),url:j.url,status:"Applied",applied_at:new Date().toISOString(),updated_at:new Date().toISOString(),source:"HUNT"})}saveApplications(a);switchView("applications")}
 window.markApplied=markApplied;
 function addApplication(){const brand=prompt("Brand?");if(!brand)return;const role=prompt("Ruolo?")||"Candidatura spontanea";saveApplications([{id:Date.now(),brand,role,status:"Applied",applied_at:new Date().toISOString(),updated_at:new Date().toISOString(),source:"Manuale"},...applications()])}
 function appDays(a){return Math.max(0,Math.floor((Date.now()-new Date(a.applied_at).getTime())/86400000))}
@@ -108,7 +137,7 @@ function updateApplication(id,status){const a=applications();const x=a.find(y=>y
 window.updateApplication=updateApplication;
 function removeApplication(id){saveApplications(applications().filter(x=>x.id!==id))}
 window.removeApplication=removeApplication;
-function renderApplications(){const a=applications().sort((x,y)=>new Date(y.applied_at)-new Date(x.applied_at));document.querySelectorAll('[data-badge-for="applications"]').forEach(x=>{x.textContent=a.length||"";x.style.display=a.length?"inline-flex":"none"});document.getElementById("applicationsList").innerHTML=a.length?a.map(x=>{const days=appDays(x);const follow=days>=7&&["Applied","Follow-up"].includes(x.status);return `<article class="application-card"><div class="application-days"><strong>${days}</strong><span>giorni</span></div><div class="application-main"><h3>${esc(x.brand)} — ${esc(x.role)}</h3><div class="meta">Applicato il ${new Date(x.applied_at).toLocaleDateString("it-IT")} · Stato: <strong>${esc(x.status)}</strong></div>${follow?'<p class="follow-warning">⚠️ Potrebbe essere il momento di valutare un follow-up.</p>':""}<div class="stage-actions"><button onclick="updateApplication(${x.id},'Applied')">Applied</button><button onclick="updateApplication(${x.id},'Interview')">Interview</button><button onclick="updateApplication(${x.id},'Follow-up')">Follow-up</button><button onclick="updateApplication(${x.id},'Rejected')">Rejected</button><button onclick="updateApplication(${x.id},'Offer')">Offer</button></div></div><div class="app-links">${x.url?`<a href="${escAttr(x.url)}" target="_blank">Annuncio</a>`:""}<button class="text-btn" onclick="removeApplication(${x.id})">Archivia</button></div></article>`}).join(""):`<div class="empty">Nessuna candidatura ancora. Quando applichi a un ruolo, tocca <strong>“Ho applicato”</strong> nell'avviso: entrerà qui automaticamente.</div>`}
+function renderApplications(){const a=applications().sort((x,y)=>new Date(y.applied_at)-new Date(x.applied_at));document.querySelectorAll('[data-badge-for="applications"]').forEach(x=>{x.textContent="";x.style.display="none"});document.getElementById("applicationsList").innerHTML=a.length?a.map(x=>{const days=appDays(x);const follow=days>=7&&["Applied","Follow-up"].includes(x.status);return `<article class="application-card"><div class="application-days"><strong>${days}</strong><span>giorni</span></div><div class="application-main"><h3>${esc(x.brand)} — ${esc(x.role)}</h3><div class="meta">Applicato il ${new Date(x.applied_at).toLocaleDateString("it-IT")} · Stato: <strong>${esc(x.status)}</strong></div>${follow?'<p class="follow-warning">⚠️ Potrebbe essere il momento di valutare un follow-up.</p>':""}<div class="stage-actions"><button onclick="updateApplication(${x.id},'Applied')">Applied</button><button onclick="updateApplication(${x.id},'Interview')">Interview</button><button onclick="updateApplication(${x.id},'Follow-up')">Follow-up</button><button onclick="updateApplication(${x.id},'Rejected')">Rejected</button><button onclick="updateApplication(${x.id},'Offer')">Offer</button></div></div><div class="app-links">${x.url?`<a href="${escAttr(x.url)}" target="_blank">Annuncio</a>`:""}<button class="text-btn" onclick="removeApplication(${x.id})">Archivia</button></div></article>`}).join(""):`<div class="empty">Nessuna candidatura ancora. Quando applichi a un ruolo, tocca <strong>“Ho applicato”</strong> nell'avviso: entrerà qui automaticamente.</div>`}
 
 function relative(v){if(!v)return"n/a";const d=(Date.now()-new Date(v).getTime())/1000;if(d<60)return"ora";if(d<3600)return Math.floor(d/60)+"m fa";if(d<86400)return Math.floor(d/3600)+"h fa";return Math.floor(d/86400)+"g fa"}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}function escAttr(s){return esc(s)}
