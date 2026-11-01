@@ -10,6 +10,7 @@ jobs=load("new_alerts.json")
 intel=load("new_intelligence_alerts.json")
 spont=load("new_spontaneous_alerts.json")
 fashion=load("new_fashion_alerts.json")
+market=load("new_market_alerts.json")
 sent_path=ROOT/"data/push_notified.json"
 sent=set(json.loads(sent_path.read_text())) if sent_path.exists() else set()
 app_id=os.getenv("ONESIGNAL_APP_ID")
@@ -31,11 +32,13 @@ def send(prefix,key,title,body,url,data=None):
 for a in jobs:
     published=a.get("published_at");pub=published[:10] if published else "data da verificare"
     send("job",a.get("key"),f"🔥 HUNT · {a.get('brand','Nuova opportunità')}",f"{a.get('title','Nuova posizione')} · {a.get('location','')} · {a.get('score','?')}% match · pubblicata {pub}",a.get("url"),{"brand":a.get("brand"),"score":a.get("score")})
-for s in intel:
+for s in intel[:6]:
     send("intel",s.get("key"),f"👀 HUNT Hidden · {s.get('brand','Brand')}",s.get("headline","Nuovo segnale")[:160],s.get("url"),{"brand":s.get("brand"),"signal_type":s.get("signal_type")})
 for x in spont[:5]:
     send("spont",x.get("key"),f"🎯 HUNT · {x.get('brand')}",f"{x.get('action','Candidatura spontanea')} consigliata · score {x.get('score')} · "+", ".join((x.get("reasons") or [])[:2]),x.get("url"),{"brand":x.get("brand"),"score":x.get("score")})
 for n in fashion[:6]:
     send("fashion",n.get("key"),"📰 HUNT Fashion Now",n.get("headline","Novità moda")[:180],n.get("url"),{"topic":n.get("topic")})
+for m in market[:4]:
+    send("market",m.get("key"),"📈 HUNT Market Pulse",m.get("headline","Movimento di mercato")[:180],m.get("url"),{"topic":m.get("topic")})
 
 sent_path.write_text(json.dumps(sorted(sent),indent=2))
