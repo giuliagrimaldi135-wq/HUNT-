@@ -73,70 +73,70 @@
     "id": "dior",
     "name": "Dior",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Dior&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
     "id": "fendi",
     "name": "Fendi",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Fendi&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
     "id": "loro-piana",
     "name": "Loro Piana",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Loro%20Piana&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
     "id": "bulgari",
     "name": "Bulgari",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Bulgari&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
     "id": "celine",
     "name": "Celine",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Celine&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
     "id": "loewe",
     "name": "Loewe",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Loewe&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
     "id": "givenchy",
     "name": "Givenchy",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Givenchy&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
@@ -185,10 +185,10 @@
     "id": "ferragamo",
     "name": "Ferragamo",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official career page",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.ferragamo.com/shop/eu/en/sf/work-with-us",
     "tier": "core"
   },
   {
@@ -205,11 +205,16 @@
     "id": "dolce-gabbana",
     "name": "Dolce & Gabbana",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official career page",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://jobs.dolcegabbana.com/?locale=it_IT",
+    "tier": "core",
+    "urls": [
+      "https://jobs.dolcegabbana.com/?locale=it_IT",
+      "https://jobs.dolcegabbana.com/go/HG_Merchandising-%26-Visual-Merchandising_GB/9136401/",
+      "https://jobs.dolcegabbana.com/go/HG_Internship_IT/9136901/"
+    ]
   },
   {
     "id": "versace",
@@ -235,31 +240,43 @@
     "id": "tods",
     "name": "Tod's",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://jobs.todsgroup.com/viewalljobs/?locale=it_IT",
+    "tier": "core",
+    "urls": [
+      "https://jobs.todsgroup.com/viewalljobs/?locale=it_IT"
+    ],
+    "require_brand_in_context": true
   },
   {
     "id": "hogan",
     "name": "Hogan",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://jobs.todsgroup.com/viewalljobs/?locale=it_IT",
+    "tier": "core",
+    "urls": [
+      "https://jobs.todsgroup.com/viewalljobs/?locale=it_IT"
+    ],
+    "require_brand_in_context": true
   },
   {
     "id": "roger-vivier",
     "name": "Roger Vivier",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://jobs.todsgroup.com/viewalljobs/?locale=it_IT",
+    "tier": "core",
+    "urls": [
+      "https://jobs.todsgroup.com/viewalljobs/?locale=it_IT"
+    ],
+    "require_brand_in_context": true
   },
   {
     "id": "etro",
@@ -275,41 +292,69 @@
     "id": "marni",
     "name": "Marni",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+    "tier": "core",
+    "urls": [
+      "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+      "https://careers.otb.net/go/Retail/8575302/",
+      "https://careers.otb.net/go/Corporate/8575202/",
+      "https://careers.otb.net/go/Internship/8575402/"
+    ],
+    "require_brand_in_context": true
   },
   {
     "id": "jil-sander",
     "name": "Jil Sander",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+    "tier": "core",
+    "urls": [
+      "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+      "https://careers.otb.net/go/Retail/8575302/",
+      "https://careers.otb.net/go/Corporate/8575202/",
+      "https://careers.otb.net/go/Internship/8575402/"
+    ],
+    "require_brand_in_context": true
   },
   {
     "id": "maison-margiela",
     "name": "Maison Margiela",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+    "tier": "core",
+    "urls": [
+      "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+      "https://careers.otb.net/go/Retail/8575302/",
+      "https://careers.otb.net/go/Corporate/8575202/",
+      "https://careers.otb.net/go/Internship/8575402/"
+    ],
+    "require_brand_in_context": true
   },
   {
     "id": "diesel",
     "name": "Diesel",
     "market": "Premium / luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official group careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
-    "tier": "core"
+    "url": "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+    "tier": "core",
+    "urls": [
+      "https://careers.otb.net/go/Sales-%26-Marketing/8575602/",
+      "https://careers.otb.net/go/Retail/8575302/",
+      "https://careers.otb.net/go/Corporate/8575202/",
+      "https://careers.otb.net/go/Internship/8575402/"
+    ],
+    "require_brand_in_context": true
   },
   {
     "id": "moschino",
@@ -325,20 +370,20 @@
     "id": "pucci",
     "name": "Pucci",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official LVMH careers",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni?PRD-it-it-timestamp-desc%5Bquery%5D=Pucci&PRD-it-it-timestamp-desc%5BrefinementList%5D%5BcountryRegionFilter%5D%5B0%5D=Italia",
     "tier": "core"
   },
   {
     "id": "max-mara",
     "name": "Max Mara",
     "market": "Luxury",
-    "type": "career source to connect",
-    "enabled": false,
+    "type": "official career page",
+    "enabled": true,
     "location_scope": "Italy",
-    "url": null,
+    "url": "https://www.maxmarafashiongroup.com/join-us?mode=list&showSearchUrl=1",
     "tier": "core"
   },
   {
