@@ -16,7 +16,7 @@ now_dt = datetime.now(timezone.utc)
 now = now_dt.isoformat()
 
 JUNIOR = ["intern", "internship", "stage", "junior", "assistant", "graduate", "trainee"]
-HARD_SENIOR = ["senior", "manager", "director", "head of", "lead "]
+HARD_SENIOR = ["senior", "manager", "director", "head of", "head ", "lead ", "principal", "owner", "chief"]
 SALES_ONLY = ["sales assistant", "client advisor", "style advisor", "sales associate", "store assistant"]
 IRRELEVANT = ["compliance", "security", "internal audit", "controlling", "non-merchandise"]
 CORE_PATTERNS = [r"\bmerchand\w*",r"\bbuying\b",r"\bbuyer\b",r"\bretail planning\b",r"\bplanning\b",r"\ballocation\b",r"\bwholesale\b",r"\bproduct development\b",r"\bomnichannel\b",r"\be-?commerce\b",r"\bbusiness analyst\b",r"\bbusiness intelligence\b",r"\btrade marketing\b",r"\bretail performance\b"]
@@ -67,7 +67,12 @@ def parse_posted_date(text):
 def extract_years_required(text):
     if not text:return None
     t=text.lower();vals=[]
-    pats=[r"(?:at least|minimum(?: of)?|min\.?)[^\d]{0,20}(\d+)\+?\s*(?:years?|anni)",r"(\d+)\+?\s*(?:years?|anni)\s+(?:of\s+)?(?:relevant\s+)?experience",r"(\d+)\s*[-–]\s*(\d+)\s*(?:years?|anni)\s+(?:of\s+)?experience",r"experience[^\d]{0,25}(\d+)\+?\s*(?:years?|anni)"]
+    pats=[
+        r"(?:at least|minimum(?: of)?|min\.?)[^\d]{0,20}(\d+)\+?\s*(?:years?|anni)",
+        r"(\d+)\+?\s*(?:years?|anni)\s+(?:of\s+)?(?:relevant\s+|working\s+|professional\s+)?experience",
+        r"(\d+)\s*[-–]\s*(\d+)\s*(?:years?|anni)\s+(?:of\s+)?(?:relevant\s+|working\s+|professional\s+)?experience",
+        r"(?:experience|esperienza)[^\d]{0,25}(\d+)\+?\s*(?:years?|anni)"
+    ]
     for p in pats:
         for m in re.finditer(p,t,re.I):
             try:vals.append(int(m.group(1)))
@@ -142,18 +147,25 @@ for b in brands:
             local_seen.add(ub)
             meta=detail_metadata(url,context)
             if not meta or meta.get("location")=="FOREIGN":continue
-            years=meta.get("years_required");junior=any(x in title.lower() for x in JUNIOR)
-            if years is not None and years>=3 and not junior:continue
+            years=meta.get("years_required");junior_by_title=any(x in title.lower() for x in JUNIOR)
+            if years is not None and years>=3:continue
+            junior_fit = junior_by_title and (years is None or years <= 1)
             location=meta.get("location") or ("Italy" if b.get("location_scope","").lower()=="italy" else "Location to verify")
             location_ok=location in {"Milano","Italy"}
             scored=score_job(title,meta.get("text",""),location_ok)
             if not scored:continue
             score,reasons,family=scored
             if score<55:continue
-            if years is not None:reasons.append(f"Esperienza richiesta rilevata: {years}+ anni")
+            if years is not None:
+                reasons.append(f"Esperienza richiesta rilevata: {years}+ anni")
+                if years >= 2:
+                    score = min(score - 30, 64)
+                    reasons.append("Fuori dal profilo junior prioritario")
+            if not junior_fit and not junior_by_title:
+                score = min(score, 72)
             final_url=meta["url"];seen_urls.add(final_url.split("#")[0]);k=canonical_key(final_url,b["name"],title)
             prev=next((x for x in old if x.get("url","").split("#")[0]==final_url.split("#")[0] or x.get("key")==k),None)
-            found.append({"key":k,"brand":b["name"],"title":title,"location":location,"score":score,"reasons":reasons,"role_family":family,"recommended_cv":"fashion_mgmt" if family=="Brand/Business" else "merch_buying","url":final_url,"source_name":b["name"]+" careers","provider":"career_page","published_at":meta.get("published_at"),"first_seen_at":prev.get("first_seen_at") if prev else now,"last_seen_at":now})
+            found.append({"key":k,"brand":b["name"],"title":title,"location":location,"score":score,"reasons":reasons,"role_family":family,"recommended_cv":"fashion_mgmt" if family=="Brand/Business" else "merch_buying","url":final_url,"source_name":b["name"]+" careers","provider":"career_page","published_at":meta.get("published_at"),"years_required":years,"junior_fit":junior_fit,"first_seen_at":prev.get("first_seen_at") if prev else now,"last_seen_at":now})
         status[b["id"]]={"ok":True,"http":r.status_code,"items":sum(1 for x in found if x["source_name"]==b["name"]+" careers"),"checked_at":now}
     except Exception as e:status[b["id"]]={"ok":False,"error":str(e)[:160],"checked_at":now}
 
@@ -164,7 +176,7 @@ def fresh_enough(job):
     if not p:return False
     try:return (now_dt-datetime.fromisoformat(p)).total_seconds()/86400<=7
     except:return False
-alerts=[x for x in found if x["url"].split("#")[0] not in old_urls and x["score"]>=85 and fresh_enough(x)]
+alerts=[x for x in found if x["url"].split("#")[0] not in old_urls and x["score"]>=85 and x.get("junior_fit") and fresh_enough(x)]
 dump("data/jobs.json",found);dump("data/new_alerts.json",alerts);dump("data/source_status.json",{"generated_at":now,"sources":status})
 
 signals=load("data/signals.json",[]);today=now[:10]
