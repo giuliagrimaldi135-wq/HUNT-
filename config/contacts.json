@@ -1,0 +1,92 @@
+[
+  {
+    "brand_id": "missoni",
+    "brand": "Missoni",
+    "email": "recruitment@missoni.com",
+    "kind": "Recruiting",
+    "recommended": true,
+    "note": "Email ufficiale indicata da Missoni per inviare la candidatura.",
+    "source_url": "https://www.missoni.com/it-it/careers.html"
+  },
+  {
+    "brand_id": "giuseppe-di-morabito",
+    "brand": "Giuseppe Di Morabito",
+    "email": "info@giuseppedimorabito.com",
+    "kind": "Corporate / general",
+    "recommended": true,
+    "note": "Contatto ufficiale della sede/azienda. Non è indicato come HR, ma è un canale corporate utilizzabile per un outreach spontaneo mirato.",
+    "source_url": "https://www.giuseppedimorabito.com/it/contatti"
+  },
+  {
+    "brand_id": "stone-island",
+    "brand": "Stone Island",
+    "email": "stoneisland@stoneisland.com",
+    "kind": "Corporate / general",
+    "recommended": false,
+    "note": "Email corporate ufficiale; non è un indirizzo recruiting. Preferisci la career page quando disponibile.",
+    "source_url": "https://www.stoneisland.com/en-gb/headquarters.html"
+  },
+  {
+    "brand_id": "onitsuka-tiger",
+    "brand": "Onitsuka Tiger",
+    "email": "milanduomo.ot@onitsukatiger.com",
+    "kind": "Store Milano",
+    "recommended": false,
+    "note": "Contatto ufficiale del flagship di Piazza Liberty; non è recruiting. Utile solo come fallback locale.",
+    "source_url": "https://www.onitsukatiger.com/it/it-it/milan"
+  },
+  {
+    "brand_id": "n21",
+    "brand": "N°21",
+    "email": "n21milano@numeroventuno.com",
+    "kind": "Flagship Milano",
+    "recommended": false,
+    "note": "Contatto ufficiale del flagship N°21 Milano; non è indicato come recruiting.",
+    "source_url": "https://www.numeroventuno.com/en/pages/contact"
+  },
+  {
+    "brand_id": "blaze",
+    "brand": "BLAZÉ Milano",
+    "email": "clientservice@blaze-milano.com",
+    "kind": "General contact",
+    "recommended": false,
+    "note": "Contatto pubblico ufficiale del brand; non è recruiting.",
+    "source_url": "https://www.blaze-milano.com/en-int/service-pages/"
+  },
+  {
+    "brand_id": "magliano",
+    "brand": "Magliano",
+    "email": "ciao@magliano.website",
+    "kind": "General contact",
+    "recommended": true,
+    "note": "Contatto generale ufficiale del brand. Non è indicato come HR, ma per un brand indipendente può essere un canale di outreach spontaneo.",
+    "source_url": "https://magliano.website/pages/about"
+  },
+  {
+    "brand_id": "plan-c",
+    "brand": "Plan C",
+    "email": "customercare@plan-c.com",
+    "kind": "Customer care",
+    "recommended": false,
+    "note": "Email pubblica ufficiale, ma è customer care: non usarla come prima scelta per inviare il CV.",
+    "source_url": "https://plan-c.com/pages/privacy-policy"
+  },
+  {
+    "brand_id": "the-attico",
+    "brand": "The Attico",
+    "email": "customercare@theattico.com",
+    "kind": "Customer care",
+    "recommended": false,
+    "note": "Email ufficiale di customer service, non recruiting.",
+    "source_url": "https://www.theattico.com/pages/termini-e-condizioni"
+  },
+  {
+    "brand_id": "themoire",
+    "brand": "THEMOIRè",
+    "email": "customerservice@the-moire.com",
+    "kind": "Customer service",
+    "recommended": false,
+    "note": "Email ufficiale di customer service, non recruiting.",
+    "source_url": "https://the-moire.com/it/pages/condizioni-generali-di-vendita"
+  }
+]
