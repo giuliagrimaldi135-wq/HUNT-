@@ -53,7 +53,7 @@ function initHuntPush(){
 window.enablePush=enablePush;
 
 const views={alerts:["01 · Alerts","Avvisi"],hidden:["02 · Intelligence","Hidden"],fashion:["03 · Briefing","Fashion Now"],brands:["04 · Coverage","Brands"],applications:["05 · Agenda","Candidature"]};
-let state={jobs:[],signals:[],brands:[],status:{},fashion:[],spontaneous:[]};
+let state={jobs:[],signals:[],brands:[],status:{},fashion:[],spontaneous:[],market:[]};
 const navItems=[["alerts","Avvisi"],["hidden","Hidden"],["fashion","Fashion Now"],["brands","Brands"],["applications","Candidature"]];
 function navMarkup(){return navItems.map(([id,label])=>`<button class="nav-btn ${id==="alerts"?"active":""}" data-view="${id}">${label}<span class="nav-badge" data-badge-for="${id}"></span></button>`).join("")}
 document.getElementById("desktopNav").innerHTML=navMarkup();document.getElementById("mobileNav").innerHTML=navMarkup();
@@ -67,15 +67,15 @@ document.getElementById("addApplication").onclick=addApplication;
 
 function switchView(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));document.getElementById("sectionEyebrow").textContent=views[id][0];document.getElementById("sectionTitle").textContent=views[id][1]}
 async function getJSON(path,fallback){try{const r=await fetch(path+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;return await r.json()}catch{return fallback}}
-async function load(){const [jobs,signals,brands,status,fashion,spontaneous]=await Promise.all([getJSON("./data/jobs.json",[]),getJSON("./data/signals.json",[]),getJSON("./config/brands.json",[]),getJSON("./data/source_status.json",{}),getJSON("./data/fashion_news.json",[]),getJSON("./data/spontaneous.json",[])]);state={jobs:jobs.filter(validItalyJob),signals,brands,status,fashion,spontaneous};renderAll()}
+async function load(){const [jobs,signals,brands,status,fashion,spontaneous,market]=await Promise.all([getJSON("./data/jobs.json",[]),getJSON("./data/signals.json",[]),getJSON("./config/brands.json",[]),getJSON("./data/source_status.json",{}),getJSON("./data/fashion_news.json",[]),getJSON("./data/spontaneous.json",[]),getJSON("./data/market_pulse.json",[])]);state={jobs:jobs.filter(validItalyJob),signals,brands,status,fashion,spontaneous,market};renderAll()}
 function validItalyJob(j){const l=(j.location||"").toLowerCase();const allowed=["milano","milan","firenze","florence","scandicci","roma","rome","londra","london","svizzera","switzerland","zurich","zürich","geneva","genève","lugano","mendrisio","basel","bâle"];return allowed.some(x=>l.includes(x))}
-function renderAll(){renderStats();renderAlerts();renderHidden();renderSpontaneous();renderFashion();renderBrands();renderApplications();updateIntelBadges();const t=state.status.generated_at;document.getElementById("lastScan").textContent=t?"Ultimo controllo "+relative(t):"In attesa del controllo"}
+function renderAll(){renderStats();renderAlerts();renderHidden();renderSpontaneous();renderMarket();renderFashion();renderBrands();renderApplications();updateIntelBadges();const t=state.status.generated_at;document.getElementById("lastScan").textContent=t?"Ultimo controllo "+relative(t):"In attesa del controllo"}
 
 function cleanJobTitle(j){let t=(j.title||"").trim();const b=(j.brand||"").trim();if(!b)return t;const norm=s=>s.toLowerCase().replace(/[^a-z0-9]+/g," ").trim();const bt=norm(b),tt=norm(t);if(tt.startsWith(bt+" ")){const words=b.split(/\s+/).length;t=t.split(/\s+/).slice(words).join(" ").replace(/^[-–—:·]+\s*/,"")}return t||j.title}
 function publishedAgeDays(j){if(!j.published_at)return null;const ms=Date.now()-new Date(j.published_at).getTime();return Number.isFinite(ms)?ms/86400000:null}
 function publishedText(j){if(!j.published_at)return"Data pubblicazione non disponibile";return"Pubblicata "+new Date(j.published_at).toLocaleDateString("it-IT")}
 function detectedText(j){return"Rilevata da HUNT "+relative(j.first_seen_at)}
-function alertLabel(j){const d=publishedAgeDays(j);if(d!==null&&d<=3)return"NUOVO";if(d!==null&&d<=7)return"RECENTE";if(j.score>=85)return"FORTE MATCH";return"DA VALUTARE"}
+function alertLabel(j){if(j.decision==="stretch_apply")return"STRETCH SENSATO";if(j.decision==="strong")return"FORTE MATCH";const d=publishedAgeDays(j);if(d!==null&&d<=3)return"NUOVO";if(d!==null&&d<=7)return"RECENTE";return"DA VALUTARE"}
 
 function renderStats(){const high=state.jobs.filter(x=>x.score>=85).length;const fresh=state.jobs.filter(x=>{const d=publishedAgeDays(x);return d!==null&&d<=7}).length;const sources=Object.values(state.status.sources||{}).filter(x=>x.ok).length;document.getElementById("stats").innerHTML=[["Opportunità",state.jobs.length],["Alta priorità",high],["Pubblicate ≤7g",fresh],["Fonti live",sources]].map(([a,b])=>`<div class="stat"><strong>${b}</strong><span>${a}</span></div>`).join("")}
 
@@ -118,41 +118,53 @@ updateAlertBadge();
 document.getElementById("alertsList").innerHTML=jobs.length?jobs.map(j=>alertCard(j)).join(""):`<div class="empty">Nessun avviso corrisponde ai filtri.</div>`;
 observeAlertReads()}
 
-function alertCard(j){const title=cleanJobTitle(j);const stretch=j.junior_fit===false||((j.years_required||0)>=2);return `<article class="alert-card" data-alert-key="${j.key}"><div class="alert-top"><span class="alert-label">${alertLabel(j)}</span><span class="alert-score">${j.score}% MATCH</span></div><h3>${esc(j.brand)}</h3><h4>${esc(title)}</h4><div class="alert-location">📍 ${esc(j.location||"")}</div><div class="meta">${publishedText(j)} · ${detectedText(j)}</div><p>${esc((j.reasons||[]).slice(0,4).join(" · "))}</p><div class="chips"><span class="chip">${esc(j.role_family||"Fashion")}</span>${stretch?'<span class="chip">STRETCH</span>':'<span class="chip high">JUNIOR FIT</span>'}</div><div class="alert-actions"><button class="secondary" onclick="markApplied('${j.key}')">Ho applicato</button><button class="secondary" onclick="ignoreJob('${j.key}')">Ignora</button><a href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri annuncio</a></div></article>`}
-
-function signalTypeLabel(t){return({store_opening:"Apertura / retail",expansion:"Espansione",category_launch:"Nuovo prodotto/categoria",hiring_velocity:"Hiring",management_change:"Management",financial_momentum:"Business",social_signal:"Social / buzz",industry_news:"Industry"})[t]||"Segnale"}
-function storageSet(name){return new Set(JSON.parse(localStorage.getItem(name)||"[]"))}
-function saveStorageSet(name,set){localStorage.setItem(name,JSON.stringify([...set]))}
-function dismissSignal(key){const s=storageSet("hunt-read-signals");s.add(key);saveStorageSet("hunt-read-signals",s);renderHidden();updateIntelBadges()}
-function dismissFashion(key){const s=storageSet("hunt-read-fashion");s.add(key);saveStorageSet("hunt-read-fashion",s);renderFashion();updateIntelBadges()}
-function dismissSpontaneous(key){const s=storageSet("hunt-read-spontaneous");s.add(key);saveStorageSet("hunt-read-spontaneous",s);renderSpontaneous();updateIntelBadges()}
-window.dismissSignal=dismissSignal;window.dismissFashion=dismissFashion;window.dismissSpontaneous=dismissSpontaneous;
-function updateIntelBadges(){
-  const rs=storageSet("hunt-read-signals"),rf=storageSet("hunt-read-fashion"),rsp=storageSet("hunt-read-spontaneous");
-  const hidden=state.signals.filter(x=>!rs.has(x.key)).length+state.spontaneous.filter(x=>!rsp.has(x.key)).length;
-  const fashion=state.fashion.filter(x=>!rf.has(x.key)).length;
-  document.querySelectorAll('[data-badge-for="hidden"]').forEach(x=>{x.textContent=hidden||"";x.style.display=hidden?"inline-flex":"none"});
-  document.querySelectorAll('[data-badge-for="fashion"]').forEach(x=>{x.textContent=fashion||"";x.style.display=fashion?"inline-flex":"none"});
+function alertCard(j){
+ const title=cleanJobTitle(j);
+ const stretch=j.decision==="stretch_apply"||j.junior_fit===false||((j.years_required||0)>=2);
+ const verdict=j.fit_explanation||((j.years_required||0)>=2?"Stretch da valutare con attenzione.":"Ruolo coerente con il profilo.");
+ return `<article class="alert-card" data-alert-key="${j.key}">
+ <div class="alert-top"><span class="alert-label">${alertLabel(j)}</span><span class="alert-score">${j.score}% MATCH</span></div>
+ <h3>${esc(j.brand)}</h3><h4>${esc(title)}</h4>
+ <div class="alert-location">📍 ${esc(j.location||"")}</div>
+ <div class="meta">${publishedText(j)} · ${detectedText(j)}</div>
+ <div class="hunt-verdict"><strong>Perché te la lascio</strong><span>${esc(verdict)}</span></div>
+ <p>${esc((j.reasons||[]).slice(0,4).join(" · "))}</p>
+ <div class="chips"><span class="chip">${esc(j.role_family||"Fashion")}</span>${stretch?'<span class="chip">STRETCH</span>':'<span class="chip high">JUNIOR FIT</span>'}</div>
+ <div class="alert-actions"><button class="secondary" onclick="markApplied('${j.key}')">Ho applicato</button><button class="secondary" onclick="ignoreJob('${j.key}')">Ignora</button><a href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri annuncio</a></div>
+ </article>`
 }
+
+function signalTypeLabel(t){return({store_opening:"Apertura / retail",expansion:"Espansione",category_launch:"Nuovo prodotto/categoria",hiring_velocity:"Hiring",management_change:"Management",financial_momentum:"Business",social_signal:"Social / buzz",industry_news:"Industry",energy:"Energia & costi",consumer:"Domanda & consumi",currency:"Valute",luxury_market:"Luxury market",sourcing:"Sourcing & materiali",trade:"Commercio & tariffe"})[t]||"Segnale"}
 function storageSet(name){return new Set(JSON.parse(localStorage.getItem(name)||"[]"))}
 function saveStorageSet(name,set){localStorage.setItem(name,JSON.stringify([...set]))}
-function dismissSignal(key){const s=storageSet("hunt-read-signals");s.add(key);saveStorageSet("hunt-read-signals",s);renderHidden();updateIntelBadges()}
-function dismissFashion(key){const s=storageSet("hunt-read-fashion");s.add(key);saveStorageSet("hunt-read-fashion",s);renderFashion();updateIntelBadges()}
-function dismissSpontaneous(key){const s=storageSet("hunt-read-spontaneous");s.add(key);saveStorageSet("hunt-read-spontaneous",s);renderSpontaneous();updateIntelBadges()}
-window.dismissSignal=dismissSignal;window.dismissFashion=dismissFashion;window.dismissSpontaneous=dismissSpontaneous;
+function dismissSignal(key){const x=storageSet("hunt-read-signals");x.add(key);saveStorageSet("hunt-read-signals",x);renderHidden();updateIntelBadges()}
+function dismissFashion(key){const x=storageSet("hunt-read-fashion");x.add(key);saveStorageSet("hunt-read-fashion",x);renderFashion();updateIntelBadges()}
+function dismissSpontaneous(key){const x=storageSet("hunt-read-spontaneous");x.add(key);saveStorageSet("hunt-read-spontaneous",x);renderSpontaneous();renderHidden();updateIntelBadges()}
+function dismissMarket(key){const x=storageSet("hunt-read-market");x.add(key);saveStorageSet("hunt-read-market",x);renderMarket();updateIntelBadges()}
+window.dismissSignal=dismissSignal;window.dismissFashion=dismissFashion;window.dismissSpontaneous=dismissSpontaneous;window.dismissMarket=dismissMarket;
+
 function updateIntelBadges(){
- const rs=storageSet("hunt-read-signals"),rf=storageSet("hunt-read-fashion"),rp=storageSet("hunt-read-spontaneous");
+ const rs=storageSet("hunt-read-signals"),rf=storageSet("hunt-read-fashion"),rp=storageSet("hunt-read-spontaneous"),rm=storageSet("hunt-read-market");
  const h=state.signals.filter(x=>!rs.has(x.key)).length+state.spontaneous.filter(x=>!rp.has(x.key)).length;
- const n=state.fashion.filter(x=>!rf.has(x.key)).length;
+ const n=state.fashion.filter(x=>!rf.has(x.key)).length+state.market.filter(x=>!rm.has(x.key)).length;
  document.querySelectorAll('[data-badge-for="hidden"]').forEach(x=>{x.textContent=h||"";x.style.display=h?"inline-flex":"none"});
  document.querySelectorAll('[data-badge-for="fashion"]').forEach(x=>{x.textContent=n||"";x.style.display=n?"inline-flex":"none"});
+}
+function watchReason(x){
+ const r=(x.reasons||[]).slice(0,3);
+ return r.length?r.join(" · "):(x.why_now||"Più segnali recenti meritano attenzione.");
 }
 function renderHidden(){
  const read=storageSet("hunt-read-signals");
  const list=[...state.signals].filter(x=>!read.has(x.key)).sort((a,b)=>new Date(b.published_at||b.detected_at||0)-new Date(a.published_at||a.detected_at||0)).slice(0,40);
- const brands=[...new Set(list.map(x=>x.brand).filter(Boolean))].slice(0,6).join(", ");
- document.getElementById("hiddenSummary").innerHTML=`<span class="hero-kicker">HUNT READOUT</span><p><strong>${list.length} segnali non letti</strong>.</p><p>${brands?"Brand che stanno muovendosi: "+esc(brands)+". ":""}Quando apri un segnale o premi “Letto”, sparisce da questa lista.</p>`;
- document.getElementById("signals").innerHTML=list.length?list.map(x=>`<article class="news-card"><div><span class="news-topic">${esc(signalTypeLabel(x.signal_type))}</span><h3>${esc(x.brand||"Fashion")} — ${esc(x.headline)}</h3><div class="meta">${x.source?esc(x.source)+" · ":""}${relative(x.published_at||x.detected_at)}</div><p>${esc(x.reason||"Segnale pubblico da monitorare.")}</p><div class="news-actions"><button class="secondary" onclick="dismissSignal('${x.key}')">✓ Letto</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener" onclick="dismissSignal('${x.key}')">Apri fonte</a>`:""}</div></div></article>`).join(""):`<div class="empty">Hai letto tutti i segnali recenti.</div>`;
+ let watch=[...state.spontaneous].sort((a,b)=>b.score-a.score).slice(0,5);
+ if(!watch.length){
+   const map={};state.signals.forEach(x=>{if(!x.brand)return;(map[x.brand]??=[]).push(x)});
+   watch=Object.entries(map).map(([brand,ss])=>({brand,score:Math.max(...ss.map(x=>x.score||0)),reasons:[...new Set(ss.map(x=>signalTypeLabel(x.signal_type)))].slice(0,3)})).sort((a,b)=>b.score-a.score).slice(0,5);
+ }
+ const watchHtml=watch.length?`<div class="watch-reasons">${watch.map(x=>`<div><strong>${esc(x.brand)}</strong><span>${esc(watchReason(x))}</span></div>`).join("")}</div>`:"";
+ document.getElementById("hiddenSummary").innerHTML=`<span class="hero-kicker">HUNT READOUT</span><p><strong>${list.length} segnali non letti</strong>. Qui entrano solo movimenti che possono anticipare un'opportunità, non vacancy.</p>${watchHtml}`;
+ document.getElementById("signals").innerHTML=list.length?list.map(x=>`<article class="news-card"><div><span class="news-topic">${esc(signalTypeLabel(x.signal_type))}</span><h3>${esc(x.brand||"Fashion")} — ${esc(x.headline)}</h3><div class="meta">${x.source?esc(x.source)+" · ":""}${relative(x.published_at||x.detected_at)}</div><p><strong>Per te:</strong> ${esc(x.reason||"Segnale da incrociare con crescita, retail e hiring.")}</p><div class="news-actions"><button class="secondary" onclick="dismissSignal('${x.key}')">✓ Letto</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener" onclick="dismissSignal('${x.key}')">Apri fonte</a>`:""}</div></div></article>`).join(""):`<div class="empty">Hai letto tutti i segnali recenti.</div>`;
 }
 function prepareSpontaneous(key){
  const x=state.spontaneous.find(y=>y.key===key);if(!x)return;
@@ -164,7 +176,13 @@ window.prepareSpontaneous=prepareSpontaneous;
 function renderSpontaneous(){
  const read=storageSet("hunt-read-spontaneous");
  const list=[...state.spontaneous].filter(x=>!read.has(x.key)).sort((a,b)=>b.score-a.score).slice(0,15);
- document.getElementById("spontaneousList").innerHTML=list.length?list.map(x=>`<article class="spontaneous-card"><div class="spont-score">${x.score}</div><div><span class="news-topic">${esc(x.action||"Candidatura spontanea")}</span><h3>${esc(x.brand)}</h3><p>${esc(x.why_now||"Più segnali recenti rendono questo brand interessante per un outreach mirato.")}</p><div class="signal-stack">${(x.reasons||[]).slice(0,5).map(r=>`<span>${esc(r)}</span>`).join("")}</div><div class="news-actions"><button class="primary" onclick="prepareSpontaneous('${x.key}')">Prepara candidatura</button><button class="secondary" onclick="dismissSpontaneous('${x.key}')">Ignora</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</div></div></article>`).join(""):`<div class="empty">Nessuna nuova candidatura spontanea suggerita.</div>`;
+ document.getElementById("spontaneousList").innerHTML=list.length?list.map(x=>`<article class="spontaneous-card"><div class="spont-score">${x.score}</div><div><span class="news-topic">${esc(x.action||"Candidatura spontanea")}</span><h3>${esc(x.brand)}</h3><p><strong>Perché adesso:</strong> ${esc(x.why_now||"Più segnali recenti rendono questo brand interessante per un outreach mirato.")}</p><div class="signal-stack">${(x.reasons||[]).slice(0,5).map(r=>`<span>${esc(r)}</span>`).join("")}</div><div class="news-actions"><button class="primary" onclick="prepareSpontaneous('${x.key}')">Prepara candidatura</button><button class="secondary" onclick="dismissSpontaneous('${x.key}')">Ignora</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</div></div></article>`).join(""):`<div class="empty">Nessuna nuova candidatura spontanea abbastanza forte al momento.</div>`;
+}
+function renderMarket(){
+ const el=document.getElementById("marketPulse");if(!el)return;
+ const read=storageSet("hunt-read-market");
+ const list=[...state.market].filter(x=>!read.has(x.key)).sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0)).slice(0,30);
+ el.innerHTML=list.length?list.map(x=>`<article class="news-card market-card"><div><span class="news-topic">${esc(signalTypeLabel(x.topic))}</span><h3>${esc(x.headline)}</h3><div class="meta">${esc(x.source||"Market")} · ${relative(x.published_at)}</div><p><strong>Perché conta per te:</strong> ${esc(x.why_it_matters||"Può influire su domanda, margini, retail e hiring nel fashion/luxury.")}</p><div class="news-actions"><button class="secondary" onclick="dismissMarket('${x.key}')">✓ Letto</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener" onclick="dismissMarket('${x.key}')">Leggi</a>`:""}</div></div></article>`).join(""):`<div class="empty">Hai letto tutto il Market Pulse recente.</div>`;
 }
 function renderFashion(){
  const read=storageSet("hunt-read-fashion");
