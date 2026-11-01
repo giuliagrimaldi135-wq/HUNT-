@@ -21,7 +21,7 @@ FASHION_DAYS=21
 TARGET_TERMS=["milano","milan","firenze","florence","scandicci","roma","rome","london","londra","switzerland","svizzera","zurich","zürich","geneva","genève","lugano","basel","lausanne"]
 FASHION_CONTEXT=["fashion","moda","luxury","lusso","retail","boutique","store","brand","collection","collezione","showroom","designer","merchandising","footwear","accessories","apparel","creative director","wholesale","e-commerce","ecommerce"]
 keywords={
-    "store_opening":["new store","flagship","opening","apertura","nuovo negozio","showroom","boutique","new boutique"],
+    "store_opening":["new store","new flagship","store opening","opening store","apertura","nuovo negozio","new boutique","inaugura","apre ","riapre","debutta nel retail"],
     "expansion":["expansion","expanding","espansione","growth","crescita","investment","investimento","new market","acquisition","acquisizione"],
     "category_launch":["launch","new category","footwear","accessories","lancio","debut","capsule","collaboration","collaborazione"],
     "hiring_velocity":["hiring","recruiting","assume","assunzioni","team expansion","recruitment","new hires"],
@@ -72,7 +72,12 @@ def rss_search(query,limit=10):
 
 def classify(text):
     t=text.lower()
+    opening_actions=["opens","opening","apre ","inaugura","riapre","debutta nel retail","new store","new flagship","nuovo negozio","new boutique"]
+    retail_places=["store","flagship","boutique","showroom","retail","negozio"]
+    if any(a in t for a in opening_actions) and any(p in t for p in retail_places):
+        return "store_opening"
     for typ,words in keywords.items():
+        if typ=="store_opening":continue
         if any(w in t for w in words):return typ
     return "industry_news"
 
@@ -98,14 +103,22 @@ def clean_html(s):return re.sub("<[^>]+>"," ",s or "")
 def norm(s):return re.sub(r"[^a-z0-9]+"," ",(s or "").lower()).strip()
 
 def interview_takeaway(text,typ):
-    if typ=="store_opening":return "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising."
-    if typ=="expansion":return "Segnale di crescita del brand o ingresso in nuovi mercati: utile per capire priorità commerciali e possibili nuove assunzioni."
-    if typ=="hiring_velocity":return "Il brand sta rafforzando il team: può esserci spazio anche prima che venga pubblicata la vacancy perfetta."
-    if typ=="management_change":return "Un cambio di leadership può anticipare nuove priorità, team e progetti nei mesi successivi."
-    if typ=="financial_momentum":return "Performance e investimenti possono tradursi in budget, espansione e nuove funzioni da rafforzare."
-    if typ=="category_launch":return "Una nuova categoria può richiedere più lavoro su assortment, buying, merchandising, pricing e go-to-market."
-    if typ=="social_signal":return "Un aumento di attenzione social/campaign può segnalare una fase di lancio o accelerazione da incrociare con retail e hiring."
-    return "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach."
+    t=text.lower()
+    if typ=="store_opening":
+        return "Il brand sta aprendo, riaprendo o facendo debuttare uno spazio retail. Per te conta perché un'apertura richiede lavoro su assortimento, stock, merchandising, visual e operations e può creare bisogno di nuove persone."
+    if typ=="expansion":
+        return "Il brand sta crescendo, investendo o entrando in nuovi mercati. Per te conta perché la crescita può aumentare budget, team, wholesale, retail e bisogno di profili junior."
+    if typ=="hiring_velocity":
+        return "Ci sono segnali di rafforzamento del team. Per te significa che può essere utile candidarti anche prima che venga pubblicata la vacancy perfetta."
+    if typ=="management_change":
+        return "È cambiata una figura di leadership. Per te conta perché nuova leadership spesso porta nuove priorità, categorie, progetti e talvolta nuove assunzioni."
+    if typ=="financial_momentum":
+        return "Il brand sta comunicando risultati, ricavi o investimenti. Per te conta perché performance e budget possono incidere su aperture, assortimenti, retail e hiring."
+    if typ=="category_launch":
+        return "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market."
+    if typ=="social_signal":
+        return "Il brand sta avendo un movimento social rilevante. Da solo non basta per candidarsi: HUNT lo usa solo se può essere collegato a prodotto, retail, lancio o crescita."
+    return "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche."
 
 def brand_signal(b):
     name=b["name"]
@@ -134,6 +147,10 @@ def brand_signal(b):
 
 # Drop stale legacy signals first.
 signals=[s for s in old_signals if age_days(s.get("published_at") or s.get("detected_at"))<=SIGNAL_DAYS]
+for s0 in signals:
+    txt=(s0.get("headline") or "")
+    s0["signal_type"]=classify(txt)
+    s0["reason"]=interview_takeaway(txt,s0["signal_type"])
 known={x.get("key") for x in signals}
 
 # Rotate one third of the brand universe every 5 minutes: all brands are covered every 15 minutes.
