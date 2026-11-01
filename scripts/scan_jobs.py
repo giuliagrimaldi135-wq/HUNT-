@@ -201,7 +201,7 @@ for b in brands:
             final_url=meta["url"];seen_urls.add(final_url.split("#")[0]);k=canonical_key(final_url,b["name"],title)
             prev=next((x for x in old if x.get("url","").split("#")[0]==final_url.split("#")[0] or x.get("key")==k),None)
             found.append({"key":k,"brand":b["name"],"title":title,"location":location,"score":score,"reasons":reasons,"role_family":family,"decision":decision,"fit_explanation":fit_explanation,"recommended_cv":"fashion_mgmt" if family=="Brand/Business" else "merch_buying","url":final_url,"source_name":b["name"]+" careers","provider":"career_page","published_at":meta.get("published_at"),"years_required":years,"junior_fit":junior_fit,"first_seen_at":prev.get("first_seen_at") if prev else now,"last_seen_at":now})
-        status[b["id"]]={"ok":True,"http":last_status,"items":sum(1 for x in found if x["source_name"]==b["name"]+" careers"),"checked_at":now}
+        status[b["id"]]={"ok":True,"http":last_status,"candidates":len(candidates),"items":sum(1 for x in found if x["source_name"]==b["name"]+" careers"),"checked_at":now}
     except Exception as e:status[b["id"]]={"ok":False,"error":str(e)[:160],"checked_at":now}
 
 found=sorted(found,key=lambda x:(x["score"],x.get("published_at") or x["first_seen_at"]),reverse=True)[:400]
