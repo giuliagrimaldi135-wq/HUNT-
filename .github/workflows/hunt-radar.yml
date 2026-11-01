@@ -1,6 +1,13 @@
 name: HUNT Radar
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "config/**"
+      - "requirements.txt"
+      - ".github/workflows/hunt-radar.yml"
   schedule:
     - cron: "*/5 * * * *"
 permissions:
