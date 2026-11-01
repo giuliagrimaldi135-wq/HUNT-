@@ -1,5 +1,18 @@
 [
   {
+    "key": "2fdc259411e20ca67f9b",
+    "brand": "N°21",
+    "headline": "Dans l’ombre – Dietro le quinte della moda Il ruolo dello showroom director - Harper's BAZAAR",
+    "signal_type": "store_opening",
+    "score": 80,
+    "confidence": "public-signal correlation",
+    "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-11-01T13:39:03+00:00",
+    "source": "Harper's BAZAAR",
+    "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPODZQU2VHWXFIejRWdVhVX3JKRFE5SXVGZU5Fbnk4VTNNeVFBdHMwc2tYQWwxNGM0QUc1VVp2cGRnUFdYb3R0T2dKRzJyNmJNdnIyemxEWEd1bGx3TDVPMmJPQU4xSmdLMmlTN1lwX3FNMzVJcFR2VEVSQzQyLVNLY1VOT1dnN3pFNUNHMXhCSW5GV1U3Tnd6SQ?oc=5"
+  },
+  {
     "key": "cb9796792bdc504ce72f",
     "brand": "Golden Goose",
     "headline": "Golden Goose x Disney: la collezione Mickey & Friends - Fashion Times",
@@ -13,6 +26,32 @@
     "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPZDAwVW1XNWdSbXZTUXVkeERWV2Y1TGJQNXM3eXZQVEhCV05TNG5iRmZPN2ZyTHZaM0JpQTZLc3pnTDlEQ00wNkxSa09fTzZOcHVlVG9JY2NVeThKMGFOd25kWUkzUy00NnNSUnRNZVU4czVuaU5rUkZ2VVBib2lrZUFCbHlZR2EwTmNfMHFDeFFDaUU?oc=5"
   },
   {
+    "key": "8548d6986d5eb0a5c2eb",
+    "brand": "Gucci",
+    "headline": "Gucci riparte da Parigi. La ceo Francesca Bellettini: «Il retail è una priorità strategica» - Milano Finanza",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-30T10:07:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNbmNPaDJLaURJWE1PSkxGRE1EaXJKNWRPNHRvVmJJdGVZUlV0akRKR184SHB6U1pJYTFkNEpEMHFKMUl4Z0dMcUtmYmx1bWNxYU0xa2FIQVg1MXVHZlRZQ1A4dHNORVlQdXU4UV9aS3paSlJJZGNMZlprZ3drOW44WGFPbTV4Qm5hcHJRQ250NDRpRmJsUWw4eXRWY0V3RW9sc1N0WUY2QS1IQVUzUkNqNTdxZTRDMkx4WHlN?oc=5"
+  },
+  {
+    "key": "68e6eaf7ab202c26dd6c",
+    "brand": "Loro Piana",
+    "headline": "Loro Piana inaugura un nuovo store a Tokyo - d la Repubblica",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-29T02:54:00+00:00",
+    "source": "d la Repubblica",
+    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQXzRkTFUtazlTa2paTG1EalNFM0VHeUNrV2JkOG5CT2p3VUo0cFJ4WjA5ZWROcVBmMFNVdXFBM2ZDOC1UQ2ViUEhRUTN1UGtsUGtkZ2xKS0JjVmREQlhIelRFNmJzMHhvSzZTZVU0Z2FLTUNrblpaVm40ZWM1R2pfRkhWNzJRS2FScEJYeXd6OWc2elhfZDVpOVhqMy1WN0FieGptY1RrZENCdw?oc=5"
+  },
+  {
     "key": "b62b41880b938271b0c2",
     "brand": "Bottega Veneta",
     "headline": "Il ritorno di Bottega Veneta su Instagram e il valore degli archivi social per i brand - d la Repubblica",
@@ -20,7 +59,7 @@
     "score": 75,
     "confidence": "public-signal correlation",
     "reason": "Un aumento di attenzione social/campaign può segnalare una fase di lancio o accelerazione da incrociare con retail e hiring.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-28T16:14:00+00:00",
     "source": "d la Repubblica",
     "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNZGhjYk1rUzhXYTJsZDQ4WnJyeHNacGhqeThPSmY2bXZzMzF0R3hVZWI0d1k1Z3hGZDh1UDNZR3hQc1Z4ckt4VDhXT09zY1RaOXNlaTVodmp3dkZqSHNia1R0cG5jSDZBcm5fM2pVT2RpVzhDbTlwTjJWeEVCQVI2aVdHMnBxSkdTZWd1QmlWbHNzUXlOdEswa1VSYUhtR3Zjejh0djVEZklZNXhUbG0tY3htc3FCTG5uRFRZSVExdWxLMUJNQzRn?oc=5"
@@ -33,10 +72,36 @@
     "score": 78,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-28T12:12:57+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNNld3SnBiRWVfaGUzSzVab1RqUXRodl81YVUwd3pWenhaMWpBa1BxQm8zY1EzUnd4Wm94Q1JjeXZwQVVobFM2YXpjdUx3VFZfUWFuRHhLejVWSHZkbW9SRjJMREkwelBUQmJuVUlldFlITF9XaEFhb0dFUDNaVFRKRUxXUGVVaTAtbXFCVVh0SmZUZThySnVVb1VUV3NaZw?oc=5"
+  },
+  {
+    "key": "a8a817b1fb12e79bd8f7",
+    "brand": "Louis Vuitton",
+    "headline": "Louis Vuitton con L’ippocampo: primo libro di sfilate maschili della maison - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-28T11:15:01+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQeS1tenA5dTFJU3hyX0d2RHJJOEpGbW5sUWRQSHdPc2tQMDdkUTFmVXYxUFJMUlhDamJtbmU0WnM1MV9CbnNkZlJPNjUxcnNTMS1iRGRyd1MyN3RxWTFVY29RQzlQdTJKQVVKX2ltSmVaNWVlZzIyc0pyMko5X2JyUFBXdWIxNVhNR1RfdDFvU3FnVllIN2FFSWhoczV1UQ?oc=5"
+  },
+  {
+    "key": "c94795bb3e31cbd47ad6",
+    "brand": "Louis Vuitton",
+    "headline": "Ma cos’è che fa il Chief Brand Creative Officer di Louis Vuitton? - nss magazine",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-27T06:06:27+00:00",
+    "source": "nss magazine",
+    "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNeTh2YV9ITmFjeHF6eTRVdDdUaXM2eE9zTU96N2hOWm1lVzFoVjlpVF9wNm9iQUNlMTcwVk5IazNhVGZZNUV1V0ZsMUVYZHNEQ1c3bHVTdmx2VE11cTBHNGFPaFdEUlk1RHRlQWFIVWM5ZmxDNktLLW45dWRiY0xja05lMlhPdU1EY0NVOGZOMHhZaFVhVHZTcVh1VE4?oc=5"
   },
   {
     "key": "5e817c7be5d2228acb25",
@@ -46,7 +111,7 @@
     "score": 80,
     "confidence": "public-signal correlation",
     "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-26T13:22:44+00:00",
     "source": "FashionUnited",
     "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxPNXlCOHJub2RHaE84R010MzlHaWdIZE80ekVta3J5dlhFbGs4SHVnb2xWcmU2MkppUXJ6el9nMzRJVjJSVzczRVFiZ0Joek1Zb2F5am5uRTJrMnZodE55T21aby1ldDA3cGREQjhmTlZDWU1KNDBOcHVPM3Y3NEs1N2szQUxxVXM0d0JkMWRRUXhjR09fQ0hOak9xWkVTbVp3OURBa3NDcl83QWhUQVROMF9ac2lnMHRWRzZCY0lkYmdyTGdLQUx3MFE2em9OZFlMVkxnelR1SQ?oc=5"
@@ -59,7 +124,7 @@
     "score": 90,
     "confidence": "public-signal correlation",
     "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-26T08:01:55+00:00",
     "source": "Outpump",
     "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5OWTBmcE1QU1ZSTEs3NjYwbVdZVWM2QmtpS3gyT1B3NDBaeVlQeElaanI4c2pFXzJ6YkZFSU4yMGtYcE1hMkxSaXZJZ2ZfWW5CbkZ0RDd1Tk4wbGZWRThUUHpaS2RZbEo4SG9YaHFsMzVhYUxyVzFVSVl3?oc=5"
@@ -76,6 +141,45 @@
     "published_at": "2026-10-23T07:00:00+00:00",
     "source": "Business People",
     "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNc1dfRmpVbWNtMW9ETTNTQTdjcU9Uc0xFcE0waUNJSTV6dWtzd2Y0aVVzMEN6djBZVnBCMjNJR0JjbjNJbks5WlZZdTA4ck5ROEdqMnZaT09PUDJyOXJPRzNidWFZMEJYMk5IWVN3NF9wMGdsNTdEWFFFTHpfYUxLZlctU0JyNDhURmZ5X2dHTjdVc1pQZEdBRlM0dFh0SDg?oc=5"
+  },
+  {
+    "key": "407c2f8c57054903e47c",
+    "brand": "Etro",
+    "headline": "Etro inaugura a New York la mostra \"Etrospective Ny: 96-26\" - FashionUnited",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
+    "published_at": "2026-10-22T16:04:56+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPOHNtYkhqWVc0UmZxbW1zb0UtMUZTS2ZkWTRla0M0a2l1Vkt5UjhoRXpoQkgtd2pRWlBGVFlwTjVaTkNWWkY3eVB1b2xhN3prX3Q5UTE0ci1iUU9Rc2FRbWREQ2tNeXRvTVJHUFFubU1oU1BiWWRIVXZOZ2E5MXJEQzhDYWNUWlpOQXVzN2d2eGZNSGFkcWdiNWlwTHNudzJm?oc=5"
+  },
+  {
+    "key": "89f01441be65b1e3e168",
+    "brand": "Kering",
+    "headline": "Kering stabile nel terzo trimestre - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-22T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPYWpxMkEwSnZfLXNGOW9vZ0dRMlRJaTlRWW5FVHc3ajdLRXRPTVBLcjdteTlSbEptMXRmOC1LUEMxTm9CLW45UW95YU9HbU10UUhicDJVWm5zN0FLMDI2a1JWb1hZY2VjUXJyOVUwUmpxeHFKcUY5M2xRbnNzWGdWbTdaM3RieTdaRVE?oc=5"
+  },
+  {
+    "key": "083e2c898836e8e07b3f",
+    "brand": "Moncler",
+    "headline": "Moncler: nel Q3 fatturato stabile, frenato dal calo della spesa turistica in Europa - FashionNetwork Italia",
+    "signal_type": "financial_momentum",
+    "score": 75,
+    "confidence": "public-signal correlation",
+    "reason": "Performance e investimenti possono tradursi in budget, espansione e nuove funzioni da rafforzare.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-21T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNVmhYMGZ2Wk9QaWhCWDNORXE5TEYweF9aWFhVdGU3UTc3T21HTFcwLWJDS2MzWXBsZ1ZIV3l3cXgwV1AyTDJnOVVDS21pR2NPVlA2LWdXTXFIdF82MTdKeWhmc1YxUm9UWWpibXZQSG5EcTZ1NkpENjA5ZUVDNzFzRFhXTnFiYk1tUGY5ckRpSVNudW9RQzZuc19HS241Q21aMlRPdGdMYVZqRzJkZXBlTk5SbEhOYk51TEw3bW90OGdEdE13ZVFOag?oc=5"
   },
   {
     "key": "eec69ef5c5e606526e76",
@@ -104,6 +208,19 @@
     "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxQcUU1SVFLOWZ0MlB1Zzg4cXA3aW15V2x3MjlTU2w2OGJkaXE0NW9weFd3emJKcVR6SGhLWjNnZldXRlZ0NXVEMmlvVzg3SktHXzdDWGtYekhsenhCekJxUTRNOUtrMXJzaS1RQ24xYkdzTlRzakhEaVdrU0psT2NON1JtRTh4YmRJZzl2UEhhbk9WYkxqTFJCSjBaRGRXSDJvWFdHUWkySmdHM1d0RElGd1drdjJxSm1iay1QbE9KYVJpeklQVDUyQUZuWkNYcGNMQ1ZPaDViXzlhUQ?oc=5"
   },
   {
+    "key": "f2d59821c20fde730708",
+    "brand": "Maison Margiela",
+    "headline": "Maison Margiela festeggia vent’anni dello store di Tokyo - Milano Finanza",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
+    "published_at": "2026-10-20T07:00:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQV1I1WDllZ2p2LWl2YUV1LU9sSUNqdlg4VDhkRzRfdDFKQ01pZU1Va295TUhiejFMWmZia3BpZVg1Z1JhenNfdDd3WjZRcEFNUnQzMVo4VVU4aDdEeFh1eW5XTmlKaVNrVWsxV2tVZ0stXzVWQ05ZdjJKOE1vYWV1Vm9qT1ZlREY5TGNneWhpZGY1eWJNenJfbUh2MEVMeTFLdkdUeGlaMC1lTVdWSlpXZEh3?oc=5"
+  },
+  {
     "key": "7b197fb639e33bafaa3e",
     "brand": "Givenchy",
     "headline": "Givenchy trasforma una cipria compatta in un iconico accessorio di moda - Tatler Asia",
@@ -111,10 +228,23 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-18T07:00:00+00:00",
     "source": "Tatler Asia",
     "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQbVBtUnRXcHhHaFhmX09ac3BCOElVeDR6REw3Z29SblQ2dWgzNWEwSTRuMklvS3RCaEozY2RDcXhkRHhVcTJ5c0pJYXIzLTlGQjc4WEVFeEZ3QnFoelZtajZQOWd3LUV4V2JYaklkTjZmLXZ1Y0Jtc0IwcG95Vkd6eVNxVjJTbmV2?oc=5"
+  },
+  {
+    "key": "a2663ea308cd423ca42f",
+    "brand": "Kering",
+    "headline": "Kering: la futura direttrice della comunicazione arriva dalla banca d’affari Lazard - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-15T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNVnVlZHJlTGFKX3hsUlRXQXA5SWtNMm1aSWszSW9CVlYyT3JZLXRuNVE1VloyTGZzMXBXcVlxNjRKRURMRWlQUEtkLS1SWkR6OG42OHRBXzdiQkNpdXJYZG5xUmpFUUNiR1E5aDBWQUVORmNxcEx0Y2FLSjVNczR4d3pQOTJqWjJ6UVRzcUo3cmZ3LU12aTl2V0ZWQkJidXNuRUtHbTIydlhhME9kWVdCbm0tYm5HRVBUdDVNbnlaVDVubnZJMERkbG5R?oc=5"
   },
   {
     "key": "f6c2ee085e181991cec9",
@@ -124,10 +254,23 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-13T07:00:00+00:00",
     "source": "Wondernet Magazine",
     "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNS2NJa0M2VXNMQ2trR2hlSUdnV3JxeEVkbmxiLTBjdlJjNkV5dmxoalJ6TzRaWmhMLUl3OXpoY0JOakNzcTh2Z3BMYS1IZ1EtTWQ0Rl8wd1VvdGtVdUhHZVBxcmNuaWhhY2ljeU94S2dsaGdIVTE2dlpZcVp3b3oycFhB?oc=5"
+  },
+  {
+    "key": "245f842730b242f742c2",
+    "brand": "Giorgio Armani",
+    "headline": "Giorgio Armani e Kith presentano \"Dreams of the Dune\", terzo capitolo della loro collaborazione - FashionNetwork Italia",
+    "signal_type": "category_launch",
+    "score": 75,
+    "confidence": "public-signal correlation",
+    "reason": "Una nuova categoria può richiedere più lavoro su assortment, buying, merchandising, pricing e go-to-market.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-12T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxQUGw1akRZYzlnams1M2o1T0p0cVBpQ09HQ1pHVUkzZ3BLby1pQjU5VGJabWNzNkxlZkRnaUkxcGcxcWVMOVJJcndEeUlZWGw0SnNQbnJLWVRMTXMyWm5kcEdGMjRRZDlXa3dPMlZSSUR5N2tiRTlHeUxTSmJibkxIRzdSdnotbVlzMFJsTFp6Mk9OWjVHZFpoZF9yVEFZR2wwOVpZVEJvdmpHaE5PeEhzWEtmYy13aDUyeDUwWDdDMjI1ZUd3QTYySndwRFNRcjJwT2pranhicw?oc=5"
   },
   {
     "key": "480621b114092e0ff496",
@@ -150,10 +293,36 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-10T07:00:00+00:00",
     "source": "L’OFFICIEL Italia",
     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOQU5VSU9ZQ0U0Z3ZoZ1J6SjRKYU5DVFNSZHRUNTBBWDl6c0xndS11Ry1TV1psLXpFQ3pGMFAxTVRsbnZ4UVhTRGZvQjFxY1pVaW9jMmRVbXRYcEk1WjJjeG9HUmIzU2RLN2tMc0Q3c2ZRZUtTWTltdS1ReFZKNzN6Mll5MzRwSUJ0eWJuNS1tVk94TF93bUE?oc=5"
+  },
+  {
+    "key": "bee2c7675fb5c0c5a98a",
+    "brand": "Louis Vuitton",
+    "headline": "Louis Vuitton - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-07T10:48:55+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5Oc01SSUNRZVNSUnZVUW0xc1VuaHE0bDRuc19ERElXWGszYlVFWUZ2aDNhS3lfeFF6NExvUnVTenpFdV9pbUphUjk1WVJfbjF3RU5fbklLY25DWkxickh0MEhpcG5Gd2k1TjZIZTJOZVRyQUZLTFh0VS1B?oc=5"
+  },
+  {
+    "key": "d9bcffbd11058f273377",
+    "brand": "Elisabetta Franchi",
+    "headline": "Gi.Mel ed Elisabetta Franchi rinnovano la loro partnership fino all’AI 2032 - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-07T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPQndTVEwybEJ4MExWTTZRQXQ2cTBNUEVyX2ZrQU1SOUpQYU42MFVxT2tLSWFnM0tDYXlYVVlDZjFpLUFIMDFpVGxadXFrRjlWOWpmS1ZQNzRBM0c1MlZidEp1UGQ0OWFoT2VscjljSnhGT2VLdHNFMDJkb2ViOVdLcHVXYjREeVJ2d0FGUFV5c1hvLVRlYXZ2NFJvTFJLWDExU3NOSi1BTjhja2ViQndycDhZUFVnNXlhN1E5XzlJcFc?oc=5"
   },
   {
     "key": "838ad875f7427e4781fb",
@@ -163,7 +332,7 @@
     "score": 80,
     "confidence": "public-signal correlation",
     "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-07T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQVmpzMURrR2hiNlNqZ2xrY05aY1A3cG1DRXQ2dDRncURJMEJ3em9ObXpGSklCRmZlWUE5Qzd1a05yMWtXdU9LZWtzU3I2dldxdWthSURCUHdwbjRpTWR6RjZyLUZGaDRvbGloTlR4VUduZ3VzUWhaLU95X3EyTnAzN0JkQXdvUFZPeUdpM3dwYTB6Ym5oTWhCRkhqTjF2TDdmUWRWVzZSeXNPWUQtbkRiZUlMZw?oc=5"
@@ -176,10 +345,23 @@
     "score": 90,
     "confidence": "public-signal correlation",
     "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-07T07:00:00+00:00",
     "source": "HUB Style Magazine",
     "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjg3UXB5WFF4VXRhcFViSk9XbUhQMm1vaFFRa19QRmhYYUpUUDJVVVRQYllGQ1NuekNnQmRRVjUzbnltNnlMOGNwXzJ1V2NLdTRPQTJBZ3FfbEtiX21jOHFKREQ3XzBTS2R0M2N5b2RCaUp0U013R2V6bXR1UFp4R3d6cml4Zw?oc=5"
+  },
+  {
+    "key": "f1c10d5fb23e594bdc40",
+    "brand": "Louis Vuitton",
+    "headline": "Lisa chiude la Paris Fashion Week da Louis Vuitton - PAP Magazine",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-06T07:00:00+00:00",
+    "source": "PAP Magazine",
+    "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxORTE5YmZZUTlzR29pLXUxRWIwLV92OV82VkxHZ0ZBVEdteEZ3QnllUmZVbTFQUVhpOTBQYjEwUk5TSzBxNWgzQ1VLTG9lRlRQVnY0SC03dklVdHpKYlBGZGNWX1RmVVFpbTRUY1FZeGZGOV95TWJVWnFUTFpfLWE0UFVSQ3V4YkVvcG0xZg?oc=5"
   },
   {
     "key": "845752d8556a3cb532b4",
@@ -189,7 +371,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-06T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPTDNLZnBmM1lyQmlpanc5NldRUS12QXpGcnAzdTZxOWM0UHJ5S0NQSE5Rc2g0aTNNWkx1RmVObWdDQUZnTzdYZnpabHBjV2NlZzZveTQ2UzFUOV9EdThXbmE1R1p6WWtVbVRtbGdNQXpSTlVGd2xCMk1JR3hhbGZ0YmpMRThaWVhvNEU4cl9JVVF6Z0t2emdBOU5qcElFb2I4NU5pX21vbVNTc3ZNMDhnZExoUHpnUkxDZHozR2g2WThWa3ZlZHRXUFJyRXN6RXhqdG5aS2dn?oc=5"
@@ -221,6 +403,19 @@
     "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNdVBWMUVRTmxRSC1ZT0lOTjJNYW5tWUpzNlY5cmEyMTlUMVZYejM4dVlmVWduc2p1WmJfQmFpOWlndDRWTk5zUkgzU1RLVkZleDY1eEpGVTFCTmh4Y3lBWjhNd2haTE9qRkF6aDBaekpuV2tkMzd3TVZUbVNwQ3lQUXFPSFotOFdVX0phbzlSZzFLSnBmay1mVHA3S184cHhvbUF5aDBvQWZrdEJ0dFVjTUZWMA?oc=5"
   },
   {
+    "key": "b4d0a2a3e29dd5505578",
+    "brand": "Roger Vivier",
+    "headline": "La collezione “Vivier en Fleur” Spring-Summer 2027 di Roger Vivier - Tatler Asia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-05T07:00:00+00:00",
+    "source": "Tatler Asia",
+    "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPeGVWekZoWXMwVDlwY2pDOUFHUDBxZXRGcDB1WnlaelpXWFIycWU1ZzljUVQyaWsyT0s5WkxBaGNRQ0FINVRHdjJmNFgzVU9hYVI3dm1LejhXNDZXZzZUSU1JbWVLWnAtWHVWNXBzOTlBaU4tWEJNWGRocGktX09RRGxMeUNsZXN6dHA4RVF3UDhqZEdFdHc?oc=5"
+  },
+  {
     "key": "cdc42955c496ed920012",
     "brand": "Valentino",
     "headline": "Valentino - FashionNetwork Italia",
@@ -241,7 +436,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-04T12:30:59+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQRnJyeDRPWmF2OG5jaU02ajdWLUhfanNHY25hTE11RlJBVUlCSG1iVkx1U014aS1BUW5qNXVCaHNleVJSUEhHdDNyaml1ZWl2ZjBOQnlwci1jMmpZeFo4ZjFNOTM3ZDE5bmUzOHg1VDlFY3VKMnhfYVZpMEJ6TlFIY2JB?oc=5"
@@ -260,19 +455,6 @@
     "url": "https://news.google.com/rss/articles/CBMikAJBVV95cUxQNDFoWFJnSHE3a1Z6aW84bTVGcWllTnBiT1loTUlJOGxWaVI5U0lJbDJIdGgxb2h0M1p4T29FNGhyRU5BTXREdlpoTFdCOS02U1dLTm1jbVVKaVk1LUI4VFVOT09qNVNFbkdyV2JQQ210aDlsNk9TZFREd1ZySVR1UFFvS2N0RDZGSWR1WmNXdS1qS1Qzdms2MFFYazlSTzdrUWhaNGxaZ1k2Z0lQYUl0OHFKQjFma0R3NFhRQjhMeGx5V0FjQ1VUVkdaWU51N1RoM2daUVN5V1JCZThPb1FRbHhXZjJvUmxjNFhsb0c2NXlGVlRYMUpQRXhQYnVkSmpKbGpDd2pqZXZpOGxpN2labg?oc=5"
   },
   {
-    "key": "a40e18acc5b516265ea6",
-    "brand": "Etro",
-    "headline": "Etro Primavera Estate 2027: estetica di una sfilata moda bohémien - Life&People Magazine",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
-    "published_at": "2026-10-04T07:00:00+00:00",
-    "source": "Life&People Magazine",
-    "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPTHI2TWtWSTRaTHFtMVRlQWR5eUFFRE9GOVdDTzdudlRNTG9MM3BaaW1EUXV4SWNUS3lzRHJqT084X1NuWjFpeVc4TEczUFFKekNHcWR1ZGZ6WDBMZUhtT0ROc3d2SHJNN25ZLVVwNWNZSWwzWEpWN1BUR1puazNrOENRdVl5VGhEZmhKb0Q1cEdlNkRMNFE?oc=5"
-  },
-  {
     "key": "85f56ddf6a2b5110c01c",
     "brand": "Givenchy",
     "headline": "Céline Dion conquista il web con i look di Givenchy e Ferragamo a Parigi - Fashion Times",
@@ -280,7 +462,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-04T07:00:00+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOTjdteC1jbVRoNTBONF9FSVllcURfRjdyNUxGSkFmanpiQXFrUGF0cW5vb2pxcUFkcTc4anZWQUtKd3RheFRhVzloYS1mMlJtY0xHR1YxdVJ0VV9pYVBrNWdqTHd1azQxODJMc0dWSlgzT1E5cHBSTE44V3BWWlVDNjZtZHZmZEVZUlg4cFg1d2xYaEZVUHJGSA?oc=5"
@@ -293,23 +475,23 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-03T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOOUMzYmtlSVU4M2w5QmlWTXMtcTdEQmx4dy0wNW5kSFBtWWtodW9SOGh3ZXFENW9IbVFuNjdJWTlVSHNiXzRBbTJubHU4QndRZXlZSUMwUGRhOWZrX20tUE1FZy1KRGNLVThWV2hyYVppVEIxRE5QeHBIS3hOSVhQTlZMMFh1d3ltS215X3IxcVYwdXpneFdrZTNqa0JpLUlkcWhCSURTOHhpRVkybW4tTA?oc=5"
   },
   {
-    "key": "77e23e285cf567eea39f",
-    "brand": "Bottega Veneta",
-    "headline": "BOTTEGA VENETA - WOMEN SS 2027 - MILANO - FashionNetwork Italia",
+    "key": "2125990844f16aeb43b9",
+    "brand": "Loewe",
+    "headline": "Loewe - FashionNetwork Italia",
     "signal_type": "industry_news",
-    "score": 78,
+    "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
-    "published_at": "2026-10-03T07:00:00+00:00",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-10-02T12:36:40+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQX3pVU29TTnlPdjdobmI3UzBxTVZPVnBENGR5MzJqLUtWc3Y2b0dzN1VyQkxqdFVhSnFGSEZUUW9BWk85bnVsNHExSGRpa1dfSnBRMGVjWjFnNWJKeDZKbU9td2xfMkVkbTl1d2s4aEowdk1zak5id29KMUFtMGMzVkNZUnl3djVYZTAxcGI2NmtQZUk?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBqS0hkd0s4OHpZalg0ZzV4MUxpYzQ1dnlwUy0zUmIxRVB6UEpfSllrdEdMSVUtMUhaT0JuRXFKcFRqdE5GNlQwdE92dXc4WkEzVzV5Uk1odG1YT084Z3RIbGk1SHlrYWVMTExBQmQybw?oc=5"
   },
   {
     "key": "4bab0edc3562d4108fa9",
@@ -319,7 +501,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-02T07:00:00+00:00",
     "source": "Sortir à Paris",
     "url": "https://news.google.com/rss/articles/CBMihwJBVV95cUxOT3hUT1B5WjBRX1VJVmt3ZmxXeGZkeU9ON0JBbVV2Q3BpbGhmc1dsTlFJRzl0QzJxTUw5bGpuRXdNU3piNWhQRUUybHhrUVV0UklRQ3JCSWNPcU9VRTlTcWtsb01aWnlORzBCUlpxMTlOVjRFT3RjSDh2Qmhfc0QwUGVONWlRV0ZXNnlzR1BYOXFFbWU3ZmNNT0l0dUpMb3dhQ3JOYTdFTkdrdUJTaHhNT2YtSDJUNm5LaDQ5RmdSVHk5aURlQ19ncmxrbDVjVnFodUpPQzA3Ym96bEE0VEZpY1dqOTlQUWViUC1zNl9MWDZ5V3NWbUVzRkRVOHJCaGhGWThGZ0xjSQ?oc=5"
@@ -332,23 +514,10 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-10-01T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPYXlEbk93Z2dybEQwS1J1cmlUVU9Nb3ZCWVN2NWxhcThBbEo2U0p2UWZMcGxFcHp6SWw3bGZNaTZtVlptQXRiR0RweEZzVUZpTWh3X01xbm1PRHB5Wjl5WmI5b1dpUGNFSzZNbDdkanhLX2N0X01BMk92Tm1OUklCY1pHanYydTBaaThoZDVBQ2lsRjB0endzYw?oc=5"
-  },
-  {
-    "key": "ce43911a264a5ab9eb8e",
-    "brand": "Maison Margiela",
-    "headline": "Maison Margiela: la fioritura nella visione di Glenn Martens - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
-    "published_at": "2026-09-30T07:00:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPUkVoZnlJbFdpSllDamRJM3NDRGxwUTZ0N216VGZ5b3RUT0tDSW1XcUFLaXpVd2xpdVNpY0pUVmd0YklOaWxfRTVGQm5oR0h2T19qYXBUS1RxVmJRbFBXQjMwaDVMRERFaTJKWWNzbGVvNGtKZUpVRnhGYWkwNW1hVzBjVi1lNHhXaGxyMmc4Y3BqOGhZOGRVU1RQeFpFZnBPTW54QTBfaTA0Tlk?oc=5"
   },
   {
     "key": "1aa86a00d1bc41177a01",
@@ -358,7 +527,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-30T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQVWgzVThXSms4S3AzRld6bTl4Q3JLR0h1aDR2R3N6Vl9XQVg1bDg2ZzVxcnZTOE80bkg4Ukp5ZUp3QnRtandXUmFjM2tpVkE2cFN3Tjc2RTdnc2psckc5RzZUelVBRVprOG5OOGdpZF9QcUhrWWJ1dDRiMzd2elhQNVhMWURxQUFfeU5helVvNVpPUlhQWWZHd1Jjc0E?oc=5"
@@ -371,7 +540,7 @@
     "score": 78,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-30T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQZmFFbzFVZ0k1SXNrZjRGWTM4V0o5dTJ0Y0NsbFdJTGVPOWZZaXlrRkZ6Z3REVnpqTk5FTmVHS1hPMi1TVWFnN1ZfNFZyemZpbGl3OHpfM3lCTjR1cGRNTEZUTWg2NEFSM1JsTldhVVlVQk9SY2lyS1AwN1NRY2NqQjREU0FTZGhsb1NXTTJ5N1A?oc=5"
@@ -384,7 +553,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-30T03:31:58+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBKWFI2RVhtZXRvblVfN1ZyVENXNXBSMlFtTjhrOU03NG1odXl4d2Z1WjVZaTlmdjgzZHh5d2h3RjctWFNHMXg5OTRaaVFSQ21SVV9xQkdrc0dDR2RTb0szUVhSVWd6WW1YeXNqTmJyUWdPcDRJT05IMy1qYw?oc=5"
@@ -468,17 +637,30 @@
     "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxPYTBzbVFlelhTQi1FUkp4OHFfcHFobGx6eW1HYllUR1NuU2dtRHNvUlA2cDFrX0dOWGRnTlFxbDdQUEhfcVFpbl9ZeWh4cjFVU1MzdmNWRFVqUXRBU2hsVFJjZWJSLXZPemV0dXpyUUhLN2syaVNZaWFzblBhRjhWQ2ZIYTRJX3JNbnFiUUphR0w0b19HZk1uX3lFMkU3N1V3VFJQR3ZldjZNRHcxaXdIRmVVM1Z3THhTZFd3Y1pMdFEyMlR3OWlpQUtlbVYwSVE5cVc1TV9aeDQ?oc=5"
   },
   {
-    "key": "939277388e2e44fa6aaa",
-    "brand": "Dolce & Gabbana",
-    "headline": "DOLCE & GABBANA - WOMEN SS 2027 - MILANO - FashionNetwork Italia",
+    "key": "2eb80d98968fc10ba1ab",
+    "brand": "Brunello Cucinelli",
+    "headline": "Brunello Cucinelli - FashionNetwork Italia",
     "signal_type": "industry_news",
-    "score": 78,
+    "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
-    "published_at": "2026-09-29T07:00:00+00:00",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-28T16:10:59+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQa3NJdkI1RGlqY3lTMGJTTm1iVE4tR3hBaFl1bWVrNk9GTlhvaV9FRzVKT3JzVEJyVVpBTS1mbHdBUEdpU0dZaURvS3FoeDM1cTJ1NFZ4d215aE9sVzhNTmNhaExDdTZRNGluWlFaWFoyYUF4QXZwdVVZcUg4aDRQY2hoQ2xuSUhjR0ZTOUZOX0FsZw?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNUk1rdzVDcUZhWkxxM0phNS1CQk8zQms3QkhLc0k2UENCWUhMVy1oeE8zQjBaY2JxXzhObHY2dzBGWTZhT3hiZkc0cF9lNEg1M3lCOWdDRllqTlI4SkZOT0l5MXFJd1ozZjBSeC1BcnJ4X1pXTmZmSVlYb3YweHVOcg?oc=5"
+  },
+  {
+    "key": "219a1b335c8f9e249a3e",
+    "brand": "Loro Piana",
+    "headline": "Loro Piana - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-28T13:16:06+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9mdTIydGtVdGVsWGxweWJPUUluekZEblZNTjMyXzA2NlVOR2k2Wk0yekNfM2h6c2tsVUZQYkNjdk5oWU1zaEhiRzVHT1NPaFZSbjdwaTllOHVKOVBsTUJiU3BMMXJwc0EzbTFXZG90cGw0VGZqV2c?oc=5"
   },
   {
     "key": "26f8f72bb83bbd30bc33",
@@ -520,6 +702,45 @@
     "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPLUp6cVdzVEZpa01IcmlSbjhSUkRvcGVPckhuV2dSQXQ4WWs4TG5rWWRGQllOVUdxcDktVWtEUUhZLTR3ZkktT1Vtc2VKMzJFNlRoSkU0Q3FRanVjc0M0ajlrekZlaGt1aEVXdjJtNEUtWDIwWlhQN1NETVJoajRQNVZTZ2s0OGUyeVBBNFhJYWo2U3pXekVxay1HMnB4ZU1OWERnMVBCY0pGbGNmR1Vzblg5cjdLN2drMWwwQnFsTDJNYU1TakEwZUoya2t1MC1OclZ3dHpwUW5BMjhSN0pvZEZ3?oc=5"
   },
   {
+    "key": "02c796d8994f65bc0151",
+    "brand": "Blumarine",
+    "headline": "Blumarine e l’ingénue californiana - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-28T07:00:00+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9CUWE5bkZhQ2RpN0xJdmcweXlGR0EyT3V3M1h2NXB0QW5ObnNWN2dnalhzU2ZScjg3OFdTWHZzbVhyQ3MyekpUY25PMERYeFUtRkpSeU9WLWg3N2JmRWU0V2M3SlJlOEJaOTcyZlNuRUpDNVpFQ1JFVVN3?oc=5"
+  },
+  {
+    "key": "04e56644419c2ebe7060",
+    "brand": "Blumarine",
+    "headline": "Milano Fashion Week: il romanticismo di Blumarine al sole della California Economia - VOCE.IT",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-28T07:00:00+00:00",
+    "source": "VOCE.IT",
+    "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOeDByZEhzMGdoc0E3QzBHNWpidExaX2ZtOWNUSGdTR0Y2azZDOG4xQ2hySjFiSEk0R0RhcEZtSW44NS1jNzZrdkVBUWJ1WkM5RWFjekhFWUYtNXExXzRVblhfUDNBU3I5Z2hfZWVGRkJ4Y1J2TG9IUFdUTUtXQldzd3F1TmhvZ2lTSDBrWHhOeFhLOHI3RkNacEpKdGU5NFNUNFZjSWlSVFctd1NTLXozQXJRTjdfUmM?oc=5"
+  },
+  {
+    "key": "c278fced051302da943e",
+    "brand": "MSGM",
+    "headline": "Msgm tra le stelle con Mario Schifano – Moda - Gazzetta di Reggio",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-27T07:41:42+00:00",
+    "source": "Gazzetta di Reggio",
+    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQbnp5RjFGR3QzSUpXeHBOQmhnVmlRVjdVMnBFclV0VnFvb3laa0Fya1QwQTVwMlI1UWxWNGQyaHN5VkZ5VkpXUm1BdW5uRVNDaFNsQjR6bmtRN3hCUWJWa19ieXNwMHZ4RkVoRXJ4TS04QnVHNGtBU2c3OXlXYUgzTHp6TUhQR3pMbllaay0tNDg?oc=5"
+  },
+  {
     "key": "c2093756f31b6f30fca9",
     "brand": "Ferragamo",
     "headline": "Ferragamo “a vita alta”: l'eleganza anni ’40 tra fotografia e rigore - FashionNetwork Italia",
@@ -546,17 +767,43 @@
     "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPMi1SUWNwS1JORkx0UXpjMjJtOThlbi1NQk9kR1FMYW1ZVTRpa183NHdyVWhtdVZ0cW1BQ0RJNmhJU0E1WUFHVTZTUGZteHlVeUJrLURuMTdZVVM1TURlMVZYZ2xqSGRwSl9KZXlyOXlnY1RIalpMaXNkaUI3QUUxUjFodEVsbVpxZXJVcnhQS1h0OEZUNzl1bGZ3OHhYU1JX?oc=5"
   },
   {
-    "key": "5a96f68d390c575da08b",
-    "brand": "Bottega Veneta",
-    "headline": "Kendall Jenner alla Milano Fashion Week 2026 chiude a sorpresa la sfilata di Bottega Veneta sotto gli occhi di Jacob Elordi - Vogue",
+    "key": "95696926e3395da42f0d",
+    "brand": "Giorgio Armani",
+    "headline": "Milano Fashion Week, la sfilata di Giorgio Armani S/S 2027. FOTO - Sky TG24",
     "signal_type": "industry_news",
     "score": 78,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
     "published_at": "2026-09-27T07:00:00+00:00",
-    "source": "Vogue",
-    "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPOWtzM2hjZnQzYTFJMFczWWlYLWtaTWdkc0I1LV8wSS1Rd2NyUVZQYnp5MWlXVkV2d3djS3pMNWt0RUQ3eVNFOF9TMm9PTDNzZlI0Si1wb2F1RkdyaHhjdHBOenhkd29zQXV2NU9fU1d6OVljZk9CT1I3RXNjUG01Q2Z1VE5CeXJFZlE4?oc=5"
+    "source": "Sky TG24",
+    "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPbmRfbEFDTGNwRmtEczlqUndmd3NNWVRZZld5elFXLWNwOTFnNDVsMkc0R1lQQzN6QXRWb2RFa2JzV0tZWkl4eFMtV0FOLUxmT2JKT2poby1tdHI2LTRVNE5hNVREdGFrQV83RGhSMzZpVUxPMHp4cl82M0lMR0w5M21LNTVHS3hlX3N1Ug?oc=5"
+  },
+  {
+    "key": "d53355413f73f8843f73",
+    "brand": "Giorgio Armani",
+    "headline": "“Ho messo il cotone, a Giorgio Armani non piaceva perché diceva che faceva povero”: Silvana Armani chiude la Milano Fashion Week tra oro, farfalle e la memoria dell'abito della Prima Comunione dello zio - Il Fatto Quotidiano",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-27T07:00:00+00:00",
+    "source": "Il Fatto Quotidiano",
+    "url": "https://news.google.com/rss/articles/CBMizgJBVV95cUxNQTE2aFdJOGJzZzRNVmNXMkx0LUxUSmxLU0lta2FXWkt5TUdyODhmUzVUQW1JNVJaeldlb0NWSnM0dHhvYUg3Nm9xa24wSDBfc1plTnhuWllTMEhCYnUtbDFSS3poOXJXdjNUR1Fvamo2N2R3T3djVktlX2tUSkZzUFRvWWNUa2hyME5jZUp2cnItQ2U0Qll1cVhhM2t0cEptZ1ZYSkVxVG54bFVSZlNEbXRnMHpWRXR1NkVfQUtralFCRFE1cnJlSWdBS2lmRjBWYWZyREN6NnQ4T3dBbjRnVVRVZnpUaVFrY2haalkxY0t6cndtdi1LWWJqMUNhTVpXdTF5Z1BQY01XWDZUNnNzVHNxMGQzcDFVOUg2amRiczlXdVlXcVNwdE9hcnJQMVZzaXpLcndJUGJiX2dMYXdYRDd3YldGbkM2NV9iVUpn?oc=5"
+  },
+  {
+    "key": "24a8f80363d4ab56a686",
+    "brand": "Maison Margiela",
+    "headline": "MM6 Maison Margiela x Havaianas: la collaborazione debutta alla Milano Fashion Week - 4ActionSport",
+    "signal_type": "category_launch",
+    "score": 85,
+    "confidence": "public-signal correlation",
+    "reason": "Una nuova categoria può richiedere più lavoro su assortment, buying, merchandising, pricing e go-to-market.",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
+    "published_at": "2026-09-27T07:00:00+00:00",
+    "source": "4ActionSport",
+    "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE5WRVp2bHNxNzhLalZZZ3NjSnd2OGdFd1ZNalFZcXRDZXBjeUhCLXBPdWg4WVNYRDFJX0JualAydFNaczJURUQwVHNnUXE5eTE3UmM0a2ExeVoxdTVrQU8wSjhpRHRySWdDRTY5bnVJZDRzUWg2b2pBRFYyTllmUQ?oc=5"
   },
   {
     "key": "3296f67ad5ba953ebd5d",
@@ -566,7 +813,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-27T07:00:00+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOcG5MRENhQkpxTHZsemMteFZHbWd2ZVFCMkpuVTByQXBsVTM5ckY4SUtoUGl2cVlSeXBJaTZZUzlHYzNORHdYdEtDeE1rRFJmbGhGTW1wc2RKcWVjSUVNRnBMYXFaWjdZWUYyNFFhWVZqUEQ2WEUzdkNjbC1LWUJpZjhpZFBOSWpDSXVSd2h1WElqdXpxZlBN?oc=5"
@@ -579,7 +826,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-27T07:00:00+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNemxzdG8ycGkxVXBMU0ttVGlucFhuY0tqTFlFdV9JV3ljckNyeGFKM2NGYkJEODlldXU1MEpXSmRpbFZwLVl2aThYcGFZMl9wazFtbkt6aHBPVWQ2QlpfS1JNZlQ3TGk5bFJKalJ1Q2gyWE1fMXRTaU9WSHUxZGNYd241VTNRN2IwaVJTT0U0aXBfc2hPeWk4UUVJT1M?oc=5"
@@ -592,7 +839,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-27T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOYTlSc2RQZkxyRFBSRjhVU3RJN29sRTY1bTFMd2ltaVJkVXlqSmJxdkZvTUNCaFRLOVNxYzB6aEdEQXYzeS1xcE9ZVktEZ2JQajduYzE2bmtybXFsQmw5aHFnMThHOGk5YzhFNG5XVlpnLTFPMEQ4RThRakJfSm5ISGswWmI0LTdydzBvUA?oc=5"
@@ -605,7 +852,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-27T03:32:21+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1QTDYyYk1rNVV2aXA3Q1owSlVGZW1SRF9uN2Z0SDJyYWZNb0RwbF9EOXJPalo4d1pfS25UdExsV2ZjWHdTMGpyTnhFZmZFUzd3MGZqazRoWUpfSDlodjZheHJNZTZ6ZTNfQ2YyRC0wTXBSYTJLMjB1ZV9B?oc=5"
@@ -631,10 +878,23 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-27T03:21:21+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1zTFdoNHJuRDlxZEpmeUg2M0JZeUxpUlJPM1hHNmRmV2hHYTFXMmhBRElBSExtcG5fU3E1aHJSQzB6UWpZTlpldzNKR2J5ZjVnaGY2OFBOTzlCQkZLRHp4N0NMbkxOLVFxcEFCdVVRZGxDdWdBd1JIaVlLcw?oc=5"
+  },
+  {
+    "key": "ef39983ce48cc9920f82",
+    "brand": "MSGM",
+    "headline": "Msgm - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-26T15:39:21+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE10Ul9Cc3dnNlU5T19FNW9EOV95bURvYmFaOHREQmFWdGtmM1lBd0F5S3lfbUlDdXNHOGxXV000bVFmQlV5MGhnZlh6a0ZsWll0SjNVWV9ycEZwWXpsR0pEczliUlZrLTlnSnhoTklB?oc=5"
   },
   {
     "key": "d1d41c56d8719c8d0dba",
@@ -644,7 +904,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-26T12:44:37+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE81a3FGYnlVUHRYWTNHbEJtNmJJd3Y1WUdnMk11bWpXTEVOZGd2dVBtVFhjVFBIX0czeTdtcHp6MlR4S3dVSHV1Y2Y4bmpzN3ZJRWpBU0FYaVFyZXRuS3Ayb2RnNmVpbzhkZTB3TUprWnBSTlVUeHJDYjVR?oc=5"
@@ -663,6 +923,19 @@
     "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQbmF4NE1HaFpZOTVUeXNNWDVpR1JqMVJDa1dYbHFmeFZmTXgtRm9TVXU5eXE5NGxzeDZUNzJkb0N2U0lYQ0d4N1VrdGhPeC1sY1FDWnhzZ2ROV2I1V0FkRHdybjUzXzVVZ2ltLTVaNGVIOFhIamVvOUNpdlpLUTZKSTVpZ0tadw?oc=5"
   },
   {
+    "key": "047886ecb27f46f6fab0",
+    "brand": "Moschino",
+    "headline": "Moschino sfila in un parcheggio con 450 persone comuni, Scervino reinventa la pelle e Tod’s risponde all’AI: cosa abbiamo visto alla Milano Fashion Week - Il Fatto Quotidiano",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-26T07:00:00+00:00",
+    "source": "Il Fatto Quotidiano",
+    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNRThacklZMUg5Ti1xYXl1NnFFa2J6SEdCSUpXbGVyTmpodk9sNGxDUVVic2g5MWdHaWJMODJiWDNTdDJtcmdqVEc2YzhtcmV5aHd5QWJXNDV1UnR0ZXFKS181NG9sbGRnWHJwMENQU0t1RWdfanZYU0s4cG5yeEhRVTRHMk9RN0I5X2VWb1h5TUhmUU1tSTczUDFfWG1oQjhnbmNaU3BLZ1NlZw?oc=5"
+  },
+  {
     "key": "1b12aab2bf59433cbf94",
     "brand": "Tod's",
     "headline": "Tod’s e la sua intelligenza artigianale: una collezione nel segno della spontaneità - FashionNetwork Italia",
@@ -670,7 +943,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-26T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQT3dENUxkRVhiUnVOb1Q1MGpwZjVINksya0VvRUx4aEs1aHhZRW93WmNUd21VSW9iWFdGUnVDSTlmc3JBajBYdHRuX05tUWs4SFh6Sy1Pb0lzSkJJb0RTZmpXbVdIU2JoQlpEMWdLUDBxVE9KRzRpUWlkZ29VR2RIbFloZmNqbkRhUjJzcENhMEVwZmFOWGxzc1FfTTlaZmNqRkx3TXh6dWZib1ZqT2lkZGJRX0VYd1RXUHdLQXNOU25aX3ZmV0x6ZlB3?oc=5"
@@ -683,10 +956,49 @@
     "score": 78,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-26T07:00:00+00:00",
     "source": "Il Fatto Quotidiano",
     "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNRThacklZMUg5Ti1xYXl1NnFFa2J6SEdCSUpXbGVyTmpodk9sNGxDUVVic2g5MWdHaWJMODJiWDNTdDJtcmdqVEc2YzhtcmV5aHd5QWJXNDV1UnR0ZXFKS181NG9sbGRnWHJwMENQU0t1RWdfanZYU0s4cG5yeEhRVTRHMk9RN0I5X2VWb1h5TUhmUU1tSTczUDFfWG1oQjhnbmNaU3BLZ1NlZw?oc=5"
+  },
+  {
+    "key": "710b96eea0fdf4c3373b",
+    "brand": "Bottega Veneta",
+    "headline": "Alla Milano Fashion Week primavera estate 2027 oggi sfilano Ermanno Scervino, Ferragamo, Dolce&Gabbana e Bottega Veneta - Vogue",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
+    "published_at": "2026-09-26T07:00:00+00:00",
+    "source": "Vogue",
+    "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQbmF4NE1HaFpZOTVUeXNNWDVpR1JqMVJDa1dYbHFmeFZmTXgtRm9TVXU5eXE5NGxzeDZUNzJkb0N2U0lYQ0d4N1VrdGhPeC1sY1FDWnhzZ2ROV2I1V0FkRHdybjUzXzVVZ2ltLTVaNGVIOFhIamVvOUNpdlpLUTZKSTVpZ0tadw?oc=5"
+  },
+  {
+    "key": "a987390323e159c6f938",
+    "brand": "Elisabetta Franchi",
+    "headline": "Elisabetta Franchi - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-25T20:39:40+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQT1g5SEU1QU9mSXZ3N0hLbWFPaWRVSnM3eUxZZUVwQ25hWDlFV29EXzBOd0xPV19sNFJ6UEprNG02aWRHSWVRVUtXWDN1UlhjRGRiMWprLS1NMmRGeGRhSFV0eENlMThTM0V1UDFXeEJISWNTSUhHS3UzM3czUmV0Sg?oc=5"
+  },
+  {
+    "key": "7b61a3c035155796801a",
+    "brand": "Blumarine",
+    "headline": "Blumarine - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-25T19:29:10+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5iXzB6VmdMamczODliZWZKUHlUZ1BSWGJKVFVJR0MweTV5OWQtS01vMUI3eWtUUm5wa2lVeUtQN1hpdWhPVjVmeW9sa1FKOXNHaHlGOEpKcDNDZzhPS2JkX3NDQmozSkdHS25YQ0VkeU40VXJr?oc=5"
   },
   {
     "key": "81ecefeb48fc4f17f3a5",
@@ -700,6 +1012,32 @@
     "published_at": "2026-09-25T19:14:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFAwcTlqUVhGWi1Mc091aXNyR00wQ2lFWDF5Y1ctSjlEQVUyOEx2YlkzcHllTkRLUDRtZUNHT1NTNFBCNUs1LUlVeVpXaXM4MU5VVGs3T1VOVmktbmExZ1ZCc2tBXzVXMGpvbDhocGxIQzdtLUdjT0E?oc=5"
+  },
+  {
+    "key": "fb22f7a3ea4a045bd5f1",
+    "brand": "Gucci",
+    "headline": "Gucci - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-25T14:22:10+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE80MWcyeVZLN3pvYnFrZG1aTkszQm56Y3hVUmxkYWtuRGZCX0p6SXFnblBNQkVjNUJtNG1acmlTZ1doenR2cGJEZVFYaUVOVTBWSG1qU1Zfd19ycFVBckx5ZEh4TVBWenVYMloxXzRlMA?oc=5"
+  },
+  {
+    "key": "106990f0130764aaf9b5",
+    "brand": "Blumarine",
+    "headline": "Blumarine - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-25T12:25:45+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1GQ1hscWRHXzVsT1ZMMlIzMzRhNU9ab04yT3haUTYyZUxiT0ItTmduRWZHekhRaUZXQ0g1cjcwVTBOWVRHMkxjX2FqVjd3akJrYXlSVWZXRmY1bVp2ZjFBWm5JckpPczlHMmc0dWdPU2RtZUs1?oc=5"
   },
   {
     "key": "cae957bce4f2ee0088f4",
@@ -728,6 +1066,45 @@
     "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOWExUWU0zTlpFbDBFcmp0Z01rMWMxbDQ4ZmhJaE9famYzN1hCTmU3ejB3Z1FKS1VLSEZDWi1oOHIxaFlLbUR6a1dhXzZLUURsekVzdTVlYmRQeWhrOE1TRnNhWUJNcVRxMm1fVXFTWndKSDM2NzU1YXBOWFpueTJ3SWxveGRlYUk?oc=5"
   },
   {
+    "key": "50ddc16e9dc87514cf87",
+    "brand": "Jil Sander",
+    "headline": "Milano Fashion Week 2026, il tempo \"minerale\" di Armani, il caos vitale di Cavalli e l'uniforme vulnerabile di Jil Sander: \"Creare una collezione è come andare in terapia\" - Il Fatto Quotidiano",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-25T07:00:00+00:00",
+    "source": "Il Fatto Quotidiano",
+    "url": "https://news.google.com/rss/articles/CBMivAJBVV95cUxPNWRJSkxDdXlvREwxWFVScmhXb0t2aEp6R29PdWhsVFNoanlFdm5aSkswa0ZHMzBnRUVJZU01WC1lX3BNdEMzZlJGbUd6aU5nU2lkU3NwYlk5RE9yNnh0SWV2QXo0TTdabkxSejc2WVJJX3VLTWlFWERaNmsxb2NfbXdoOUtSQTZBVG1LU2RnbDlHcHlnQmVzSS1kREw2RFhRWUdCVnAtQUhOMUFzc2VOanphUldZLXEzLXpHQmFmWU11ZnpueEd5dVNwTFpsbGdGSWZiU3ktMDNIS2xBSk1VcUZscFpRNllTb0FqOTQ3VTlNOUdLSUFBVzJRWmhkWWR6dzdKdFRxNUdDZm1qM3ZnSVBranR6anFjOUdGYVVoRXE5T29hM0dxUUlxZ204aVJWNTVJUXdNMXRBRC1Z?oc=5"
+  },
+  {
+    "key": "425b6213633905b744ad",
+    "brand": "Gucci",
+    "headline": "Collezione SS27 Gucci: 5 highlight della sfilata - Grazia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-25T07:00:00+00:00",
+    "source": "Grazia",
+    "url": "https://news.google.com/rss/articles/CBMikwJBVV95cUxNZmhTREM1anBtWUpackZvVHctcC1CakVVOXgxd1dyWkFGRVpkUnFBYlhDU2hMamxtS0p6WHNjZlRsVFpNSlhmSnVtUF9udkZwOWNLYlJRVHVyY1RrSjZpUEV3WnpVcW10c3g3alIzQUZjeDB6V0ZrNUw2Z0wyZ3AwS3FCUExtU3Vhd0I1elRQcm5Mc3ZoTWRUSVpHVjBUVFE4VzZIaHpkdlZNZDVBNXRNRzllSU4wSW90TVQtLUtNeWdDRFpiOHR3ZThSU1pCcTJqTG10VzRvaXZYY01hVEc2S2JMUHNBNkdTdC1MYzdkVDF4WHg5SDhqOHdBeV9DSVdFaHdJdUNxSElDVE5scUJvdmp3OA?oc=5"
+  },
+  {
+    "key": "bde03b7832d3dbef7930",
+    "brand": "Sportmax",
+    "headline": "SPORTMAX - WOMEN SS 2027 - MILANO - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-25T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNRXVUSFVoMXQ1eUtGd1F2ZGdNcW5ObTVEbnU3djctdE9GcEtfeS1ITnM3V2JGVHlGOXUwQkxfR05ySklJWGZRTUNzS0RvV21ZNld2cUxlZzZaM0trZ0dmY3F6dVk1NHZXckExNENlUENtMVFJYVJDNlo2V0JLTHdWbmNheVk3cjMwLVZJ?oc=5"
+  },
+  {
     "key": "b6a9a48576847ce4a021",
     "brand": "Twinset",
     "headline": "Twinset celebra la spring-summer 2027 e il nuovo corso del brand - Adnkronos",
@@ -735,10 +1112,23 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-25T07:00:00+00:00",
     "source": "Adnkronos",
     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQNGRJazhRRmpBdTVXak5XenVpMTNqcUxKSWR0ZmpaWmdqd3M1Z1hSZEo1Z29wQmNqR2ppeVlfWFY5dkJzakltMmFZSVVxQ2VQeWtKX1lxQy1MdW5rRXkxSHB1cVpXTExubmxLVlBURjRsbVViM05qc09zTC01UVZrdVNnN2pQa09xOWV4SnJPdlcxYnowamhzMjBMRFF3bnhSXzkxZmtCMERwZzFwdEcxZ3pKUmdycDRB?oc=5"
+  },
+  {
+    "key": "7e8d073b409a95bd944e",
+    "brand": "Missoni",
+    "headline": "Missoni - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
+    "published_at": "2026-09-24T19:38:05+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE4tWUh4RktEQUxvOVVvR3pDemE5U2pwOG5ScXZQbUZDa3VLNUl5Mm9RX1lhWWhQVnRUSXFFSmp1cGlnXy1wY2lWS3F3NHdwYUhKc0FyYkVERW9sZzgtS19IZmpHWUpRTjBTYUxjTlBTbmlOZw?oc=5"
   },
   {
     "key": "62b49b69c09d67e4027b",
@@ -806,6 +1196,19 @@
     "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNRWwzWWJHTFpuYkk3eUlfV1c0YVVoN1c3LUdHVXg1V1I2a2UzbmxvaFhxLUZRZThKNC1oaWx3UXJWU21YZzcwNDgtSzMzTjU4MnEzQktjMkFyNmkxelk3X0dldnJLcEk5clBhcmdzNm03Mnl3dzNWVVV5NzlqVXpRa0RTLUtkOVlMTVZZWWl5UEJQY2RONzJaa2ZGaUlvNWlqZTFLb2dR?oc=5"
   },
   {
+    "key": "5a029be46dc1f004f83f",
+    "brand": "Retori",
+    "headline": "Retori, la boutique a Milano e il mondo fra arte e moda - iO Donna",
+    "signal_type": "store_opening",
+    "score": 90,
+    "confidence": "public-signal correlation",
+    "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-24T07:00:00+00:00",
+    "source": "iO Donna",
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE0xeklpRFI0dHk1Ni1HSGpydmJVcUlTczBHbFBhZGVreGZXZ0MyTjl2bWpTOE5KSnAtUjFNb0pwUDRJd2QwUC1pVV9NQjNyS2R0bjJoX3BMWjR2d1ZoRFNZRUNLYXVocS1ySHB1d2VEdWFNNkJILUw1Rll2bw?oc=5"
+  },
+  {
     "key": "be89ff17743c867d8e1a",
     "brand": "Onitsuka Tiger",
     "headline": "Onitsuka Tiger - FashionNetwork Italia",
@@ -826,7 +1229,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-23T19:43:30+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5NdENoS3h3dVJGV2ZEMVlyT3VSdFpOTzFlb2RJZ25tUHZwZU9iTGg4U0gtanhIWkl3SU9jb1haN3ExUmIxLVNqY1Y0TGhBbDJTMTFZQ0NyRG0wQUc0RDd0bGdjZ3ZNeHpVRDU4ZzN3?oc=5"
@@ -839,7 +1242,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-23T19:25:59+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE1qeWJwV2c5dVBvbktNTGU0UDZqME00bmNsTFQxdTE3aVctdzNDS09BeENld1puVklIUjR1Qk9PeG9KNk9JX3ZJZThGYlpkd01PdXZJRDlod2RncmlVTGxYdE5ibHlJUmhTb2JHdDU2ekE2dw?oc=5"
@@ -852,7 +1255,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-23T18:37:14+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQTmJtcGFrMVA1RjFpc0tFQVFMRVBhOFl6STFaem9mTS05M0ZfNnBPUzBWU0hmS19zTmZCcm5MWUhWQ0t2UjR1ZEozVFpHcDJQMVlBYjRGMndxaW9JNmV4LXkyNmdIOFR0a2VNMml3SXhyU29PWVpycHE0RzJtX3dxS0ln?oc=5"
@@ -865,10 +1268,23 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-23T16:48:52+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMickFVX3lxTFA0SVVLQndCcXBndlBkQXpvcU9VUm50TVpRZnFqQm5KWlh0MmJDQVd0a0dqQUpzZFZON3RUMkhPRkJ1bEJhcmNaYmFpYV8zazhfRU9wUnI2RXFsSXRjcFBUTWZBM3pMWnVZLU9yYXZkSWk2Zw?oc=5"
+  },
+  {
+    "key": "d6e6f24d817614db1ef2",
+    "brand": "Jil Sander",
+    "headline": "Jil Sander - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-23T11:45:47+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBRVUxPYjhNVVB3XzZ6eVFGdzdsU2xJeWFOblRwRnIzUG5HS3lLZFhoaHhHbHE2VEJmVVprbDFBMUExYktsZU1HdHZtWWRXek1EelQwZHJDMG5KeTBpWG1XbjdVRG5HSHZzeEk2bVU2LU9zd0FHVWc?oc=5"
   },
   {
     "key": "8b94f96bcc0bf80dd063",
@@ -936,6 +1352,19 @@
     "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNVFFOcGNJVmE5VXZxdEJWUjBkVVJGd19kckV4cVd0d0JwSHJfcVdBcVFnbmhVYVNUbUp3dE96R1FQZjdyYVhfdGRDcWtQRVFOclV6UzNNTHpjTmsyRkNDZGZvSGZlUU94TTVpRDJkU2pTV0Vab1BRYlBhZ09RWWJwcHFSNWxlZmRtUHRfSWt6NnIySnNRSHZTU0NyUG0zX3h1QzdxSnJhZDZyalJIblE0VUpsT2RkYlZ5VDVzZFpGdE1Jdw?oc=5"
   },
   {
+    "key": "33cd91494721ee681bcc",
+    "brand": "Brunello Cucinelli",
+    "headline": "Brunello Cucinelli elogia il savoir faire naturale - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-23T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQZ0pBdjhtVG0zVUQ2cU9BbGhvNWhfOTcwZkVxOW9YeVpMUkNWRVg4WDBzMVRGQkEtUy1ta3RDeElYRXl6a1NtZTYwbWJRdDhEaEJlTlNRQnk3V1d2MUh0dmI5WDc1aVdWTkp3ZHNYMmxKSjVrbUhuMVVWTkxjbFVTUk5GSGhIMFVHNTJvOTN4VzJ2UE1aNUhCX19BaFJzazA?oc=5"
+  },
+  {
     "key": "ae174a43f1201db3b32d",
     "brand": "Etro",
     "headline": "Etro primavera estate 2027: la collezione donna Halo - L’OFFICIEL Italia",
@@ -943,7 +1372,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-23T07:00:00+00:00",
     "source": "L’OFFICIEL Italia",
     "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQRGkxNHh2VUhwSHNfZXJFWEwyVW02STVLOWhjeGxOajVJNURSRVJFaXVvaGFCWlZfVFFaYmJseVRkWi10QnpVRDBYY2tVdHZ1OUw4V2RmZG5DODNTN3Jyb2dqeTZMdy1Pc1JzSmNxYWljZGJ2aHhqQURZNUhpNG9TNVJB?oc=5"
@@ -956,7 +1385,7 @@
     "score": 78,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-23T07:00:00+00:00",
     "source": "Cosmopolitan",
     "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOeVZkTnhxN0pPak5YVDNoRGdGclh0UjczTWFPYVpGS3pZQXJBOUFEbUJCbmJjejRqUW1hRnQ5NmxEWUxFTTdxRGppVzdlVjdCdzZvQjJLWXl6ZWtOQ3Y1N3R2eUVqUWd6TngybmVUaXozU1pqY0xEU1UzVHlCWWxGUC0zSXZmMUR3MW9pS2hvYzJkWjZZdVd3YlQ5NG1PUQ?oc=5"
@@ -995,23 +1424,10 @@
     "score": 75,
     "confidence": "public-signal correlation",
     "reason": "Una nuova categoria può richiedere più lavoro su assortment, buying, merchandising, pricing e go-to-market.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-22T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPUHkxNDJsUHpNLTljY1hWV1c5cHRhUGJYdzBZblJCMDltT3hlWlFNTExpeEQxT1lsODhqVzh4N21jOUdpdW5vaGpZeTJVV2dFWU5rbWhxcThKbWpOZjhfZ1FKa3dOeFpHS0xsdVF5RGJ0NVVmS2JYWXNPQmdYMk82OTU5ZnZnMUptSERpSGt4RUMwM2RSNVVibWZ3c2MtTGctTWpoMzhjY2xoOENXVWpJcnlUTUZWQ3paekVwbGd2bDFaQQ?oc=5"
-  },
-  {
-    "key": "123fe78aa097c5ff79c0",
-    "brand": "Burberry",
-    "headline": "Burberry ha chiuso la London fashion week - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 78,
-    "confidence": "public-signal correlation",
-    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOcFlRaDNEYkREbk9wN0h4Y1VXYUVDZURDamlmMXRuTW9NZkVXUk93YUQwZFYxcEVHRnhzLUlua0NWRENwNXhmOWtqYnRaY3J6OHJfUUpzWGdTX0xPZ2xoZWEyN2dub1lrRHRmOUQtc0drMnUtTGNSaU1ta21HazBpejRTa2Izd1ljcEx0ZXBLc2p2Rm8?oc=5"
   },
   {
     "key": "b2afee530ce9fbfa0f04",
@@ -1021,10 +1437,23 @@
     "score": 80,
     "confidence": "public-signal correlation",
     "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-22T07:00:00+00:00",
     "source": "Pambianconews",
     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQRHZ4dzM1Qi15X0JZVVNuVjJZWGo0SDhqRzRvUmtvUUQ0U2U0U1J6QkhvMjFhU2R1RHJhMDdiOGZlOG91NmRDZkFra3V6Mjk4ZGJQdU1RbVNGcjRMY2xzb09CR19MZGU1Z09fSTJRWlZqcjdLcmF5T2FydkUwcml6NEN0TjVhemFlNXBTRDZOSmlhcWw1dy1BaGVCLWpla01xVDF4SHhZVHJjLW1t?oc=5"
+  },
+  {
+    "key": "123fe78aa097c5ff79c0",
+    "brand": "Burberry",
+    "headline": "Burberry ha chiuso la London fashion week - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
+    "published_at": "2026-09-22T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOcFlRaDNEYkREbk9wN0h4Y1VXYUVDZURDamlmMXRuTW9NZkVXUk93YUQwZFYxcEVHRnhzLUlua0NWRENwNXhmOWtqYnRaY3J6OHJfUUpzWGdTX0xPZ2xoZWEyN2dub1lrRHRmOUQtc0drMnUtTGNSaU1ta21HazBpejRTa2Izd1ljcEx0ZXBLc2p2Rm8?oc=5"
   },
   {
     "key": "8cfbba6461801ab84396",
@@ -1034,7 +1463,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-22T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQZEwwVTE5T3ZiMnFNQkduRE0yYUhBQ1NEYmlyNjBMR2pvVHJIdW9MYUtaRGR4S1BGZWZTR1RkaU4yWmxmUkdkeUZ4OWRBM2ZTdTBwUWN3ZGpSYmFhTzl5SUROTGk1YXVGY01XU1lXd3IwUG5mX1dYRDNITF93VUZmT0d0cHQzU0VsQ1pUN2tGNjN3UFozb0RoVHoweFpuSGxHRDlHWHZBS2U4WjJXZDJxSWw5dUk0amw2dGxUcmZOcnlxZ0MyZkdkN0Rn?oc=5"
@@ -1066,6 +1495,19 @@
     "url": "https://news.google.com/rss/articles/CBMirwJBVV95cUxOZXFsR0p4ajFZVnVUbUMzcXA1dHRqbnVyNTZybmhUMkc2U3R6bEVPTUVfX2lrQUtmTlFZMEV4aEZlYmZhbV96NmlFeTl0bGc3UjFBcWJXU0VNM2VxTHF2LUhPRm01TlFOZEtNd2h5bElaOEJPcWFNUzllZUlLT2ZkOXlDcUxnYWw1YnhpaFNENWhZalVFa0hISWszMUVjWFBZRXFkbEoySmJMN1A5VndzWTVEQU13bUxDZE5mMVhVOW1uQ21DajhCMnRKeXRpV09KQTNwMWZtSnNjcnNGbmZtcTJTODg0RWUzY21ySHVJd1lfTmhxUTVzZE9OdWJnLW45OXBscjItZlBoY1ZQMEJ4STlydFl1MXhMTGJ5Uzl5cGdpRXpWR2Y2NE8yWnpCWkk?oc=5"
   },
   {
+    "key": "f06092b11a87b5c1011a",
+    "brand": "Loro Piana",
+    "headline": "Loro Piana rafforza la filiera e inaugura a Ghemme un polo d'eccellenza per la maglieria - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-21T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxOTXh4U2xXQkg4MFpFYUFSWEwtczNqcTNUV2Myc3RHQ0s0V0VJZWxheDUyS01EanhZQnJ5UDBlNTk2TlVQa1BXeUYzYk5UTGpqTTdDZWJKaU9TVF92emlrejlvX3R2czVseHFEQTRlRlZFYkR4Y1pPSDBjT2dKMWxnM0tvVl9TS3ZJN016Z0x6WkNENWwwMEdJUXVVODZ0Ql9rR0lNcE5aYkZmTFZZckdkanpUSV8xYmVObkFoMGc2MElyUG15ZVdhOF9YVHFSOWUtcGc?oc=5"
+  },
+  {
     "key": "0b8a094ea805a36602c0",
     "brand": "Dior",
     "headline": "Dior apre il flagship House of Dior a Milano in via Monte Napoleone - FashionUnited",
@@ -1073,7 +1515,7 @@
     "score": 90,
     "confidence": "public-signal correlation",
     "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-21T07:00:00+00:00",
     "source": "FashionUnited",
     "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPN2VQbS1ydEdPaGo2cEktbW9QYTcxT2ptZEpTaUFoa0RzNGVHZUgyT3hobnRoTlFDVDRBcEdWMm9FRHhrQjN2cU1TWkZDVTdKNUZBUlhNb0hHbzkyNjdOVnRXY05LdEJSWDRhUW84Smx2S0h3eXZqUUNWam1NWC12YzRpNlNHNEw3UnNjRFlGVXdPU1IwX0lBQWJ2NzZORU9aMWNpakNNdWVoUDNjWjJXdkVCd1l0MU9DM1Ew?oc=5"
@@ -1086,10 +1528,23 @@
     "score": 80,
     "confidence": "public-signal correlation",
     "reason": "Segnale concreto di investimento retail: può anticipare crescita di team, assortimento, operations e merchandising.",
-    "detected_at": "2026-11-01T21:50:41.503243+00:00",
+    "detected_at": "2026-11-01T21:52:01.624663+00:00",
     "published_at": "2026-09-21T07:00:00+00:00",
     "source": "HUB Style Magazine",
     "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOU0tOY256WExhMnhKVjIxck14aUlsX29LR0p4VEZQSGFOTXZwWmxoWndZbGwyTUNDYkpnVXBmZ0dHRUxXNE1Uam5McVZ2X0FldXhyQ2NuV2dwdWVUNHAzNWtXQkxONXI4RTN1THNKQVE3TTcwNWFjNWM4SUkwQTFFTGNqRXFsUHFQOGlpTFNBWGZLb3BFZUFwdEZaMFZfTE1YT2c?oc=5"
+  },
+  {
+    "key": "a54c69f234f4bd099497",
+    "brand": "Moschino",
+    "headline": "Moda e IA: le strategie di Moschino e Pettenon al Netcomm Focus Fashion & Beauty - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:49:10.498756+00:00",
+    "published_at": "2026-09-20T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxNaHZyOTRmQnZoYWZzaU14M3hoWjFzZXZaRzl1dzMwNHcyWnZVSzNlcjNGUGZFdktoWDRrV3ZwYXBra25xMHE2TldjSi1ZSThjM3JNZklrZjJma05nQmdKMHZtQ2NWVnpsTHM4MVVkNGhwRXhlZGNJUERDTTRBaFJCZlgyYUNGaGh2Ti1TQkpUam14TWZpdzJjalFaUjRqR25NQU9Fdnl5MEQ0NTQwdFFhZU9WclNRSHBXbS1lVEtDNWhfNlE?oc=5"
   },
   {
     "key": "b92b92fca8c69a9d8a40",
