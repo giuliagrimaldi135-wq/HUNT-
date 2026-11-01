@@ -190,7 +190,18 @@ function renderFashion(){
  document.getElementById("fashionNews").innerHTML=list.length?list.map(x=>`<article class="news-card"><div><span class="news-topic">${esc(signalTypeLabel(x.topic))}</span><h3>${esc(x.headline)}</h3><div class="meta">${esc(x.source||"News")} · ${relative(x.published_at)}</div><p><strong>Per il colloquio:</strong> ${esc(x.why_it_matters||"Tieni a mente il fatto e collegalo al brand e al ruolo.")}</p><div class="news-actions"><button class="secondary" onclick="dismissFashion('${x.key}')">✓ Letto</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener" onclick="dismissFashion('${x.key}')">Leggi</a>`:""}</div></div></article>`).join(""):`<div class="empty">Hai letto tutte le notizie recenti.</div>`;
 }
 
-function renderBrands(){const q=document.getElementById("brandSearch").value.toLowerCase();const list=state.brands.filter(b=>`${b.name} ${b.market}`.toLowerCase().includes(q));document.getElementById("brandGrid").innerHTML=list.map(b=>{const s=state.status.sources?.[b.id];let career,cls,explain;if(s?.ok){career="● CAREER COLLEGATA";cls="live";explain="Fonte ufficiale career controllata automaticamente."}else if(b.enabled){career="◌ CAREER DA MIGLIORARE";cls="pending";explain="Fonte ufficiale presente, ma l'estrazione automatica non è ancora perfetta."}else{career="○ NESSUN ATS STRUTTURATO";cls="pending";explain="Nessuna career source automatica affidabile ancora; il brand resta comunque monitorato da HUNT Intelligence."}return `<div class="brand-card"><h3>${esc(b.name)}</h3><div class="source-status live">● INTELLIGENCE ATTIVA</div><div class="source-status ${cls}">${career}</div><p class="meta">${esc(b.market||"fashion/luxury")}</p><p class="brand-explain">${explain}</p></div>`}).join("")}
+function renderBrands(){
+ const q=document.getElementById("brandSearch").value.toLowerCase();
+ const list=state.brands.filter(b=>`${b.name} ${b.market}`.toLowerCase().includes(q));
+ document.getElementById("brandGrid").innerHTML=list.map(b=>{
+   const st=state.status.sources?.[b.id];let career,cls,explain;
+   if(st?.ok&&(st.candidates||0)>0){career="● CAREER LETTA";cls="live";explain="HUNT sta leggendo elementi dalla fonte ufficiale e filtra quelli coerenti con te."}
+   else if(st?.ok){career="◐ FONTE RAGGIUNGIBILE";cls="pending";explain="Il sito ufficiale risponde, ma in questo ciclo non sono stati letti job compatibili o il markup va ancora migliorato."}
+   else if(b.enabled){career="◌ COLLEGAMENTO DA MIGLIORARE";cls="pending";explain="Fonte ufficiale presente, ma il collegamento automatico non sta funzionando bene."}
+   else{career="○ NESSUN ATS STRUTTURATO";cls="pending";explain="Nessuna career source automatica affidabile; il brand resta comunque monitorato da HUNT Intelligence."}
+   return `<div class="brand-card"><h3>${esc(b.name)}</h3><div class="source-status live">● INTELLIGENCE ATTIVA</div><div class="source-status ${cls}">${career}</div><p class="meta">${esc(b.market||"fashion/luxury")}</p><p class="brand-explain">${explain}</p></div>`
+ }).join("")
+}
 
 function applications(){return JSON.parse(localStorage.getItem("hunt-applications")||"[]")}
 function saveApplications(x){localStorage.setItem("hunt-applications",JSON.stringify(x));renderApplications();renderAlerts()}
