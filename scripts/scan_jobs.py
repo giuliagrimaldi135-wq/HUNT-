@@ -18,8 +18,8 @@ now = now_dt.isoformat()
 JUNIOR = ["intern", "internship", "stage", "junior", "assistant", "graduate", "trainee"]
 HARD_SENIOR = ["senior", "manager", "director", "head of", "head ", "lead ", "principal", "owner", "chief"]
 SALES_ONLY = ["sales assistant", "client advisor", "style advisor", "sales associate", "store assistant"]
-IRRELEVANT = ["compliance", "security", "internal audit", "controlling", "non-merchandise"]
-CORE_PATTERNS = [r"\bmerchand\w*",r"\bbuying\b",r"\bbuyer\b",r"\bretail planning\b",r"\bplanning\b",r"\ballocation\b",r"\bwholesale\b",r"\bproduct development\b",r"\bomnichannel\b",r"\be-?commerce\b",r"\bbusiness analyst\b",r"\bbusiness intelligence\b",r"\btrade marketing\b",r"\bretail performance\b"]
+IRRELEVANT = ["compliance", "security", "internal audit", "controlling", "non-merchandise", "business intelligence", "business analyst", "data analyst", "data science", "analytics"]
+CORE_PATTERNS = [r"\bmerchand\w*",r"\bbuying\b",r"\bbuyer\b",r"\bretail planning\b",r"\bplanning\b",r"\ballocation\b",r"\bwholesale\b",r"\bproduct development\b",r"\bomnichannel\b",r"\be-?commerce\b",r"\btrade marketing\b",r"\bretail performance\b"]
 ADJACENT_PATTERNS = [r"\bbrand management\b",r"\bbrand strategy\b",r"\bretail operations\b",r"\bcommercial\b",r"\bdigital marketing\b"]
 SKILLS = [x.lower() for x in profile.get("skills", [])]
 ITALY = ["milano","milan","italy","italia","firenze","florence","roma","rome","scandicci"]
@@ -39,7 +39,7 @@ def role_family(title):
     if "planning" in t or "allocation" in t:return "Planning/Allocation"
     if "product development" in t:return "Product"
     if "wholesale" in t:return "Wholesale"
-    if any(x in t for x in ["omnichannel","e-commerce","ecommerce","business analyst","business intelligence","trade marketing","retail performance"]):return "Brand/Business"
+    if any(x in t for x in ["omnichannel","e-commerce","ecommerce","trade marketing","retail performance"]):return "Brand/Business"
     return "Adjacent"
 
 def parse_posted_date(text):
