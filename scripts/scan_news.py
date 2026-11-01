@@ -134,7 +134,13 @@ news_queries=[
     f'"luxury brand" expansion Europe when:{FASHION_DAYS}d',
     f'"fashion" Instagram TikTok luxury brand when:{FASHION_DAYS}d',
     f'"moda lusso" Milano apertura when:{FASHION_DAYS}d',
-    f'"moda" nomina direttore creativo when:{FASHION_DAYS}d'
+    f'"moda" nomina direttore creativo when:{FASHION_DAYS}d',
+    f'"luxury fashion" business strategy when:{FASHION_DAYS}d',
+    f'"fashion retail" Europe openings when:{FASHION_DAYS}d',
+    f'"luxury fashion" mergers acquisitions when:{FASHION_DAYS}d',
+    f'"fashion ecommerce" luxury growth when:{FASHION_DAYS}d',
+    f'"fashion brand" collaboration launch when:{FASHION_DAYS}d',
+    f'"fashion luxury" wholesale showroom when:{FASHION_DAYS}d'
 ]
 fashion=[];seen_links=set()
 for q in news_queries:
