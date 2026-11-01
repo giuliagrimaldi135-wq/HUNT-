@@ -143,6 +143,15 @@ for b in brands:
                     cc=clean(parent.get_text(" ",strip=True))
                     if 20<=len(cc)<=700:context=cc
                     parent=parent.parent
+                if b.get("require_brand_in_context"):
+                    bn=b["name"].lower().replace("’","'").replace("maison ","")
+                    cx=context.lower().replace("’","'")
+                    aliases=[bn]
+                    if b["id"]=="maison-margiela": aliases+=["margiela"]
+                    if b["id"]=="jil-sander": aliases+=["jil sander"]
+                    if b["id"]=="roger-vivier": aliases+=["roger vivier"]
+                    if b["id"]=="tods": aliases+=["tod's","tods"]
+                    if not any(a in cx for a in aliases): continue
                 candidates.append((title,context,link))
         local_seen=set()
         for title,context,url in candidates:
