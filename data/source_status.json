@@ -1,41 +1,41 @@
 {
-  "generated_at": "2026-11-01T18:33:30.537130+00:00",
+  "generated_at": "2026-11-01T18:39:51.946934+00:00",
   "sources": {
     "gucci": {
       "ok": true,
       "http": 200,
       "items": 4,
-      "checked_at": "2026-11-01T18:33:30.537130+00:00"
+      "checked_at": "2026-11-01T18:39:51.946934+00:00"
     },
     "bottega-veneta": {
       "ok": true,
       "http": 200,
-      "items": 6,
-      "checked_at": "2026-11-01T18:33:30.537130+00:00"
+      "items": 4,
+      "checked_at": "2026-11-01T18:39:51.946934+00:00"
     },
     "saint-laurent": {
       "ok": true,
       "http": 200,
-      "items": 3,
-      "checked_at": "2026-11-01T18:33:30.537130+00:00"
+      "items": 1,
+      "checked_at": "2026-11-01T18:39:51.946934+00:00"
     },
     "kering": {
       "ok": true,
       "http": 200,
-      "items": 5,
-      "checked_at": "2026-11-01T18:33:30.537130+00:00"
+      "items": 1,
+      "checked_at": "2026-11-01T18:39:51.946934+00:00"
     },
     "prada-group": {
       "ok": true,
       "http": 200,
       "items": 0,
-      "checked_at": "2026-11-01T18:33:30.537130+00:00"
+      "checked_at": "2026-11-01T18:39:51.946934+00:00"
     },
     "zegna": {
       "ok": true,
       "http": 200,
-      "items": 4,
-      "checked_at": "2026-11-01T18:33:30.537130+00:00"
+      "items": 0,
+      "checked_at": "2026-11-01T18:39:51.946934+00:00"
     }
   }
 }
