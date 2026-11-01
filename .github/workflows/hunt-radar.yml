@@ -46,19 +46,31 @@ jobs:
         run: |
           mkdir -p /tmp/hunt-data
           cp data/*.json /tmp/hunt-data/
-          git fetch origin main
-          git reset --hard origin/main
-          cp /tmp/hunt-data/*.json data/
           git config user.name "HUNT Radar"
           git config user.email "actions@users.noreply.github.com"
-          git add data/
-          if git diff --cached --quiet; then
-            echo "No data changes"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
+          CHANGED=false
+          for ATTEMPT in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/hunt-data/*.json data/
+            git add data/
+            if git diff --cached --quiet; then
+              echo "No data changes"
+              CHANGED=false
+              break
+            fi
             git commit -m "radar: update opportunities"
-            git push origin HEAD:main
+            if git push origin HEAD:main; then
+              CHANGED=true
+              break
+            fi
+            echo "Concurrent update detected; retrying"
+            sleep 2
+          done
+          if [ "$CHANGED" = "true" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/configure-pages@v5
         if: steps.persist.outputs.changed == 'true'
