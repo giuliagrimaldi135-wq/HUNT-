@@ -1053,6 +1053,19 @@
     "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQT1g5SEU1QU9mSXZ3N0hLbWFPaWRVSnM3eUxZZUVwQ25hWDlFV29EXzBOd0xPV19sNFJ6UEprNG02aWRHSWVRVUtXWDN1UlhjRGRiMWprLS1NMmRGeGRhSFV0eENlMThTM0V1UDFXeEJISWNTSUhHS3UzM3czUmV0Sg?oc=5"
   },
   {
+    "key": "167701145bb638b6b8a7",
+    "brand": "Galib Gassanoff",
+    "headline": "Institution By Galib Gassanoff - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-25T20:34:05+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNUVVLSnBBWXRCaThkQ1VaOWhJV0lOZXQ4QkhnbVRDdlJEMVAyTVdfTkUzZnJFdDVfemtTMzlEUHVscE9ZUVpyak5rVGh1azlzSGtfcC1oZHBReGRqY2FYTVA5TkVQR0VKcmpsRjJ2Y3RhYTI1UzZxMFFLemd5YmZXT2doTmxyZG5KNWpuQ3V5cy0?oc=5"
+  },
+  {
     "key": "7b61a3c035155796801a",
     "brand": "Blumarine",
     "headline": "Blumarine - FashionNetwork Italia",
@@ -1103,6 +1116,19 @@
     "published_at": "2026-09-25T12:25:45+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1GQ1hscWRHXzVsT1ZMMlIzMzRhNU9ab04yT3haUTYyZUxiT0ItTmduRWZHekhRaUZXQ0g1cjcwVTBOWVRHMkxjX2FqVjd3akJrYXlSVWZXRmY1bVp2ZjFBWm5JckpPczlHMmc0dWdPU2RtZUs1?oc=5"
+  },
+  {
+    "key": "2da6e5301ec429126759",
+    "brand": "Galib Gassanoff",
+    "headline": "Institution By Galib Gassanoff - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-25T10:31:22+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQSlFmOXhWSXBBQnJ5R2Fva1ZyY2xXS0pKV0U4b0w3NEI1czhmcDdyRnFKN05rSkNpMUZ0Q0NFQVctQkgyUmxKNTRFT3ZJUWxjU0p5eVU2NjlRMXJ2cmdHZWdoeDdVS3FHQ0ZNR0dscS1XUUxQemZ0NGNybVc3bFVUT3Y3WVZqM2FrM1RXczV2c0o?oc=5"
   },
   {
     "key": "cae957bce4f2ee0088f4",
@@ -1183,6 +1209,45 @@
     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQNGRJazhRRmpBdTVXak5XenVpMTNqcUxKSWR0ZmpaWmdqd3M1Z1hSZEo1Z29wQmNqR2ppeVlfWFY5dkJzakltMmFZSVVxQ2VQeWtKX1lxQy1MdW5rRXkxSHB1cVpXTExubmxLVlBURjRsbVViM05qc09zTC01UVZrdVNnN2pQa09xOWV4SnJPdlcxYnowamhzMjBMRFF3bnhSXzkxZmtCMERwZzFwdEcxZ3pKUmdycDRB?oc=5"
   },
   {
+    "key": "d65697b115d8375cc312",
+    "brand": "Diesel",
+    "headline": "Le top fashion news della settimana: l’ultima sfilata Diesel di Glenn Martens e il nuovo brand di Donatella Versace - Hypebeast",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-25T07:00:00+00:00",
+    "source": "Hypebeast",
+    "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNOC1sZ3RKLUs5aklrUUJ5bmE2QTZFZVRmQ1pyZmp3eFBZMUhyYUdWUG5iX0ZrVVlEcGlZYi04WkFBZlhlWnNCRkxpNW9SZmowOEp4TW82N1NQZ09wU29LQ2ZJaDNDZVIyQ2NQVzd4eG9kMlJTNGdyc2ZRY3ZrSWtDUkJpNldOVzRkM18xMVlnaHlfZ21CbUpIY21vQlBTZGZ5V3p2S1NjNmVpYUFaQ291Q1dSZkpxU3A5VHA3V1MwdkhoeGVRY09qckpjYzJPMUV4VGJnRA?oc=5"
+  },
+  {
+    "key": "222837c5251d0c6c88f2",
+    "brand": "Onitsuka Tiger",
+    "headline": "Onitsuka Tiger - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-24T19:55:40+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFB2dXhvYmMySkRzVzNKTjFUb0YzbFhDOGxIek93MHJ5VHBVblEtMGx5dHN0ZE1oTXBvZ01qYXZwSTlpSGJlbTAyVDVsYzZ1R2M4VmZxX1dDb2tYamdiN2ZuYWhqWmRrazZpZDVUWE9renQ1TnQ4aWZTMHhpRQ?oc=5"
+  },
+  {
+    "key": "f8eb6c9dfa74167d3de4",
+    "brand": "Francesco Murano",
+    "headline": "Francesco Murano - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-24T19:38:06+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE5WY3FTV2VrNmpaT2Z4aDVwQUFCaW90SUdFN2FCUjE1X1lhZVlVQUpRSjVBTzRkOXZhWlluaWlvUFk1NDBnR1BTa0pnam40ZmN1dVFBaVVHWUs2TEJzR2E0bERKQ1ptbmFmZVV2MU8ydE42M0Z3VU9KejVmNTlwUQ?oc=5"
+  },
+  {
     "key": "7e8d073b409a95bd944e",
     "brand": "Missoni",
     "headline": "Missoni - FashionNetwork Italia",
@@ -1207,6 +1272,19 @@
     "published_at": "2026-09-24T16:01:33+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBFcFUyZ010MkN6VDBveHhDTTFsa2pkTFEtYlJoVFNMOUdVQ0NrZk5lbnM4T2RhTXp3c042TUgxQTRoYmttVy12R3pqZHdrbm9UTmNMT1JodWxwVlRrSHQxOTBXbld1Q3VWSUVBRDZmLXVldDFQcUVmUUZqaExNdw?oc=5"
+  },
+  {
+    "key": "6e6cb46e2a760b6f1552",
+    "brand": "Francesco Murano",
+    "headline": "Francesco Murano - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-24T15:03:19+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFAtVzJFd041RlBHWXNQZ0RpeFlvVXFoTWowVHNZUWp4WFJOY3VXcHB3TWdRTzlHemk4cTljd2toNTFjMHBMS0FaSW5wNWEtN0hYalQwNUU3ZmZtejdVRFZ0U1JfSVVYSEsydzdzQVl4b3pINEFlNEVPS2ZVVEFFQQ?oc=5"
   },
   {
     "key": "87ab46bce5c277cc15fb",
@@ -1272,6 +1350,19 @@
     "published_at": "2026-09-24T07:00:00+00:00",
     "source": "iO Donna",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE0xeklpRFI0dHk1Ni1HSGpydmJVcUlTczBHbFBhZGVreGZXZ0MyTjl2bWpTOE5KSnAtUjFNb0pwUDRJd2QwUC1pVV9NQjNyS2R0bjJoX3BMWjR2d1ZoRFNZRUNLYXVocS1ySHB1d2VEdWFNNkJILUw1Rll2bw?oc=5"
+  },
+  {
+    "key": "105ac13eae454f2e6bf5",
+    "brand": "Francesco Murano",
+    "headline": "Francesco Murano, il maestro del drappeggio alla Milano Fashion Week - saywhomedia.com",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-24T07:00:00+00:00",
+    "source": "saywhomedia.com",
+    "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOaWszN1dwc2VodmRWRlRiejFkcHpsVmVDVlBnVG8xb2tLN20zNF9uNGpOV2VNVGNscjcxWDJNSkQ3U0JLU0RQcWlwM0IxWlg3RUVVOHdNU3c4YmFVajNITWhDU3Q2WGNtRlFZQXRlT25VNWRONlRzS3poUHN6Q2FWWjBQWS1vSnhyZDdtNzZlOHNqT05xcjktNWI3OU5mR1dBM0lPcw?oc=5"
   },
   {
     "key": "be89ff17743c867d8e1a",
@@ -1456,6 +1547,32 @@
     "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOeVZkTnhxN0pPak5YVDNoRGdGclh0UjczTWFPYVpGS3pZQXJBOUFEbUJCbmJjejRqUW1hRnQ5NmxEWUxFTTdxRGppVzdlVjdCdzZvQjJLWXl6ZWtOQ3Y1N3R2eUVqUWd6TngybmVUaXozU1pqY0xEU1UzVHlCWWxGUC0zSXZmMUR3MW9pS2hvYzJkWjZZdVd3YlQ5NG1PUQ?oc=5"
   },
   {
+    "key": "53f1bb58d717f500df2c",
+    "brand": "Fendi",
+    "headline": "Riflettere sulla moda e sulla valenza dei corpi: la sfilata Fendi Primavera Estate 2027 - ELLE",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-23T07:00:00+00:00",
+    "source": "ELLE",
+    "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQR2pFbGxDUlVXUms0TXowTW9VQUQ1UERNRFB0YnRzanFlN1dKWlo0TGxmRUd1Wk5MV1NzVUw0M0J1ZkhlZEsza3ljWmNsUkNkVlQyRWxZQnZYWEhfYkdBREtOWmIzSlU2ajV3VzhIVlp6TlZMdThxajZfaGwzZ3ZnY2FyUmFTWW5tOE5JNVN2QnNVb1cycXhnRjB6YmU0anAta2xMakZVSXFLUWdDMmsyTg?oc=5"
+  },
+  {
+    "key": "54b033643590079ce286",
+    "brand": "Venerdì Pomeriggio",
+    "headline": "Venerdi Pomeriggio - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-22T19:13:42+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPZTA5eEU2NmpvOVNicW5hY29HSFNYV0pHeVZCbWVjN0lxMjVTVXNLQkZUaTZrREFKQnM3Nk1zME1xNzdfdWM1LTFWblRLWkZKa2hsa1BwYTVUdHBIRG1hV2NqSmlSNTNHZm50eWJQdThLd29LeFE2bmZ6aFk1SDlMRg?oc=5"
+  },
+  {
     "key": "1fddc563a1c34c434553",
     "brand": "Versace",
     "headline": "Donatella Versace ritorna nell’industria della moda con un nuovo brand ispirato al lusso - Tatler Asia",
@@ -1636,5 +1753,18 @@
     "published_at": "2026-09-18T07:00:00+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQeHZqVWpNakhTSzBSanNMcXd5SWFTcXFPY1hPM0pqM0lZbE16X0RTTVZ1SmFUTXBWZ1pXUFA0NzRyTEh1ZXl2WDQxZmNVNUZrVlYzRldEbkNENWVSSk9MTHBreWxGdlE2MTBBeDhwTF9iWG9DNzhiWkQzZGtUVjVPbWs3ZDBlYTR5MnNQZA?oc=5"
+  },
+  {
+    "key": "738e5243401887e3f905",
+    "brand": "Zegna",
+    "headline": "Da Luca de Meo a Diego Della Valle e Gildo Zegna, parte lunedì il 25° Milano Fashion Global Summit - Milano Finanza",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Notizia utile per capire direzione, priorità e momento del brand prima di un colloquio o outreach.",
+    "detected_at": "2026-11-01T21:57:48.229253+00:00",
+    "published_at": "2026-09-18T07:00:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxNcldMUzJiVC1RU2EwVHdIUjZWcE4xWjhpR1o4dDJhaXVrYmtSWjdFeDlxV0EzcW1zeUcyWndFaVBLY2Ftb2hzYUhpZm5WVWY0YnVWUmU0b09rYWZfWGZGejUtYzdVWTFKbFZnSmRSWC1FR2RBSmRTTHhiVEtBZlkxNVVGYk9BRThDTWhoM1dfV2RHMGswNHNxUGY5VjYxLW1MS1VrLWxQYUR0clRybVhDZ1hFQWVzTll1ajlFSTJpU2szeVI5c3ZEYk53SW5yYk9nNmpMbDhBZDhqMmR4alA4UENCQS0?oc=5"
   }
 ]
