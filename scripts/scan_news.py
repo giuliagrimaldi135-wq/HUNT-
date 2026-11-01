@@ -109,16 +109,17 @@ def brand_signal(b):
 signals=[s for s in old_signals if age_days(s.get("published_at") or s.get("detected_at"))<=SIGNAL_DAYS]
 known={x.get("key") for x in signals}
 
-# Full brand sweep every 15 minutes; public signals cover both connected and unconnected career brands.
-if now.minute%15<7:
-    with ThreadPoolExecutor(max_workers=10) as ex:
-        futs=[ex.submit(brand_signal,b) for b in brands]
-        for fut in as_completed(futs):
-            try:
-                for s in fut.result():
-                    if s["key"] not in known:
-                        signals.append(s);known.add(s["key"])
-            except Exception:pass
+# Rotate one third of the brand universe every 5 minutes: all brands are covered every 15 minutes.
+slot=(now.minute//5)%3
+watch=[b for i,b in enumerate(brands) if i%3==slot]
+with ThreadPoolExecutor(max_workers=10) as ex:
+    futs=[ex.submit(brand_signal,b) for b in watch]
+    for fut in as_completed(futs):
+        try:
+            for s in fut.result():
+                if s["key"] not in known:
+                    signals.append(s);known.add(s["key"])
+        except Exception:pass
 
 news_queries=[
     f'"fashion luxury" (Milan OR Milano OR Italy OR Italia) when:{FASHION_DAYS}d',
