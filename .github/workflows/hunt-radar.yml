@@ -41,6 +41,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/notify_github.py
+      - name: Send HUNT push alerts
+        env:
+          ONESIGNAL_APP_ID: "86341c64-d62a-4983-9e20-c242566d14ff"
+          ONESIGNAL_REST_API_KEY: ${{ secrets.ONESIGNAL_REST_API_KEY }}
+        run: python scripts/notify_onesignal.py
       - name: Persist radar data
         id: persist
         run: |
