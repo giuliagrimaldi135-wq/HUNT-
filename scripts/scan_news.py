@@ -39,6 +39,30 @@ def age_days(v):
     dt=parse_dt(v)
     return 9999 if not dt else (now-dt).total_seconds()/86400
 
+JOB_POST_TERMS=["sales assistant","client advisor","sales associate","retail assistant","merchandising intern","planning intern","internship","stage ","vacancy","job offer","job opportunity","apply now","candidati","posizione aperta","offerta di lavoro"]
+AUTOMOTIVE_TERMS=["diesel engine","gasolio","motore diesel","audi","bmw","q5","suv","automotive","car ","auto ","fuel","benzina","emissioni"]
+FASHION_DISAMBIG=["fashion","moda","denim","apparel","collection","collezione","retail","store","boutique","otb","runway","designer"]
+
+def looks_like_job_post(text,source=""):
+    t=(text+" "+source).lower()
+    return any(x in t for x in JOB_POST_TERMS)
+
+def brand_context_ok(name,text):
+    t=text.lower()
+    if name.lower()=="diesel" and any(x in t for x in AUTOMOTIVE_TERMS):
+        return any(x in t for x in FASHION_DISAMBIG)
+    return True
+
+def market_reason(topic):
+    return {
+      "energy":"Energia e logistica incidono sui costi operativi e sui margini: in merchandising/buying aiutano a leggere pricing, budget e pressione sui markdown.",
+      "consumer":"Domanda e fiducia dei consumatori influenzano sell-through, stock, assortimento e velocità di riordino: è utile per ragionare sui KPI retail.",
+      "currency":"EUR/CHF/GBP possono cambiare tourist spending, pricing relativo e performance tra Milano, Svizzera e Londra.",
+      "luxury_market":"La crescita o il rallentamento del luxury influenza budget, aperture, hiring e livello di selettività dei brand.",
+      "sourcing":"Materie prime e sourcing impattano costo prodotto, margine, timing e scelte di assortimento.",
+      "trade":"Tariffe e commercio internazionale possono cambiare costi, mercati prioritari e distribuzione wholesale."
+    }.get(topic,"Segnale macro utile per capire domanda, margini, retail e hiring nel fashion/luxury.")
+
 def rss_search(query,limit=10):
     url="https://news.google.com/rss/search?q="+urllib.parse.quote(query)+"&hl=it&gl=IT&ceid=IT:it"
     try:
@@ -91,6 +115,9 @@ def brand_signal(b):
         published=published_iso(e)
         if not published or age_days(published)>SIGNAL_DAYS:continue
         text=(e.get("title","")+" "+clean_html(e.get("summary",""))).strip()
+        src=source_name(e)
+        if looks_like_job_post(e.get("title",""),src):continue
+        if not brand_context_ok(name,text):continue
         nt=norm(text); nn=norm(name)
         tokens=[x for x in nn.split() if len(x)>2]
         if tokens and not all(t in nt for t in tokens[:2]):continue
@@ -153,12 +180,35 @@ for q in news_queries:
         title=e.get("title","").strip()
         summary=clean_html(e.get("summary",""))
         text=title+" "+summary
+        src=source_name(e)
+        if looks_like_job_post(title,src):continue
         if not any(x in text.lower() for x in FASHION_CONTEXT):continue
         typ=classify(text)
         fashion.append({"key":hashlib.sha1(link.encode()).hexdigest()[:20],"headline":title,"source":source_name(e),"published_at":published,"topic":typ,"why_it_matters":interview_takeaway(text,typ),"url":link})
 
 fashion=sorted(fashion,key=lambda x:x.get("published_at",""),reverse=True)[:80]
 signals=sorted(signals,key=lambda x:x.get("published_at") or x.get("detected_at",""),reverse=True)[:400]
+
+MARKET_DAYS=10
+market_specs=[
+ ("luxury_market",f'"luxury market" fashion Europe Italy growth decline when:{MARKET_DAYS}d'),
+ ("luxury_market",f'"luxury goods" demand Europe China Italy when:{MARKET_DAYS}d'),
+ ("energy",f'energy prices Europe Italy retail industry when:{MARKET_DAYS}d'),
+ ("consumer",f'consumer confidence Italy retail spending when:{MARKET_DAYS}d'),
+ ("consumer",f'consumer spending luxury Europe fashion when:{MARKET_DAYS}d'),
+ ("currency",f'EUR CHF GBP luxury retail tourism when:{MARKET_DAYS}d'),
+ ("sourcing",f'fashion textile leather cotton costs sourcing Europe when:{MARKET_DAYS}d'),
+ ("trade",f'fashion tariffs trade Europe luxury when:{MARKET_DAYS}d')
+]
+market=[];market_seen=set()
+for topic,q in market_specs:
+    for e in rss_search(q,7):
+        link=e.get("link","");published=published_iso(e);title=e.get("title","").strip()
+        if not link or link in market_seen or not published or age_days(published)>MARKET_DAYS:continue
+        if looks_like_job_post(title,source_name(e)):continue
+        market_seen.add(link)
+        market.append({"key":hashlib.sha1(("market|"+link).encode()).hexdigest()[:20],"headline":title,"source":source_name(e),"published_at":published,"topic":topic,"why_it_matters":market_reason(topic),"url":link})
+market=sorted(market,key=lambda x:x.get("published_at",""),reverse=True)[:40]
 
 # Correlate recent signals into spontaneous-application suggestions.
 weights={"store_opening":32,"expansion":26,"hiring_velocity":30,"management_change":18,"category_launch":18,"financial_momentum":12,"social_signal":10,"industry_news":5}
@@ -173,13 +223,14 @@ for b in brands:
     ss=by_brand.get(b["name"],[])
     if not ss:continue
     types={s.get("signal_type") for s in ss}
-    score=22+sum(weights.get(t,0) for t in types)
     target_hits=sum(1 for s in ss if any(x in (s.get("headline") or "").lower() for x in TARGET_TERMS))
-    score+=min(16,target_hits*8)
+    strong_types={"store_opening","expansion","hiring_velocity"}
+    if len(types)<2 and not (types & strong_types and target_hits>0):continue
+    score=22+sum(weights.get(t,0) for t in types)+min(16,target_hits*8)
     open_roles=job_counts.get(b["name"],0)
     if open_roles:score+=8
     score=min(score,97)
-    if score<55:continue
+    if score<65:continue
     labels=[]
     maplbl={"store_opening":"Apertura/store","expansion":"Espansione/investimenti","hiring_velocity":"Hiring in crescita","management_change":"Nuova leadership","category_launch":"Nuova categoria/lancio","financial_momentum":"Momentum business","social_signal":"Buzz social","industry_news":"News di settore"}
     for t in sorted(types,key=lambda t:weights.get(t,0),reverse=True):
@@ -187,7 +238,7 @@ for b in brands:
     if open_roles:labels.append(f"{open_roles} ruolo/i HUNT già rilevato/i")
     action="Candidatura spontanea" if open_roles==0 else "Outreach mirato"
     top=sorted(ss,key=lambda x:x.get("score",0),reverse=True)[0]
-    why=f"{b['name']} mostra {len(types)} segnali diversi nello stesso periodo. HUNT li considera più interessanti insieme che presi singolarmente."
+    why=f"{b['name']} mostra {len(types)} segnali diversi nello stesso periodo" + (" nelle località che ti interessano." if target_hits else ".") + " La combinazione è abbastanza forte da giustificare un outreach mirato."
     spontaneous.append({"key":hashlib.sha1(("spont|"+b["id"]+"|"+now.strftime("%Y-%m")).encode()).hexdigest()[:20],"brand":b["name"],"score":score,"action":action,"why_now":why,"reasons":labels[:5],"signal_count":len(ss),"open_roles":open_roles,"url":top.get("url"),"updated_at":now.isoformat()})
 
 spontaneous=sorted(spontaneous,key=lambda x:x["score"],reverse=True)[:25]
@@ -196,11 +247,14 @@ spontaneous=sorted(spontaneous,key=lambda x:x["score"],reverse=True)[:25]
 new_intel=[s for s in signals if age_days(s.get("published_at"))<=7 and s.get("score",0)>=84 and s.get("signal_type") in {"store_opening","expansion","hiring_velocity","management_change","social_signal"}]
 new_spont=[x for x in spontaneous if x.get("score",0)>=80]
 new_fashion=[x for x in fashion if age_days(x.get("published_at"))<=2 and x.get("topic") in {"store_opening","expansion","management_change","financial_momentum","category_launch","social_signal"}]
+new_market=[x for x in market if age_days(x.get("published_at"))<=2][:6]
 
 dump("data/signals.json",signals)
 dump("data/fashion_news.json",fashion)
+dump("data/market_pulse.json",market)
 dump("data/spontaneous.json",spontaneous)
 dump("data/new_intelligence_alerts.json",new_intel)
 dump("data/new_spontaneous_alerts.json",new_spont)
 dump("data/new_fashion_alerts.json",new_fashion)
-print("Signals:",len(signals),"Fashion Now:",len(fashion),"Spontaneous:",len(spontaneous),"Push intel:",len(new_intel),"Push fashion:",len(new_fashion))
+dump("data/new_market_alerts.json",new_market)
+print("Signals:",len(signals),"Fashion Now:",len(fashion),"Market:",len(market),"Spontaneous:",len(spontaneous),"Push intel:",len(new_intel),"Push fashion:",len(new_fashion))
