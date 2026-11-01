@@ -53,7 +53,7 @@ function initHuntPush(){
 window.enablePush=enablePush;
 
 const views={alerts:["01 · Alerts","Avvisi"],hidden:["02 · Intelligence","Hidden"],fashion:["03 · Briefing","Fashion Now"],brands:["04 · Coverage","Brands"],applications:["05 · Agenda","Candidature"]};
-let state={jobs:[],signals:[],brands:[],status:{},fashion:[],spontaneous:[],market:[]};
+let state={jobs:[],signals:[],brands:[],status:{},fashion:[],spontaneous:[],market:[],contacts:[]};
 const navItems=[["alerts","Avvisi"],["hidden","Hidden"],["fashion","Fashion Now"],["brands","Brands"],["applications","Candidature"]];
 function navMarkup(){return navItems.map(([id,label])=>`<button class="nav-btn ${id==="alerts"?"active":""}" data-view="${id}">${label}<span class="nav-badge" data-badge-for="${id}"></span></button>`).join("")}
 document.getElementById("desktopNav").innerHTML=navMarkup();document.getElementById("mobileNav").innerHTML=navMarkup();
@@ -67,7 +67,7 @@ document.getElementById("addApplication").onclick=addApplication;
 
 function switchView(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));document.getElementById("sectionEyebrow").textContent=views[id][0];document.getElementById("sectionTitle").textContent=views[id][1]}
 async function getJSON(path,fallback){try{const r=await fetch(path+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;return await r.json()}catch{return fallback}}
-async function load(){const [jobs,signals,brands,status,fashion,spontaneous,market]=await Promise.all([getJSON("./data/jobs.json",[]),getJSON("./data/signals.json",[]),getJSON("./config/brands.json",[]),getJSON("./data/source_status.json",{}),getJSON("./data/fashion_news.json",[]),getJSON("./data/spontaneous.json",[]),getJSON("./data/market_pulse.json",[])]);state={jobs:jobs.filter(validItalyJob),signals,brands,status,fashion,spontaneous,market};renderAll()}
+async function load(){const [jobs,signals,brands,status,fashion,spontaneous,market,contacts]=await Promise.all([getJSON("./data/jobs.json",[]),getJSON("./data/signals.json",[]),getJSON("./config/brands.json",[]),getJSON("./data/source_status.json",{}),getJSON("./data/fashion_news.json",[]),getJSON("./data/spontaneous.json",[]),getJSON("./data/market_pulse.json",[]),getJSON("./config/contacts.json",[])]);state={jobs:jobs.filter(validItalyJob),signals,brands,status,fashion,spontaneous,market,contacts};renderAll()}
 function validItalyJob(j){const l=(j.location||"").toLowerCase();const allowed=["milano","milan","firenze","florence","scandicci","roma","rome","londra","london","svizzera","switzerland","zurich","zürich","geneva","genève","lugano","mendrisio","basel","bâle"];return allowed.some(x=>l.includes(x))}
 function renderAll(){renderStats();renderAlerts();renderHidden();renderSpontaneous();renderMarket();renderFashion();renderBrands();renderApplications();updateIntelBadges();const t=state.status.generated_at;document.getElementById("lastScan").textContent=t?"Ultimo controllo "+relative(t):"In attesa del controllo"}
 
@@ -186,15 +186,18 @@ function dossierData(key){
  const news=state.fashion.filter(y=>brandMentions(y.headline,x.brand)).sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0)).slice(0,6);
  const jobs=state.jobs.filter(y=>y.brand===x.brand).sort((a,b)=>b.score-a.score).slice(0,5);
  const brand=state.brands.find(y=>y.name===x.brand);
- return {x,signals,news,jobs,brand}
+ const contact=state.contacts.find(y=>y.brand_id===brand?.id||y.brand===x.brand)||null;
+ return {x,signals,news,jobs,brand,contact}
 }
 function openDossier(key){
  const d=dossierData(key);if(!d)return;
- const {x,signals,news,jobs,brand}=d;
+ const {x,signals,news,jobs,brand,contact}=d;
  const signalHtml=signals.length?signals.map(y=>`<div class="dossier-item"><span class="news-topic">${esc(signalTypeLabel(y.signal_type))}</span><h4>${esc(y.headline)}</h4><p>${esc(y.reason||"Segnale da monitorare.")}</p>${y.url?`<a href="${escAttr(y.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</div>`).join(""):`<p class="dossier-muted">Nessun altro segnale recente disponibile.</p>`;
  const newsHtml=news.length?news.map(y=>`<div class="dossier-item"><h4>${esc(y.headline)}</h4><p>${esc(y.why_it_matters||"Notizia utile da conoscere.")}</p>${y.url?`<a href="${escAttr(y.url)}" target="_blank" rel="noopener">Leggi</a>`:""}</div>`).join(""):`<p class="dossier-muted">Nessuna altra news recente specifica sul brand.</p>`;
  const jobsHtml=jobs.length?jobs.map(y=>`<div class="dossier-job"><div><strong>${esc(cleanJobTitle(y))}</strong><span>${esc(y.location||"")} · ${y.score}% match</span></div><a href="${escAttr(y.url)}" target="_blank" rel="noopener">Apri</a></div>`).join(""):`<p class="dossier-muted">HUNT non sta vedendo al momento una vacancy coerente: per questo il suggerimento è spontaneo.</p>`;
  const career=brand?.url?`<a class="dossier-link" href="${escAttr(brand.url)}" target="_blank" rel="noopener">Apri fonte career/brand</a>`:"";
+ const mailSubject=encodeURIComponent("Candidatura spontanea – Giulia Grimaldi | Merchandising / Buying");
+ const contactHtml=contact?`<div class="contact-card"><div><span class="contact-kind">${esc(contact.kind)}</span><strong>${esc(contact.email)}</strong><small>${esc(contact.note||"Contatto pubblico ufficiale.")}</small></div><div class="contact-actions"><a href="mailto:${escAttr(contact.email)}?subject=${mailSubject}">Scrivi email</a>${contact.source_url?`<a href="${escAttr(contact.source_url)}" target="_blank" rel="noopener">Verifica fonte</a>`:""}</div></div>`:`<div class="contact-card muted"><div><span class="contact-kind">EMAIL</span><strong>Nessuna email recruiting verificata</strong><small>HUNT non inventa indirizzi: usa la career/contact page ufficiale finché non troviamo un canale pubblico affidabile.</small></div></div>`;
  document.getElementById("dossierContent").innerHTML=`
    <span class="hero-kicker">HUNT APPLICATION DOSSIER</span>
    <h2 id="dossierTitle">${esc(x.brand)}</h2>
@@ -211,9 +214,9 @@ function openDossier(key){
    <section class="dossier-section"><h3>Segnali da sapere</h3>${signalHtml}</section>
    <section class="dossier-section"><h3>News del brand da sapere</h3>${newsHtml}</section>
    <section class="dossier-section"><h3>Posizioni HUNT già aperte</h3>${jobsHtml}</section>
+   <section class="dossier-section"><h3>Dove candidarti</h3>${contactHtml}<div class="dossier-contact-note">${contact?.recommended?"Questo è un canale che HUNT considera utilizzabile per una candidatura spontanea.":"Se l'email non è recruiting, usala solo come fallback: prima controlla la career page ufficiale."}</div>${career}</section>
    <section class="dossier-section"><h3>Prima di inviare</h3>
      <div class="dossier-checklist"><span>□ So spiegare perché questo brand adesso</span><span>□ Ho adattato CV e headline al ruolo che cerco</span><span>□ Ho un esempio concreto su assortment/KPI/retail</span><span>□ Ho controllato career page e contatto ufficiale</span></div>
-     ${career}
    </section>
    <div class="dossier-actions"><button class="primary" onclick="saveSpontaneous('${x.key}','Da preparare')">Salva in preparazione</button><button class="secondary strong" onclick="saveSpontaneous('${x.key}','Applied')">✓ Già candidata</button><button class="secondary" onclick="closeDossier()">Chiudi</button></div>
  `;
@@ -271,7 +274,7 @@ function renderBrands(){
  }).join("")
 }
 
-function applications(){return JSON.parse(localStorage.getItem("hunt-applications")||"[]")}
+function applications(){const a=JSON.parse(localStorage.getItem("hunt-applications")||"[]");let changed=false;a.forEach(x=>{if(x.status==="To apply"){x.status="Da preparare";changed=true}});if(changed)localStorage.setItem("hunt-applications",JSON.stringify(a));return a}
 function saveApplications(x){localStorage.setItem("hunt-applications",JSON.stringify(x));renderApplications();renderAlerts();renderSpontaneous()}
 function markApplied(key){const j=state.jobs.find(x=>x.key===key);if(!j)return;markAlertRead(key);const a=applications(),now=new Date().toISOString();if(!a.some(x=>x.url===j.url)){a.unshift({id:Date.now(),key:j.key,brand:j.brand,role:cleanJobTitle(j),url:j.url,status:"Applied",created_at:now,applied_at:now,updated_at:now,source:"HUNT"})}saveApplications(a);switchView("applications")}
 window.markApplied=markApplied;
