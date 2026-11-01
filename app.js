@@ -1,3 +1,57 @@
+const ONESIGNAL_APP_ID="86341c64-d62a-4983-9e20-c242566d14ff";
+let HuntOneSignal=null;
+function iosDevice(){return /iPad|iPhone|iPod/.test(navigator.userAgent)}
+function standaloneMode(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
+function pushNotice(msg,kind="info"){const el=document.getElementById("pushNotice");if(!el)return;el.hidden=!msg;el.className="push-notice "+kind;el.textContent=msg||""}
+async function updatePushUI(){
+  const btn=document.getElementById("pushBtn");if(!btn)return;
+  if(!HuntOneSignal){btn.textContent="🔔 Notifiche";return}
+  try{
+    const supported=await HuntOneSignal.Notifications.isPushSupported();
+    if(!supported){btn.textContent="🔕 Non supportate";btn.disabled=true;return}
+    const permission=HuntOneSignal.Notifications.permission;
+    const opted=HuntOneSignal.User.PushSubscription.optedIn;
+    if(permission&&opted){btn.textContent="🔔 Notifiche attive";btn.classList.add("active");pushNotice("Notifiche HUNT attive su questo dispositivo.","success")}
+    else{btn.textContent="🔔 Attiva notifiche";btn.classList.remove("active")}
+  }catch(e){btn.textContent="🔔 Attiva notifiche"}
+}
+async function enablePush(){
+  if(!HuntOneSignal){pushNotice("Il servizio notifiche si sta inizializzando. Riprova tra un momento.","info");return}
+  if(iosDevice()&&!standaloneMode()){
+    pushNotice("Su iPhone devi aprire HUNT dall’icona nella schermata Home. Se non c’è ancora: Safari → Condividi → Aggiungi alla schermata Home.","warn");
+    return;
+  }
+  try{
+    await HuntOneSignal.Notifications.requestPermission();
+    if(HuntOneSignal.Notifications.permission&&!HuntOneSignal.User.PushSubscription.optedIn){
+      await HuntOneSignal.User.PushSubscription.optIn();
+    }
+    await updatePushUI();
+  }catch(e){pushNotice("Non sono riuscita ad attivare le notifiche. Controlla che HUNT sia aperta dalla schermata Home e che le notifiche non siano state negate.","warn")}
+}
+function initHuntPush(){
+  window.OneSignalDeferred=window.OneSignalDeferred||[];
+  OneSignalDeferred.push(async function(OneSignal){
+    try{
+      await OneSignal.init({
+        appId:ONESIGNAL_APP_ID,
+        serviceWorkerPath:"HUNT-/push/onesignal/OneSignalSDKWorker.js",
+        serviceWorkerParam:{scope:"/HUNT-/push/onesignal/"},
+        autoResubscribe:true,
+        notifyButton:{enable:false},
+        welcomeNotification:{disable:true}
+      });
+      HuntOneSignal=OneSignal;
+      OneSignal.Notifications.addEventListener("permissionChange",updatePushUI);
+      OneSignal.User.PushSubscription.addEventListener("change",updatePushUI);
+      await updatePushUI();
+    }catch(e){
+      pushNotice("Notifiche non ancora pronte su questo dispositivo.","warn");
+    }
+  });
+}
+window.enablePush=enablePush;
+
 const views={alerts:["01 · Alerts","Avvisi"],hidden:["02 · Intelligence","Hidden"],fashion:["03 · Briefing","Fashion Now"],brands:["04 · Coverage","Brands"],applications:["05 · Agenda","Candidature"]};
 let state={jobs:[],signals:[],brands:[],status:{},fashion:[]};
 const navItems=[["alerts","Avvisi"],["hidden","Hidden"],["fashion","Fashion Now"],["brands","Brands"],["applications","Candidature"]];
@@ -5,6 +59,7 @@ function navMarkup(){return navItems.map(([id,label])=>`<button class="nav-btn $
 document.getElementById("desktopNav").innerHTML=navMarkup();document.getElementById("mobileNav").innerHTML=navMarkup();
 document.addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)switchView(b.dataset.view)});
 document.getElementById("refreshBtn").onclick=load;
+document.getElementById("pushBtn").onclick=enablePush;
 document.getElementById("searchInput").oninput=renderAlerts;
 document.getElementById("scoreFilter").onchange=renderAlerts;
 document.getElementById("brandSearch").oninput=renderBrands;
@@ -58,4 +113,5 @@ function renderApplications(){const a=applications().sort((x,y)=>new Date(y.appl
 function relative(v){if(!v)return"n/a";const d=(Date.now()-new Date(v).getTime())/1000;if(d<60)return"ora";if(d<3600)return Math.floor(d/60)+"m fa";if(d<86400)return Math.floor(d/3600)+"h fa";return Math.floor(d/86400)+"g fa"}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}function escAttr(s){return esc(s)}
 if("serviceWorker" in navigator){let refreshing=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(refreshing)return;refreshing=true;location.reload()});navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>{reg.update().catch(()=>{});setInterval(()=>reg.update().catch(()=>{}),60000)}).catch(()=>{})}
+initHuntPush();
 load();
