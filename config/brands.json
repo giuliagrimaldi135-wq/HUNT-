@@ -1,0 +1,22 @@
+[
+{"id":"gucci","name":"Gucci","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Gucci&countriesList=Italy"},
+{"id":"bottega-veneta","name":"Bottega Veneta","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Bottega+Veneta&countriesList=Italy"},
+{"id":"saint-laurent","name":"Saint Laurent","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?brandsList=Saint+Laurent&countriesList=Italy"},
+{"id":"kering","name":"Kering","market":"Luxury group","type":"official career page","enabled":true,"location_scope":"Italy","url":"https://www.kering.com/it/talenti/offerte-di-lavoro/?countriesList=Italy"},
+{"id":"prada-group","name":"Prada Group / Miu Miu","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Mixed","url":"https://www.pradagroup.com/it/talents/job-opportunities.html"},
+{"id":"zegna","name":"Zegna","market":"Luxury","type":"official career page","enabled":true,"location_scope":"Mixed","url":"https://careers.zegnagroup.com/"},
+{"id":"louis-vuitton","name":"Louis Vuitton","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Mixed","url":null},
+{"id":"valentino","name":"Valentino","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Mixed","url":null},
+{"id":"moncler","name":"Moncler","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Mixed","url":null},
+{"id":"missoni","name":"Missoni","market":"Luxury","type":"discovery queue","enabled":false,"location_scope":"Italy","url":null},
+{"id":"armarium","name":"ARMARIUM","market":"Emerging","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"paris-texas","name":"Paris Texas","market":"Emerging","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"the-attico","name":"The Attico","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"n21","name":"N°21","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"gcds","name":"GCDS","market":"Contemporary","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"sunnei","name":"SUNNEI","market":"Contemporary","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"blaze","name":"BLAZÉ Milano","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"giuseppe-di-morabito","name":"Giuseppe Di Morabito","market":"Luxury independent","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"themoire","name":"THEMOIRè","market":"Contemporary","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null},
+{"id":"retori","name":"Retori","market":"Emerging","type":"signal watchlist","enabled":false,"location_scope":"Italy","url":null}
+]
