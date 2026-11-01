@@ -1,26 +1,38 @@
 {
   "gucci": {
     "last_count": 3,
-    "updated_at": "2026-11-01T18:58:19.104429+00:00"
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
   },
   "bottega-veneta": {
     "last_count": 2,
-    "updated_at": "2026-11-01T18:58:19.104429+00:00"
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
   },
   "saint-laurent": {
     "last_count": 1,
-    "updated_at": "2026-11-01T18:58:19.104429+00:00"
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
   },
   "kering": {
     "last_count": 1,
-    "updated_at": "2026-11-01T18:58:19.104429+00:00"
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
   },
   "prada-group": {
     "last_count": 0,
-    "updated_at": "2026-11-01T18:58:19.104429+00:00"
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
   },
   "zegna": {
     "last_count": 0,
-    "updated_at": "2026-11-01T18:58:19.104429+00:00"
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
+  },
+  "louis-vuitton": {
+    "last_count": 0,
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
+  },
+  "valentino": {
+    "last_count": 2,
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
+  },
+  "moncler": {
+    "last_count": 0,
+    "updated_at": "2026-11-01T19:05:06.294857+00:00"
   }
 }
