@@ -166,17 +166,85 @@ function renderHidden(){
  document.getElementById("hiddenSummary").innerHTML=`<span class="hero-kicker">HUNT READOUT</span><p><strong>${list.length} segnali non letti</strong>. Qui entrano solo movimenti che possono anticipare un'opportunità, non vacancy.</p>${watchHtml}`;
  document.getElementById("signals").innerHTML=list.length?list.map(x=>`<article class="news-card"><div><span class="news-topic">${esc(signalTypeLabel(x.signal_type))}</span><h3>${esc(x.brand||"Fashion")} — ${esc(x.headline)}</h3><div class="meta">${x.source?esc(x.source)+" · ":""}${relative(x.published_at||x.detected_at)}</div><p><strong>Per te:</strong> ${esc(x.reason||"Segnale da incrociare con crescita, retail e hiring.")}</p><div class="news-actions"><button class="secondary" onclick="dismissSignal('${x.key}')">✓ Letto</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener" onclick="dismissSignal('${x.key}')">Apri fonte</a>`:""}</div></div></article>`).join(""):`<div class="empty">Hai letto tutti i segnali recenti.</div>`;
 }
-function prepareSpontaneous(key){
- const x=state.spontaneous.find(y=>y.key===key);if(!x)return;
- const a=applications();
- if(!a.some(y=>y.spontaneous_key===key))a.unshift({id:Date.now(),brand:x.brand,role:"Candidatura spontanea",status:"To apply",applied_at:new Date().toISOString(),updated_at:new Date().toISOString(),source:"HUNT Intelligence",spontaneous_key:key,url:x.url||null});
- saveApplications(a);dismissSpontaneous(key);switchView("applications")
+function brandMentions(text,brand){
+ const norm=v=>String(v||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g," ");
+ const t=norm(text),tokens=norm(brand).split(/\s+/).filter(x=>x.length>2&&!["group","milano","maison"].includes(x));
+ return tokens.length?tokens.slice(0,2).every(x=>t.includes(x)):false
 }
+function applicationAngle(x){
+ const r=(x.reasons||[]).join(" ").toLowerCase();
+ if(r.includes("apertura")||r.includes("store"))return "Usa l'apertura/espansione retail come motivo concreto per scrivere adesso. Collega il tuo profilo a assortimento, stock, merchandising, retail operations e coordinamento del lancio.";
+ if(r.includes("categoria")||r.includes("lancio"))return "Collega il lancio prodotto al tuo interesse per assortment, pricing, merchandising, buying e go-to-market.";
+ if(r.includes("hiring"))return "Il team sembra in rafforzamento: candidati prima che esca il ruolo perfetto e posizionati su merchandising/buying/planning/wholesale.";
+ if(r.includes("leadership"))return "La nuova leadership può cambiare priorità e team: mostra di conoscere il momento del brand e proponiti con un profilo flessibile ma focalizzato sul prodotto.";
+ if(r.includes("social"))return "Il brand sta vivendo un momento di attenzione: non basta citare il buzz. Collegalo a prodotto, cliente, retail e crescita commerciale.";
+ return "Apri la candidatura con il motivo concreto per cui questo è un buon momento per contattare il brand, poi collega il tuo profilo a merchandising, buying, planning, product e retail."
+}
+function dossierData(key){
+ const x=state.spontaneous.find(y=>y.key===key);if(!x)return null;
+ const signals=state.signals.filter(y=>y.brand===x.brand).sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0)).slice(0,8);
+ const news=state.fashion.filter(y=>brandMentions(y.headline,x.brand)).sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0)).slice(0,6);
+ const jobs=state.jobs.filter(y=>y.brand===x.brand).sort((a,b)=>b.score-a.score).slice(0,5);
+ const brand=state.brands.find(y=>y.name===x.brand);
+ return {x,signals,news,jobs,brand}
+}
+function openDossier(key){
+ const d=dossierData(key);if(!d)return;
+ const {x,signals,news,jobs,brand}=d;
+ const signalHtml=signals.length?signals.map(y=>`<div class="dossier-item"><span class="news-topic">${esc(signalTypeLabel(y.signal_type))}</span><h4>${esc(y.headline)}</h4><p>${esc(y.reason||"Segnale da monitorare.")}</p>${y.url?`<a href="${escAttr(y.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</div>`).join(""):`<p class="dossier-muted">Nessun altro segnale recente disponibile.</p>`;
+ const newsHtml=news.length?news.map(y=>`<div class="dossier-item"><h4>${esc(y.headline)}</h4><p>${esc(y.why_it_matters||"Notizia utile da conoscere.")}</p>${y.url?`<a href="${escAttr(y.url)}" target="_blank" rel="noopener">Leggi</a>`:""}</div>`).join(""):`<p class="dossier-muted">Nessuna altra news recente specifica sul brand.</p>`;
+ const jobsHtml=jobs.length?jobs.map(y=>`<div class="dossier-job"><div><strong>${esc(cleanJobTitle(y))}</strong><span>${esc(y.location||"")} · ${y.score}% match</span></div><a href="${escAttr(y.url)}" target="_blank" rel="noopener">Apri</a></div>`).join(""):`<p class="dossier-muted">HUNT non sta vedendo al momento una vacancy coerente: per questo il suggerimento è spontaneo.</p>`;
+ const career=brand?.url?`<a class="dossier-link" href="${escAttr(brand.url)}" target="_blank" rel="noopener">Apri fonte career/brand</a>`:"";
+ document.getElementById("dossierContent").innerHTML=`
+   <span class="hero-kicker">HUNT APPLICATION DOSSIER</span>
+   <h2 id="dossierTitle">${esc(x.brand)}</h2>
+   <div class="dossier-score">${x.score}<span>/100</span></div>
+   <section class="dossier-verdict"><strong>Perché HUNT te lo propone adesso</strong><p>${esc(x.why_now)}</p><div class="signal-stack">${(x.reasons||[]).map(r=>`<span>${esc(r)}</span>`).join("")}</div></section>
+   <section class="dossier-section"><h3>Come preparare la candidatura</h3>
+     <div class="dossier-plan">
+       <div><b>CV</b><span>Usa la versione Merchandising & Buying come default; passa al Fashion Management solo se l'outreach è chiaramente brand/marketing.</span></div>
+       <div><b>Cosa valorizzare</b><span>Assortment, pricing, OTB/KPI, sell-through, retail, prodotto e capacità di lavorare con priorità operative.</span></div>
+       <div><b>Angolo del messaggio</b><span>${esc(applicationAngle(x))}</span></div>
+       <div><b>Da evitare</b><span>Una candidatura generica tipo “amo il brand”. Cita uno dei segnali sotto e spiega perché ti rende interessata proprio adesso.</span></div>
+     </div>
+   </section>
+   <section class="dossier-section"><h3>Segnali da sapere</h3>${signalHtml}</section>
+   <section class="dossier-section"><h3>News del brand da sapere</h3>${newsHtml}</section>
+   <section class="dossier-section"><h3>Posizioni HUNT già aperte</h3>${jobsHtml}</section>
+   <section class="dossier-section"><h3>Prima di inviare</h3>
+     <div class="dossier-checklist"><span>□ So spiegare perché questo brand adesso</span><span>□ Ho adattato CV e headline al ruolo che cerco</span><span>□ Ho un esempio concreto su assortment/KPI/retail</span><span>□ Ho controllato career page e contatto ufficiale</span></div>
+     ${career}
+   </section>
+   <div class="dossier-actions"><button class="primary" onclick="saveSpontaneous('${x.key}','Da preparare')">Salva in preparazione</button><button class="secondary strong" onclick="saveSpontaneous('${x.key}','Applied')">✓ Già candidata</button><button class="secondary" onclick="closeDossier()">Chiudi</button></div>
+ `;
+ const modal=document.getElementById("dossierModal");modal.hidden=false;document.body.classList.add("modal-open")
+}
+function closeDossier(){const m=document.getElementById("dossierModal");if(m)m.hidden=true;document.body.classList.remove("modal-open")}
+window.openDossier=openDossier;window.closeDossier=closeDossier;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDossier()});
+
+function saveSpontaneous(key,status){
+ const x=state.spontaneous.find(y=>y.key===key);if(!x)return;
+ const a=applications(),now=new Date().toISOString();
+ let item=a.find(y=>y.spontaneous_key===key);
+ if(!item){
+   item={id:Date.now(),brand:x.brand,role:"Candidatura spontanea",status,created_at:now,updated_at:now,source:"HUNT Intelligence",spontaneous_key:key,url:x.url||null};
+   if(status==="Applied")item.applied_at=now;
+   a.unshift(item)
+ }else{
+   item.status=status;item.updated_at=now;if(status==="Applied"&&!item.applied_at)item.applied_at=now
+ }
+ saveApplications(a);dismissSpontaneous(key);closeDossier();switchView("applications")
+}
+function markSpontaneousApplied(key){saveSpontaneous(key,"Applied")}
+window.saveSpontaneous=saveSpontaneous;window.markSpontaneousApplied=markSpontaneousApplied;
+function prepareSpontaneous(key){openDossier(key)}
 window.prepareSpontaneous=prepareSpontaneous;
 function renderSpontaneous(){
  const read=storageSet("hunt-read-spontaneous");
- const list=[...state.spontaneous].filter(x=>!read.has(x.key)).sort((a,b)=>b.score-a.score).slice(0,15);
- document.getElementById("spontaneousList").innerHTML=list.length?list.map(x=>`<article class="spontaneous-card"><div class="spont-score">${x.score}</div><div><span class="news-topic">${esc(x.action||"Candidatura spontanea")}</span><h3>${esc(x.brand)}</h3><p><strong>Perché adesso:</strong> ${esc(x.why_now||"Più segnali recenti rendono questo brand interessante per un outreach mirato.")}</p><div class="signal-stack">${(x.reasons||[]).slice(0,5).map(r=>`<span>${esc(r)}</span>`).join("")}</div><div class="news-actions"><button class="primary" onclick="prepareSpontaneous('${x.key}')">Prepara candidatura</button><button class="secondary" onclick="dismissSpontaneous('${x.key}')">Ignora</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</div></div></article>`).join(""):`<div class="empty">Nessuna nuova candidatura spontanea abbastanza forte al momento.</div>`;
+ const apps=applications(),done=new Set(apps.map(a=>a.spontaneous_key).filter(Boolean));
+ const list=[...state.spontaneous].filter(x=>!read.has(x.key)&&!done.has(x.key)).sort((a,b)=>b.score-a.score).slice(0,15);
+ document.getElementById("spontaneousList").innerHTML=list.length?list.map(x=>`<article class="spontaneous-card"><div class="spont-score">${x.score}</div><div><span class="news-topic">${esc(x.action||"Candidatura spontanea")}</span><h3>${esc(x.brand)}</h3><p><strong>Perché adesso:</strong> ${esc(x.why_now||"Più segnali recenti rendono questo brand interessante per un outreach mirato.")}</p><div class="signal-stack">${(x.reasons||[]).slice(0,5).map(r=>`<span>${esc(r)}</span>`).join("")}</div><div class="news-actions"><button class="primary" onclick="openDossier('${x.key}')">Prepara candidatura</button><button class="secondary strong" onclick="markSpontaneousApplied('${x.key}')">✓ Già candidata</button><button class="secondary" onclick="dismissSpontaneous('${x.key}')">Ignora</button>${x.url?`<a href="${escAttr(x.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</div></div></article>`).join(""):`<div class="empty">Nessuna nuova candidatura spontanea abbastanza forte al momento.</div>`;
 }
 function renderMarket(){
  const el=document.getElementById("marketPulse");if(!el)return;
@@ -204,16 +272,28 @@ function renderBrands(){
 }
 
 function applications(){return JSON.parse(localStorage.getItem("hunt-applications")||"[]")}
-function saveApplications(x){localStorage.setItem("hunt-applications",JSON.stringify(x));renderApplications();renderAlerts()}
-function markApplied(key){const j=state.jobs.find(x=>x.key===key);if(!j)return;markAlertRead(key);const a=applications();if(!a.some(x=>x.url===j.url)){a.unshift({id:Date.now(),key:j.key,brand:j.brand,role:cleanJobTitle(j),url:j.url,status:"Applied",applied_at:new Date().toISOString(),updated_at:new Date().toISOString(),source:"HUNT"})}saveApplications(a);switchView("applications")}
+function saveApplications(x){localStorage.setItem("hunt-applications",JSON.stringify(x));renderApplications();renderAlerts();renderSpontaneous()}
+function markApplied(key){const j=state.jobs.find(x=>x.key===key);if(!j)return;markAlertRead(key);const a=applications(),now=new Date().toISOString();if(!a.some(x=>x.url===j.url)){a.unshift({id:Date.now(),key:j.key,brand:j.brand,role:cleanJobTitle(j),url:j.url,status:"Applied",created_at:now,applied_at:now,updated_at:now,source:"HUNT"})}saveApplications(a);switchView("applications")}
 window.markApplied=markApplied;
-function addApplication(){const brand=prompt("Brand?");if(!brand)return;const role=prompt("Ruolo?")||"Candidatura spontanea";saveApplications([{id:Date.now(),brand,role,status:"Applied",applied_at:new Date().toISOString(),updated_at:new Date().toISOString(),source:"Manuale"},...applications()])}
-function appDays(a){return Math.max(0,Math.floor((Date.now()-new Date(a.applied_at).getTime())/86400000))}
-function updateApplication(id,status){const a=applications();const x=a.find(y=>y.id===id);if(!x)return;x.status=status;x.updated_at=new Date().toISOString();if(status==="Interview"&&!x.interview_at)x.interview_at=new Date().toISOString();saveApplications(a)}
+function addApplication(){const brand=prompt("Brand?");if(!brand)return;const role=prompt("Ruolo?")||"Candidatura spontanea";const now=new Date().toISOString();saveApplications([{id:Date.now(),brand,role,status:"Applied",created_at:now,applied_at:now,updated_at:now,source:"Manuale"},...applications()])}
+function appBaseDate(a){return a.applied_at||a.created_at||a.updated_at||new Date().toISOString()}
+function appDays(a){return Math.max(0,Math.floor((Date.now()-new Date(appBaseDate(a)).getTime())/86400000))}
+function updateApplication(id,status){const a=applications();const x=a.find(y=>y.id===id);if(!x)return;const now=new Date().toISOString();x.status=status;x.updated_at=now;if(status==="Applied"&&!x.applied_at)x.applied_at=now;if(status==="Interview"&&!x.interview_at)x.interview_at=now;saveApplications(a)}
 window.updateApplication=updateApplication;
 function removeApplication(id){saveApplications(applications().filter(x=>x.id!==id))}
 window.removeApplication=removeApplication;
-function renderApplications(){const a=applications().sort((x,y)=>new Date(y.applied_at)-new Date(x.applied_at));document.querySelectorAll('[data-badge-for="applications"]').forEach(x=>{x.textContent="";x.style.display="none"});document.getElementById("applicationsList").innerHTML=a.length?a.map(x=>{const days=appDays(x);const follow=days>=7&&["Applied","Follow-up"].includes(x.status);return `<article class="application-card"><div class="application-days"><strong>${days}</strong><span>giorni</span></div><div class="application-main"><h3>${esc(x.brand)} — ${esc(x.role)}</h3><div class="meta">Applicato il ${new Date(x.applied_at).toLocaleDateString("it-IT")} · Stato: <strong>${esc(x.status)}</strong></div>${follow?'<p class="follow-warning">⚠️ Potrebbe essere il momento di valutare un follow-up.</p>':""}<div class="stage-actions"><button onclick="updateApplication(${x.id},'Applied')">Applied</button><button onclick="updateApplication(${x.id},'Interview')">Interview</button><button onclick="updateApplication(${x.id},'Follow-up')">Follow-up</button><button onclick="updateApplication(${x.id},'Rejected')">Rejected</button><button onclick="updateApplication(${x.id},'Offer')">Offer</button></div></div><div class="app-links">${x.url?`<a href="${escAttr(x.url)}" target="_blank">Annuncio</a>`:""}<button class="text-btn" onclick="removeApplication(${x.id})">Archivia</button></div></article>`}).join(""):`<div class="empty">Nessuna candidatura ancora. Quando applichi a un ruolo, tocca <strong>“Ho applicato”</strong> nell'avviso: entrerà qui automaticamente.</div>`}
+function openApplicationDossier(id){const a=applications().find(x=>x.id===id);if(a?.spontaneous_key)openDossier(a.spontaneous_key)}
+window.openApplicationDossier=openApplicationDossier;
+function renderApplications(){
+ const a=applications().sort((x,y)=>new Date(y.updated_at||appBaseDate(y))-new Date(x.updated_at||appBaseDate(x)));
+ document.querySelectorAll('[data-badge-for="applications"]').forEach(x=>{x.textContent="";x.style.display="none"});
+ document.getElementById("applicationsList").innerHTML=a.length?a.map(x=>{
+   const days=appDays(x),isPrep=x.status==="Da preparare",follow=days>=7&&["Applied","Follow-up"].includes(x.status);
+   const dateLabel=isPrep?"In preparazione dal":"Applicato il";
+   const dateValue=new Date(isPrep?(x.created_at||x.updated_at):(x.applied_at||x.created_at||x.updated_at)).toLocaleDateString("it-IT");
+   return `<article class="application-card"><div class="application-days"><strong>${days}</strong><span>${isPrep?"giorni prep":"giorni"}</span></div><div class="application-main"><h3>${esc(x.brand)} — ${esc(x.role)}</h3><div class="meta">${dateLabel} ${dateValue} · Stato: <strong>${esc(x.status)}</strong></div>${follow?'<p class="follow-warning">⚠️ Potrebbe essere il momento di valutare un follow-up.</p>':""}<div class="stage-actions"><button onclick="updateApplication(${x.id},'Da preparare')">Da preparare</button><button onclick="updateApplication(${x.id},'Applied')">Candidata</button><button onclick="updateApplication(${x.id},'Interview')">Colloquio</button><button onclick="updateApplication(${x.id},'Follow-up')">Follow-up</button><button onclick="updateApplication(${x.id},'Rejected')">Rifiutata</button><button onclick="updateApplication(${x.id},'Offer')">Offerta</button></div></div><div class="app-links">${x.spontaneous_key?`<button class="text-btn" onclick="openApplicationDossier(${x.id})">Apri dossier</button>`:""}${x.url?`<a href="${escAttr(x.url)}" target="_blank">Fonte</a>`:""}<button class="text-btn" onclick="removeApplication(${x.id})">Archivia</button></div></article>`
+ }).join(""):`<div class="empty">Nessuna candidatura ancora. Da Hidden puoi salvare una candidatura in preparazione o segnare “Già candidata”; dagli Avvisi puoi usare “Ho applicato”.</div>`
+}
 
 function relative(v){if(!v)return"n/a";const d=(Date.now()-new Date(v).getTime())/1000;if(d<60)return"ora";if(d<3600)return Math.floor(d/60)+"m fa";if(d<86400)return Math.floor(d/3600)+"h fa";return Math.floor(d/86400)+"g fa"}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}function escAttr(s){return esc(s)}
