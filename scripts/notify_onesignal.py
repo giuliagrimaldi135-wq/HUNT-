@@ -26,7 +26,7 @@ def send(prefix,key,title,body,url,data=None):
     token=prefix+":"+str(key)
     if not key or token in sent:return
     payload={"app_id":app_id,"target_channel":"push","included_segments":["Subscribed Users"],"headings":{"it":title,"en":title},"contents":{"it":body,"en":body},"url":url or "https://giuliagrimaldi135-wq.github.io/HUNT-/","data":{"hunt_type":prefix,**(data or {})}}
-    r=requests.post("https://api.onesignal.com/notifications",headers={"Authorization":f"Bearer {api_key}","Content-Type":"application/json"},json=payload,timeout=20)
+    r=requests.post("https://api.onesignal.com/notifications",headers={"Authorization":f"Key {api_key}","Content-Type":"application/json"},json=payload,timeout=20)
     if r.ok and r.json().get("id"):
         sent.add(token);print("HUNT push sent:",title)
     else:print("OneSignal push failed",r.status_code,r.text[:300])
