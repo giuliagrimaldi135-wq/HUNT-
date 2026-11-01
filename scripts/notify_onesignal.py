@@ -11,6 +11,8 @@ intel=load("new_intelligence_alerts.json")
 spont=load("new_spontaneous_alerts.json")
 fashion=load("new_fashion_alerts.json")
 market=load("new_market_alerts.json")
+test_cfg_path=ROOT/"config"/"push_test.json"
+test_cfg=json.loads(test_cfg_path.read_text()) if test_cfg_path.exists() else {}
 sent_path=ROOT/"data/push_notified.json"
 sent=set(json.loads(sent_path.read_text())) if sent_path.exists() else set()
 app_id=os.getenv("ONESIGNAL_APP_ID")
@@ -28,6 +30,10 @@ def send(prefix,key,title,body,url,data=None):
     if r.ok and r.json().get("id"):
         sent.add(token);print("HUNT push sent:",title)
     else:print("OneSignal push failed",r.status_code,r.text[:300])
+
+if test_cfg.get("enabled"):
+    test_id=str(test_cfg.get("id") or "manual-test")
+    send("test",test_id,"✅ HUNT · Notifiche attive","Test riuscito: HUNT può inviarti notifiche anche quando l’app è chiusa.","https://giuliagrimaldi135-wq.github.io/HUNT-/",{"test":True})
 
 for a in jobs:
     published=a.get("published_at");pub=published[:10] if published else "data da verificare"
