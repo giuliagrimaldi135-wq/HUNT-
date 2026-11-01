@@ -123,23 +123,27 @@ found=[];status={};seen_urls=set()
 for b in brands:
     if not b.get("enabled") or not b.get("url"):continue
     try:
-        r=session.get(b["url"],timeout=18);r.raise_for_status();soup=BeautifulSoup(r.text,"html.parser");candidates=[]
-        for el in soup.find_all(["a","h1","h2","h3","h4","li"]):
-            title=clean(el.get_text(" ",strip=True))
-            if not title or len(title)>170:continue
-            if not (has_any_pattern(title,CORE_PATTERNS+ADJACENT_PATTERNS) or any(x in title.lower() for x in JUNIOR)):continue
-            link=el.get("href") if el.name=="a" else None
-            if not link:
-                a=el.find("a",href=True);link=a.get("href") if a else None
-            if not link:continue
-            link=requests.compat.urljoin(b["url"],link)
-            context=title;parent=el.parent
-            for _ in range(3):
-                if parent is None:break
-                cc=clean(parent.get_text(" ",strip=True))
-                if 20<=len(cc)<=700:context=cc
-                parent=parent.parent
-            candidates.append((title,context,link))
+        source_urls=b.get("urls") or [b["url"]]
+        candidates=[]
+        last_status=200
+        for source_url in source_urls:
+            r=session.get(source_url,timeout=18);r.raise_for_status();last_status=r.status_code;soup=BeautifulSoup(r.text,"html.parser")
+            for el in soup.find_all(["a","h1","h2","h3","h4","li"]):
+                title=clean(el.get_text(" ",strip=True))
+                if not title or len(title)>170:continue
+                if not (has_any_pattern(title,CORE_PATTERNS+ADJACENT_PATTERNS) or any(x in title.lower() for x in JUNIOR)):continue
+                link=el.get("href") if el.name=="a" else None
+                if not link:
+                    a=el.find("a",href=True);link=a.get("href") if a else None
+                if not link:continue
+                link=requests.compat.urljoin(source_url,link)
+                context=title;parent=el.parent
+                for _ in range(3):
+                    if parent is None:break
+                    cc=clean(parent.get_text(" ",strip=True))
+                    if 20<=len(cc)<=700:context=cc
+                    parent=parent.parent
+                candidates.append((title,context,link))
         local_seen=set()
         for title,context,url in candidates:
             ub=url.split("#")[0]
@@ -168,7 +172,7 @@ for b in brands:
             final_url=meta["url"];seen_urls.add(final_url.split("#")[0]);k=canonical_key(final_url,b["name"],title)
             prev=next((x for x in old if x.get("url","").split("#")[0]==final_url.split("#")[0] or x.get("key")==k),None)
             found.append({"key":k,"brand":b["name"],"title":title,"location":location,"score":score,"reasons":reasons,"role_family":family,"recommended_cv":"fashion_mgmt" if family=="Brand/Business" else "merch_buying","url":final_url,"source_name":b["name"]+" careers","provider":"career_page","published_at":meta.get("published_at"),"years_required":years,"junior_fit":junior_fit,"first_seen_at":prev.get("first_seen_at") if prev else now,"last_seen_at":now})
-        status[b["id"]]={"ok":True,"http":r.status_code,"items":sum(1 for x in found if x["source_name"]==b["name"]+" careers"),"checked_at":now}
+        status[b["id"]]={"ok":True,"http":last_status,"items":sum(1 for x in found if x["source_name"]==b["name"]+" careers"),"checked_at":now}
     except Exception as e:status[b["id"]]={"ok":False,"error":str(e)[:160],"checked_at":now}
 
 found=sorted(found,key=lambda x:(x["score"],x.get("published_at") or x["first_seen_at"]),reverse=True)[:400]
