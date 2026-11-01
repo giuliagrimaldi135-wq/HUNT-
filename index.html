@@ -40,4 +40,13 @@
   <div id="applicationsList" class="cards application-list"></div>
 </section>
 
-</main><nav class="bottom-nav" id="mobileNav"></nav><script src="./app.js" defer></script></body></html>
+</main>
+<nav class="bottom-nav" id="mobileNav"></nav>
+<div id="dossierModal" class="dossier-modal" hidden>
+  <div class="dossier-backdrop" onclick="closeDossier()"></div>
+  <section class="dossier-panel" role="dialog" aria-modal="true" aria-labelledby="dossierTitle">
+    <button class="dossier-close" onclick="closeDossier()" aria-label="Chiudi">×</button>
+    <div id="dossierContent"></div>
+  </section>
+</div>
+<script src="./app.js" defer></script></body></html>
