@@ -106,5 +106,120 @@
     "source_name": "LinkedIn / Off-White",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-prada-regional-retail-merchandising-4475706280",
+    "brand": "Prada",
+    "title": "Regional Retail Merchandising Intern",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T13:32:51+00:00",
+    "priority": "ALTA",
+    "score": 94,
+    "role_family": "Retail Merchandising",
+    "why_fit": "Supporto merchandising uomo Sud Europa: assortimenti, preparazione buying, analisi mercati, strategie vendita e acquisto; Fashion Management tra i titoli ammessi.",
+    "reasons": [
+      "Retail Merchandising HQ",
+      "Assortimenti Sud Europa",
+      "Buying nuove collezioni",
+      "Milano",
+      "Stage"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/regional-retail-merchandising-intern-at-prada-4475706280",
+    "source_name": "LinkedIn / Prada",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-artemest-buying-curation-4471716510",
+    "brand": "Artemest",
+    "title": "Buying & Curation Intern",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T13:32:51+00:00",
+    "priority": "MEDIA",
+    "score": 84,
+    "role_family": "Buying",
+    "why_fit": "Selezione prodotti e fornitori, analisi assortimenti e performance, merchandising marketplace e negoziazione commerciale; luxury design/home decor, non moda abbigliamento.",
+    "reasons": [
+      "Buying e selezione prodotto",
+      "Assortimenti marketplace",
+      "Rapporti fornitori",
+      "Milano",
+      "Luxury design anziché fashion"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/buying-curation-intern-at-artemest-4471716510",
+    "source_name": "LinkedIn / Artemest",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-artemest-catalogue-management-4483729338",
+    "brand": "Artemest",
+    "title": "Catalogue Management Intern",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T13:32:51+00:00",
+    "priority": "MEDIA",
+    "score": 79,
+    "role_family": "E-commerce Merchandising",
+    "why_fit": "Catalogo prodotti, categorizzazione, assortimenti, benchmarking e gestione brand partner di un marketplace luxury design; non è fashion apparel.",
+    "reasons": [
+      "Catalogo e-commerce",
+      "Categorizzazione prodotto",
+      "Analisi assortimenti",
+      "Milano",
+      "Luxury design anziché fashion"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/catalogue-management-intern-at-artemest-4483729338",
+    "source_name": "LinkedIn / Artemest",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-prada-outlet-merchandising-planning-4437021551",
+    "brand": "Prada Group",
+    "title": "Outlet Merchandising Planning Intern",
+    "location": "Valvigna (AR), Terranuova Bracciolini",
+    "published_at": null,
+    "detected_at": "2026-11-02T13:32:51+00:00",
+    "priority": "MEDIA",
+    "score": 88,
+    "role_family": "Retail Planning",
+    "why_fit": "Stage nel merchandising outlet con piani assortimento, stock, KPI, pricing e selezione prodotto per eventi commerciali; sede in provincia di Arezzo, non Milano.",
+    "reasons": [
+      "Outlet Merchandising Planning",
+      "Assortimenti e stock",
+      "Pricing e special sales",
+      "Luxury",
+      "Sede Valvigna (AR)"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/outlet-merchandising-planning-intern-at-prada-group-4437021551",
+    "source_name": "LinkedIn / Prada Group",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-richemont-cartier-watch-marketing-merchandising-jr128690",
+    "brand": "Cartier (Richemont)",
+    "title": "Marketing and Merchandising Assistant Trainee - Watches",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T13:32:51+00:00",
+    "priority": "MEDIA",
+    "score": 85,
+    "role_family": "Retail Merchandising",
+    "why_fit": "Stage in merchandising orologeria Cartier: analisi vendite, review assortimenti, bilanciamento stock e supporto alle boutique; pubblicazione originale non verificata e annuncio precedente a 30 giorni.",
+    "reasons": [
+      "Assortimenti orologeria",
+      "Stock balancing",
+      "Report vendite",
+      "Milano",
+      "Stage 6 mesi"
+    ],
+    "url": "https://richemont.wd3.myworkdayjobs.com/en-US/broadbean_external/job/MILAN/Marketing-and-Merchandising-Assistant-Trainee_JR128690",
+    "source_name": "Richemont Workday",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
