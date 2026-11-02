@@ -247,15 +247,17 @@ for b in brands:
     if len(types)==1 and "store_opening" in types and target_hits:location_bonus=24
     score=22+sum(weights.get(t,0) for t in types)+location_bonus
     open_roles=job_counts.get(b["name"],0)
-    if open_roles:score+=8
+    # Spontaneous outreach is only useful when there is no direct vacancy to apply to.
+    if open_roles:continue
+    # Keep this section focused on independent/emerging brands rather than large maisons.
+    if b.get("tier")!="emerging" and b.get("enabled",False):continue
     score=min(score,97)
     if score<65:continue
     labels=[]
     maplbl={"store_opening":"Apertura/store","expansion":"Espansione/investimenti","hiring_velocity":"Hiring in crescita","management_change":"Nuova leadership","category_launch":"Nuova categoria/lancio","financial_momentum":"Momentum business","social_signal":"Buzz social","industry_news":"News di settore"}
     for t in sorted(types,key=lambda t:weights.get(t,0),reverse=True):
         labels.append(maplbl.get(t,t))
-    if open_roles:labels.append(f"{open_roles} ruolo/i HUNT già rilevato/i")
-    action="Candidatura spontanea" if open_roles==0 else "Outreach mirato"
+    action="Candidatura spontanea"
     top=sorted(ss,key=lambda x:x.get("score",0),reverse=True)[0]
     why=f"{b['name']} mostra {len(types)} segnali diversi nello stesso periodo" + (" nelle località che ti interessano." if target_hits else ".") + " La combinazione è abbastanza forte da giustificare un outreach mirato."
     spontaneous.append({"key":hashlib.sha1(("spont|"+b["id"]+"|"+now.strftime("%Y-%m")).encode()).hexdigest()[:20],"brand":b["name"],"score":score,"action":action,"why_now":why,"reasons":labels[:5],"signal_count":len(ss),"open_roles":open_roles,"url":top.get("url"),"updated_at":now.isoformat()})
