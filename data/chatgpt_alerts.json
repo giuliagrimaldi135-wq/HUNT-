@@ -268,5 +268,28 @@
     "source_name": "LinkedIn / La DoubleJ",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-versace-shoes-product-intern-4462791379",
+    "brand": "Versace",
+    "title": "Shoes Product Intern",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T16:23:54+01:00",
+    "priority": "MEDIA",
+    "score": 78,
+    "role_family": "Product",
+    "why_fit": "Stage nello sviluppo prodotto Calzature Uomo e Sneakers: avanzamento collezioni, budget e costing, fornitori, prototipi e campioni. Coerente con Product ma meno orientato al Retail Merchandising; posizione distinta dal Leather Goods Product Intern già segnalato.",
+    "reasons": [
+      "Stage Product Development calzature uomo e sneakers",
+      "Coordinamento con Category Manager",
+      "Monitoraggio collezione e costing",
+      "Milano",
+      "Conoscenza base PLM e Stealth richiesta"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/shoes-product-intern-at-versace-4462791379",
+    "source_name": "LinkedIn / Versace",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
