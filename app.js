@@ -3,6 +3,19 @@ let HuntOneSignal=null;
 function iosDevice(){return /iPad|iPhone|iPod/.test(navigator.userAgent)}
 function standaloneMode(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
 function pushNotice(msg,kind="info"){const el=document.getElementById("pushNotice");if(!el)return;el.hidden=!msg;el.className="push-notice "+kind;el.textContent=msg||""}
+function pushRegistrationReady(){
+  if(!HuntOneSignal)return false;
+  const sub=HuntOneSignal.User.PushSubscription;
+  return !!(sub.optedIn&&sub.id&&sub.token);
+}
+async function waitForPushRegistration(timeoutMs=12000){
+  const start=Date.now();
+  while(Date.now()-start<timeoutMs){
+    if(pushRegistrationReady())return true;
+    await new Promise(resolve=>setTimeout(resolve,500));
+  }
+  return false;
+}
 async function updatePushUI(){
   const btn=document.getElementById("pushBtn");if(!btn)return;
   if(!HuntOneSignal){btn.textContent="🔔 Notifiche";return}
@@ -10,9 +23,16 @@ async function updatePushUI(){
     const supported=await HuntOneSignal.Notifications.isPushSupported();
     if(!supported){btn.textContent="🔕 Non supportate";btn.disabled=true;return}
     const permission=HuntOneSignal.Notifications.permission;
-    const opted=HuntOneSignal.User.PushSubscription.optedIn;
-    if(permission&&opted){btn.textContent="🔔 Notifiche attive";btn.classList.add("active");pushNotice("Notifiche HUNT attive su questo dispositivo.","success")}
-    else{btn.textContent="🔔 Attiva notifiche";btn.classList.remove("active")}
+    const sub=HuntOneSignal.User.PushSubscription;
+    if(permission&&sub.optedIn&&sub.id&&sub.token){
+      btn.textContent="🔔 Notifiche attive";btn.classList.add("active");
+      pushNotice("Notifiche HUNT attive e dispositivo registrato.","success");
+    }else if(permission&&sub.optedIn){
+      btn.textContent="🔄 Completa notifiche";btn.classList.remove("active");
+      pushNotice("Permesso iPhone concesso, ma la registrazione OneSignal non è completa. Tocca il pulsante per riprovare.","warn");
+    }else{
+      btn.textContent="🔔 Attiva notifiche";btn.classList.remove("active");
+    }
   }catch(e){btn.textContent="🔔 Attiva notifiche"}
 }
 async function enablePush(){
@@ -23,11 +43,29 @@ async function enablePush(){
   }
   try{
     await HuntOneSignal.Notifications.requestPermission();
-    if(HuntOneSignal.Notifications.permission&&!HuntOneSignal.User.PushSubscription.optedIn){
-      await HuntOneSignal.User.PushSubscription.optIn();
+    if(!HuntOneSignal.Notifications.permission){
+      pushNotice("Le notifiche non sono autorizzate nelle impostazioni di iPhone.","warn");
+      await updatePushUI();return;
+    }
+    const sub=HuntOneSignal.User.PushSubscription;
+    if(!sub.optedIn)await sub.optIn();
+    let ready=await waitForPushRegistration();
+    if(!ready){
+      try{
+        await sub.optOut();
+        await new Promise(resolve=>setTimeout(resolve,500));
+        await sub.optIn();
+        ready=await waitForPushRegistration(15000);
+      }catch(_){}
+    }
+    if(!ready){
+      pushNotice("Permesso concesso, ma OneSignal non ha ancora creato l’ID del dispositivo. Riapri HUNT e tocca di nuovo Completa notifiche.","warn");
     }
     await updatePushUI();
-  }catch(e){pushNotice("Non sono riuscita ad attivare le notifiche. Controlla che HUNT sia aperta dalla schermata Home e che le notifiche non siano state negate.","warn")}
+  }catch(e){
+    const detail=(e&&e.message)?e.message:String(e||"errore sconosciuto");
+    pushNotice("Errore attivazione notifiche: "+detail,"warn");
+  }
 }
 function initHuntPush(){
   window.OneSignalDeferred=window.OneSignalDeferred||[];
