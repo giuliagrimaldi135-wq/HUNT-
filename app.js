@@ -125,7 +125,7 @@ async function load(){
    const b=brands.find(y=>y.name===x.brand);
    const hasOpenRole=mergedJobs.some(j=>j.brand===x.brand);
    if(hasOpenRole)return false;
-   if(x.email_draft)return true;
+   if(!b)return true;
    return b?.tier==="emerging"||b?.enabled===false;
  });
  state={jobs:mergedJobs,signals,brands,status,fashion,spontaneous:mergedOutreach,market,contacts,chatgptAlerts,chatgptOutreach};
