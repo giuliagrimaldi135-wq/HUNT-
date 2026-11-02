@@ -56,5 +56,55 @@
     "recommended_cv": "merch_buying",
     "decision": "adjacent",
     "junior_fit": true
+  },
+  {
+    "key": "chatgpt-boggi-retail-merchandising-stage-curriculare-milano",
+    "brand": "Boggi Milano",
+    "title": "Retail Merchandising - Stage Curriculare",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T11:38:18+00:00",
+    "first_seen_at": "2026-11-02T11:38:18+00:00",
+    "last_seen_at": "2026-11-02T11:38:18+00:00",
+    "priority": "ALTA",
+    "score": 88,
+    "role_family": "Retail Merchandising",
+    "why_fit": "Stage nel team Retail Merchandising con riassortimenti, riequilibrio stock fra negozi e magazzini, analisi settimanale vendite/stock e reportistica; allineamento diretto all'obiettivo Retail Merchandising. Solo curriculare durante gli studi: verificare l'eleggibilità di Giulia.",
+    "reasons": [
+      "Riassortimenti e stock rebalance",
+      "Analisi vendite e stock",
+      "Retail Merchandising HQ",
+      "Milano",
+      "Solo stage curriculare"
+    ],
+    "url": "https://boggimilano1.recruitee.com/l/es/o/retail-merchandising-stage-curriculare",
+    "source_name": "Boggi Milano careers (Recruitee)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-offwhite-product-collection-accessories-4475188729",
+    "brand": "Off-White",
+    "title": "Product and Collection Intern, Accessories (Curricular Internship)",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T11:38:18+00:00",
+    "first_seen_at": "2026-11-02T11:38:18+00:00",
+    "last_seen_at": "2026-11-02T11:38:18+00:00",
+    "priority": "MEDIA",
+    "score": 78,
+    "role_family": "Product",
+    "why_fit": "Supporto sviluppo collezione accessori, line sheet e collection grid, analisi sell-in/sell-out e benchmark competitor; utile per il percorso Product/Collection Merchandising. Stage esclusivamente curriculare e non retribuito.",
+    "reasons": [
+      "Product Development accessori",
+      "Collection grid e line sheet",
+      "Analisi sell-in/sell-out",
+      "Milano",
+      "Stage curriculare non retribuito"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/product-and-collection-intern-accessories-curricular-internship-at-off-white-4475188729",
+    "source_name": "LinkedIn / Off-White",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
