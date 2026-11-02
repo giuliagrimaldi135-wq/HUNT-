@@ -35,7 +35,7 @@ function initHuntPush(){
     try{
       await OneSignal.init({
         appId:ONESIGNAL_APP_ID,
-        serviceWorkerPath:"HUNT-/push/onesignal/OneSignalSDKWorker.js",
+        serviceWorkerPath:"/HUNT-/push/onesignal/OneSignalSDKWorker.js",
         serviceWorkerParam:{scope:"/HUNT-/push/onesignal/"},
         autoResubscribe:true,
         notifyButton:{enable:false},
