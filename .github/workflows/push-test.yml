@@ -1,0 +1,50 @@
+name: HUNT Push Test
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "config/push_test.json"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send OneSignal test push
+        env:
+          ONESIGNAL_APP_ID: "86341c64-d62a-4983-9e20-c242566d14ff"
+          ONESIGNAL_REST_API_KEY: ${{ secrets.ONESIGNAL_REST_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          cfg=json.load(open("config/push_test.json"))
+          payload={
+            "app_id":os.environ["ONESIGNAL_APP_ID"],
+            "target_channel":"push",
+            "included_segments":["Subscribed Users"],
+            "headings":{"it":"✅ HUNT · Test notifiche","en":"✅ HUNT · Push test"},
+            "contents":{"it":"Se leggi questo messaggio, le notifiche HUNT funzionano.","en":"If you see this, HUNT push notifications work."},
+            "url":"https://giuliagrimaldi135-wq.github.io/HUNT-/",
+            "data":{"hunt_type":"test","test_id":str(cfg.get("id","test"))}
+          }
+          req=urllib.request.Request(
+            "https://api.onesignal.com/notifications",
+            data=json.dumps(payload).encode(),
+            headers={"Authorization":"Key "+os.environ["ONESIGNAL_REST_API_KEY"],"Content-Type":"application/json"},
+            method="POST"
+          )
+          try:
+            with urllib.request.urlopen(req,timeout=20) as r:
+              body=r.read().decode()
+              print("OneSignal response",r.status,body)
+              data=json.loads(body)
+              if not data.get("id"):
+                raise SystemExit("OneSignal did not create notification: "+body)
+          except urllib.error.HTTPError as e:
+            body=e.read().decode()
+            print("OneSignal HTTP error",e.code,body)
+            raise
+          PY
