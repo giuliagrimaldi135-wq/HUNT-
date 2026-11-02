@@ -121,7 +121,13 @@ async function load(){
   getJSON("./data/chatgpt_alerts.json",[]),getJSON("./data/chatgpt_outreach.json",[])
  ]);
  const mergedJobs=mergeByKey(chatgptAlerts,jobs,x=>x.url||x.key).filter(validItalyJob);
- const mergedOutreach=mergeByKey(chatgptOutreach,spontaneous,x=>(x.brand||"").toLowerCase());
+ const mergedOutreach=mergeByKey(chatgptOutreach,spontaneous,x=>(x.brand||"").toLowerCase()).filter(x=>{
+   const b=brands.find(y=>y.name===x.brand);
+   const hasOpenRole=mergedJobs.some(j=>j.brand===x.brand);
+   if(hasOpenRole)return false;
+   if(x.email_draft)return true;
+   return b?.tier==="emerging"||b?.enabled===false;
+ });
  state={jobs:mergedJobs,signals,brands,status,fashion,spontaneous:mergedOutreach,market,contacts,chatgptAlerts,chatgptOutreach};
  renderAll()
 }
