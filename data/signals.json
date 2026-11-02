@@ -1105,6 +1105,32 @@
     "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQT3NCcHVQMEc2UmJoa01JQV9iQ2ZydDFIbUtnY2lSNjM1UDFrUEJldlNfS2hMS2lmU1RXSTEwT1R6UXdnWmVnbHVIVUR4QklNSllQY1Foc0RXZ09RUTVzeTlGN284ZjNLTzdSQ0pySFZrdmM4VFVqV1JYd0tJZEpWT0hCSTloUUxjdXdQdllXd0ZROHRHYWdFbWVHXzM?oc=5"
   },
   {
+    "key": "dc528e135515fad064ae",
+    "brand": "Giorgio Armani",
+    "headline": "Giorgio Armani donna primavera estate 2027, la collezione - L’OFFICIEL Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-02T08:46:35.259602+00:00",
+    "published_at": "2026-09-27T07:00:00+00:00",
+    "source": "L’OFFICIEL Italia",
+    "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOQ21PN1JReUg5Zk9NQmRoeHRhcUdlNGxXVUVkLTU3OWZjblR0bU4wWDM5cDNaTWpMSlZzdTJXeXhxQUl2T2QxNTJaQ0lMRXB0eVRYTFJXcm1lcVNucnR0czN6ZGtPNTNVaUNOd0RycUdBNk40bWZGZmFlVHJiMGd2WE9nVGlIZ2VldXBvejlqRXdUMVhUNW5SUnRxY2ltdEk?oc=5"
+  },
+  {
+    "key": "812dee90766ad388657d",
+    "brand": "Giorgio Armani",
+    "headline": "Tornano le spalle anni ’80: Giorgio Armani le reinventa così - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-02T08:46:35.259602+00:00",
+    "published_at": "2026-09-27T07:00:00+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOdmFKWXZkeVNRS3FkQVJ0Q2ktZjlEZVZ2N1hUMk43dHNLSDlqcXZfNDdIUXk0a0JiUlhNMGg2TzBpblNsbUZlelY3Q0I2bXJVUFpqZ0tqWDFZd2R4eEhra3lWVGQ2RS1FbE43d200eGZ2RGZramtTQzdrNVFhQnNfanpUakM5Y1U3dFYyaFBiTmtWSTQ?oc=5"
+  },
+  {
     "key": "41d58c5d5b01121f2242",
     "brand": "Dolce & Gabbana",
     "headline": "Dolce & Gabbana - FashionNetwork Italia",
@@ -1339,6 +1365,19 @@
     "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFAwcTlqUVhGWi1Mc091aXNyR00wQ2lFWDF5Y1ctSjlEQVUyOEx2YlkzcHllTkRLUDRtZUNHT1NTNFBCNUs1LUlVeVpXaXM4MU5VVGs3T1VOVmktbmExZ1ZCc2tBXzVXMGpvbDhocGxIQzdtLUdjT0E?oc=5"
   },
   {
+    "key": "1564721adebac0c7a71b",
+    "brand": "Moschino",
+    "headline": "Moschino - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-02T08:46:35.259602+00:00",
+    "published_at": "2026-09-25T16:30:46+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBqNTZETVBXWVBuVWpxeTNFX3gyejRQdTVoTGoweWk4UG1SUFpTYk9nV3BKWXdKZ2x6b2ZkUlNla2h3WXBIR2pGSHc4cURoN2plMm8zX0t1UDZvSWZmUWtHX2wxWkIwUmhBalVoV2pwMFhIaTA?oc=5"
+  },
+  {
     "key": "fb22f7a3ea4a045bd5f1",
     "brand": "Gucci",
     "headline": "Gucci - FashionNetwork Italia",
@@ -1363,6 +1402,19 @@
     "published_at": "2026-09-25T12:25:45+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1GQ1hscWRHXzVsT1ZMMlIzMzRhNU9ab04yT3haUTYyZUxiT0ItTmduRWZHekhRaUZXQ0g1cjcwVTBOWVRHMkxjX2FqVjd3akJrYXlSVWZXRmY1bVp2ZjFBWm5JckpPczlHMmc0dWdPU2RtZUs1?oc=5"
+  },
+  {
+    "key": "e44e8a9d7f5bfccc9764",
+    "brand": "Sportmax",
+    "headline": "Sportmax - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-02T08:46:35.259602+00:00",
+    "published_at": "2026-09-25T12:25:44+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFA2djQ4cmwyRWlrcnc2OXFPdXBvUGtOZFdic050OHZpZk5LV0dlYWtHVThsa1RsN1VNaUNfWmlaMzBwTDc0SUlfdG1nckw5WHltT3Bpa1VkQ1lUZ1ZwdjFIUTh5LWxKV0dNNDRCRi1nekwwdFk?oc=5"
   },
   {
     "key": "2da6e5301ec429126759",
