@@ -1,5 +1,6 @@
 import json, os, requests
 from pathlib import Path
+from datetime import datetime, timezone
 
 ROOT=Path(__file__).resolve().parents[1]
 def load(name):
@@ -11,6 +12,7 @@ intel=load("new_intelligence_alerts.json")
 spont=load("new_spontaneous_alerts.json")
 fashion=load("new_fashion_alerts.json")
 market=load("new_market_alerts.json")
+chatgpt=load("chatgpt_alerts.json")
 test_cfg_path=ROOT/"config"/"push_test.json"
 test_cfg=json.loads(test_cfg_path.read_text()) if test_cfg_path.exists() else {}
 sent_path=ROOT/"data/push_notified.json"
@@ -34,6 +36,24 @@ def send(prefix,key,title,body,url,data=None):
 if test_cfg.get("enabled"):
     test_id=str(test_cfg.get("id") or "manual-test")
     send("test",test_id,"✅ HUNT · Notifiche attive","Test riuscito: HUNT può inviarti notifiche anche quando l’app è chiusa.","https://giuliagrimaldi135-wq.github.io/HUNT-/",{"test":True})
+
+# ChatGPT HUNT feed: push only recent, unsent alerts so the app mirrors the chat radar without spamming old backlog.
+def _age_hours(v):
+    if not v:return 9999
+    try:
+        dt=datetime.fromisoformat(v.replace("Z","+00:00"))
+        if dt.tzinfo is None:dt=dt.replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc)-dt.astimezone(timezone.utc)).total_seconds()/3600
+    except:return 9999
+
+recent_chat=sorted(
+    [a for a in chatgpt if _age_hours(a.get("detected_at") or a.get("first_seen_at"))<=3 and (a.get("score") or 0)>=75],
+    key=lambda a:a.get("detected_at") or a.get("first_seen_at") or "",
+    reverse=True
+)[:6]
+for a in recent_chat:
+    pub=(a.get("published_at") or "")[:10] or "data da verificare"
+    send("chatjob",a.get("key"),f"🔥 HUNT · {a.get('brand','Nuova opportunità')}",f"{a.get('title','Nuova posizione')} · {a.get('location','')} · {a.get('score','?')}% match · pubblicata {pub}",a.get("url"),{"brand":a.get("brand"),"score":a.get("score"),"source":"ChatGPT HUNT"})
 
 for a in jobs:
     published=a.get("published_at");pub=published[:10] if published else "data da verificare"
