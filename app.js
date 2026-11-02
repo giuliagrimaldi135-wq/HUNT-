@@ -94,9 +94,9 @@ function initHuntPush(){
 }
 window.enablePush=enablePush;
 
-const views={alerts:["01 · Alerts","Avvisi"],hidden:["02 · Intelligence","Hidden"],fashion:["03 · Briefing","Fashion Now"],brands:["04 · Coverage","Brands"],applications:["05 · Agenda","Candidature"]};
+const views={alerts:["01 · Alerts","Avvisi"],hidden:["02 · Outreach","Spontanee"],fashion:["03 · Briefing","Fashion Now"],brands:["04 · Coverage","Brands"],applications:["05 · Agenda","Candidature"]};
 let state={jobs:[],signals:[],brands:[],status:{},fashion:[],spontaneous:[],market:[],contacts:[],chatgptAlerts:[],chatgptOutreach:[]};
-const navItems=[["alerts","Avvisi"],["hidden","Hidden"],["fashion","Fashion Now"],["brands","Brands"],["applications","Candidature"]];
+const navItems=[["alerts","Avvisi"],["hidden","Spontanee"],["fashion","Fashion Now"],["brands","Brands"],["applications","Candidature"]];
 function navMarkup(){return navItems.map(([id,label])=>`<button class="nav-btn ${id==="alerts"?"active":""}" data-view="${id}">${label}<span class="nav-badge" data-badge-for="${id}"></span></button>`).join("")}
 document.getElementById("desktopNav").innerHTML=navMarkup();document.getElementById("mobileNav").innerHTML=navMarkup();
 document.addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)switchView(b.dataset.view)});
@@ -273,7 +273,7 @@ function openJobDossier(key){
    <section class="dossier-section"><h3>Email / messaggio di partenza</h3><div class="email-draft"><pre>${esc(mailDraft)}</pre></div></section>
    <section class="dossier-section"><h3>News e segnali da sapere prima di candidarti</h3>${signalHtml}${newsHtml}</section>
    <section class="dossier-section"><h3>Altre posizioni del brand</h3>${otherJobs||'<p class="dossier-muted">Nessun’altra posizione coerente rilevata.</p>'}</section>
-   <div class="dossier-actions"><a class="primary dossier-apply-link" href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri candidatura</a><button class="secondary" onclick="markApplied('${j.key}')">✓ Ho applicato</button><button class="secondary" onclick="closeDossier()">Chiudi</button></div>
+   <div class="dossier-actions"><button class="primary" onclick="prepareJobApplication('${j.key}')">Salva in preparazione</button><a class="primary dossier-apply-link" href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri candidatura</a><button class="secondary" onclick="markApplied('${j.key}')">✓ Ho applicato</button><button class="secondary" onclick="closeDossier()">Chiudi</button></div>
  `;
  const modal=document.getElementById("dossierModal");modal.hidden=false;document.body.classList.add("modal-open")
 }
