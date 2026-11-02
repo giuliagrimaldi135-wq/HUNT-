@@ -325,6 +325,19 @@
     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOQU5VSU9ZQ0U0Z3ZoZ1J6SjRKYU5DVFNSZHRUNTBBWDl6c0xndS11Ry1TV1psLXpFQ3pGMFAxTVRsbnZ4UVhTRGZvQjFxY1pVaW9jMmRVbXRYcEk1WjJjeG9HUmIzU2RLN2tMc0Q3c2ZRZUtTWTltdS1ReFZKNzN6Mll5MzRwSUJ0eWJuNS1tVk94TF93bUE?oc=5"
   },
   {
+    "key": "fbe43e0e0cc47fe3f555",
+    "brand": "Saint Laurent",
+    "headline": "Saint Laurent si separa dal suo direttore creativo Anthony Vaccarello - FashionNetwork Italia",
+    "signal_type": "management_change",
+    "score": 80,
+    "confidence": "public-signal correlation",
+    "reason": "È cambiata una figura di leadership. Per te conta perché nuova leadership spesso porta nuove priorità, categorie, progetti e talvolta nuove assunzioni.",
+    "detected_at": "2026-11-02T07:42:50.145864+00:00",
+    "published_at": "2026-10-09T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQeVhCWXoyNUlQN3JpckRMVmRjM25iT1NHcV9sV1RtcDVMR0JfSVh5cXE5czRoTUtoeXVHeUtCNFR3OHdKYWZaRnpGQkZsTzd5TmRsWm1MTnRDVzdvZURoVjM1RzNqSVRYMXNFQlNPUnNIaVZCSnctTTJGTFR5a0ZPT3NYMWdwNWc3LVZiaVBINElUZmJoX0ZxY3BXbXNIaDJ2bEd2MGdXTkp3UjBGOWpuZ0tSTEJlZ3gz?oc=5"
+  },
+  {
     "key": "4a77f44d9f1b4a8504b8",
     "brand": "Louis Vuitton",
     "headline": "LOUIS VUITTON - WOMEN SS 2027 - PARIS - FashionNetwork Italia",
@@ -2065,44 +2078,5 @@
     "published_at": "2026-09-20T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxNaHZyOTRmQnZoYWZzaU14M3hoWjFzZXZaRzl1dzMwNHcyWnZVSzNlcjNGUGZFdktoWDRrV3ZwYXBra25xMHE2TldjSi1ZSThjM3JNZklrZjJma05nQmdKMHZtQ2NWVnpsTHM4MVVkNGhwRXhlZGNJUERDTTRBaFJCZlgyYUNGaGh2Ti1TQkpUam14TWZpdzJjalFaUjRqR25NQU9Fdnl5MEQ0NTQwdFFhZU9WclNRSHBXbS1lVEtDNWhfNlE?oc=5"
-  },
-  {
-    "key": "b92b92fca8c69a9d8a40",
-    "brand": "Diesel",
-    "headline": "Diesel: Glenn Martens steps down as the brand’s creative director - Il Sole 24 ORE",
-    "signal_type": "management_change",
-    "score": 80,
-    "confidence": "public-signal correlation",
-    "reason": "È cambiata una figura di leadership. Per te conta perché nuova leadership spesso porta nuove priorità, categorie, progetti e talvolta nuove assunzioni.",
-    "detected_at": "2026-11-01T21:43:16.398768+00:00",
-    "published_at": "2026-09-18T07:00:00+00:00",
-    "source": "Il Sole 24 ORE",
-    "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxONW9IQ2Nob2diM0NTNkx0VUdiZ28zbGtfV2JRTE9NMHR0eDE0ZzZoZ3k2NWJKemVKNUJsVU1FSkR5a2VGelVLM3Q2UGNnckpSeExXRGgtT094WUp6a01YNGFoSng5clpUWHR4eE1OY2I5VTN2aWVRSjJKdE5hU3pRSTBSNFlGUE0xTk1oNDk3QlRQVUh1aTlJbEw5TQ?oc=5"
-  },
-  {
-    "key": "70e39fdd3cec213953e7",
-    "brand": "Golden Goose",
-    "headline": "Golden Goose, lo spirito varsity atterra a Harvard - Fashion Times",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:43:16.398768+00:00",
-    "published_at": "2026-09-18T07:00:00+00:00",
-    "source": "Fashion Times",
-    "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQeHZqVWpNakhTSzBSanNMcXd5SWFTcXFPY1hPM0pqM0lZbE16X0RTTVZ1SmFUTXBWZ1pXUFA0NzRyTEh1ZXl2WDQxZmNVNUZrVlYzRldEbkNENWVSSk9MTHBreWxGdlE2MTBBeDhwTF9iWG9DNzhiWkQzZGtUVjVPbWs3ZDBlYTR5MnNQZA?oc=5"
-  },
-  {
-    "key": "738e5243401887e3f905",
-    "brand": "Zegna",
-    "headline": "Da Luca de Meo a Diego Della Valle e Gildo Zegna, parte lunedì il 25° Milano Fashion Global Summit - Milano Finanza",
-    "signal_type": "industry_news",
-    "score": 78,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:59:08.629849+00:00",
-    "published_at": "2026-09-18T07:00:00+00:00",
-    "source": "Milano Finanza",
-    "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxNcldMUzJiVC1RU2EwVHdIUjZWcE4xWjhpR1o4dDJhaXVrYmtSWjdFeDlxV0EzcW1zeUcyWndFaVBLY2Ftb2hzYUhpZm5WVWY0YnVWUmU0b09rYWZfWGZGejUtYzdVWTFKbFZnSmRSWC1FR2RBSmRTTHhiVEtBZlkxNVVGYk9BRThDTWhoM1dfV2RHMGswNHNxUGY5VjYxLW1MS1VrLWxQYUR0clRybVhDZ1hFQWVzTll1ajlFSTJpU2szeVI5c3ZEYk53SW5yYk9nNmpMbDhBZDhqMmR4alA4UENCQS0?oc=5"
   }
 ]
