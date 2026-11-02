@@ -50,6 +50,7 @@ jobs:
         run: |
           mkdir -p /tmp/hunt-data
           cp data/*.json /tmp/hunt-data/
+          rm -f /tmp/hunt-data/chatgpt_alerts.json /tmp/hunt-data/chatgpt_outreach.json
           git config user.name "HUNT Radar"
           git config user.email "actions@users.noreply.github.com"
           CHANGED=false
