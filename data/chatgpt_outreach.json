@@ -1,1 +1,421 @@
-[]
+[
+  {
+    "key": "armarium",
+    "brand": "ARMARIUM",
+    "score": 92,
+    "area": "Retail Merchandising / Product / Retail Planning",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "La collezione SS27 Control/Release è stata presentata a fine settembre 2026; una fonte di settore segnala il progetto del primo flagship milanese per l'autunno 2026 (apertura effettiva da confermare).",
+    "reasons": [
+      "Nuova collezione SS27",
+      "Primo flagship milanese annunciato, non ancora verificato come aperto"
+    ],
+    "contact": "marketingcommunication@armariumbrand.com",
+    "contact_kind": "Email pubblica marketing/generale, NON recruiting",
+    "contact_source_url": "https://www.armariumbrand.com/pages/contact-us",
+    "email_subject": "Candidatura spontanea – Retail Merchandising | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito la presentazione della collezione Control/Release SS27 e il progetto di apertura del primo flagship ARMARIUM a Milano. Ho concluso Fashion Management a Istituto Marangoni e ho lavorato su progetti di merchandising e retail buying, con attenzione ad assortimenti e analisi commerciale. Mi piacerebbe candidarmi per un eventuale supporto junior alle attività merchandising, prodotto o pianificazione retail legate a questa fase di sviluppo. Allego il mio CV; se non siete il riferimento corretto, potreste indicarmi il team a cui inoltrarlo?\nGrazie, Giulia Grimaldi",
+    "source_url": "https://modelempire.net/armarium-unveils-spring-2027-control-release-collection-redefining-modern-femininity-and-luxury-tailoring-with-strategic-milan-expansion/",
+    "signals": [
+      {
+        "date": "2026-09-29",
+        "type": "retail_expansion_announcement",
+        "description": "Primo flagship a Milano annunciato per autunno 2026; apertura da verificare.",
+        "url": "https://modelempire.net/armarium-unveils-spring-2027-control-release-collection-redefining-modern-femininity-and-luxury-tailoring-with-strategic-milan-expansion/"
+      }
+    ],
+    "priority": "alta",
+    "news": [
+      {
+        "date": "2026-09-29",
+        "type": "retail_expansion_announcement",
+        "description": "Primo flagship a Milano annunciato per autunno 2026; apertura da verificare.",
+        "url": "https://modelempire.net/armarium-unveils-spring-2027-control-release-collection-redefining-modern-femininity-and-luxury-tailoring-with-strategic-milan-expansion/"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "blaze-milano",
+    "brand": "BLAZÉ Milano",
+    "score": 91,
+    "area": "Wholesale / Retail Merchandising / Product",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "Primo pop-up del marchio a Monaco presso Lodenfrey dall'8 al 20 settembre 2026; nuova collezione SS27 presentata a Milano. Segnale commerciale per assortimenti e canale wholesale.",
+    "reasons": [
+      "Pop-up Lodenfrey settembre 2026",
+      "Nuova collezione SS27",
+      "Piccolo brand privato milanese"
+    ],
+    "contact": "Cercare su LinkedIn Wholesale Manager / Commercial Director / Merchandising Manager BLAZÉ Milano",
+    "contact_kind": "LinkedIn – ruolo da individuare; nessuna email HR verificata",
+    "email_subject": "Candidatura spontanea – Wholesale e Merchandising | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito il pop-up BLAZÉ Milano da Lodenfrey a Monaco e la presentazione della collezione SS27. Sono diplomata in Fashion Management a Istituto Marangoni e vorrei lavorare su assortimenti, performance commerciali e coordinamento dei canali retail/wholesale. Vi sottopongo il mio CV per eventuali opportunità junior nei team merchandising o commerciale. Mi farebbe piacere approfondire se il profilo può essere utile.\nCordiali saluti, Giulia Grimaldi",
+    "source_url": "https://www.harpersbazaar.de/fashion/blaze-milano-lodenfrey-trachtenjacke-oktoberfest-2026",
+    "signals": [
+      {
+        "date": "2026-09-08",
+        "type": "international_pop_up",
+        "description": "Pop-up presso Lodenfrey, Monaco, 8–20 settembre.",
+        "url": "https://www.harpersbazaar.de/fashion/blaze-milano-lodenfrey-trachtenjacke-oktoberfest-2026"
+      }
+    ],
+    "priority": "alta",
+    "news": [
+      {
+        "date": "2026-09-08",
+        "type": "international_pop_up",
+        "description": "Pop-up presso Lodenfrey, Monaco, 8–20 settembre.",
+        "url": "https://www.harpersbazaar.de/fashion/blaze-milano-lodenfrey-trachtenjacke-oktoberfest-2026"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "plan-c",
+    "brand": "Plan C",
+    "score": 90,
+    "area": "Retail Merchandising / Buying / Brand-Business",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "Plan C Frame in via Manzoni ha introdotto a settembre 2026 un corner beauty multibrand, ampliando il concept retail già avviato nel 2025.",
+    "reasons": [
+      "Nuova categoria beauty settembre 2026",
+      "Concept store multi-brand Milano",
+      "Gestione assortimenti cross-category"
+    ],
+    "contact": "info@plan-c.com",
+    "contact_kind": "Email generale ufficiale, NON HR",
+    "contact_source_url": "https://plan-c.com/it/pages/contact",
+    "email_subject": "Candidatura spontanea – Retail Merchandising Plan C Frame | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito l'evoluzione di Plan C Frame e l'introduzione del corner beauty nel concept store di via Manzoni. Ho concluso Fashion Management presso Istituto Marangoni, con progetti su assortimenti, retail buying e analisi commerciale. Vorrei propormi per un eventuale ruolo junior nel merchandising o nel coordinamento degli assortimenti del concept store e del brand. Allego il CV e vi ringrazio se potrete indirizzarlo alla persona di riferimento.\nCordiali saluti, Giulia Grimaldi",
+    "source_url": "https://www.vanityfair.it/article/plan-c-framework-si-apre-al-mondo-della-bellezza",
+    "signals": [
+      {
+        "date": "2026-09-21",
+        "type": "category_expansion",
+        "description": "Plan C Frame aggiunge un corner beauty con selezione multibrand.",
+        "url": "https://www.vanityfair.it/article/plan-c-framework-si-apre-al-mondo-della-bellezza"
+      }
+    ],
+    "priority": "alta",
+    "news": [
+      {
+        "date": "2026-09-21",
+        "type": "category_expansion",
+        "description": "Plan C Frame aggiunge un corner beauty con selezione multibrand.",
+        "url": "https://www.vanityfair.it/article/plan-c-framework-si-apre-al-mondo-della-bellezza"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "fivefourfive",
+    "brand": "FiveFourFive",
+    "score": 90,
+    "area": "Retail Planning / Merchandising / Brand-Business",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "Primo negozio permanente in via Fiori Chiari a Milano, inaugurato ad aprile 2026; il marchio ha introdotto una linea continuativa Everyday e gioielli in oro 18 carati.",
+    "reasons": [
+      "Primo store permanente aprile 2026",
+      "Nuova categoria gioielli",
+      "Assortimento continuativo Everyday e drop mensili"
+    ],
+    "contact": "info@fivefourfive.it",
+    "contact_kind": "Email generale ufficiale, NON HR",
+    "contact_source_url": "https://fivefourfive.it/pages/contatti",
+    "email_subject": "Candidatura spontanea – Merchandising / Retail Planning | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito l'apertura del primo store permanente FiveFourFive a Brera e l'evoluzione del modello tra drop mensili, linea Everyday e nuova proposta di gioielli. Ho concluso Fashion Management a Istituto Marangoni, approfondendo retail buying, analisi commerciale e assortimenti. Vorrei proporre il mio profilo per un eventuale supporto junior alla pianificazione dei lanci, alla lettura delle vendite e alla gestione prodotto tra online e negozio. Allego il CV.\nGrazie, Giulia Grimaldi",
+    "source_url": "https://www.pambianconews.com/2026/04/30/fivefourfive-dal-digitale-a-brera-il-brand-dei-drop-apre-il-suo-primo-store-a-milano-482530/",
+    "signals": [
+      {
+        "date": "2026-04-30",
+        "type": "first_permanent_store",
+        "description": "Store permanente a Brera; Everyday e nuova linea gioielli.",
+        "url": "https://www.pambianconews.com/2026/04/30/fivefourfive-dal-digitale-a-brera-il-brand-dei-drop-apre-il-suo-primo-store-a-milano-482530/"
+      }
+    ],
+    "priority": "alta",
+    "news": [
+      {
+        "date": "2026-04-30",
+        "type": "first_permanent_store",
+        "description": "Store permanente a Brera; Everyday e nuova linea gioielli.",
+        "url": "https://www.pambianconews.com/2026/04/30/fivefourfive-dal-digitale-a-brera-il-brand-dei-drop-apre-il-suo-primo-store-a-milano-482530/"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "magliano",
+    "brand": "Magliano",
+    "score": 88,
+    "area": "Wholesale / Merchandising / Brand-Business",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "Il 5 agosto 2026 MondeVita ha acquisito la maggioranza di Underscore District, piattaforma dietro Magliano; il piano dichiarato riguarda sviluppo internazionale, merchandising, retail ed e-commerce. Non più indipendente nella proprietà, ma brand emergente in espansione.",
+    "reasons": [
+      "Investimento maggioritario agosto 2026",
+      "Sviluppo retail/e-commerce dichiarato",
+      "Wholesale internazionale e prima sfilata parigina 2026"
+    ],
+    "contact": "Cercare su LinkedIn Head of Merchandising / Commercial Director / Talent o Operations presso Underscore District o Magliano",
+    "contact_kind": "LinkedIn – ruolo da individuare; email pubbliche del brand solo customer care/wholesale",
+    "email_subject": "Candidatura spontanea – Merchandising / Wholesale | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho letto dell'ingresso di MondeVita in Underscore District e del piano di sviluppo di Magliano sul fronte internazionale, retail ed e-commerce. Ho concluso Fashion Management a Istituto Marangoni, con progetti su merchandising, buying e analisi commerciale. Mi piacerebbe candidarmi per un eventuale supporto junior a merchandising o wholesale durante questa fase di consolidamento. Allego il mio CV e resto disponibile per un confronto.\nCordiali saluti, Giulia Grimaldi",
+    "source_url": "https://www.prnewswire.com/mx/comunicados-de-prensa/mondevita-adquiere-una-participacion-mayoritaria-en-underscore-district-empresa-matriz-de-magliano-en-la-segunda-fase-de-la-nueva-plataforma-italiana-de-lujo-302845298.html",
+    "signals": [
+      {
+        "date": "2026-08-05",
+        "type": "investment",
+        "description": "MondeVita acquisisce maggioranza di Underscore District; focus su brand, retail, merchandising e digital.",
+        "url": "https://www.prnewswire.com/mx/comunicados-de-prensa/mondevita-adquiere-una-participacion-mayoritaria-en-underscore-district-empresa-matriz-de-magliano-en-la-segunda-fase-de-la-nueva-plataforma-italiana-de-lujo-302845298.html"
+      }
+    ],
+    "priority": "medio-alta",
+    "news": [
+      {
+        "date": "2026-08-05",
+        "type": "investment",
+        "description": "MondeVita acquisisce maggioranza di Underscore District; focus su brand, retail, merchandising e digital.",
+        "url": "https://www.prnewswire.com/mx/comunicados-de-prensa/mondevita-adquiere-una-participacion-mayoritaria-en-underscore-district-empresa-matriz-de-magliano-en-la-segunda-fase-de-la-nueva-plataforma-italiana-de-lujo-302845298.html"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "durazzi-milano",
+    "brand": "DURAZZI Milano",
+    "score": 86,
+    "area": "Product / Brand-Business / Wholesale",
+    "recommended_cv": "Merchandising | Fashion Management",
+    "why_now": "Presentazione SS27 e apertura al pubblico di Atrium in via Rosolino Pilo durante la Fashion Week del 22–27 settembre 2026: progetto di relazione diretta con community e stampa.",
+    "reasons": [
+      "Presentazione SS27 settembre 2026",
+      "Atrium aperto a eventi e collaborazioni",
+      "Piccola realtà milanese"
+    ],
+    "contact": "Cercare su LinkedIn Brand Manager / Commercial o Operations presso DURAZZI Milano",
+    "contact_kind": "LinkedIn – ruolo da individuare; info@durazzimilano.com è per ordini/appuntamenti, non recruiting",
+    "contact_source_url": "https://www.durazzimilano.com/it/contatti/",
+    "email_subject": "Candidatura spontanea – Product / Brand Operations | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito la presentazione della collezione SS27 e il progetto The Atrium Show negli spazi DURAZZI di Milano. Ho concluso Fashion Management a Istituto Marangoni e sono interessata al lavoro operativo che collega sviluppo prodotto, presentazioni di collezione e attività commerciali. Vorrei proporre il mio CV per un eventuale inserimento junior nel team prodotto o brand operations. Grazie per l'attenzione.\nGiulia Grimaldi",
+    "source_url": "https://www.nssmag.com/en/fashion/46960/for-ilenia-durazzi-fashion-needs-time",
+    "signals": [
+      {
+        "date": "2026-09-23",
+        "type": "collection_and_brand_space",
+        "description": "SS27 presentata con The Atrium Show a Milano.",
+        "url": "https://www.nssmag.com/en/fashion/46960/for-ilenia-durazzi-fashion-needs-time"
+      }
+    ],
+    "priority": "medio-alta",
+    "news": [
+      {
+        "date": "2026-09-23",
+        "type": "collection_and_brand_space",
+        "description": "SS27 presentata con The Atrium Show a Milano.",
+        "url": "https://www.nssmag.com/en/fashion/46960/for-ilenia-durazzi-fashion-needs-time"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "giuseppe-di-morabito",
+    "brand": "Giuseppe Di Morabito",
+    "score": 85,
+    "area": "Wholesale / Product Merchandising / Buying",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "Presenza nelle campagne wholesale 2026 di RG Showroom a Milano e Parigi; distribuzione internazionale già sviluppata e crescita del team documentata nel 2025. Segnale 2026 soprattutto di attività commerciale, non di nuove assunzioni.",
+    "reasons": [
+      "Campagne showroom wholesale 2026 Milano/Parigi",
+      "Rete distributiva internazionale",
+      "Espansione del team documentata in precedenza"
+    ],
+    "contact": "info@giuseppedimorabito.com",
+    "contact_kind": "Email ufficiale sede aziendale, NON recruiting",
+    "contact_source_url": "https://www.giuseppedimorabito.com/it/contatti",
+    "email_subject": "Candidatura spontanea – Merchandising / Wholesale | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho visto la presenza delle collezioni Giuseppe Di Morabito nelle campagne wholesale 2026 di RG Showroom a Milano e Parigi. Ho concluso Fashion Management a Istituto Marangoni, lavorando su progetti di retail buying, assortimenti e analisi commerciale. Mi piacerebbe contribuire in una posizione junior alle attività merchandising, prodotto o supporto wholesale. Allego il CV; vi sarei grata se poteste inoltrarlo al team competente.\nCordiali saluti, Giulia Grimaldi",
+    "source_url": "https://www.modemonline.com/img/_upload/newsletter/newsletter-1917-en.html",
+    "signals": [
+      {
+        "date": "2026-06-16",
+        "type": "wholesale_showroom",
+        "description": "Brand presente nella campagna RG Showroom SS27 a Milano e Parigi.",
+        "url": "https://milled.com/divacattiva/pitti-immagine-uomo-110-kicks-off-spotlight-on-rg-showroom-and-marziano-bello-xQihstJpJ7lIaEGp"
+      }
+    ],
+    "priority": "medio-alta",
+    "news": [
+      {
+        "date": "2026-06-16",
+        "type": "wholesale_showroom",
+        "description": "Brand presente nella campagna RG Showroom SS27 a Milano e Parigi.",
+        "url": "https://milled.com/divacattiva/pitti-immagine-uomo-110-kicks-off-spotlight-on-rg-showroom-and-marziano-bello-xQihstJpJ7lIaEGp"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "francesco-russo",
+    "brand": "Francesco Russo",
+    "score": 85,
+    "area": "Footwear Merchandising / Wholesale / Retail",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "Prima boutique milanese in via Bagutta inaugurata nell'aprile 2026, passaggio dal modello prevalentemente wholesale/e-commerce a retail diretto.",
+    "reasons": [
+      "Prima boutique Milano aprile 2026",
+      "Nuovo canale retail diretto",
+      "Brand footwear indipendente"
+    ],
+    "contact": "info@francescorusso.fr",
+    "contact_kind": "Email ufficiale info/press, NON HR",
+    "contact_source_url": "https://francescorusso.fr/pages/contacts",
+    "email_subject": "Candidatura spontanea – Footwear Merchandising | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito l'apertura della vostra prima boutique milanese in via Bagutta. Ho concluso Fashion Management presso Istituto Marangoni, con progetti su retail buying, assortimenti e performance commerciali. Vorrei proporre il mio profilo per eventuali opportunità junior tra footwear merchandising, retail e wholesale, in questa fase di sviluppo del canale diretto. Allego il CV e vi ringrazio se potrete condividerlo con la persona competente.\nCordiali saluti, Giulia Grimaldi",
+    "source_url": "https://www.pambianconews.com/2026/04/15/poker-di-aperture-nel-quadrilatero-agnona-rimowa-moynat-e-francesco-russo-480621/",
+    "signals": [
+      {
+        "date": "2026-04-15",
+        "type": "first_milan_store",
+        "description": "Prima boutique a Milano, via Bagutta.",
+        "url": "https://www.pambianconews.com/2026/04/15/poker-di-aperture-nel-quadrilatero-agnona-rimowa-moynat-e-francesco-russo-480621/"
+      }
+    ],
+    "priority": "medio-alta",
+    "news": [
+      {
+        "date": "2026-04-15",
+        "type": "first_milan_store",
+        "description": "Prima boutique a Milano, via Bagutta.",
+        "url": "https://www.pambianconews.com/2026/04/15/poker-di-aperture-nel-quadrilatero-agnona-rimowa-moynat-e-francesco-russo-480621/"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "marco-rambaldi",
+    "brand": "Marco Rambaldi",
+    "score": 83,
+    "area": "Product / Wholesale / Merchandising",
+    "recommended_cv": "Merchandising | Fashion Management",
+    "why_now": "Sfilata FW26/27 a Milano il 27 febbraio 2026 e rinnovo della collaborazione con MTT per materiali e sviluppo della collezione, annunciato il 9 marzo 2026.",
+    "reasons": [
+      "Collezione FW26/27 a Milano",
+      "Collaborazione produttiva MTT rinnovata",
+      "Rete commerciale tramite showroom BOON"
+    ],
+    "contact": "info@marco-rambaldi.com",
+    "contact_kind": "Email generale ufficiale, NON HR",
+    "contact_source_url": "https://marcorambaldi.com/pages/about-contacts",
+    "email_subject": "Candidatura spontanea – Product / Merchandising | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito la collezione FW26/27 di Marco Rambaldi e la collaborazione con MTT sui materiali. Ho concluso Fashion Management presso Istituto Marangoni e sono interessata al coordinamento prodotto e alle attività commerciali che accompagnano lo sviluppo di una collezione. Vorrei proporre il mio profilo per un eventuale supporto junior su prodotto, merchandising o wholesale. Allego il CV e resto disponibile per presentarmi.\nCordiali saluti, Giulia Grimaldi",
+    "source_url": "https://www.mtt.it/en/collaborazione/marco-rambaldi-and-mtt-collaborate-again-for-the-fall-winter-2026-collection/",
+    "signals": [
+      {
+        "date": "2026-03-09",
+        "type": "supplier_collaboration",
+        "description": "MTT rinnova la collaborazione su FW26/27.",
+        "url": "https://www.mtt.it/en/collaborazione/marco-rambaldi-and-mtt-collaborate-again-for-the-fall-winter-2026-collection/"
+      }
+    ],
+    "priority": "media",
+    "news": [
+      {
+        "date": "2026-03-09",
+        "type": "supplier_collaboration",
+        "description": "MTT rinnova la collaborazione su FW26/27.",
+        "url": "https://www.mtt.it/en/collaborazione/marco-rambaldi-and-mtt-collaborate-again-for-the-fall-winter-2026-collection/"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  },
+  {
+    "key": "aliita",
+    "brand": "ALIITA",
+    "score": 83,
+    "area": "Wholesale / Product / Retail Merchandising",
+    "recommended_cv": "Merchandising & Buying",
+    "why_now": "Shop-in-shop nel concept store Plan C Frame a Milano e pop-up internazionale a Tokyo presso Tomorrowland Lumine Shinjuku dal 9 al 19 aprile 2026.",
+    "reasons": [
+      "Shop-in-shop Milano",
+      "Pop-up Tokyo aprile 2026",
+      "Espansione distributiva internazionale"
+    ],
+    "contact": "Cercare su LinkedIn Sales Manager / Wholesale Manager / Commercial Manager ALIITA",
+    "contact_kind": "LinkedIn – ruolo da individuare; sales@aliita.com è commerciale, NON HR",
+    "contact_source_url": "https://aliita.com/it/pages/contact",
+    "email_subject": "Candidatura spontanea – Wholesale / Merchandising | Giulia Grimaldi",
+    "email_draft": "Buongiorno,\nho seguito lo sviluppo della presenza ALIITA nel concept store Plan C Frame a Milano e il pop-up di aprile a Tokyo. Ho concluso Fashion Management a Istituto Marangoni, approfondendo buying, assortimenti e analisi delle performance commerciali. Vorrei propormi per un eventuale supporto junior alle attività wholesale, prodotto o retail merchandising, in particolare nel coordinamento dei canali distributivi. Allego il mio CV.\nCordiali saluti, Giulia Grimaldi",
+    "source_url": "https://prtimes.jp/main/html/rd/p/000000891.000050309.html",
+    "signals": [
+      {
+        "date": "2026-04-07",
+        "type": "international_pop_up",
+        "description": "Pop-up ALIITA presso Tomorrowland Lumine Shinjuku, Tokyo, 9–19 aprile.",
+        "url": "https://prtimes.jp/main/html/rd/p/000000891.000050309.html"
+      },
+      {
+        "date": "2025-10-01",
+        "type": "shop_in_shop",
+        "description": "Shop-in-shop ALIITA nel Plan C Frame Milano.",
+        "url": "https://aliita.com/pages/store"
+      }
+    ],
+    "priority": "media",
+    "news": [
+      {
+        "date": "2026-04-07",
+        "type": "international_pop_up",
+        "description": "Pop-up ALIITA presso Tomorrowland Lumine Shinjuku, Tokyo, 9–19 aprile.",
+        "url": "https://prtimes.jp/main/html/rd/p/000000891.000050309.html"
+      },
+      {
+        "date": "2025-10-01",
+        "type": "shop_in_shop",
+        "description": "Shop-in-shop ALIITA nel Plan C Frame Milano.",
+        "url": "https://aliita.com/pages/store"
+      }
+    ],
+    "updated_at": "2026-11-02T15:17:41+01:00",
+    "status": "da_preparare",
+    "action": "Candidatura spontanea – revisione manuale",
+    "open_roles": 0,
+    "verification_note": "Nessuna vacancy coerente o career page strutturata emersa dalle ricerche pubbliche al 2026-11-02; non è garanzia di assenza assoluta."
+  }
+]
