@@ -291,5 +291,28 @@
     "source_name": "LinkedIn / Versace",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-gucci-rtw-product-assistant-r171944",
+    "brand": "Gucci",
+    "title": "GUCCI RTW Product Assistant Intern",
+    "location": "Milano",
+    "published_at": "2026-10-07T00:00:00+02:00",
+    "detected_at": "2026-11-02T16:47:27+01:00",
+    "priority": "MEDIA",
+    "score": 76,
+    "role_family": "Product",
+    "why_fit": "Stage HQ Ready-to-Wear Collection Coordination: coordinamento sviluppo collezioni, dati prodotto, calendari, campionari e contatti con merchandising. Diploma Fashion Management coerente. ATTENZIONE: annuncio indica colloqui ottobre 2026 e inizio novembre 2026, perciò la selezione potrebbe essere già in fase avanzata nonostante il link candidatura ufficiale sia ancora raggiungibile.",
+    "reasons": [
+      "Stage a Milano nel team Ready-to-Wear Collection Coordination",
+      "Fashion Management tra i percorsi ammessi",
+      "Coordinamento prodotto e team Merchandising",
+      "Annuncio ufficiale pubblicato 7 ottobre 2026",
+      "Colloqui previsti ottobre e inizio novembre: verificare apertura effettiva"
+    ],
+    "url": "https://careers.kering.com/careers/R171944?source=Keringcom_Slots",
+    "source_name": "Kering Careers / Gucci",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
