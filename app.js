@@ -95,7 +95,7 @@ function initHuntPush(){
 window.enablePush=enablePush;
 
 const views={alerts:["01 · Alerts","Avvisi"],hidden:["02 · Intelligence","Hidden"],fashion:["03 · Briefing","Fashion Now"],brands:["04 · Coverage","Brands"],applications:["05 · Agenda","Candidature"]};
-let state={jobs:[],signals:[],brands:[],status:{},fashion:[],spontaneous:[],market:[],contacts:[]};
+let state={jobs:[],signals:[],brands:[],status:{},fashion:[],spontaneous:[],market:[],contacts:[],chatgptAlerts:[],chatgptOutreach:[]};
 const navItems=[["alerts","Avvisi"],["hidden","Hidden"],["fashion","Fashion Now"],["brands","Brands"],["applications","Candidature"]];
 function navMarkup(){return navItems.map(([id,label])=>`<button class="nav-btn ${id==="alerts"?"active":""}" data-view="${id}">${label}<span class="nav-badge" data-badge-for="${id}"></span></button>`).join("")}
 document.getElementById("desktopNav").innerHTML=navMarkup();document.getElementById("mobileNav").innerHTML=navMarkup();
@@ -109,7 +109,22 @@ document.getElementById("addApplication").onclick=addApplication;
 
 function switchView(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));document.getElementById("sectionEyebrow").textContent=views[id][0];document.getElementById("sectionTitle").textContent=views[id][1]}
 async function getJSON(path,fallback){try{const r=await fetch(path+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;return await r.json()}catch{return fallback}}
-async function load(){const [jobs,signals,brands,status,fashion,spontaneous,market,contacts]=await Promise.all([getJSON("./data/jobs.json",[]),getJSON("./data/signals.json",[]),getJSON("./config/brands.json",[]),getJSON("./data/source_status.json",{}),getJSON("./data/fashion_news.json",[]),getJSON("./data/spontaneous.json",[]),getJSON("./data/market_pulse.json",[]),getJSON("./config/contacts.json",[])]);state={jobs:jobs.filter(validItalyJob),signals,brands,status,fashion,spontaneous,market,contacts};renderAll()}
+function mergeByKey(primary,secondary,keyFn){
+ const map=new Map();
+ [...secondary,...primary].forEach(x=>{if(!x)return;const k=keyFn(x);if(k)map.set(k,x)});
+ return [...map.values()]
+}
+async function load(){
+ const [jobs,signals,brands,status,fashion,spontaneous,market,contacts,chatgptAlerts,chatgptOutreach]=await Promise.all([
+  getJSON("./data/jobs.json",[]),getJSON("./data/signals.json",[]),getJSON("./config/brands.json",[]),getJSON("./data/source_status.json",{}),
+  getJSON("./data/fashion_news.json",[]),getJSON("./data/spontaneous.json",[]),getJSON("./data/market_pulse.json",[]),getJSON("./config/contacts.json",[]),
+  getJSON("./data/chatgpt_alerts.json",[]),getJSON("./data/chatgpt_outreach.json",[])
+ ]);
+ const mergedJobs=mergeByKey(chatgptAlerts,jobs,x=>x.url||x.key).filter(validItalyJob);
+ const mergedOutreach=mergeByKey(chatgptOutreach,spontaneous,x=>(x.brand||"").toLowerCase());
+ state={jobs:mergedJobs,signals,brands,status,fashion,spontaneous:mergedOutreach,market,contacts,chatgptAlerts,chatgptOutreach};
+ renderAll()
+}
 function validItalyJob(j){const l=(j.location||"").toLowerCase();const allowed=["milano","milan","firenze","florence","scandicci","roma","rome","londra","london","svizzera","switzerland","zurich","zürich","geneva","genève","lugano","mendrisio","basel","bâle"];return allowed.some(x=>l.includes(x))}
 function renderAll(){renderStats();renderAlerts();renderHidden();renderSpontaneous();renderMarket();renderFashion();renderBrands();renderApplications();updateIntelBadges();const t=state.status.generated_at;document.getElementById("lastScan").textContent=t?"Ultimo controllo "+relative(t):"In attesa del controllo"}
 
@@ -163,16 +178,19 @@ observeAlertReads()}
 function alertCard(j){
  const title=cleanJobTitle(j);
  const stretch=j.decision==="stretch_apply"||j.junior_fit===false||((j.years_required||0)>=2);
- const verdict=j.fit_explanation||((j.years_required||0)>=2?"Stretch da valutare con attenzione.":"Ruolo coerente con il profilo.");
+ const verdict=j.why_fit||j.fit_explanation||((j.years_required||0)>=2?"Stretch da valutare con attenzione.":"Ruolo coerente con il profilo.");
+ const priority=(j.priority||((j.score||0)>=90?"ALTA":(j.score||0)>=80?"MEDIA":"DA VALUTARE")).toUpperCase();
+ const detected=j.detected_at||j.first_seen_at;
+ const source=j.source_type==="ChatGPT HUNT"?"ChatGPT HUNT":(j.source_name||"HUNT Radar");
  return `<article class="alert-card" data-alert-key="${j.key}">
- <div class="alert-top"><span class="alert-label">${alertLabel(j)}</span><span class="alert-score">${j.score}% MATCH</span></div>
+ <div class="alert-top"><span class="alert-label">${esc(priority)}</span><span class="alert-score">${j.score}% MATCH</span></div>
  <h3>${esc(j.brand)}</h3><h4>${esc(title)}</h4>
  <div class="alert-location">📍 ${esc(j.location||"")}</div>
- <div class="meta">${publishedText(j)} · ${detectedText(j)}</div>
- <div class="hunt-verdict"><strong>Perché te la lascio</strong><span>${esc(verdict)}</span></div>
- <p>${esc((j.reasons||[]).slice(0,4).join(" · "))}</p>
+ <div class="meta">${publishedText(j)} · ${detected?"Rilevata "+relative(detected):"rilevazione n/a"} · ${esc(source)}</div>
+ <div class="hunt-verdict"><strong>Perché è coerente</strong><span>${esc(verdict)}</span></div>
+ <p>${esc((j.reasons||[]).slice(0,5).join(" · "))}</p>
  <div class="chips"><span class="chip">${esc(j.role_family||"Fashion")}</span>${stretch?'<span class="chip">STRETCH</span>':'<span class="chip high">JUNIOR FIT</span>'}</div>
- <div class="alert-actions"><button class="secondary" onclick="markApplied('${j.key}')">Ho applicato</button><button class="secondary" onclick="ignoreJob('${j.key}')">Ignora</button><a href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri annuncio</a></div>
+ <div class="alert-actions"><button class="primary" onclick="openJobDossier('${j.key}')">Apri folder candidatura</button><button class="secondary" onclick="markApplied('${j.key}')">Ho applicato</button><button class="secondary" onclick="ignoreJob('${j.key}')">Ignora</button><a href="${escAttr(j.url)}" target="_blank" rel="noopener">Candidati / annuncio</a></div>
  </article>`
 }
 
@@ -222,6 +240,44 @@ function applicationAngle(x){
  if(r.includes("social"))return "Il brand sta vivendo un momento di attenzione: non basta citare il buzz. Collegalo a prodotto, cliente, retail e crescita commerciale.";
  return "Apri la candidatura con il motivo concreto per cui questo è un buon momento per contattare il brand, poi collega il tuo profilo a merchandising, buying, planning, product e retail."
 }
+function brandFolderData(brandName){
+ const signals=state.signals.filter(y=>y.brand===brandName).sort((a,b)=>new Date(b.published_at||b.detected_at||0)-new Date(a.published_at||a.detected_at||0)).slice(0,10);
+ const news=state.fashion.filter(y=>brandMentions(y.headline,brandName)).sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0)).slice(0,8);
+ const jobs=state.jobs.filter(y=>y.brand===brandName).sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,8);
+ const brand=state.brands.find(y=>y.name===brandName);
+ const contact=state.contacts.find(y=>y.brand_id===brand?.id||y.brand===brandName)||null;
+ const outreach=state.spontaneous.find(y=>y.brand===brandName)||null;
+ return {signals,news,jobs,brand,contact,outreach}
+}
+function openJobDossier(key){
+ const j=state.jobs.find(x=>x.key===key);if(!j)return;
+ const d=brandFolderData(j.brand);
+ const signalHtml=d.signals.length?d.signals.map(y=>`<div class="dossier-item"><span class="news-topic">${esc(signalTypeLabel(y.signal_type))}</span><h4>${esc(y.headline)}</h4><p>${esc(y.reason||"Segnale utile da conoscere.")}</p>${y.url?`<a href="${escAttr(y.url)}" target="_blank" rel="noopener">Fonte</a>`:""}</div>`).join(""):`<p class="dossier-muted">Nessun segnale recente specifico.</p>`;
+ const newsHtml=d.news.length?d.news.map(y=>`<div class="dossier-item"><h4>${esc(y.headline)}</h4><div class="meta">${esc(y.source||"News")} · ${relative(y.published_at)}</div><p>${esc(y.why_it_matters||"Notizia utile per preparare candidatura e colloquio.")}</p>${y.url?`<a href="${escAttr(y.url)}" target="_blank" rel="noopener">Leggi</a>`:""}</div>`).join(""):`<p class="dossier-muted">Nessuna news specifica recente.</p>`;
+ const otherJobs=d.jobs.filter(x=>x.key!==key).map(y=>`<div class="dossier-job"><div><strong>${esc(cleanJobTitle(y))}</strong><span>${esc(y.location||"")} · ${y.score}% match</span></div><a href="${escAttr(y.url)}" target="_blank">Apri</a></div>`).join("");
+ const cv=j.recommended_cv==="fashion_mgmt"?"Fashion Management":"Merchandising & Buying";
+ const why=j.why_fit||j.fit_explanation||(j.reasons||[]).join(" · ");
+ const outreach=d.outreach;
+ const mailDraft=outreach?.email_draft||`Buongiorno,\n\nvi contatto in riferimento alla posizione ${cleanJobTitle(j)} a ${j.location||"Milano"}. Ho concluso Fashion Management presso Istituto Marangoni e sono interessata a sviluppare il mio percorso nelle aree merchandising, buying, product e retail.\n\nLe attività descritte nella posizione sono particolarmente coerenti con il mio interesse per analisi commerciale del prodotto, assortimenti e performance retail.\n\nAllego il mio CV e resto disponibile per un confronto.\n\nCordiali saluti,\nGiulia Grimaldi`;
+ document.getElementById("dossierContent").innerHTML=`
+   <span class="hero-kicker">HUNT APPLICATION FOLDER</span>
+   <h2 id="dossierTitle">${esc(j.brand)} — ${esc(cleanJobTitle(j))}</h2>
+   <div class="dossier-score">${j.score}<span>/100</span></div>
+   <section class="dossier-verdict"><strong>Perché candidarti</strong><p>${esc(why)}</p><div class="signal-stack">${(j.reasons||[]).slice(0,6).map(r=>`<span>${esc(r)}</span>`).join("")}</div></section>
+   <section class="dossier-section"><h3>Scheda candidatura</h3><div class="dossier-plan">
+     <div><b>Priorità</b><span>${esc(j.priority||((j.score||0)>=90?"ALTA":"MEDIA"))}</span></div>
+     <div><b>Area</b><span>${esc(j.role_family||"Fashion / Luxury")}</span></div>
+     <div><b>CV</b><span>${esc(cv)}</span></div>
+     <div><b>Pubblicazione</b><span>${esc(j.published_at?new Date(j.published_at).toLocaleDateString("it-IT"):"Da verificare")}</span></div>
+   </div></section>
+   <section class="dossier-section"><h3>Email / messaggio di partenza</h3><div class="email-draft"><pre>${esc(mailDraft)}</pre></div></section>
+   <section class="dossier-section"><h3>News e segnali da sapere prima di candidarti</h3>${signalHtml}${newsHtml}</section>
+   <section class="dossier-section"><h3>Altre posizioni del brand</h3>${otherJobs||'<p class="dossier-muted">Nessun’altra posizione coerente rilevata.</p>'}</section>
+   <div class="dossier-actions"><a class="primary dossier-apply-link" href="${escAttr(j.url)}" target="_blank" rel="noopener">Apri candidatura</a><button class="secondary" onclick="markApplied('${j.key}')">✓ Ho applicato</button><button class="secondary" onclick="closeDossier()">Chiudi</button></div>
+ `;
+ const modal=document.getElementById("dossierModal");modal.hidden=false;document.body.classList.add("modal-open")
+}
+window.openJobDossier=openJobDossier;
 function dossierData(key){
  const x=state.spontaneous.find(y=>y.key===key);if(!x)return null;
  const signals=state.signals.filter(y=>y.brand===x.brand).sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0)).slice(0,8);
