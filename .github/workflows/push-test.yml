@@ -10,21 +10,70 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 1
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
-      - name: Send OneSignal test push
+      - name: Inspect OneSignal subscriptions and send direct test
         env:
           ONESIGNAL_APP_ID: "86341c64-d62a-4983-9e20-c242566d14ff"
           ONESIGNAL_REST_API_KEY: ${{ secrets.ONESIGNAL_REST_API_KEY }}
         run: |
           python - <<'PY'
-          import json, os, urllib.request, urllib.error
+          import csv, gzip, io, json, os, time, urllib.request, urllib.error
+
+          app_id=os.environ["ONESIGNAL_APP_ID"]
+          api_key=os.environ["ONESIGNAL_REST_API_KEY"]
+          headers={"Authorization":"Key "+api_key,"Content-Type":"application/json"}
+
+          export_req=urllib.request.Request(
+            "https://api.onesignal.com/players/csv_export?app_id="+app_id,
+            data=json.dumps({"extra_fields":["notification_types","unsubscribed_at","onesignal_id"]}).encode(),
+            headers=headers,
+            method="POST"
+          )
+          with urllib.request.urlopen(export_req,timeout=20) as r:
+            export_body=json.loads(r.read().decode())
+          url=export_body["csv_file_url"]
+
+          raw=None
+          for _ in range(12):
+            try:
+              with urllib.request.urlopen(url,timeout=20) as r:
+                raw=r.read()
+              break
+            except urllib.error.HTTPError as e:
+              if e.code!=404: raise
+              time.sleep(1)
+          if raw is None:
+            raise SystemExit("Subscription export was not ready")
+
+          text=gzip.decompress(raw).decode("utf-8-sig")
+          rows=list(csv.DictReader(io.StringIO(text)))
+          push_types={"5","7","17","8","12"}
+          def subscribed(row):
+            invalid=str(row.get("invalid_identifier","")).strip().lower()
+            return invalid in ("","f","false","0","none")
+          push_rows=[r for r in rows if str(r.get("device_type","")) in push_types]
+          valid=[r for r in push_rows if subscribed(r)]
+
+          print(f"OneSignal subscriptions: total={len(rows)}, web_push={len(push_rows)}, subscribed_web_push={len(valid)}")
+          for r in push_rows:
+            print("subscription summary:",
+                  "device_type="+str(r.get("device_type","")),
+                  "subscribed="+str(subscribed(r)),
+                  "notification_types="+str(r.get("notification_types","")),
+                  "created_at="+str(r.get("created_at","")),
+                  "last_active="+str(r.get("last_active","")))
+
+          if not valid:
+            raise SystemExit("No subscribed web push subscription exists in OneSignal")
+
           cfg=json.load(open("config/push_test.json"))
+          ids=[r["id"] for r in valid if r.get("id")]
           payload={
-            "app_id":os.environ["ONESIGNAL_APP_ID"],
+            "app_id":app_id,
             "target_channel":"push",
-            "included_segments":["Subscribed Users"],
+            "include_subscription_ids":ids,
             "headings":{"it":"✅ HUNT · Test notifiche","en":"✅ HUNT · Push test"},
             "contents":{"it":"Se leggi questo messaggio, le notifiche HUNT funzionano.","en":"If you see this, HUNT push notifications work."},
             "url":"https://giuliagrimaldi135-wq.github.io/HUNT-/",
@@ -33,18 +82,13 @@ jobs:
           req=urllib.request.Request(
             "https://api.onesignal.com/notifications",
             data=json.dumps(payload).encode(),
-            headers={"Authorization":"Key "+os.environ["ONESIGNAL_REST_API_KEY"],"Content-Type":"application/json"},
+            headers=headers,
             method="POST"
           )
-          try:
-            with urllib.request.urlopen(req,timeout=20) as r:
-              body=r.read().decode()
-              print("OneSignal response",r.status,body)
-              data=json.loads(body)
-              if not data.get("id"):
-                raise SystemExit("OneSignal did not create notification: "+body)
-          except urllib.error.HTTPError as e:
-            body=e.read().decode()
-            print("OneSignal HTTP error",e.code,body)
-            raise
+          with urllib.request.urlopen(req,timeout=20) as r:
+            body=r.read().decode()
+            print("OneSignal send response",r.status,body)
+            data=json.loads(body)
+            if not data.get("id"):
+              raise SystemExit("OneSignal did not create notification: "+body)
           PY
