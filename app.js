@@ -46,7 +46,9 @@ function initHuntPush(){
       OneSignal.User.PushSubscription.addEventListener("change",updatePushUI);
       await updatePushUI();
     }catch(e){
-      pushNotice("Notifiche non ancora pronte su questo dispositivo.","warn");
+      const detail=(e&&e.message)?e.message:String(e||"errore sconosciuto");
+      pushNotice("Errore notifiche: "+detail,"warn");
+      console.error("OneSignal init error",e);
     }
   });
 }
