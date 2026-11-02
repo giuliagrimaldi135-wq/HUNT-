@@ -221,5 +221,52 @@
     "source_name": "Richemont Workday",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-aspesi-wholesale-intern-4478393523",
+    "brand": "ASPESI",
+    "title": "Wholesale Intern",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T15:23:36+01:00",
+    "priority": "ALTA",
+    "score": 92,
+    "role_family": "Wholesale",
+    "why_fit": "Stage extracurriculare nel Wholesale fashion: supporto campagne vendita e showroom, ordini clienti, sell-out key account, reportistica e coordinamento consegne. L'esperienza pregressa in showroom fashion di Giulia è direttamente pertinente.",
+    "reasons": [
+      "Stage extracurriculare di 6 mesi",
+      "Campagne vendita e showroom",
+      "Analisi sell-out key account",
+      "Gestione ordini wholesale",
+      "Milano centro",
+      "700 € netti/mese e ticket 7 €"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/wholesale-intern-at-aspesi-4478393523",
+    "source_name": "LinkedIn / ASPESI",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-ladoublej-wholesale-sales-intern-4414350476",
+    "brand": "La DoubleJ",
+    "title": "Wholesale Sales Intern",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-02T15:23:36+01:00",
+    "priority": "ALTA",
+    "score": 88,
+    "role_family": "Wholesale",
+    "why_fit": "Stage wholesale fashion distinto dal ruolo Wholesale Junior Sales Coordinator già segnalato: campagne vendita, inserimento ordini, stock, riassortimenti e ricerche mercato. Coerente con precedente esperienza di Giulia in showroom e campagne vendita.",
+    "reasons": [
+      "Stage nel dipartimento Wholesale",
+      "Supporto durante i mercati e le campagne",
+      "Gestione ordini e stock",
+      "Riassortimenti",
+      "Milano"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/wholesale-sales-intern-at-la-doublej-4414350476",
+    "source_name": "LinkedIn / La DoubleJ",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
