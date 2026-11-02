@@ -125,7 +125,7 @@ async function load(){
  state={jobs:mergedJobs,signals,brands,status,fashion,spontaneous:mergedOutreach,market,contacts,chatgptAlerts,chatgptOutreach};
  renderAll()
 }
-function validItalyJob(j){const l=(j.location||"").toLowerCase();const allowed=["milano","milan","firenze","florence","scandicci","roma","rome","londra","london","svizzera","switzerland","zurich","zürich","geneva","genève","lugano","mendrisio","basel","bâle"];return allowed.some(x=>l.includes(x))}
+function validItalyJob(j){if(j.source_type==="ChatGPT HUNT")return true;const l=(j.location||"").toLowerCase();const allowed=["milano","milan","firenze","florence","scandicci","roma","rome","italia","italy","arezzo","valvigna","terranuova","bologna","venezia","venice","padova","parma","modena","torino","turin","londra","london","svizzera","switzerland","zurich","zürich","geneva","genève","lugano","mendrisio","basel","bâle"];return allowed.some(x=>l.includes(x))}
 function renderAll(){renderStats();renderAlerts();renderHidden();renderSpontaneous();renderMarket();renderFashion();renderBrands();renderApplications();updateIntelBadges();const t=state.status.generated_at;document.getElementById("lastScan").textContent=t?"Ultimo controllo "+relative(t):"In attesa del controllo"}
 
 function cleanJobTitle(j){let t=(j.title||"").trim();const b=(j.brand||"").trim();if(!b)return t;const norm=s=>s.toLowerCase().replace(/[^a-z0-9]+/g," ").trim();const bt=norm(b),tt=norm(t);if(tt.startsWith(bt+" ")){const words=b.split(/\s+/).length;t=t.split(/\s+/).slice(words).join(" ").replace(/^[-–—:·]+\s*/,"")}return t||j.title}
@@ -425,5 +425,16 @@ function renderApplications(){
 
 function relative(v){if(!v)return"n/a";const d=(Date.now()-new Date(v).getTime())/1000;if(d<60)return"ora";if(d<3600)return Math.floor(d/60)+"m fa";if(d<86400)return Math.floor(d/3600)+"h fa";return Math.floor(d/86400)+"g fa"}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}function escAttr(s){return esc(s)}
+
+let huntLastLoadedAt=Date.now();
+async function refreshHuntIfStale(force=false){
+ if(!force&&Date.now()-huntLastLoadedAt<60000)return;
+ huntLastLoadedAt=Date.now();
+ await load();
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refreshHuntIfStale(true)});
+window.addEventListener("focus",()=>refreshHuntIfStale());
+setInterval(()=>{if(document.visibilityState==="visible")refreshHuntIfStale()},300000);
+
 initHuntPush();
 load();
