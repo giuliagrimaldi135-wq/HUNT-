@@ -1,4 +1,4 @@
-import json, os, requests
+import json, os, requests, csv, gzip, io, time
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -24,10 +24,46 @@ if not app_id or not api_key:
     print("OneSignal push skipped: secret not configured")
     raise SystemExit(0)
 
+def active_subscription_ids():
+    headers={"Authorization":f"Key {api_key}","Content-Type":"application/json"}
+    try:
+        r=requests.post(
+            f"https://api.onesignal.com/players/csv_export?app_id={app_id}",
+            headers=headers,
+            json={"extra_fields":["notification_types","unsubscribed_at"]},
+            timeout=20
+        )
+        r.raise_for_status()
+        url=r.json().get("csv_file_url")
+        if not url:return []
+        raw=None
+        for _ in range(10):
+            rr=requests.get(url,timeout=20)
+            if rr.status_code==200:
+                raw=rr.content;break
+            time.sleep(1)
+        if raw is None:return []
+        rows=list(csv.DictReader(io.StringIO(gzip.decompress(raw).decode("utf-8-sig"))))
+        push_types={"5","7","8","12","17"}
+        ids=[]
+        for row in rows:
+            if str(row.get("device_type","")) not in push_types:continue
+            invalid=str(row.get("invalid_identifier","")).strip().lower()
+            if invalid not in ("","f","false","0","none"):continue
+            if row.get("id"):ids.append(row["id"])
+        return ids
+    except Exception as e:
+        print("OneSignal subscription lookup failed:",str(e)[:180])
+        return []
+
+SUBSCRIPTION_IDS=active_subscription_ids()
+print("OneSignal active push subscriptions:",len(SUBSCRIPTION_IDS))
+
 def send(prefix,key,title,body,url,data=None):
     token=prefix+":"+str(key)
     if not key or token in sent:return
-    payload={"app_id":app_id,"target_channel":"push","included_segments":["Subscribed Users"],"headings":{"it":title,"en":title},"contents":{"it":body,"en":body},"url":url or "https://giuliagrimaldi135-wq.github.io/HUNT-/","data":{"hunt_type":prefix,**(data or {})}}
+    if not SUBSCRIPTION_IDS:return
+    payload={"app_id":app_id,"target_channel":"push","include_subscription_ids":SUBSCRIPTION_IDS,"headings":{"it":title,"en":title},"contents":{"it":body,"en":body},"url":url or "https://giuliagrimaldi135-wq.github.io/HUNT-/","data":{"hunt_type":prefix,**(data or {})}}
     r=requests.post("https://api.onesignal.com/notifications",headers={"Authorization":f"Key {api_key}","Content-Type":"application/json"},json=payload,timeout=20)
     if r.ok and r.json().get("id"):
         sent.add(token);print("HUNT push sent:",title)
