@@ -35,8 +35,8 @@ function initHuntPush(){
     try{
       await OneSignal.init({
         appId:ONESIGNAL_APP_ID,
-        serviceWorkerPath:"/HUNT-/push/onesignal/OneSignalSDKWorker.js",
-        serviceWorkerParam:{scope:"/HUNT-/push/onesignal/"},
+        serviceWorkerPath:"/HUNT-/OneSignalSDKWorker.js",
+        serviceWorkerParam:{scope:"/HUNT-/"},
         autoResubscribe:true,
         notifyButton:{enable:false},
         welcomeNotification:{disable:true}
@@ -300,6 +300,5 @@ function renderApplications(){
 
 function relative(v){if(!v)return"n/a";const d=(Date.now()-new Date(v).getTime())/1000;if(d<60)return"ora";if(d<3600)return Math.floor(d/60)+"m fa";if(d<86400)return Math.floor(d/3600)+"h fa";return Math.floor(d/86400)+"g fa"}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}function escAttr(s){return esc(s)}
-if("serviceWorker" in navigator){let refreshing=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(refreshing)return;refreshing=true;location.reload()});navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>{reg.update().catch(()=>{});setInterval(()=>reg.update().catch(()=>{}),60000)}).catch(()=>{})}
 initHuntPush();
 load();
