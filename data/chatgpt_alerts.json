@@ -1,0 +1,60 @@
+[
+  {
+    "key": "chatgpt-stella-wholesale-20261015",
+    "brand": "Stella McCartney",
+    "title": "Wholesale Coordinator",
+    "location": "Milano",
+    "published_at": "2026-10-15T00:00:00+00:00",
+    "detected_at": "2026-11-02T11:11:47+00:00",
+    "first_seen_at": "2026-11-02T11:11:47+00:00",
+    "last_seen_at": "2026-11-02T11:11:47+00:00",
+    "priority": "ALTA",
+    "score": 92,
+    "role_family": "Wholesale",
+    "why_fit": "Supporto wholesale molto vicino al profilo: sell-in/sell-out, bestseller, ordini, campagne vendita e assortimenti. L'esperienza fashion/luxury/wholesale è indicata come vantaggio, non come requisito rigido.",
+    "fit_explanation": "Posizione junior/early-career molto coerente con Wholesale e merchandising commerciale.",
+    "reasons": [
+      "Analisi sell-in/sell-out",
+      "Bestseller e slow movers",
+      "Campagne wholesale",
+      "Gestione ordini",
+      "Milano"
+    ],
+    "url": "https://it.fashionjobs.com/lavoro/stella-mccartney/Wholesale-coordinator%2C12232824.html",
+    "source_name": "FashionJobs / Stella McCartney",
+    "source_type": "ChatGPT HUNT",
+    "provider": "chatgpt_web",
+    "recommended_cv": "merch_buying",
+    "decision": "strong",
+    "junior_fit": true
+  },
+  {
+    "key": "chatgpt-armani-ea7-area-management-20261027",
+    "brand": "Giorgio Armani",
+    "title": "Area Management Intern EA7",
+    "location": "Milano",
+    "published_at": "2026-10-27T00:00:00+00:00",
+    "detected_at": "2026-11-02T11:11:47+00:00",
+    "first_seen_at": "2026-11-02T11:11:47+00:00",
+    "last_seen_at": "2026-11-02T11:11:47+00:00",
+    "priority": "MEDIA",
+    "score": 82,
+    "role_family": "Wholesale",
+    "why_fit": "Stage nel team Sales/Wholesale EA7 con analisi KPI, mercati internazionali, showroom e visual merchandising. È più commerciale del Retail Merchandising puro, ma resta coerente con Wholesale Management.",
+    "fit_explanation": "Buona opportunità adiacente per esperienza commerciale internazionale e analisi performance.",
+    "reasons": [
+      "Stage",
+      "Wholesale EA7",
+      "Analisi KPI",
+      "Mercati internazionali",
+      "Milano"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/area-management-intern-ea7-at-giorgio-armani-4484034634",
+    "source_name": "LinkedIn / Giorgio Armani",
+    "source_type": "ChatGPT HUNT",
+    "provider": "chatgpt_web",
+    "recommended_cv": "merch_buying",
+    "decision": "adjacent",
+    "junior_fit": true
+  }
+]
