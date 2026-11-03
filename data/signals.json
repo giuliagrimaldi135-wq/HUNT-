@@ -234,6 +234,19 @@
     "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOMU9XRDFOd2tIanI4SHFSVXBucnlOcXVPN01rMEpseEt0N2JUOFlqSkluNkFRZTk4U2hBdVhzd1NRYjBpN01FdUtfRWtQNkdWdWZxNkZzRnVJZ3ZrU25maWh4SHcyRU5QTmxKUVctU3FTRWlxLU5xRVB5X2VmdXh1bzJySW5WalNuX1BDenRFVWdkcjJuSVktX2l1ZVlkTUxmQ3JjYUdDVXB1bTFPenplTlRfMlJKY2RFb3ZjVmpLenhPdlk?oc=5"
   },
   {
+    "key": "ce33a02097c117afa7e4",
+    "brand": "Moncler",
+    "headline": "I ricavi del Gruppo Moncler crescono del 6% nei primi nove mesi del 2026 - FashionUnited",
+    "signal_type": "financial_momentum",
+    "score": 75,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta comunicando risultati, ricavi o investimenti. Per te conta perché performance e budget possono incidere su aperture, assortimenti, retail e hiring.",
+    "detected_at": "2026-11-03T00:01:42.855482+00:00",
+    "published_at": "2026-10-21T16:28:45+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNTkZPTmFUbzhoZFFab0JxZS1FckJ4bDh5b1dxY1BKZFpESDJGRVlCdVdqMDVSNV9LbmlWRWNpQW95YUtiWUhWeGpOSE5xOUk4Y0JvUWZaM3lsbUpQVWVDOGdRQUFEbTUwTk5BSzNLa0F6YzVKYjRicTVfUlFJVnd2LWxxaEFCZjZoeGVTd1Z1LXh3TVBHQmZERkZHaFpLYmdIY283M1A0djJjZkFHYnVDdXI4dTJMRHNfaG5JRjdxdlBYUQ?oc=5"
+  },
+  {
     "key": "083e2c898836e8e07b3f",
     "brand": "Moncler",
     "headline": "Moncler: nel Q3 fatturato stabile, frenato dal calo della spesa turistica in Europa - FashionNetwork Italia",
@@ -401,6 +414,19 @@
     "published_at": "2026-10-09T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQeVhCWXoyNUlQN3JpckRMVmRjM25iT1NHcV9sV1RtcDVMR0JfSVh5cXE5czRoTUtoeXVHeUtCNFR3OHdKYWZaRnpGQkZsTzd5TmRsWm1MTnRDVzdvZURoVjM1RzNqSVRYMXNFQlNPUnNIaVZCSnctTTJGTFR5a0ZPT3NYMWdwNWc3LVZiaVBINElUZmJoX0ZxY3BXbXNIaDJ2bEd2MGdXTkp3UjBGOWpuZ0tSTEJlZ3gz?oc=5"
+  },
+  {
+    "key": "72396b338615ba90fb05",
+    "brand": "Moncler",
+    "headline": "In giro per Parigi con le presentazioni delle collezioni di Ganni, Ami, Time e Moncler - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-03T00:01:42.855482+00:00",
+    "published_at": "2026-10-09T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPdlJXTG43TTRIQ05DMmEyT1lENEVLRTdZZF8yVjZOLUF2QlRLTXVXN01ZVTg4LWRwM0Z6RDBnaTYzVDl6am81TXV2T1lPTW1WZWlRWVZweG85eTRybkVhQmVHakw2NDFocV9FMDdfV1VaUEtjRzhMbzFmRjdrVG1xXzhyeTl3Tzk3OUJtWWplNGliV2tRbHBDVlREa2dwa3ItUXR3Y1BRNEp0SEVhY3J0bThCajlaMDFwLWhTQXBTc3ItcWR4Zjc2NHhjWUM?oc=5"
   },
   {
     "key": "4a77f44d9f1b4a8504b8",
@@ -1441,6 +1467,19 @@
     "published_at": "2026-09-25T20:34:05+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNUVVLSnBBWXRCaThkQ1VaOWhJV0lOZXQ4QkhnbVRDdlJEMVAyTVdfTkUzZnJFdDVfemtTMzlEUHVscE9ZUVpyak5rVGh1azlzSGtfcC1oZHBReGRqY2FYTVA5TkVQR0VKcmpsRjJ2Y3RhYTI1UzZxMFFLemd5YmZXT2doTmxyZG5KNWpuQ3V5cy0?oc=5"
+  },
+  {
+    "key": "fc69fdc1254ab4f5e1d5",
+    "brand": "Gucci",
+    "headline": "Gucci - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-03T00:01:42.855482+00:00",
+    "published_at": "2026-09-25T19:43:41+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE1nNDJ6anV5OHJYNE1qVXpYcjhaS1lrQ29rMmpIVDlYenREYUpGdEpxd3U4LUdUeUE1ZDdhdXJ4SEhVMkFEcElnNURjemU1VVJxUXotRlRySVVsMWhWN05IZzY2ZUdCUFMtNm1hd3VjSQ?oc=5"
   },
   {
     "key": "7b61a3c035155796801a",
