@@ -647,5 +647,33 @@
     "source_name": "L'OCCITANE Italia / Indeed; pagina diretta vacancy BeBee",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-gucci-mrtw-collection-merchandising-20261103",
+    "brand": "Gucci",
+    "title": "GUCCI MRTW Collection Merchandising Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-03T00:00:00+01:00",
+    "detected_at": "2026-11-03T13:13:37+01:00",
+    "first_seen_at": "2026-11-03T13:13:37+01:00",
+    "last_seen_at": "2026-11-03T13:13:37+01:00",
+    "priority": "ALTA",
+    "score": 88,
+    "role_family": "Collection Merchandising / Product",
+    "why_fit": "Stage nell'ufficio Merchandising Gucci dedicato al menswear ready-to-wear: ricerca trend e competitor, aggiornamento line list e database collezioni, supporto campagne vendita e analisi dei dati di vendita. Allineato alla formazione Fashion Management e all'esperienza showroom di Giulia, pur essendo Collection Merchandising e non Retail Merchandising.",
+    "reasons": [
+      "Stage entry-level aperto a neolaureati entro due anni",
+      "Merchandising prodotto menswear ready-to-wear",
+      "Trend e competitor analysis, prodotti e prezzi",
+      "Line list e database collezioni",
+      "Supporto campagne vendita e showroom",
+      "Sede Milano; inglese, Excel e PowerPoint"
+    ],
+    "url": "https://www.kering.com/fr/talent/offres-d-emploi/europe/gucci-mrtw-collection-merchandising-intern/",
+    "source_name": "Kering Careers – Gucci",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying",
+    "vacancy_id": "gucci-mrtw-collection-merchandising-intern",
+    "notes": "Pubblicato il 03/11/2026 sul portale ufficiale Kering. Distinto dal precedente GUCCI RTW Product Assistant Intern e dalle due posizioni Gucci già segnalate in Women's Shoes Retail Merchandising e Costume Jewelry Merchandising. Rimborso 750 EUR lordi/mese e mensa gratuita."
   }
 ]
