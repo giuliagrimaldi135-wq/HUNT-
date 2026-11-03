@@ -23,7 +23,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T19:05:59.550269+00:00",
-    "last_seen_at": "2026-11-03T10:23:25.330246+00:00"
+    "last_seen_at": "2026-11-03T11:17:39.392225+00:00"
   },
   {
     "key": "95f862d1d88219d8bae1",
@@ -49,7 +49,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T19:05:59.550269+00:00",
-    "last_seen_at": "2026-11-03T10:23:25.330246+00:00"
+    "last_seen_at": "2026-11-03T11:17:39.392225+00:00"
   },
   {
     "key": "32d919cc7b9dd57dfd13",
@@ -75,7 +75,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
-    "last_seen_at": "2026-11-03T10:23:25.330246+00:00"
+    "last_seen_at": "2026-11-03T11:17:39.392225+00:00"
   },
   {
     "key": "87ad6510dd6b0946c03c",
@@ -101,7 +101,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-02T15:32:50.971442+00:00",
-    "last_seen_at": "2026-11-03T10:23:25.330246+00:00"
+    "last_seen_at": "2026-11-03T11:17:39.392225+00:00"
   },
   {
     "key": "3b68746f9f584b0a711f",
@@ -129,7 +129,7 @@
     "years_required": 2,
     "junior_fit": false,
     "first_seen_at": "2026-11-03T10:23:25.330246+00:00",
-    "last_seen_at": "2026-11-03T10:23:25.330246+00:00"
+    "last_seen_at": "2026-11-03T11:17:39.392225+00:00"
   },
   {
     "key": "b9145e91275901c9339c",
@@ -155,6 +155,6 @@
     "years_required": 1,
     "junior_fit": false,
     "first_seen_at": "2026-11-03T02:37:56.737226+00:00",
-    "last_seen_at": "2026-11-03T10:23:25.330246+00:00"
+    "last_seen_at": "2026-11-03T11:17:39.392225+00:00"
   }
 ]
