@@ -1,298 +1,298 @@
 {
-  "generated_at": "2026-11-03T14:09:16.799745+00:00",
+  "generated_at": "2026-11-03T14:59:08.520257+00:00",
   "sources": {
     "gucci": {
       "ok": true,
       "http": 200,
       "candidates": 10,
       "items": 2,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "bottega-veneta": {
       "ok": true,
       "http": 200,
       "candidates": 12,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "saint-laurent": {
       "ok": true,
       "http": 200,
       "candidates": 4,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "kering": {
       "ok": true,
       "http": 200,
       "candidates": 4,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "prada-group": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "zegna": {
       "ok": true,
       "http": 200,
       "candidates": 4,
       "items": 1,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "louis-vuitton": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "dior": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "fendi": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "loro-piana": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "bulgari": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "celine": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "loewe": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "givenchy": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "valentino": {
       "ok": true,
       "http": 200,
       "candidates": 32,
       "items": 3,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "moncler": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "stone-island": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "ferragamo": {
       "ok": false,
       "error": "403 Client Error: Forbidden for url: https://www.ferragamo.com/shop/eu/en/sf/work-with-us",
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "armani": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "dolce-gabbana": {
       "ok": true,
       "http": 200,
       "candidates": 4,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "versace": {
       "ok": false,
       "error": "403 Client Error: Forbidden for url: https://www.versace.com/it/it/a-proposito-di-noi/careers.html",
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "tods": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "hogan": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "roger-vivier": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "etro": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "marni": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "jil-sander": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "maison-margiela": {
       "ok": true,
       "http": 200,
       "candidates": 8,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "diesel": {
       "ok": true,
       "http": 200,
       "candidates": 2,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "moschino": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "pucci": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "max-mara": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "sportmax": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "missoni": {
       "ok": false,
       "error": "403 Client Error: Forbidden for url: https://www.missoni.com/it-it/careers.html",
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "golden-goose": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "bally": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "burberry": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "pinko": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "coccinelle": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "furla": {
       "ok": false,
       "error": "404 Client Error: Not Found for url: https://www.furla.com/at/de/eshop/work-with-us",
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "patrizia-pepe": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "philosophy": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     },
     "alberta-ferretti": {
       "ok": true,
       "http": 200,
       "candidates": 0,
       "items": 0,
-      "checked_at": "2026-11-03T14:09:16.799745+00:00"
+      "checked_at": "2026-11-03T14:59:08.520257+00:00"
     }
   }
 }
