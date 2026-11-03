@@ -675,5 +675,32 @@
     "recommended_cv": "merch_buying",
     "vacancy_id": "gucci-mrtw-collection-merchandising-intern",
     "notes": "Pubblicato il 03/11/2026 sul portale ufficiale Kering. Distinto dal precedente GUCCI RTW Product Assistant Intern e dalle due posizioni Gucci già segnalate in Women's Shoes Retail Merchandising e Costume Jewelry Merchandising. Rimborso 750 EUR lordi/mese e mensa gratuita."
+  },
+  {
+    "key": "hunt-prada-supply-chain-retail-specialist-rtw-21348",
+    "brand": "Prada Group",
+    "title": "Supply Chain Retail Specialist RTW",
+    "location": "Terranuova Bracciolini (AR), Italia",
+    "published_at": "2026-10-30T00:00:00+01:00",
+    "detected_at": "2026-11-03T14:05:38+01:00",
+    "priority": "MEDIA",
+    "score": 78,
+    "role_family": "Allocation / Replenishment / Retail Operations",
+    "why_fit": "Ruolo junior di 12 mesi nel fashion luxury dedicato alla gestione degli ordini Retail WW, all'allocation e al replenishment dei prodotti RTW, al monitoraggio stock e al supporto delle campagne acquisti. Le competenze di Fashion Management e l'esperienza di showroom di Giulia sono affini alle attività prodotto e retail; da valutare il requisito di laurea in Economia/Management o discipline affini e la breve esperienza specifica richiesta. Sede in provincia di Arezzo, non Milano.",
+    "reasons": [
+      "Pubblicazione ufficiale Prada Group del 30 ottobre 2026, ID 21348",
+      "Allocation e replenishment per boutique Country e Worldwide",
+      "Monitoraggio ordini, stock, trasferimenti tra negozi e report Retail",
+      "Supporto alla campagna acquisti e alle priorità post-showroom",
+      "Contratto a tempo determinato di 12 mesi con RAL 25.000–26.000 euro",
+      "Richiesti laurea in Economia, Management, Statistica o Ingegneria Gestionale e breve esperienza specifica: compatibilità formale da valutare",
+      "Sede Terranuova Bracciolini (Arezzo), quindi trasferimento necessario rispetto a Milano"
+    ],
+    "url": "https://jobs.pradagroup.com/job/Terranuova-Bracciolini-Supply-Chain-Retail-Specialist-RTW/1452997933/",
+    "source_name": "Prada Group Careers – vacancy ufficiale ID 21348",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying",
+    "vacancy_id": "21348",
+    "notes": "Pagina ufficiale con pulsante APPLY NOW, verificata il 03/11/2026. Non è una posizione BI/controlling: le responsabilità sono operative di allocation, replenishment e retail supply chain."
   }
 ]
