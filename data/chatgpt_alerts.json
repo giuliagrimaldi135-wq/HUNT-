@@ -529,5 +529,30 @@
     "source_name": "Richemont Careers / Buccellati",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-valentino-econcession-account-store-management-4464636768",
+    "brand": "Valentino",
+    "title": "E-Concession Account & Store Management Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-09-08T00:00:00+02:00",
+    "detected_at": "2026-11-03T07:47:54+01:00",
+    "priority": "MEDIA",
+    "score": 84,
+    "role_family": "E-commerce Merchandising",
+    "why_fit": "Stage nel team e-Business Commercial Valentino a Milano: monitoraggio performance partner e-concession, accuratezza catalogo e visibilità prodotti, opportunità di assortimento, lanci stagionali e collaborazione con Buying e Merchandising. Fashion Business tra i percorsi ammessi; più orientato a e-commerce account/store operations rispetto al Retail Merchandising puro. Data 8 settembre 2026 indicata da aggregatore, non verificata come data originale ufficiale; post recente di una professionista Valentino invita a candidarsi.",
+    "reasons": [
+      "Stage luxury e-commerce a Milano",
+      "Gestione catalogo, product visibility e assortimenti su marketplace luxury",
+      "Analisi performance e-concession e lanci stagionali",
+      "Collaborazione con team Buying, Merchandising e Marketing",
+      "Fashion Business tra i titoli ammessi; precedente esperienza fashion è un plus",
+      "Annuncio LinkedIn diretto ID 4464636768 e post Valentino recente con invito a candidarsi",
+      "Data di pubblicazione 08/09/2026 da fonte secondaria, non confermata dall'azienda"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/e-concession-account-store-management-intern-at-valentino-4464636768",
+    "source_name": "LinkedIn / Valentino (ID 4464636768); data secondaria CercoLavoro; post pubblico Valentino",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
