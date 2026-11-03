@@ -505,5 +505,29 @@
     "source_name": "Zegna Careers / LinkedIn (ID 4486411762)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-buccellati-product-merchandising-jr135580",
+    "brand": "Buccellati",
+    "title": "Product Merchandising Trainee",
+    "location": "Milano",
+    "published_at": null,
+    "detected_at": "2026-11-03T05:50:56+01:00",
+    "priority": "ALTA",
+    "score": 94,
+    "role_family": "Product",
+    "why_fit": "Stage Product Merchandising in maison di alta gioielleria a Milano: analisi performance prodotto, assortimenti boutique, stock, posizionamento e pricing; esperienza precedente anche breve in marketing apprezzata, non obbligatoria. Coerente con Fashion Management e l'interesse di Giulia per merchandising e buying.",
+    "reasons": [
+      "Assortimenti boutique e model stock",
+      "Analisi vendite, trend e benchmark competitor",
+      "Pricing e posizionamento prodotto",
+      "Stage aperto a profili early-career",
+      "Milano",
+      "Annuncio ufficiale Richemont con candidatura diretta"
+    ],
+    "url": "https://careers.richemont.com/en/jobs/jr135580/product-merchandising-trainee/",
+    "source_name": "Richemont Careers / Buccellati",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
