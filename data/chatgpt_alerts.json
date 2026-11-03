@@ -554,5 +554,74 @@
     "source_name": "LinkedIn / Valentino (ID 4464636768); data secondaria CercoLavoro; post pubblico Valentino",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-armani-eyewear-licensing-12209303",
+    "brand": "Giorgio Armani",
+    "title": "Eyewear Licensing Intern",
+    "location": "Milano, Italia",
+    "published_at": null,
+    "detected_at": "2026-11-03T10:27:57+01:00",
+    "priority": "MEDIA",
+    "score": 83,
+    "role_family": "Product",
+    "why_fit": "Stage luxury nell'area licenze eyewear con analisi delle categorie e collezioni, supporto ai lanci prodotto, selezione articoli, visual merchandising e attivazioni trade marketing. Coerente con Fashion Management e la precedente esperienza showroom, anche se il ruolo comprende PR e comunicazione.",
+    "reasons": [
+      "Stage full-time a Milano, esperienza richiesta inferiore a due anni",
+      "Analisi collezioni, trend e competitor eyewear",
+      "Supporto merchandising e selezione prodotto",
+      "Trade marketing e visual merchandising",
+      "Aggiornamento FashionJobs 09/10/2026; pubblicazione originale non dichiarata"
+    ],
+    "url": "https://it.fashionjobs.com/lavoro/giorgio-armani-s-p-a-/Eyewear-licensing-intern,12209303.html",
+    "source_name": "FashionJobs / Giorgio Armani (vacancy 12209303)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-armani-watches-jewelry-licensing-12298792",
+    "brand": "Giorgio Armani",
+    "title": "Watches & Jewelry Licensing Intern",
+    "location": "Milano, Italia",
+    "published_at": null,
+    "detected_at": "2026-11-03T10:27:57+01:00",
+    "priority": "MEDIA",
+    "score": 83,
+    "role_family": "Product",
+    "why_fit": "Stage dedicato alle categorie orologi e gioielli, con analisi delle collezioni, coordinamento lanci prodotto, campioni, attività di merchandising e trade marketing. È distinto dall'Eyewear Licensing Intern, pur avendo mansioni simili e una componente di comunicazione/PR.",
+    "reasons": [
+      "Stage full-time a Milano",
+      "Categorie prodotto watches & jewelry distinte dall'eyewear",
+      "Supporto alla collection architecture e ai product launch",
+      "Trade marketing e VM presso canali retail",
+      "Annuncio presente almeno dal 07/10/2026; versione attiva aggiornata 27/10/2026"
+    ],
+    "url": "https://it.fashionjobs.com/lavoro/giorgio-armani-s-p-a-/Watches-jewelry-licensing-intern,12298792.html",
+    "source_name": "FashionJobs / Giorgio Armani (vacancy 12298792)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-essilor-retail-italia-marketing-1415428533",
+    "brand": "EssilorLuxottica",
+    "title": "Retail Italia Marketing Internship",
+    "location": "Milano, Italia",
+    "published_at": null,
+    "detected_at": "2026-11-03T10:27:57+01:00",
+    "priority": "MEDIA",
+    "score": 80,
+    "role_family": "Trade Marketing",
+    "why_fit": "Stage retail marketing nel gruppo eyewear: campagne in-store, attivazioni con partner, materiali promozionali, monitoraggio delle performance e customer experience. Esperienza precedente retail/marketing solo preferenziale; meno orientato al merchandising prodotto rispetto ai ruoli prioritari.",
+    "reasons": [
+      "Candidatura diretta attiva sul portale ufficiale",
+      "Campagne e attivazioni in negozi e partner",
+      "Monitoraggio performance promozioni e customer experience",
+      "Breve stage marketing/retail indicato come preferenziale",
+      "Rimborso 900 euro lordi/mese e buoni pasto; data originale non indicata"
+    ],
+    "url": "https://careers.essilorluxottica.com/job/Milano-Retail-Italia-Marketing-Internship/1415428533/",
+    "source_name": "EssilorLuxottica Careers (vacancy 1415428533)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
