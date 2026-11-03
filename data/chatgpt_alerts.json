@@ -458,5 +458,52 @@
     "source_name": "FashionUnited / BasicNet (K-Way)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-valentino-global-outlet-intern-12752",
+    "brand": "Valentino",
+    "title": "Global Outlet Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-02T00:00:00+01:00",
+    "detected_at": "2026-11-03T05:17:31+01:00",
+    "priority": "ALTA",
+    "score": 88,
+    "role_family": "Retail Performance",
+    "why_fit": "Stage nel Global Outlet Department a Milano: analisi vendite e KPI per regione e categoria, calendario stagionale, feedback prodotto e competitor, coordinamento con Retail, CRM e Visual Merchandising. Allineato a Retail Performance e Planning, senza essere un ruolo BI/business analyst.",
+    "reasons": [
+      "Stage full-time HQ Milano",
+      "Analisi vendite e KPI per prodotto/regione",
+      "Calendario stagionale e feedback assortimenti",
+      "Collaborazione con Retail e Visual Merchandising",
+      "Vacancy ufficiale Valentino ID 12752 con Apply now; annuncio indicato 2 novembre 2026"
+    ],
+    "url": "https://jobs.valentino.com/job/Milano-Global-Outlet-Intern/1453296233/",
+    "source_name": "Valentino Careers (SAP SuccessFactors); pubblicazione 2 novembre su Cerulean",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-zegna-retail-operations-intern-4486411762",
+    "brand": "Zegna",
+    "title": "Retail Operations Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-03T00:00:00+01:00",
+    "detected_at": "2026-11-03T05:17:31+01:00",
+    "priority": "MEDIA",
+    "score": 83,
+    "role_family": "Retail Operations",
+    "why_fit": "Stage nel team Retail Operations Zegna con supporto alle boutique e outlet, monitoraggio processi e stock, implementazione di strumenti operativi, report KPI e preparazione aperture stagionali. Profilo Fashion Management pertinente; più operativo che merchandising di assortimento.",
+    "reasons": [
+      "Stage nel luxury retail a Milano",
+      "Supporto rete boutique e outlet",
+      "Monitoraggio stock, procedure e processi store",
+      "Report settimanali/mensili e indicatori performance",
+      "Rimborso 800 €/mese e buoni pasto",
+      "Annuncio LinkedIn comparso il 3 novembre; pagina careers Zegna conferma la vacancy"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/retail-operations-intern-at-zegna-4486411762",
+    "source_name": "Zegna Careers / LinkedIn (ID 4486411762)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
