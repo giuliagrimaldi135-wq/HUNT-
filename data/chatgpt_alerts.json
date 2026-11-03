@@ -410,5 +410,29 @@
     "source_name": "FashionJobs / TOM FORD (vacancy #12245283)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-kering-eyewear-trade-marketing-intern-r172921",
+    "brand": "Kering Eyewear",
+    "title": "KERING EYEWEAR Trade Marketing Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-10-28T00:00:00+01:00",
+    "detected_at": "2026-11-03T02:43:25+01:00",
+    "priority": "ALTA",
+    "score": 90,
+    "role_family": "Trade Marketing",
+    "why_fit": "Stage luxury eyewear in Trade Marketing a Milano: analisi assortimenti di categoria, sell-in/sell-out, supporto visual merchandising e campagne locali; Fashion/Retail Management esplicitamente ammesso e attività coerenti con l'interesse di Giulia per merchandising e retail.",
+    "reasons": [
+      "Stage a Milano nel gruppo luxury Kering",
+      "Analisi core assortment e visibilità prodotto nei punti vendita",
+      "Analisi sell-in/sell-out per anticipare opportunità e rischi",
+      "Supporto visual merchandising e attivazioni trade",
+      "€800 al mese più buoni pasto",
+      "Pubblicazione ufficiale 28 ottobre 2026, ID R172921; avvio 1 dicembre 2026, distinto dal precedente ciclo con avvio giugno 2026"
+    ],
+    "url": "https://careers.kering.com/careers/R172921?source=Keringcom_Slots",
+    "source_name": "Kering Careers / Kering Eyewear",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
