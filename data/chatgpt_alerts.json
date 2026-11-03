@@ -386,5 +386,29 @@
     "source_name": "DOUGLAS Careers (pagina ufficiale; candidatura SAP SuccessFactors, requisition 1321)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "hunt-tomford-menswear-product-development-12245283",
+    "brand": "TOM FORD",
+    "title": "Product Development Intern – Menswear",
+    "location": "Gallarate (VA), Lombardia",
+    "published_at": null,
+    "detected_at": "2026-11-03T01:38:35+01:00",
+    "priority": "MEDIA",
+    "score": 77,
+    "role_family": "Product",
+    "why_fit": "Stage in sviluppo prodotto uomo luxury con avanzamento collezioni, codici modello, materiali, ordini e documentazione Excel. Coerente con l'interesse per Product e con Fashion Management, ma più tecnico e meno orientato al Retail Merchandising; sede Gallarate anziché Milano. Annuncio aggiornato il 19 ottobre 2026, data originale di pubblicazione non disponibile.",
+    "reasons": [
+      "Stage curriculare o extracurriculare full-time",
+      "Sviluppo collezioni uomo e coordinamento materiali",
+      "Gestione dati prodotto e ordini con Excel",
+      "PLM e Stealth indicati solo come plus",
+      "Sede Gallarate (VA), ingresso dicembre/gennaio",
+      "Data originale di pubblicazione non verificabile"
+    ],
+    "url": "https://it.fashionjobs.com/lavoro/tom-ford/Product-development-intern,12245283.html",
+    "source_name": "FashionJobs / TOM FORD (vacancy #12245283)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
