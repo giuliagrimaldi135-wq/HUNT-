@@ -1300,6 +1300,19 @@
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1zTFdoNHJuRDlxZEpmeUg2M0JZeUxpUlJPM1hHNmRmV2hHYTFXMmhBRElBSExtcG5fU3E1aHJSQzB6UWpZTlpldzNKR2J5ZjVnaGY2OFBOTzlCQkZLRHp4N0NMbkxOLVFxcEFCdVVRZGxDdWdBd1JIaVlLcw?oc=5"
   },
   {
+    "key": "bf85db7c61c95b4c15db",
+    "brand": "Bottega Veneta",
+    "headline": "Bottega Veneta - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-03T12:05:03.605211+00:00",
+    "published_at": "2026-09-26T20:30:33+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBIdXBpYWV0TU0xdllsdHhSR2JkTUpnY2hveFJwRWxnZWR0cHY5NVR5VW52d3hpU21iTElGb0JwMU5fM1otQTNSZUJTRVRxRE9KZ2JQZkpEYVptZHh6R2dGTUx3VTFPdmR0Vmhpdy0tRjRKRDdScm1UX0NTWQ?oc=5"
+  },
+  {
     "key": "15fdecca4aee0991d4bb",
     "brand": "ACT N°1",
     "headline": "Act N 1 - FashionNetwork Italia",
