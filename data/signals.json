@@ -1742,6 +1742,19 @@
     "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE4tWUh4RktEQUxvOVVvR3pDemE5U2pwOG5ScXZQbUZDa3VLNUl5Mm9RX1lhWWhQVnRUSXFFSmp1cGlnXy1wY2lWS3F3NHdwYUhKc0FyYkVERW9sZzgtS19IZmpHWUpRTjBTYUxjTlBTbmlOZw?oc=5"
   },
   {
+    "key": "1adb76e5abe9e1400b29",
+    "brand": "Marni",
+    "headline": "Marni - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-03T09:27:56.877376+00:00",
+    "published_at": "2026-09-24T19:38:05+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5Md2Rfd1BOM1pVeUZDUU1UNGlyRldPSXpNQXZrLXNYS1g3TzhRcHRFaDNFTGdSRWdaczJORXZFZVVzNDhjR2xCbUtTa3NPaE1KSzFmTnpPcjV0SVpBemJNaXVLTzBiWVZwb1ZSRzJhaw?oc=5"
+  },
+  {
     "key": "62b49b69c09d67e4027b",
     "brand": "Alberta Ferretti",
     "headline": "Alberta Ferretti - FashionNetwork Italia",

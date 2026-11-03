@@ -1,5 +1,31 @@
 [
   {
+    "key": "68ef732d031b2af141ca",
+    "brand": "Gucci",
+    "title": "GUCCI MRTW Collection Merchandising Intern",
+    "location": "Milano",
+    "score": 100,
+    "reasons": [
+      "Ruolo coerente dal titolo",
+      "Seniority junior/intern",
+      "Località target coerente",
+      "Competenze: excel, competitor, merchandising",
+      "Priorità Milano"
+    ],
+    "role_family": "Merchandising",
+    "decision": "strong",
+    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-mrtw-collection-merchandising-intern/",
+    "source_name": "Gucci careers",
+    "provider": "career_page",
+    "published_at": "2026-11-03T00:00:00+00:00",
+    "years_required": null,
+    "junior_fit": true,
+    "first_seen_at": "2026-11-03T09:27:00.704594+00:00",
+    "last_seen_at": "2026-11-03T09:27:00.704594+00:00"
+  },
+  {
     "key": "a457cc063cb8288560d0",
     "brand": "Valentino",
     "title": "Retail Planning Intern",
@@ -23,7 +49,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T19:05:59.550269+00:00",
-    "last_seen_at": "2026-11-03T08:34:03.875837+00:00"
+    "last_seen_at": "2026-11-03T09:27:00.704594+00:00"
   },
   {
     "key": "95f862d1d88219d8bae1",
@@ -49,7 +75,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T19:05:59.550269+00:00",
-    "last_seen_at": "2026-11-03T08:34:03.875837+00:00"
+    "last_seen_at": "2026-11-03T09:27:00.704594+00:00"
   },
   {
     "key": "32d919cc7b9dd57dfd13",
@@ -75,7 +101,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
-    "last_seen_at": "2026-11-03T08:34:03.875837+00:00"
+    "last_seen_at": "2026-11-03T09:27:00.704594+00:00"
   },
   {
     "key": "87ad6510dd6b0946c03c",
@@ -101,35 +127,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-02T15:32:50.971442+00:00",
-    "last_seen_at": "2026-11-03T08:34:03.875837+00:00"
-  },
-  {
-    "key": "3b68746f9f584b0a711f",
-    "brand": "Gucci",
-    "title": "GUCCI WRTW Collection Merchandising Assistant",
-    "location": "Milano",
-    "score": 79,
-    "reasons": [
-      "Ruolo coerente dal titolo",
-      "Seniority junior/intern",
-      "Località target coerente",
-      "Competenze: excel, assortment, pricing, kpi",
-      "Priorità Milano",
-      "Esperienza richiesta rilevata: 2+ anni",
-      "Stretch sensato: 2 anni richiesti, ma ruolo junior/assistant e funzione core"
-    ],
-    "role_family": "Merchandising",
-    "decision": "stretch_apply",
-    "fit_explanation": "Candidatura comunque sensata: chiede 2 anni, ma il titolo è junior/assistant e il lavoro è molto vicino a merchandising, buying, planning, product o wholesale.",
-    "recommended_cv": "merch_buying",
-    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-wrtw-collection-merchandising-assistant/",
-    "source_name": "Gucci careers",
-    "provider": "career_page",
-    "published_at": "2026-10-19T00:00:00+00:00",
-    "years_required": 2,
-    "junior_fit": false,
-    "first_seen_at": "2026-11-01T18:33:30.537130+00:00",
-    "last_seen_at": "2026-11-03T08:34:03.875837+00:00"
+    "last_seen_at": "2026-11-03T09:27:00.704594+00:00"
   },
   {
     "key": "b9145e91275901c9339c",
@@ -155,6 +153,6 @@
     "years_required": 1,
     "junior_fit": false,
     "first_seen_at": "2026-11-03T02:37:56.737226+00:00",
-    "last_seen_at": "2026-11-03T08:34:03.875837+00:00"
+    "last_seen_at": "2026-11-03T09:27:00.704594+00:00"
   }
 ]
