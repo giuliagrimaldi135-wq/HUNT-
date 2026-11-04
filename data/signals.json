@@ -1,31 +1,5 @@
 [
   {
-    "key": "f3a312b54cfabb351756",
-    "brand": "Louis Vuitton",
-    "headline": "Louis Vuitton uomo PE27: quando l’eleganza resiste alle intemperie - Fashion Times",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-04T15:33:36.147422+00:00",
-    "published_at": "2026-11-02T10:42:59+00:00",
-    "source": "Fashion Times",
-    "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNcGx4MXV4RTFORXdlUmVxVTZxR0hCVWpWd08yU1VvOXk2R2dKNGZ3ZHJRVEdtNzM1UktBR2cxbW1vNnIwaWVTdEZfRlBIc1l2TldpbXV2SkQzVTFxN2VXNUI0MXJ3aFVkTmZGVVQ4Z0sxdUtnZlpMWU9veVFzczY3eklLdXJqZkdYSnQwdnlOcFhCSHJfQ0JEVllNQ1pqVkh0WE1v?oc=5"
-  },
-  {
-    "key": "2fdc259411e20ca67f9b",
-    "brand": "N°21",
-    "headline": "Dans l’ombre – Dietro le quinte della moda Il ruolo dello showroom director - Harper's BAZAAR",
-    "signal_type": "industry_news",
-    "score": 80,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:49:10.498756+00:00",
-    "published_at": "2026-11-01T13:39:03+00:00",
-    "source": "Harper's BAZAAR",
-    "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPODZQU2VHWXFIejRWdVhVX3JKRFE5SXVGZU5Fbnk4VTNNeVFBdHMwc2tYQWwxNGM0QUc1VVp2cGRnUFdYb3R0T2dKRzJyNmJNdnIyemxEWEd1bGx3TDVPMmJPQU4xSmdLMmlTN1lwX3FNMzVJcFR2VEVSQzQyLVNLY1VOT1dnN3pFNUNHMXhCSW5GV1U3Tnd6SQ?oc=5"
-  },
-  {
     "key": "cb9796792bdc504ce72f",
     "brand": "Golden Goose",
     "headline": "Golden Goose x Disney: la collezione Mickey & Friends - Fashion Times",
@@ -403,6 +377,19 @@
     "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPQjRBVnJ5N0FMNU0wa1RTbTZ0UUYzN2J6VzV4TWlzZUoxRDd1Y1VGN0hpNHcyOENjSXdWWnNxcU50Vm9vc2RocEszYWpUTjBEdXFWUnhxUEE2VTdtdmFFczR4aFc5el9pV29HdGRnQ0FRSC1IXzc0VV9wZm9ObHZEQ0RNdFVFUEU4X2pzLThxYlZsMVFxUzZPWWxmN1NPVDdfQmp0Q0Z2dTBIcWpHYnJJTHpKVWdhd29ZMHVqU24yNERiNzN1R2MzN0ZnVi1SSE9sLUpLX1FPSVNwQQ?oc=5"
   },
   {
+    "key": "509965f53b4c6cc918cd",
+    "brand": "Celine",
+    "headline": "Victoria Dartigues (buyer Galeries Lafayette) esalta la raffinatezza di Celine, l’emozione di Saint Laurent e la chiarezza di Prada - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T16:28:21.662737+00:00",
+    "published_at": "2026-10-14T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxNU2VOT0ZvMEJjcHVMYkh2aHF5LTdGTXB2SHhDX180R0ZMYW10MHliZWdjeVlwNGdFOVloLXZPMGNsSnozM2sxQUJyUWJDZ3JEcDRTcVduSUczbHNyeWxOM2taclBZMGZ4ZG0xcUpBMm1qYVo4cDNsNG8yRl9HanVhdFZsYngzR3lTMmJBaWxiOGdkMXJ5QTF4YnZZTDNPbm9tdV94RmZ5VjBXOWFDelpoWi13Z2h5R1NwbmF0ZnBDenRsb3B5OUVUV3lfOHBVR0pDeVRCeklQNEhMRTBVZFdzTERzb01Wdw?oc=5"
+  },
+  {
     "key": "f6c2ee085e181991cec9",
     "brand": "Dior",
     "headline": "Dior e Prada dominano i social della Fashion Week SS27 - Wondernet Magazine",
@@ -429,6 +416,19 @@
     "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxQUGw1akRZYzlnams1M2o1T0p0cVBpQ09HQ1pHVUkzZ3BLby1pQjU5VGJabWNzNkxlZkRnaUkxcGcxcWVMOVJJcndEeUlZWGw0SnNQbnJLWVRMTXMyWm5kcEdGMjRRZDlXa3dPMlZSSUR5N2tiRTlHeUxTSmJibkxIRzdSdnotbVlzMFJsTFp6Mk9OWjVHZFpoZF9yVEFZR2wwOVpZVEJvdmpHaE5PeEhzWEtmYy13aDUyeDUwWDdDMjI1ZUd3QTYySndwRFNRcjJwT2pranhicw?oc=5"
   },
   {
+    "key": "c5797c7ada67461c6408",
+    "brand": "Ferragamo",
+    "headline": "Ferragamo rinnova il sostegno alla Fondazione Meyer - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T16:28:21.662737+00:00",
+    "published_at": "2026-10-12T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOSlFXeFo0QjB4NUhBOGxNMGdtSWxDenFHT3g3SmRVZGRlaThmckxUZjlsbFg2YWpxZExOemNqVmJMV1Z5N3ZVTnJabi1SZ2N0MUJtNklFQ0VEcTF6c1BOOWVtdmxoQ0ZlVmxzTWlvT2NSS0xnVm1hc2RhOVNENGpadEJndzF3b3dVSFp2RHNUblJRaHAxUEVyS21qZnM0a3Rv?oc=5"
+  },
+  {
     "key": "480621b114092e0ff496",
     "brand": "Onitsuka Tiger",
     "headline": "Onitsuka Tiger: svolta lifestyle, espansione globale, flagship a Milano - Fashion Times",
@@ -453,6 +453,19 @@
     "published_at": "2026-10-10T07:00:00+00:00",
     "source": "L’OFFICIEL Italia",
     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOQU5VSU9ZQ0U0Z3ZoZ1J6SjRKYU5DVFNSZHRUNTBBWDl6c0xndS11Ry1TV1psLXpFQ3pGMFAxTVRsbnZ4UVhTRGZvQjFxY1pVaW9jMmRVbXRYcEk1WjJjeG9HUmIzU2RLN2tMc0Q3c2ZRZUtTWTltdS1ReFZKNzN6Mll5MzRwSUJ0eWJuNS1tVk94TF93bUE?oc=5"
+  },
+  {
+    "key": "63e204d9dc29449176d0",
+    "brand": "Valentino",
+    "headline": "VALENTINO - WOMEN SS 2027 - PARIS - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T16:28:21.662737+00:00",
+    "published_at": "2026-10-09T20:43:41+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQMG9wcktCeFh0cVd0V2JRMmZqbU56VUVQTXFLTll0bzlRaVBOTXBsNTM1WUN0al8xUGtKX0RYelJGT3pPME5BN1dlV29wTWdHS0Q0UFZnZVp2dWZuVjgwb2lxbXZrRUk0b2thbVBJcEVGc0NhUW9xVVJ5em5WQU4tMTd6X0RLYlU2c1pZ?oc=5"
   },
   {
     "key": "fbe43e0e0cc47fe3f555",
@@ -2507,6 +2520,19 @@
     "published_at": "2026-09-22T07:00:00+00:00",
     "source": "Fashion Press – Moda e Bellezza",
     "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9QZngyWXhscGRPUnA5LVBwcnMzNXFvMGdkVWF3bWN2SEpfaWI1X3ZEYWYwc25TTGRmUnp6U0tVMFNNUE1GcndsVzNucnEwM0VRSFZ1WFoyMzVzeC11dlYtZldFTUtmWlVHOVZGX0NB0gFzQVVfeXFMTnpTdTFVcHFTWUQ5by1WMGg5ZkhBeGVVa3c5S0V3ek5ZSkNUQXFDTU9VZC1PVmVIU0Z6eWd3SkxYUUhLeGprdTFiMkZodUFmd18xcDJ1ZnRJQTZTSWZ2a2RZalNneU5QNjlqRy0zZkhWR2liQQ?oc=5"
+  },
+  {
+    "key": "36064e140b59d0c08da0",
+    "brand": "Diesel",
+    "headline": "Milano Fashion Week Donna, si parte: dallo show di Prada e Diesel fino alla notte di Vogue World - Corriere della Sera",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T16:28:21.662737+00:00",
+    "published_at": "2026-09-22T07:00:00+00:00",
+    "source": "Corriere della Sera",
+    "url": "https://news.google.com/rss/articles/CBMijwJBVV95cUxNazJmZllQWDhLeG55SURUN010NV94Z3RtR3R6cmRUc0NIQ1Y5cEVOdHdocVREdjhVMlV2NjVnME0xRXIyUlhGWG8xa3BCaUxwaGxmd3F4dHRnMG5CTHhhZlY5Wk12MmwtWW5kWEFmS0Q4bzEwa3Y5Y0l3MGNSanJEYWFHeGZCb3FrVTNqSFQ0TmpaRS1CZTBoYlU3Tm94VzRIeXpTSGZuM2JrS2t5Q3psZWt5cEc1QkFBMTFDMi1JY3JIeVcwRS1tbUQ4TE9IZnZpaXdOSktqSUVtTXd6emJfY2syajdzOVp2MHVEWmdIQk5VcWRNRnJGbEhZMVBpa1pPWWxlRUQwN3dWeExhSTk00gGUAkFVX3lxTE5JX1ZvaEQ0Q255QVQ0S3E0UlBBMXRPck5fYmpySXVKZHUzZExLYmoxZzExSWtsUVd5YTE5b095LVBSZDNOa3FCc1RWaThqWHRndGRyckszZmN0a1BheUJTeUliY19qQWJoNkFFN2tEeTdwRlZCNVNxTDhsV091N1BLSnQ1TFN4MGdJUEY3TXJRWlBrUllicG1ZVkxaaTJ3NFhHMmFELUViTHVxcnh2b0kwd1E4em03b2lqMjJzMS1pOFo0WHdnQ2tEUEV3enc0NTRJamJudmpFNVdIUXpMMnZKZ1RhZlBsWTZ5Z3RkWHZES2hzSHVmc0Vid1ZPYzd5TUwtS1ZWQWJ0MF9lNkQxUmt4djFQeg?oc=5"
   },
   {
     "key": "56f9eba8e09771980cf3",
