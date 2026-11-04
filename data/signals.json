@@ -1885,6 +1885,19 @@
     "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5Md2Rfd1BOM1pVeUZDUU1UNGlyRldPSXpNQXZrLXNYS1g3TzhRcHRFaDNFTGdSRWdaczJORXZFZVVzNDhjR2xCbUtTa3NPaE1KSzFmTnpPcjV0SVpBemJNaXVLTzBiWVZwb1ZSRzJhaw?oc=5"
   },
   {
+    "key": "3104d1257196520749e9",
+    "brand": "Etro",
+    "headline": "Etro - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T08:52:20.746328+00:00",
+    "published_at": "2026-09-24T19:38:05+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFB4V2xONXppLUQ0bk9FZExFMmw0aXUyeHo5ME4zQmRjdDRqbGdWX0xSZmlSWjcxTDJLdXk1UWZXZlRNZ0Z6c1BDcTdwS2JRR3l3ZWhzTHBlcmEtYllVbDBtdGF0bWVMOGwydUJOcFBB?oc=5"
+  },
+  {
     "key": "62b49b69c09d67e4027b",
     "brand": "Alberta Ferretti",
     "headline": "Alberta Ferretti - FashionNetwork Italia",
@@ -2520,5 +2533,18 @@
     "published_at": "2026-09-21T07:00:00+00:00",
     "source": "Il Mattino di Padova",
     "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQc00tTWdFaTJvaUZWY3l0UjhabURIMnp6OUpMTGtpYWxmRldJQkdPT3dKVmJ4M1ZPS0lQVXlvdDNVRGg0MUtvb05XNmd0RkgtWHI4THhnSUVlY2s5bk44ZTNuMThIdDNkZU9FY2M5M1JzMm1YM3lkSGFJZXU1dnpBdHRvMDZ4bW13c3FXbnl2OTBUbWNzMndwdnBDWXFtTkk?oc=5"
+  },
+  {
+    "key": "07858384abf714f6b8bb",
+    "brand": "Tod's",
+    "headline": "Della Valle (Tod’s): «Lavoriamo a un gruppo con quattro brand» - Milano Finanza",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T08:52:20.746328+00:00",
+    "published_at": "2026-09-21T07:00:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPWVB4REFFdTMwejh5ODRKOUl1YUp1WVFQLVE0dE5HR0V5c1V6VU13RW1Ed1FLbzRhckcxYk12NVZQanR0aEEtV0x0UlgwWFA2a19nYU11VWRPdXFLQXJ4bWdiQnFvMEFBOFFXai03S3pKOXJWX3hjZjd2NXkyNjE3ZlBrc2RURDNnMDlza0c4QlpuUnd2Sl9XWElxT0FwY1REenZWYzV2RUdqbTc5bnRacFFCZ0lqWkZTT3gzREIwbl9OZF9uakZaZ3VpN1BDZjE0Q2c?oc=5"
   }
 ]
