@@ -725,5 +725,28 @@
     "source_name": "CHANEL / LinkedIn; data pubblicazione Cerulean 3 novembre 2026",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-furla-buying-intern-milano-4484691203",
+    "brand": "FURLA",
+    "title": "Buying Intern",
+    "location": "Milano",
+    "published_at": "2026-11-03",
+    "detected_at": "2026-11-04T09:25:13+01:00",
+    "priority": "ALTA",
+    "score": 94,
+    "role_family": "Buying",
+    "why_fit": "Supporto agli assortimenti, analisi sell-through e stock, report commerciali e coordinamento con altri team; coerente con Fashion Management ed esperienza showroom Marina Rinaldi.",
+    "reasons": [
+      "Stage Buying presso brand fashion",
+      "Assortimenti e monitoraggio performance retail",
+      "Report stock, sell-through e markdown",
+      "Laurea Fashion Management richiesta tra i percorsi idonei",
+      "Sede Milano"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/buying-intern-at-furla-4484691203",
+    "source_name": "FURLA / LinkedIn",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
