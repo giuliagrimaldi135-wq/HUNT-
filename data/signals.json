@@ -1,5 +1,18 @@
 [
   {
+    "key": "753594e2e6afd225686a",
+    "brand": "Ferragamo",
+    "headline": "Con Kris Jenner Ferragamo racconta la gioia di amare - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T03:56:43.197921+00:00",
+    "published_at": "2026-11-03T19:39:42+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNaFltZjZlZ25SWk9LaWQ1dzBONDd6bHFSWVZDN0dtQ2VGcjE5RWhWWTR2RmVXdTdiUHJTdjMzMUlSbUNNVVdoWHExak1udkl0V0Jvek9JQjJVVndic0dYME1DaDU0OE5QNDJFVERjYno5M0JNXzVVYkJscGwxSVJBTEtYZlJ4WDM1cFg5VmduUVUxN1k?oc=5"
+  },
+  {
     "key": "b138c1fa8926ffbe5323",
     "brand": "N°21",
     "headline": "Style Capital si assicura il controllo di N°21 - FashionNetwork Italia",
@@ -1883,6 +1896,19 @@
     "published_at": "2026-09-24T15:03:19+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFAtVzJFd041RlBHWXNQZ0RpeFlvVXFoTWowVHNZUWp4WFJOY3VXcHB3TWdRTzlHemk4cTljd2toNTFjMHBMS0FaSW5wNWEtN0hYalQwNUU3ZmZtejdVRFZ0U1JfSVVYSEsydzdzQVl4b3pINEFlNEVPS2ZVVEFFQQ?oc=5"
+  },
+  {
+    "key": "00207d03a1127b3a09d1",
+    "brand": "Marni",
+    "headline": "Marni - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T03:56:43.197921+00:00",
+    "published_at": "2026-09-24T14:05:01+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBuckhuTldvTW16M0pkSzVValpDZXlCN1Z4M29BR3EyT3AyZlpVUEFaeFMxczJWLTdsMmQ0aGh0TEh6MThVbGs5M0tzNlVpQndjQ18tU1QzWnNCZ3J3ckg1clFRMkpTeEl4Y1ZBeWd1RQ?oc=5"
   },
   {
     "key": "651bf2b87672ddcc9129",
