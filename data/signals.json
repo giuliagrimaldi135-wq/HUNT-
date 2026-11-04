@@ -1404,6 +1404,19 @@
     "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBUNllsZmNTc0xvakFnZjB2aElDbzVYdmhzem1DR1BWZXZEYk1DSHlONm9oeG5OTkp3UDBqOUtDV1MxeEpCNmZfcDBZQXJCWnRaOGtKeUFYVC1FQWFNdkJtMzFyLXBIdU9VMUxLWUlTYmhwT0Jv?oc=5"
   },
   {
+    "key": "04c3985f003c2eb91851",
+    "brand": "Francesco Murano",
+    "headline": "Francesco Murano - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T05:42:10.608998+00:00",
+    "published_at": "2026-09-26T22:16:53+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE94NXVUX0ZoMWNpSUxjT3B5eTVrbkNEZzlKODdQUWRydjNhb3FndVhtempFWDkwaVVMN1JvcWNIYnRDcWVZZzZnWTNGV0dqdTNCMFgtYmpvZURFbEpJdkR4RUQyZTRJZ3JuaDNCRXFWaGNlMjlfVXZqNG5odW5pUQ?oc=5"
+  },
+  {
     "key": "bf85db7c61c95b4c15db",
     "brand": "Bottega Veneta",
     "headline": "Bottega Veneta - FashionNetwork Italia",
