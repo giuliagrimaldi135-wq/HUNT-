@@ -702,5 +702,28 @@
     "recommended_cv": "merch_buying",
     "vacancy_id": "21348",
     "notes": "Pagina ufficiale con pulsante APPLY NOW, verificata il 03/11/2026. Non è una posizione BI/controlling: le responsabilità sono operative di allocation, replenishment e retail supply chain."
+  },
+  {
+    "key": "chatgpt-chanel-high-end-product-merchandising-milano-4486096894",
+    "brand": "CHANEL",
+    "title": "High End Product Merchandising - Internship",
+    "location": "Milano",
+    "published_at": "2026-11-03",
+    "detected_at": "2026-11-04T07:06:40+01:00",
+    "priority": "ALTA",
+    "score": 91,
+    "role_family": "Product Merchandising",
+    "why_fit": "Gestione assortimento High End, monitoraggio stock e flussi prodotto, coordinamento boutique ed eventi: attività coerenti con l'esperienza showroom e ordini presso Marina Rinaldi.",
+    "reasons": [
+      "Gestione assortimento boutique Milano Montenapoleone",
+      "Movimentazione prodotti e stock",
+      "Coordinamento tra boutique e team europei",
+      "Stage entry-level a Milano",
+      "Esperienza pregressa in showroom e ordini"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/high-end-product-merchandising-internship-at-chanel-4486096894",
+    "source_name": "CHANEL / LinkedIn; data pubblicazione Cerulean 3 novembre 2026",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
