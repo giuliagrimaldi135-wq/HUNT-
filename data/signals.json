@@ -195,6 +195,19 @@
     "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5OWTBmcE1QU1ZSTEs3NjYwbVdZVWM2QmtpS3gyT1B3NDBaeVlQeElaanI4c2pFXzJ6YkZFSU4yMGtYcE1hMkxSaXZJZ2ZfWW5CbkZ0RDd1Tk4wbGZWRThUUHpaS2RZbEo4SG9YaHFsMzVhYUxyVzFVSVl3?oc=5"
   },
   {
+    "key": "eeddc42638e3f0b2d5b1",
+    "brand": "Gucci",
+    "headline": "Kering crolla in Borsa dopo il nuovo passo falso di Gucci - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T12:30:27.166393+00:00",
+    "published_at": "2026-10-26T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPdjJLZUtGX0FRX0RuNTNRNVNrdkpiR25IRDI1YVQ5NU1KY1d6aHZpQ3duVU5RQVJNdWoxZXRRMHB4ZzdOX1VwUTZOUVBzekNhV0tzWTRhVzUxc1B0a2UyZnMwcVQ0VVFGZ1U4NkFpTlZyUUlXTlhlQmdUQTI5OU9oX0RaV1NxWWVPVUZLcTRjSlZ1d3g0b0IzcmJJbnplb0RndTU3amtGNWI?oc=5"
+  },
+  {
     "key": "ae214a3d2bf4937d9cc8",
     "brand": "Zegna",
     "headline": "Lusso, Prada e Zegna accelerano mentre Gucci frena - Business People",
@@ -401,6 +414,19 @@
     "published_at": "2026-10-15T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxOZmM0SncwR3RRQ0UxSVBpSXlkalJETDQ5N2FnZVFMM3ZHeFF3SC1YeTc2cEEtbHZnODBIa2hXWEJ2MHBxczYyLUN2R05BeG04Q0VQekRic280WDhDYlNoTHQyT2dUUGQxME9rYndXNWpyTFY4cmYzamVENzF2VXIxWFVBS1g0eHIxekJjdXU0eWlrWEFWVW1CNWlaWHdrWmRBdHRZSFZDdlZYSlZsSFhFRFNkM0FDdURWOVZpdGYwZFRsdFhKVGNNZW9tUE1aVjV5T0kweWhrZUgxYnNTTWxGRnhvOWVqckVvajJQZ0d3?oc=5"
+  },
+  {
+    "key": "af489e7c3209fee8e875",
+    "brand": "Brunello Cucinelli",
+    "headline": "Brunello Cucinelli, ricavi a 1,12 miliardi nei nove mesi (+10%). Brilla il retail (+15%) - Milano Finanza",
+    "signal_type": "financial_momentum",
+    "score": 85,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta comunicando risultati, ricavi o investimenti. Per te conta perché performance e budget possono incidere su aperture, assortimenti, retail e hiring.",
+    "detected_at": "2026-11-04T12:30:27.166393+00:00",
+    "published_at": "2026-10-15T07:00:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPQjRBVnJ5N0FMNU0wa1RTbTZ0UUYzN2J6VzV4TWlzZUoxRDd1Y1VGN0hpNHcyOENjSXdWWnNxcU50Vm9vc2RocEszYWpUTjBEdXFWUnhxUEE2VTdtdmFFczR4aFc5el9pV29HdGRnQ0FRSC1IXzc0VV9wZm9ObHZEQ0RNdFVFUEU4X2pzLThxYlZsMVFxUzZPWWxmN1NPVDdfQmp0Q0Z2dTBIcWpHYnJJTHpKVWdhd29ZMHVqU24yNERiNzN1R2MzN0ZnVi1SSE9sLUpLX1FPSVNwQQ?oc=5"
   },
   {
     "key": "f6c2ee085e181991cec9",
@@ -830,6 +856,19 @@
     "published_at": "2026-10-02T07:00:00+00:00",
     "source": "Sortir à Paris",
     "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxPWV9sVWVaeEkyWlk4NHVIenhjdXNRcEdUSXNNTDBCSWszMlFOLWVBYTktQXQzWFhNT3Y0cUVkTlhONE5pZEtFNnctYUtybk1ZMl9aNHhNR254MmNQOGhVZkNOaDViTVIxQWZteGtnZ0VLSEdhWmtHSjB3SWllOFhETnBfNjJ3THd2aTlBWVRTdTJQWUFwZDZqQlJ2Smh6dTRPdWxFZDVTVmtFLUs5V09hLVhwcE1JLWx4TjRfb0c4dk5jRjRFSjhyVG13QVMxU2NmRGVFc3QwYWRzWU5VZFhzdkRDU0xQa3I1YXZLMHVoaUl1djV3OElwYg?oc=5"
+  },
+  {
+    "key": "74b82aaf172c5428f8be",
+    "brand": "Louis Vuitton",
+    "headline": "Le Damier de Louis Vuitton svela otto nuovi gioielli - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T12:30:27.166393+00:00",
+    "published_at": "2026-10-02T07:00:00+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNOU5BOFNmM19CRzlpTU9TTzhVT1c3WEFaMGh6cDF1amJHRVZObzB0cVFjdU1tSmQ2ajBKdW9VSVlBWXdRMnlvR3RLYWlpQU85bkVxZFNJb2VZeEN2bnNSejA2aFkwbVppNUVOQ241cklHUGVXRkJ1UF9yNUpLWklRLWNFYy1PV0N4LUpQWkpPMTVJbHM?oc=5"
   },
   {
     "key": "ccdaad8622b9875597ca",
