@@ -663,6 +663,19 @@
     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPeGVWekZoWXMwVDlwY2pDOUFHUDBxZXRGcDB1WnlaelpXWFIycWU1ZzljUVQyaWsyT0s5WkxBaGNRQ0FINVRHdjJmNFgzVU9hYVI3dm1LejhXNDZXZzZUSU1JbWVLWnAtWHVWNXBzOTlBaU4tWEJNWGRocGktX09RRGxMeUNsZXN6dHA4RVF3UDhqZEdFdHc?oc=5"
   },
   {
+    "key": "626962d96a2897e55f12",
+    "brand": "Niccolò Pasqualetti",
+    "headline": "Niccolo Pasqualetti - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-04T10:52:34.940547+00:00",
+    "published_at": "2026-10-05T05:10:15+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQM1NHWGhiT0Jnd19sVzE5N3JpcjZJMHpYV241RnhYelVLaUtFTjF5bUZYOERmMEZzd2ZPTmoyOG9HV0ZCUHlQZjNNX0ZaTHY3VTRMM3U3dTRrWk14TjV3dHpiZTdLOUJ2OF9JLXN6RmtTVnQ4R1k2b3E1Z1R2RWdHcXh3?oc=5"
+  },
+  {
     "key": "cdc42955c496ed920012",
     "brand": "Valentino",
     "headline": "Valentino - FashionNetwork Italia",
