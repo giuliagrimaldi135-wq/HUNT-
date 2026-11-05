@@ -748,5 +748,28 @@
     "source_name": "FURLA / LinkedIn",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-gucci-global-merchandising-racing-r173331-20261104",
+    "brand": "Gucci",
+    "title": "Global Merchandising Racing Intern (Gucci Racing Intern)",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-04T00:00:00+01:00",
+    "detected_at": "2026-11-05T20:51:16+01:00",
+    "priority": "ALTA",
+    "score": 94,
+    "role_family": "Merchandising / Planning / Allocation",
+    "why_fit": "Stage di sei mesi nel merchandising RTW e accessori: assortment planning, sell-through, gestione stock, allocation e replenishment; coerente con Fashion Management e showroom wholesale.",
+    "reasons": [
+      "Assortment e range planning",
+      "Analisi best seller e slow movers",
+      "Allocation e replenishment",
+      "Line sheets e product data",
+      "Sede Milano; avvio dicembre 2026"
+    ],
+    "url": "https://careers.kering.com/careers/R173331?source=Keringcom_Slots",
+    "source_name": "Kering Careers / Gucci",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
