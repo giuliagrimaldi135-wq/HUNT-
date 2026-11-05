@@ -1,70 +1,5 @@
 [
   {
-    "key": "e01bb22cd301b5e19042",
-    "brand": "Louis Vuitton",
-    "headline": "Louis Vuitton - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-05T08:45:42.189384+00:00",
-    "published_at": "2026-11-04T17:02:31+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE52QlI2d2NUMU02UEYydUJ3aFhDWjVFZkI2VkZLa1JhbE5WM01uOHo0VjhCMjFraFlHQVhKYlUtdVJEeFA2SjBFWEowTXZBNnd4QTdfcFpVYnN0dWxVaXVRRU43Zl9FMzNMSmtTTjUzR2Z6dGdkUmFYVGx1bG9SUEE?oc=5"
-  },
-  {
-    "key": "df14ecab300c58759db5",
-    "brand": "MSGM",
-    "headline": "Msgm - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-05T08:45:42.189384+00:00",
-    "published_at": "2026-11-04T13:28:21+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1JdjhYMnlTU3lpZzhMYXJScU9mTWFNOXNsZFFadmhDMkREbXIyQzgzbnJxN3pZWm0taXlWLTJqRklWZVpaeXJZVFBXbUpDMTdUNU14SU1id0dzUGc1WWEtM0g0bDVkUUxLcmVqT3M3N0I5RzA?oc=5"
-  },
-  {
-    "key": "97beedd4e5307aeb5435",
-    "brand": "Coccinelle",
-    "headline": "Coccinelle, lo store concept Homization debutta nella nuova boutique di Parma - Milano Finanza",
-    "signal_type": "category_launch",
-    "score": 85,
-    "confidence": "public-signal correlation",
-    "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
-    "detected_at": "2026-11-05T07:52:10.271472+00:00",
-    "published_at": "2026-11-04T11:35:00+00:00",
-    "source": "Milano Finanza",
-    "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNSmdfSTBXcEtkOXZzZXN2T1lNaTFlNXBGU0c5Vi05dHJGR2x4bTJUajM5cUU1NnZUaGNyNWYtNk9NeGd0NllYVDE4T0FzRjRyelhOb2VEOFM4cWktTzlFQWJDUm5WQkhrQ2JLNTFIQzV2dURIWVdlV0xfQnJFQkZWdmMzcEI0dE94eGI3WFR6YnlWSHZqVlNPT2tTVGptdzdMOG5LNFg0ek9xTUpHUmQtT2ZHMUx6a05qWFVVaFBaeHhiR3J1clRTMkZQd3U?oc=5"
-  },
-  {
-    "key": "02330a21313185317466",
-    "brand": "Moncler",
-    "headline": "Moncler arruola l’ex ceo dei grandi magazzini Lotte per la Corea del sud - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-05T08:45:42.189384+00:00",
-    "published_at": "2026-11-04T08:42:03+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNUjVWTHZ2Tm9LcWZMa0Z0eUxqZW9NR003RGRFX0d2T1otZ1pfSDhNYmtBS3I2cUV1Sm9EUXNtVjRsQldXQnhVM1JlTVpPWDJkQmFxYnBnRXFLMTlVZ0ltN1pncEQyeG1WdlplOERmT3RzU3RNbm9xcUVNU0taVTdZNFNwSXVmRnJESmpsQmhtM0ZQVFVPQnJNUTFLRnMwWmVDYUFYMUlTU2RRYTJtLUpuRGVzcDN6eVVlTHRFWQ?oc=5"
-  },
-  {
-    "key": "e16fca22e7332a718a0a",
-    "brand": "Gucci",
-    "headline": "Gucci sceglie Mariah Carey come suo volto per Natale - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-05T08:45:42.189384+00:00",
-    "published_at": "2026-11-03T12:15:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNUTZoVEFMbGdrODhPNjdQcDVNV3k0R1VhREFDRWRSeUM2RnB3ZTJQd09ZajNSMEVIRG5WU3h4blFHZFVxQVRib0E3VW43R2MzMVlBMmxLQmpCRzNLa3ZVbUhJTUVwS204VFl6dVdNWUxFMEF5aE1IUmNkVVVBYUxYTUtsZWFBYm9fZEF2SHIxdnBWZ1FBQUNsZ0gzTFl3NlAta1E?oc=5"
-  },
-  {
     "key": "b138c1fa8926ffbe5323",
     "brand": "N°21",
     "headline": "Style Capital si assicura il controllo di N°21 - FashionNetwork Italia",
@@ -89,6 +24,19 @@
     "published_at": "2026-11-01T13:39:03+00:00",
     "source": "Harper's BAZAAR",
     "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPODZQU2VHWXFIejRWdVhVX3JKRFE5SXVGZU5Fbnk4VTNNeVFBdHMwc2tYQWwxNGM0QUc1VVp2cGRnUFdYb3R0T2dKRzJyNmJNdnIyemxEWEd1bGx3TDVPMmJPQU4xSmdLMmlTN1lwX3FNMzVJcFR2VEVSQzQyLVNLY1VOT1dnN3pFNUNHMXhCSW5GV1U3Tnd6SQ?oc=5"
+  },
+  {
+    "key": "cb9796792bdc504ce72f",
+    "brand": "Golden Goose",
+    "headline": "Golden Goose x Disney: la collezione Mickey & Friends - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T09:42:31.248104+00:00",
+    "published_at": "2026-10-31T14:41:26+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPZDAwVW1XNWdSbXZTUXVkeERWV2Y1TGJQNXM3eXZQVEhCV05TNG5iRmZPN2ZyTHZaM0JpQTZLc3pnTDlEQ00wNkxSa09fTzZOcHVlVG9JY2NVeThKMGFOd25kWUkzUy00NnNSUnRNZVU4czVuaU5rUkZ2VVBib2lrZUFCbHlZR2EwTmNfMHFDeFFDaUU?oc=5"
   },
   {
     "key": "8548d6986d5eb0a5c2eb",
@@ -1612,6 +1560,19 @@
     "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE81a3FGYnlVUHRYWTNHbEJtNmJJd3Y1WUdnMk11bWpXTEVOZGd2dVBtVFhjVFBIX0czeTdtcHp6MlR4S3dVSHV1Y2Y4bmpzN3ZJRWpBU0FYaVFyZXRuS3Ayb2RnNmVpbzhkZTB3TUprWnBSTlVUeHJDYjVR?oc=5"
   },
   {
+    "key": "0530abc1131b59c09be7",
+    "brand": "Ferragamo",
+    "headline": "Ferragamo - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T09:42:31.248104+00:00",
+    "published_at": "2026-09-26T11:56:21+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFB1cDVDZ2hvaXlJNUlCd3BaUkwzamlXbHhGVXdBN1drR29LNExLMjhjLTJwUks3Zl96VWJKU0piMFh5U3BVbVVnNmpRWkREY0dDWG1ITHo2Q3NWX19aWnlTRHd1QzRsT1RFazdBV2FJZld1UkVR?oc=5"
+  },
+  {
     "key": "91efac06bdd291b687a4",
     "brand": "Ferragamo",
     "headline": "Alla Milano Fashion Week primavera estate 2027 oggi sfilano Ermanno Scervino, Ferragamo, Dolce&Gabbana e Bottega Veneta - Vogue",
@@ -2260,6 +2221,19 @@
     "published_at": "2026-09-24T07:00:00+00:00",
     "source": "Lifestyle Made in Italy",
     "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPTllrMVJCVTk2OW04N1I3U0s0X0VlTjMzbEdsRmVUUzlROGpZTkZBWHowNmoxbENzVmFSekhabjhqNjVVTnVPN1FJNldHak9ZbUZDWnRhZVBwUl8zRkhEbXFxZi1ZZ0c1cEZUYkxXaFRtM0kzcEF2QllFa3hPQ19tLTl2M2x3Sk1HNnVnZmdaVllvVU9WalpuSlFB?oc=5"
+  },
+  {
+    "key": "24eeccc4d8dd13bceb28",
+    "brand": "Versace",
+    "headline": "In attesa del suo debutto da Versace, Pieter Mulier vive il clima della Milano Fashion Week - Whoopsee",
+    "signal_type": "category_launch",
+    "score": 85,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
+    "detected_at": "2026-11-05T09:42:31.248104+00:00",
+    "published_at": "2026-09-24T07:00:00+00:00",
+    "source": "Whoopsee",
+    "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxONjkybHpxZXlpRTdUT0Z6ajVOcjYxYmVkOFpuNzBpcWtFVlRueXE0NGF1dW9VMzB5YmxSdlpWeGhkNnhLSGpXak5KN0tZQlRMenE1NV9GU2ZoaG8wQjg2ZWM3LXVNdFN2Wk9WSTVSRi1NT0t5TFBIblB1SkNpNHdzWmx6amI0ZS1vLUgyZ3hJQnNIbHRhZGt3S3RGXzQ1LWtTSDNiWXg2TXAtUjVVeUhMaDhoQ2tGdw?oc=5"
   },
   {
     "key": "be89ff17743c867d8e1a",
