@@ -1,5 +1,31 @@
 [
   {
+    "key": "e01bb22cd301b5e19042",
+    "brand": "Louis Vuitton",
+    "headline": "Louis Vuitton - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-11-04T17:02:31+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE52QlI2d2NUMU02UEYydUJ3aFhDWjVFZkI2VkZLa1JhbE5WM01uOHo0VjhCMjFraFlHQVhKYlUtdVJEeFA2SjBFWEowTXZBNnd4QTdfcFpVYnN0dWxVaXVRRU43Zl9FMzNMSmtTTjUzR2Z6dGdkUmFYVGx1bG9SUEE?oc=5"
+  },
+  {
+    "key": "df14ecab300c58759db5",
+    "brand": "MSGM",
+    "headline": "Msgm - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-11-04T13:28:21+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1JdjhYMnlTU3lpZzhMYXJScU9mTWFNOXNsZFFadmhDMkREbXIyQzgzbnJxN3pZWm0taXlWLTJqRklWZVpaeXJZVFBXbUpDMTdUNU14SU1id0dzUGc1WWEtM0g0bDVkUUxLcmVqT3M3N0I5RzA?oc=5"
+  },
+  {
     "key": "97beedd4e5307aeb5435",
     "brand": "Coccinelle",
     "headline": "Coccinelle, lo store concept Homization debutta nella nuova boutique di Parma - Milano Finanza",
@@ -11,6 +37,84 @@
     "published_at": "2026-11-04T11:35:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNSmdfSTBXcEtkOXZzZXN2T1lNaTFlNXBGU0c5Vi05dHJGR2x4bTJUajM5cUU1NnZUaGNyNWYtNk9NeGd0NllYVDE4T0FzRjRyelhOb2VEOFM4cWktTzlFQWJDUm5WQkhrQ2JLNTFIQzV2dURIWVdlV0xfQnJFQkZWdmMzcEI0dE94eGI3WFR6YnlWSHZqVlNPT2tTVGptdzdMOG5LNFg0ek9xTUpHUmQtT2ZHMUx6a05qWFVVaFBaeHhiR3J1clRTMkZQd3U?oc=5"
+  },
+  {
+    "key": "02330a21313185317466",
+    "brand": "Moncler",
+    "headline": "Moncler arruola l’ex ceo dei grandi magazzini Lotte per la Corea del sud - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-11-04T08:42:03+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNUjVWTHZ2Tm9LcWZMa0Z0eUxqZW9NR003RGRFX0d2T1otZ1pfSDhNYmtBS3I2cUV1Sm9EUXNtVjRsQldXQnhVM1JlTVpPWDJkQmFxYnBnRXFLMTlVZ0ltN1pncEQyeG1WdlplOERmT3RzU3RNbm9xcUVNU0taVTdZNFNwSXVmRnJESmpsQmhtM0ZQVFVPQnJNUTFLRnMwWmVDYUFYMUlTU2RRYTJtLUpuRGVzcDN6eVVlTHRFWQ?oc=5"
+  },
+  {
+    "key": "e16fca22e7332a718a0a",
+    "brand": "Gucci",
+    "headline": "Gucci sceglie Mariah Carey come suo volto per Natale - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-11-03T12:15:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNUTZoVEFMbGdrODhPNjdQcDVNV3k0R1VhREFDRWRSeUM2RnB3ZTJQd09ZajNSMEVIRG5WU3h4blFHZFVxQVRib0E3VW43R2MzMVlBMmxLQmpCRzNLa3ZVbUhJTUVwS204VFl6dVdNWUxFMEF5aE1IUmNkVVVBYUxYTUtsZWFBYm9fZEF2SHIxdnBWZ1FBQUNsZ0gzTFl3NlAta1E?oc=5"
+  },
+  {
+    "key": "b138c1fa8926ffbe5323",
+    "brand": "N°21",
+    "headline": "Style Capital si assicura il controllo di N°21 - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-11-02T12:34:46+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOQnoxWXZTY2V0Sk1meXhITDZheTRUZlNPOXU4dzBlMzh4VW1YNnFmRE9Dc05YQXd6MEY3SHgtTWZIZVFuaEdpd21hTE5LWThfRXNRejZBUHo4amZ6X0RKZmFFeGhRSHFvblhkSUxuUXBwNjBiVlJGVXdJNXpVWHRHY0xGUTF6Z21DbjZVOTd0dzBXdTh3UFVNbEVR?oc=5"
+  },
+  {
+    "key": "2fdc259411e20ca67f9b",
+    "brand": "N°21",
+    "headline": "Dans l’ombre – Dietro le quinte della moda Il ruolo dello showroom director - Harper's BAZAAR",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-11-01T13:39:03+00:00",
+    "source": "Harper's BAZAAR",
+    "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPODZQU2VHWXFIejRWdVhVX3JKRFE5SXVGZU5Fbnk4VTNNeVFBdHMwc2tYQWwxNGM0QUc1VVp2cGRnUFdYb3R0T2dKRzJyNmJNdnIyemxEWEd1bGx3TDVPMmJPQU4xSmdLMmlTN1lwX3FNMzVJcFR2VEVSQzQyLVNLY1VOT1dnN3pFNUNHMXhCSW5GV1U3Tnd6SQ?oc=5"
+  },
+  {
+    "key": "8548d6986d5eb0a5c2eb",
+    "brand": "Gucci",
+    "headline": "Gucci riparte da Parigi. La ceo Francesca Bellettini: «Il retail è una priorità strategica» - Milano Finanza",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-10-30T10:07:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNbmNPaDJLaURJWE1PSkxGRE1EaXJKNWRPNHRvVmJJdGVZUlV0akRKR184SHB6U1pJYTFkNEpEMHFKMUl4Z0dMcUtmYmx1bWNxYU0xa2FIQVg1MXVHZlRZQ1A4dHNORVlQdXU4UV9aS3paSlJJZGNMZlprZ3drOW44WGFPbTV4Qm5hcHJRQ250NDRpRmJsUWw4eXRWY0V3RW9sc1N0WUY2QS1IQVUzUkNqNTdxZTRDMkx4WHlN?oc=5"
+  },
+  {
+    "key": "68e6eaf7ab202c26dd6c",
+    "brand": "Loro Piana",
+    "headline": "Loro Piana inaugura un nuovo store a Tokyo - d la Repubblica",
+    "signal_type": "store_opening",
+    "score": 80,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta aprendo, riaprendo o facendo debuttare uno spazio retail. Per te conta perché un'apertura richiede lavoro su assortimento, stock, merchandising, visual e operations e può creare bisogno di nuove persone.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-10-29T02:54:00+00:00",
+    "source": "d la Repubblica",
+    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQXzRkTFUtazlTa2paTG1EalNFM0VHeUNrV2JkOG5CT2p3VUo0cFJ4WjA5ZWROcVBmMFNVdXFBM2ZDOC1UQ2ViUEhRUTN1UGtsUGtkZ2xKS0JjVmREQlhIelRFNmJzMHhvSzZTZVU0Z2FLTUNrblpaVm40ZWM1R2pfRkhWNzJRS2FScEJYeXd6OWc2elhfZDVpOVhqMy1WN0FieGptY1RrZENCdw?oc=5"
   },
   {
     "key": "b62b41880b938271b0c2",
@@ -37,6 +141,19 @@
     "published_at": "2026-10-28T12:12:57+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNNld3SnBiRWVfaGUzSzVab1RqUXRodl81YVUwd3pWenhaMWpBa1BxQm8zY1EzUnd4Wm94Q1JjeXZwQVVobFM2YXpjdUx3VFZfUWFuRHhLejVWSHZkbW9SRjJMREkwelBUQmJuVUlldFlITF9XaEFhb0dFUDNaVFRKRUxXUGVVaTAtbXFCVVh0SmZUZThySnVVb1VUV3NaZw?oc=5"
+  },
+  {
+    "key": "c6f72d4bc321f4c1c157",
+    "brand": "Jil Sander",
+    "headline": "Jil Sander prosegue il suo dialogo creativo con Puma - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T08:45:42.189384+00:00",
+    "published_at": "2026-10-26T21:35:43+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQUVd0aE1yTTJFbHlCeDdtSVZ4bFEyZEN1bTRJX1JsMWgzQU5Gd2RWSUh3U0FXX1pVeGdVaHdMdlRDQTYxRU1ILWMxV3NFeHBvTUpERlpwUG5VOWdvWUlfdkRvd3g4bENmV1VfLUNSNDN0Sm5ZOWZlUjZlbFN0c3BDMXdaOTBqb21DMzAyODUzUS1oUGVUZjRyT3Z6bURsZFFWZUE?oc=5"
   },
   {
     "key": "2e6bca030aaa1c60daeb",
