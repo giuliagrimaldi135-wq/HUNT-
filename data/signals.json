@@ -1,16 +1,94 @@
 [
   {
-    "key": "cb9796792bdc504ce72f",
-    "brand": "Golden Goose",
-    "headline": "Golden Goose x Disney: la collezione Mickey & Friends - Fashion Times",
+    "key": "e01bb22cd301b5e19042",
+    "brand": "Louis Vuitton",
+    "headline": "Louis Vuitton - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-05T02:41:57.962696+00:00",
-    "published_at": "2026-10-31T14:41:26+00:00",
-    "source": "Fashion Times",
-    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPZDAwVW1XNWdSbXZTUXVkeERWV2Y1TGJQNXM3eXZQVEhCV05TNG5iRmZPN2ZyTHZaM0JpQTZLc3pnTDlEQ00wNkxSa09fTzZOcHVlVG9JY2NVeThKMGFOd25kWUkzUy00NnNSUnRNZVU4czVuaU5rUkZ2VVBib2lrZUFCbHlZR2EwTmNfMHFDeFFDaUU?oc=5"
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-11-04T17:02:31+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE52QlI2d2NUMU02UEYydUJ3aFhDWjVFZkI2VkZLa1JhbE5WM01uOHo0VjhCMjFraFlHQVhKYlUtdVJEeFA2SjBFWEowTXZBNnd4QTdfcFpVYnN0dWxVaXVRRU43Zl9FMzNMSmtTTjUzR2Z6dGdkUmFYVGx1bG9SUEE?oc=5"
+  },
+  {
+    "key": "df14ecab300c58759db5",
+    "brand": "MSGM",
+    "headline": "Msgm - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-11-04T13:28:21+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1JdjhYMnlTU3lpZzhMYXJScU9mTWFNOXNsZFFadmhDMkREbXIyQzgzbnJxN3pZWm0taXlWLTJqRklWZVpaeXJZVFBXbUpDMTdUNU14SU1id0dzUGc1WWEtM0g0bDVkUUxLcmVqT3M3N0I5RzA?oc=5"
+  },
+  {
+    "key": "02330a21313185317466",
+    "brand": "Moncler",
+    "headline": "Moncler arruola l’ex ceo dei grandi magazzini Lotte per la Corea del sud - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-11-04T08:42:03+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNUjVWTHZ2Tm9LcWZMa0Z0eUxqZW9NR003RGRFX0d2T1otZ1pfSDhNYmtBS3I2cUV1Sm9EUXNtVjRsQldXQnhVM1JlTVpPWDJkQmFxYnBnRXFLMTlVZ0ltN1pncEQyeG1WdlplOERmT3RzU3RNbm9xcUVNU0taVTdZNFNwSXVmRnJESmpsQmhtM0ZQVFVPQnJNUTFLRnMwWmVDYUFYMUlTU2RRYTJtLUpuRGVzcDN6eVVlTHRFWQ?oc=5"
+  },
+  {
+    "key": "e16fca22e7332a718a0a",
+    "brand": "Gucci",
+    "headline": "Gucci sceglie Mariah Carey come suo volto per Natale - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-11-03T12:15:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNUTZoVEFMbGdrODhPNjdQcDVNV3k0R1VhREFDRWRSeUM2RnB3ZTJQd09ZajNSMEVIRG5WU3h4blFHZFVxQVRib0E3VW43R2MzMVlBMmxLQmpCRzNLa3ZVbUhJTUVwS204VFl6dVdNWUxFMEF5aE1IUmNkVVVBYUxYTUtsZWFBYm9fZEF2SHIxdnBWZ1FBQUNsZ0gzTFl3NlAta1E?oc=5"
+  },
+  {
+    "key": "2fdc259411e20ca67f9b",
+    "brand": "N°21",
+    "headline": "Dans l’ombre – Dietro le quinte della moda Il ruolo dello showroom director - Harper's BAZAAR",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-11-01T13:39:03+00:00",
+    "source": "Harper's BAZAAR",
+    "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPODZQU2VHWXFIejRWdVhVX3JKRFE5SXVGZU5Fbnk4VTNNeVFBdHMwc2tYQWwxNGM0QUc1VVp2cGRnUFdYb3R0T2dKRzJyNmJNdnIyemxEWEd1bGx3TDVPMmJPQU4xSmdLMmlTN1lwX3FNMzVJcFR2VEVSQzQyLVNLY1VOT1dnN3pFNUNHMXhCSW5GV1U3Tnd6SQ?oc=5"
+  },
+  {
+    "key": "8548d6986d5eb0a5c2eb",
+    "brand": "Gucci",
+    "headline": "Gucci riparte da Parigi. La ceo Francesca Bellettini: «Il retail è una priorità strategica» - Milano Finanza",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-10-30T10:07:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNbmNPaDJLaURJWE1PSkxGRE1EaXJKNWRPNHRvVmJJdGVZUlV0akRKR184SHB6U1pJYTFkNEpEMHFKMUl4Z0dMcUtmYmx1bWNxYU0xa2FIQVg1MXVHZlRZQ1A4dHNORVlQdXU4UV9aS3paSlJJZGNMZlprZ3drOW44WGFPbTV4Qm5hcHJRQ250NDRpRmJsUWw4eXRWY0V3RW9sc1N0WUY2QS1IQVUzUkNqNTdxZTRDMkx4WHlN?oc=5"
+  },
+  {
+    "key": "68e6eaf7ab202c26dd6c",
+    "brand": "Loro Piana",
+    "headline": "Loro Piana inaugura un nuovo store a Tokyo - d la Repubblica",
+    "signal_type": "store_opening",
+    "score": 80,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta aprendo, riaprendo o facendo debuttare uno spazio retail. Per te conta perché un'apertura richiede lavoro su assortimento, stock, merchandising, visual e operations e può creare bisogno di nuove persone.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-10-29T02:54:00+00:00",
+    "source": "d la Repubblica",
+    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQXzRkTFUtazlTa2paTG1EalNFM0VHeUNrV2JkOG5CT2p3VUo0cFJ4WjA5ZWROcVBmMFNVdXFBM2ZDOC1UQ2ViUEhRUTN1UGtsUGtkZ2xKS0JjVmREQlhIelRFNmJzMHhvSzZTZVU0Z2FLTUNrblpaVm40ZWM1R2pfRkhWNzJRS2FScEJYeXd6OWc2elhfZDVpOVhqMy1WN0FieGptY1RrZENCdw?oc=5"
   },
   {
     "key": "c6f72d4bc321f4c1c157",
@@ -247,6 +325,19 @@
     "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQbVBtUnRXcHhHaFhmX09ac3BCOElVeDR6REw3Z29SblQ2dWgzNWEwSTRuMklvS3RCaEozY2RDcXhkRHhVcTJ5c0pJYXIzLTlGQjc4WEVFeEZ3QnFoelZtajZQOWd3LUV4V2JYaklkTjZmLXZ1Y0Jtc0IwcG95Vkd6eVNxVjJTbmV2?oc=5"
   },
   {
+    "key": "7e97d135257a6b1e3cf4",
+    "brand": "Kering",
+    "headline": "Kering: l’uscita di McGirr da McQueen, una nuova tappa nel riassetto del gruppo - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-10-18T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOUGkxcDQydWRSQ1JIb09LbWVidzk0M2g0WkJEeGdVVVMtQmM4Vmt6NWFtdWo0S1lHc3lzWDh1akhmSEhDbE1zNGgyLTdFR095ZENmaDdTenVJaWlKV0tVbWwwTm5zSTFQQVhfRG5kRTEyeW1kel9xRGlEQi04TXJBNHRYNmEwd1l6bUFuWURXVmJ2Z1JIaG5fNm1sQjhCakF2MldzUndEM3ZCcWJZcF8wN3Y1bXhpbzluVTJtME5EZS1ndFE?oc=5"
+  },
+  {
     "key": "a2663ea308cd423ca42f",
     "brand": "Kering",
     "headline": "Kering: la futura direttrice della comunicazione arriva dalla banca d’affari Lazard - FashionNetwork Italia",
@@ -297,6 +388,19 @@
     "published_at": "2026-10-15T07:00:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPQjRBVnJ5N0FMNU0wa1RTbTZ0UUYzN2J6VzV4TWlzZUoxRDd1Y1VGN0hpNHcyOENjSXdWWnNxcU50Vm9vc2RocEszYWpUTjBEdXFWUnhxUEE2VTdtdmFFczR4aFc5el9pV29HdGRnQ0FRSC1IXzc0VV9wZm9ObHZEQ0RNdFVFUEU4X2pzLThxYlZsMVFxUzZPWWxmN1NPVDdfQmp0Q0Z2dTBIcWpHYnJJTHpKVWdhd29ZMHVqU24yNERiNzN1R2MzN0ZnVi1SSE9sLUpLX1FPSVNwQQ?oc=5"
+  },
+  {
+    "key": "51365a8669f3b88535c7",
+    "brand": "Moschino",
+    "headline": "Moschino - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-05T03:33:27.705471+00:00",
+    "published_at": "2026-10-14T13:10:05+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1jLWx4NXM5Sm9SdDRYNjNNR2VDaDdqMFFoNTJqbW9oVTNCb3lYVE9SQmtmLURqdWFGUDNrQXFuSWRnV3k4Q2V1SS0zYzNuNzNzdmdDcnNFYkxBb3ItdVRhM0ZkLVhoTE42OGN1QVEweHUtQ1k?oc=5"
   },
   {
     "key": "509965f53b4c6cc918cd",
