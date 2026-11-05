@@ -771,5 +771,27 @@
     "source_name": "Kering Careers / Gucci",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-bottega-global-merchandise-demand-planning-milano-20261105",
+    "brand": "Bottega Veneta",
+    "title": "Global Merchandise & Demand Planning Intern",
+    "location": "Milano",
+    "published_at": "2026-11-05",
+    "detected_at": "2026-11-05T21:35:35+01:00",
+    "priority": "ALTA",
+    "score": 95,
+    "role_family": "Planning",
+    "why_fit": "Stage nel merchandise e demand planning con analisi sell-through, stock, performance prodotto e collaborazione Retail Merchandising: coerente con Fashion Management e l'obiettivo merchandising.",
+    "reasons": [
+      "Monitoraggio vendite e KPI per categorie e mercati",
+      "Piani merchandise e analisi performance collezioni",
+      "Stock coverage e disponibilità prodotto",
+      "Collaborazione con Retail Merchandising, Distribution e Production"
+    ],
+    "url": "https://www.kering.com/en/talent/job-offers/europe/bottega-veneta-global-merchandise-demand-planning-intern/",
+    "source_name": "Kering Careers",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
