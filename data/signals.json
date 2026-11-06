@@ -7,10 +7,23 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T06:36:14.222413+00:00",
+    "detected_at": "2026-11-06T07:51:44.847598+00:00",
     "published_at": "2026-11-05T09:47:45+00:00",
     "source": "Pambianconews",
     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPSlRacnNBVEIwczZ1YW5CWWVPdGd6SUlLQ3hMd1F2MHc1czhBU0FpT2p1d0dGNVhBQWI2ZTc4VXN1RldJcXVzOTlVekVYek85SkI0cXV4UW4tSE5QVVUtdllCd1pKdUJpVlhnOE1wSm56NVJJbFpKaHkxVjZIbjFuVXAzZGt6ZnVLWjNYTTMtdno4a3dDeTZ2b1lVMUc3aHVSd1hrNndONzRMSVcx?oc=5"
+  },
+  {
+    "key": "fe59758a0878c8328f54",
+    "brand": "Etro",
+    "headline": "Etro - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-06T07:51:44.847598+00:00",
+    "published_at": "2026-11-05T08:57:28+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9MOHVQZGZFTDM3OWRoTEFKYVZWU25HbEVsVUdWa05DdTg4eFBCTzM2VWthX3ZTZDdsYWhkZWVOM0NuTTI4eGRSUW5YV0lGMDA0ZWhYLXJ0eHY0NnlSVThBNExpNVVMSlNRZm9yT1dFYnlPZXc?oc=5"
   },
   {
     "key": "97beedd4e5307aeb5435",
@@ -20,7 +33,7 @@
     "score": 85,
     "confidence": "public-signal correlation",
     "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
-    "detected_at": "2026-11-06T06:36:14.222413+00:00",
+    "detected_at": "2026-11-06T07:51:44.847598+00:00",
     "published_at": "2026-11-04T11:35:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNSmdfSTBXcEtkOXZzZXN2T1lNaTFlNXBGU0c5Vi05dHJGR2x4bTJUajM5cUU1NnZUaGNyNWYtNk9NeGd0NllYVDE4T0FzRjRyelhOb2VEOFM4cWktTzlFQWJDUm5WQkhrQ2JLNTFIQzV2dURIWVdlV0xfQnJFQkZWdmMzcEI0dE94eGI3WFR6YnlWSHZqVlNPT2tTVGptdzdMOG5LNFg0ek9xTUpHUmQtT2ZHMUx6a05qWFVVaFBaeHhiR3J1clRTMkZQd3U?oc=5"
@@ -33,7 +46,7 @@
     "score": 75,
     "confidence": "public-signal correlation",
     "reason": "Il brand sta avendo un movimento social rilevante. Da solo non basta per candidarsi: HUNT lo usa solo se può essere collegato a prodotto, retail, lancio o crescita.",
-    "detected_at": "2026-11-06T06:36:14.222413+00:00",
+    "detected_at": "2026-11-06T07:51:44.847598+00:00",
     "published_at": "2026-10-28T16:14:00+00:00",
     "source": "d la Repubblica",
     "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNZGhjYk1rUzhXYTJsZDQ4WnJyeHNacGhqeThPSmY2bXZzMzF0R3hVZWI0d1k1Z3hGZDh1UDNZR3hQc1Z4ckt4VDhXT09zY1RaOXNlaTVodmp3dkZqSHNia1R0cG5jSDZBcm5fM2pVT2RpVzhDbTlwTjJWeEVCQVI2aVdHMnBxSkdTZWd1QmlWbHNzUXlOdEswa1VSYUhtR3Zjejh0djVEZklZNXhUbG0tY3htc3FCTG5uRFRZSVExdWxLMUJNQzRn?oc=5"
@@ -960,6 +973,19 @@
     "published_at": "2026-09-30T03:31:58+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBKWFI2RVhtZXRvblVfN1ZyVENXNXBSMlFtTjhrOU03NG1odXl4d2Z1WjVZaTlmdjgzZHh5d2h3RjctWFNHMXg5OTRaaVFSQ21SVV9xQkdrc0dDR2RTb0szUVhSVWd6WW1YeXNqTmJyUWdPcDRJT05IMy1qYw?oc=5"
+  },
+  {
+    "key": "68001c3ff6a26fccb2ef",
+    "brand": "Dior",
+    "headline": "Christian Dior - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-06T07:51:44.847598+00:00",
+    "published_at": "2026-09-30T03:29:59+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE11ajIxYWIyZElBbWZPb0N6Q3FGaWVrQkdnc0hGMFdabkZRbVdfcXA2WWxldDc2eDZ4MWM2eGNVUnQwUDV4TVpNQ084VnNPLTZLdGpVYnRPMHZJLTBFSmJQRXQxbGc0MmFUb2hDZWhNaU5JTlFFb29RRlBpQQ?oc=5"
   },
   {
     "key": "c2e108e9a8848d7294aa",
@@ -2533,109 +2559,5 @@
     "published_at": "2026-09-22T19:13:42+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPZTA5eEU2NmpvOVNicW5hY29HSFNYV0pHeVZCbWVjN0lxMjVTVXNLQkZUaTZrREFKQnM3Nk1zME1xNzdfdWM1LTFWblRLWkZKa2hsa1BwYTVUdHBIRG1hV2NqSmlSNTNHZm50eWJQdThLd29LeFE2bmZ6aFk1SDlMRg?oc=5"
-  },
-  {
-    "key": "1fddc563a1c34c434553",
-    "brand": "Versace",
-    "headline": "Donatella Versace ritorna nell’industria della moda con un nuovo brand ispirato al lusso - Tatler Asia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:43:16.398768+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "Tatler Asia",
-    "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxOZHppdlpaUGNtMEloSGgwcVc2ZWxyaS1KWC1WVEtEcG9OTnNjbTNaYk4zcTBWLXRqQUlMQTduTDI3NjBzSE02SGRrMXlLZGpMZU5Td0ZvX0hxaHBJM3JtUTNaQlV3eDFTTFpuSVJzbjE3YzNqWFZQa1dhRTZualViZEZpSzhFWnlJSGtVZEZFcDM0VW53eW5UYU80eDU?oc=5"
-  },
-  {
-    "key": "0e09d1489e40b257a825",
-    "brand": "Onitsuka Tiger",
-    "headline": "Onitsuka Tiger apre un nuovo flagship store in Piazza Liberty a Milano - Outpump",
-    "signal_type": "store_opening",
-    "score": 90,
-    "confidence": "public-signal correlation",
-    "reason": "Il brand sta aprendo, riaprendo o facendo debuttare uno spazio retail. Per te conta perché un'apertura richiede lavoro su assortimento, stock, merchandising, visual e operations e può creare bisogno di nuove persone.",
-    "detected_at": "2026-11-01T21:43:16.398768+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "Outpump",
-    "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQWTB1M3plX3ctWlNmM2s2UnNGQm1pWkRaQVhEUDZEbll3dFlRWTNkOVc2R3R4cjJHNzNrT3FYdEtZZ2I1RW1vdXR6dDk2RGNIVUNVU1o2T1dna3liR1NqMUFVQ3FiX1l4TVJBb05Ebm9COXpwYWl4WjFtMEd6amotOTNiWVZ4RUY5UVEw?oc=5"
-  },
-  {
-    "key": "bbaea88d397e9dce37d2",
-    "brand": "Coccinelle",
-    "headline": "Coccinelle debutta nell'eyewear con la PE 2027 e amplia l'universo del brand - FashionNetwork Italia",
-    "signal_type": "category_launch",
-    "score": 75,
-    "confidence": "public-signal correlation",
-    "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
-    "detected_at": "2026-11-01T21:52:01.624663+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPUHkxNDJsUHpNLTljY1hWV1c5cHRhUGJYdzBZblJCMDltT3hlWlFNTExpeEQxT1lsODhqVzh4N21jOUdpdW5vaGpZeTJVV2dFWU5rbWhxcThKbWpOZjhfZ1FKa3dOeFpHS0xsdVF5RGJ0NVVmS2JYWXNPQmdYMk82OTU5ZnZnMUptSERpSGt4RUMwM2RSNVVibWZ3c2MtTGctTWpoMzhjY2xoOENXVWpJcnlUTUZWQ3paekVwbGd2bDFaQQ?oc=5"
-  },
-  {
-    "key": "b2afee530ce9fbfa0f04",
-    "brand": "Paris Texas",
-    "headline": "Paris Texas svela la prima boutique worldwide nel Quadrilatero - Pambianconews",
-    "signal_type": "industry_news",
-    "score": 80,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:52:01.624663+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "Pambianconews",
-    "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQRHZ4dzM1Qi15X0JZVVNuVjJZWGo0SDhqRzRvUmtvUUQ0U2U0U1J6QkhvMjFhU2R1RHJhMDdiOGZlOG91NmRDZkFra3V6Mjk4ZGJQdU1RbVNGcjRMY2xzb09CR19MZGU1Z09fSTJRWlZqcjdLcmF5T2FydkUwcml6NEN0TjVhemFlNXBTRDZOSmlhcWw1dy1BaGVCLWpla01xVDF4SHhZVHJjLW1t?oc=5"
-  },
-  {
-    "key": "123fe78aa097c5ff79c0",
-    "brand": "Burberry",
-    "headline": "Burberry ha chiuso la London fashion week - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 78,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:52:01.624663+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOcFlRaDNEYkREbk9wN0h4Y1VXYUVDZURDamlmMXRuTW9NZkVXUk93YUQwZFYxcEVHRnhzLUlua0NWRENwNXhmOWtqYnRaY3J6OHJfUUpzWGdTX0xPZ2xoZWEyN2dub1lrRHRmOUQtc0drMnUtTGNSaU1ta21HazBpejRTa2Izd1ljcEx0ZXBLc2p2Rm8?oc=5"
-  },
-  {
-    "key": "8cfbba6461801ab84396",
-    "brand": "Dhruv Kapoor",
-    "headline": "Dhruv Kapoor cresce in India, USA e Asia, in MFW osserva le trasformazioni del tempo - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:52:01.624663+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQZEwwVTE5T3ZiMnFNQkduRE0yYUhBQ1NEYmlyNjBMR2pvVHJIdW9MYUtaRGR4S1BGZWZTR1RkaU4yWmxmUkdkeUZ4OWRBM2ZTdTBwUWN3ZGpSYmFhTzl5SUROTGk1YXVGY01XU1lXd3IwUG5mX1dYRDNITF93VUZmT0d0cHQzU0VsQ1pUN2tGNjN3UFozb0RoVHoweFpuSGxHRDlHWHZBS2U4WjJXZDJxSWw5dUk0amw2dGxUcmZOcnlxZ0MyZkdkN0Rn?oc=5"
-  },
-  {
-    "key": "ffe4ece16a58e2eb3065",
-    "brand": "Dior",
-    "headline": "The Celebrities in Dior at the Opening of the new House of Dior in Milan - Fashion Press – Moda e Bellezza",
-    "signal_type": "industry_news",
-    "score": 78,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-03T01:54:01.543724+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "Fashion Press – Moda e Bellezza",
-    "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9QZngyWXhscGRPUnA5LVBwcnMzNXFvMGdkVWF3bWN2SEpfaWI1X3ZEYWYwc25TTGRmUnp6U0tVMFNNUE1GcndsVzNucnEwM0VRSFZ1WFoyMzVzeC11dlYtZldFTUtmWlVHOVZGX0NB0gFzQVVfeXFMTnpTdTFVcHFTWUQ5by1WMGg5ZkhBeGVVa3c5S0V3ek5ZSkNUQXFDTU9VZC1PVmVIU0Z6eWd3SkxYUUhLeGprdTFiMkZodUFmd18xcDJ1ZnRJQTZTSWZ2a2RZalNneU5QNjlqRy0zZkhWR2liQQ?oc=5"
-  },
-  {
-    "key": "36064e140b59d0c08da0",
-    "brand": "Diesel",
-    "headline": "Milano Fashion Week Donna, si parte: dallo show di Prada e Diesel fino alla notte di Vogue World - Corriere della Sera",
-    "signal_type": "industry_news",
-    "score": 78,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-04T16:28:21.662737+00:00",
-    "published_at": "2026-09-22T07:00:00+00:00",
-    "source": "Corriere della Sera",
-    "url": "https://news.google.com/rss/articles/CBMijwJBVV95cUxNazJmZllQWDhLeG55SURUN010NV94Z3RtR3R6cmRUc0NIQ1Y5cEVOdHdocVREdjhVMlV2NjVnME0xRXIyUlhGWG8xa3BCaUxwaGxmd3F4dHRnMG5CTHhhZlY5Wk12MmwtWW5kWEFmS0Q4bzEwa3Y5Y0l3MGNSanJEYWFHeGZCb3FrVTNqSFQ0TmpaRS1CZTBoYlU3Tm94VzRIeXpTSGZuM2JrS2t5Q3psZWt5cEc1QkFBMTFDMi1JY3JIeVcwRS1tbUQ4TE9IZnZpaXdOSktqSUVtTXd6emJfY2syajdzOVp2MHVEWmdIQk5VcWRNRnJGbEhZMVBpa1pPWWxlRUQwN3dWeExhSTk00gGUAkFVX3lxTE5JX1ZvaEQ0Q255QVQ0S3E0UlBBMXRPck5fYmpySXVKZHUzZExLYmoxZzExSWtsUVd5YTE5b095LVBSZDNOa3FCc1RWaThqWHRndGRyckszZmN0a1BheUJTeUliY19qQWJoNkFFN2tEeTdwRlZCNVNxTDhsV091N1BLSnQ1TFN4MGdJUEY3TXJRWlBrUllicG1ZVkxaaTJ3NFhHMmFELUViTHVxcnh2b0kwd1E4em03b2lqMjJzMS1pOFo0WHdnQ2tEUEV3enc0NTRJamJudmpFNVdIUXpMMnZKZ1RhZlBsWTZ5Z3RkWHZES2hzSHVmc0Vid1ZPYzd5TUwtS1ZWQWJ0MF9lNkQxUmt4djFQeg?oc=5"
   }
 ]
