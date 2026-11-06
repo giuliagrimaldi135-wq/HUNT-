@@ -7,7 +7,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T14:37:24.439382+00:00",
+    "detected_at": "2026-11-06T15:23:50.821151+00:00",
     "published_at": "2026-11-05T09:47:45+00:00",
     "source": "Pambianconews",
     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPSlRacnNBVEIwczZ1YW5CWWVPdGd6SUlLQ3hMd1F2MHc1czhBU0FpT2p1d0dGNVhBQWI2ZTc4VXN1RldJcXVzOTlVekVYek85SkI0cXV4UW4tSE5QVVUtdllCd1pKdUJpVlhnOE1wSm56NVJJbFpKaHkxVjZIbjFuVXAzZGt6ZnVLWjNYTTMtdno4a3dDeTZ2b1lVMUc3aHVSd1hrNndONzRMSVcx?oc=5"
@@ -20,7 +20,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T14:37:24.439382+00:00",
+    "detected_at": "2026-11-06T15:23:50.821151+00:00",
     "published_at": "2026-11-05T08:57:28+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9MOHVQZGZFTDM3OWRoTEFKYVZWU25HbEVsVUdWa05DdTg4eFBCTzM2VWthX3ZTZDdsYWhkZWVOM0NuTTI4eGRSUW5YV0lGMDA0ZWhYLXJ0eHY0NnlSVThBNExpNVVMSlNRZm9yT1dFYnlPZXc?oc=5"
@@ -33,7 +33,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T14:37:24.439382+00:00",
+    "detected_at": "2026-11-06T15:23:50.821151+00:00",
     "published_at": "2026-11-04T13:57:42+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE9hMldLZTNjc1dYSVAwVVBSSUdWaVlfTVppYXRHQXMxUlh6dmtOWW9iallwUklGTS1HQmNiLVJoaEtJVVBwOE1YY3ZBSlhoVEJhUmpWR0F2Z1AyMFZZOFZFV1pudnV6WTF4UHpiV1BERlBSV1JWNm15c3VpYw?oc=5"
@@ -46,23 +46,10 @@
     "score": 85,
     "confidence": "public-signal correlation",
     "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
-    "detected_at": "2026-11-06T14:37:24.439382+00:00",
+    "detected_at": "2026-11-06T15:23:50.821151+00:00",
     "published_at": "2026-11-04T11:35:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNSmdfSTBXcEtkOXZzZXN2T1lNaTFlNXBGU0c5Vi05dHJGR2x4bTJUajM5cUU1NnZUaGNyNWYtNk9NeGd0NllYVDE4T0FzRjRyelhOb2VEOFM4cWktTzlFQWJDUm5WQkhrQ2JLNTFIQzV2dURIWVdlV0xfQnJFQkZWdmMzcEI0dE94eGI3WFR6YnlWSHZqVlNPT2tTVGptdzdMOG5LNFg0ek9xTUpHUmQtT2ZHMUx6a05qWFVVaFBaeHhiR3J1clRTMkZQd3U?oc=5"
-  },
-  {
-    "key": "f3a312b54cfabb351756",
-    "brand": "Louis Vuitton",
-    "headline": "Louis Vuitton uomo PE27: quando l’eleganza resiste alle intemperie - Fashion Times",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T11:34:26.073665+00:00",
-    "published_at": "2026-11-02T10:42:59+00:00",
-    "source": "Fashion Times",
-    "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNcGx4MXV4RTFORXdlUmVxVTZxR0hCVWpWd08yU1VvOXk2R2dKNGZ3ZHJRVEdtNzM1UktBR2cxbW1vNnIwaWVTdEZfRlBIc1l2TldpbXV2SkQzVTFxN2VXNUI0MXJ3aFVkTmZGVVQ4Z0sxdUtnZlpMWU9veVFzczY3eklLdXJqZkdYSnQwdnlOcFhCSHJfQ0JEVllNQ1pqVkh0WE1v?oc=5"
   },
   {
     "key": "2fdc259411e20ca67f9b",
