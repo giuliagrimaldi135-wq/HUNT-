@@ -1,5 +1,18 @@
 [
   {
+    "key": "758ab0b0e85cfa6bf822",
+    "brand": "Magliano",
+    "headline": "Magliano - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-06T08:42:18.347215+00:00",
+    "published_at": "2026-11-05T14:07:42+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8tYzdDa04yZHRfdU01eE5MUU9VNlVHR1hmZUE4aDRuQjh5VFJDRjVQektxSXF4NWczbzY5MDNXa1Z1Ym44OHhYZFBLM0ZuUHVFVkFFQXZNdGxKcTM4MkhoVmxCeDVvQXF2a0hRWm0talg4WU80dGFVRQ?oc=5"
+  },
+  {
     "key": "93e3d3f7a9f0c9259780",
     "brand": "Etro",
     "headline": "Veronica Etro torna con il nuovo fashion brand Off the menu - Pambianconews",
@@ -37,6 +50,19 @@
     "published_at": "2026-11-04T11:35:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNSmdfSTBXcEtkOXZzZXN2T1lNaTFlNXBGU0c5Vi05dHJGR2x4bTJUajM5cUU1NnZUaGNyNWYtNk9NeGd0NllYVDE4T0FzRjRyelhOb2VEOFM4cWktTzlFQWJDUm5WQkhrQ2JLNTFIQzV2dURIWVdlV0xfQnJFQkZWdmMzcEI0dE94eGI3WFR6YnlWSHZqVlNPT2tTVGptdzdMOG5LNFg0ek9xTUpHUmQtT2ZHMUx6a05qWFVVaFBaeHhiR3J1clRTMkZQd3U?oc=5"
+  },
+  {
+    "key": "cb9796792bdc504ce72f",
+    "brand": "Golden Goose",
+    "headline": "Golden Goose x Disney: la collezione Mickey & Friends - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-06T08:42:18.347215+00:00",
+    "published_at": "2026-10-31T14:41:26+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPZDAwVW1XNWdSbXZTUXVkeERWV2Y1TGJQNXM3eXZQVEhCV05TNG5iRmZPN2ZyTHZaM0JpQTZLc3pnTDlEQ00wNkxSa09fTzZOcHVlVG9JY2NVeThKMGFOd25kWUkzUy00NnNSUnRNZVU4czVuaU5rUkZ2VVBib2lrZUFCbHlZR2EwTmNfMHFDeFFDaUU?oc=5"
   },
   {
     "key": "b62b41880b938271b0c2",
