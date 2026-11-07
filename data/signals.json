@@ -169,6 +169,19 @@
     "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNc1dfRmpVbWNtMW9ETTNTQTdjcU9Uc0xFcE0waUNJSTV6dWtzd2Y0aVVzMEN6djBZVnBCMjNJR0JjbjNJbks5WlZZdTA4ck5ROEdqMnZaT09PUDJyOXJPRzNidWFZMEJYMk5IWVN3NF9wMGdsNTdEWFFFTHpfYUxLZlctU0JyNDhURmZ5X2dHTjdVc1pQZEdBRlM0dFh0SDg?oc=5"
   },
   {
+    "key": "c94523c8d1b749b87afd",
+    "brand": "Zegna",
+    "headline": "Luxury: a mixed picture in the first nine months – Zegna posts growth, whilst China weighs on Hermès - Il Sole 24 ORE",
+    "signal_type": "expansion",
+    "score": 80,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta crescendo, investendo o entrando in nuovi mercati. Per te conta perché la crescita può aumentare budget, team, wholesale, retail e bisogno di profili junior.",
+    "detected_at": "2026-11-07T08:13:19.926054+00:00",
+    "published_at": "2026-10-23T07:00:00+00:00",
+    "source": "Il Sole 24 ORE",
+    "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxNSE5oLXV6dEZQMDhNZU9qTzJaRnFzeG11YU5JcEFZaHVLRlhnS0dORzZmcEw3LVlBc09vNGRIZHhJdGthSGd0WTJzc2QtSTkzMl9GV3gyVk1LSlFiZHRKTXpHSHAzSXRwdWEyTy1XZWFnYlM4d3pTd2xwSlo3aUtOMTJsc3BhQk5aTmprWkwxTWpUTGttWGNiSy03eXAzcjVBZFlOd3hWb3NLemNVeVREeVNNV0ZoME9UZnBMeDdxMVB2UXRnamcyMU03WV83R2hlU2cwdGdjVmhGamp1TS1ESjl3?oc=5"
+  },
+  {
     "key": "407c2f8c57054903e47c",
     "brand": "Etro",
     "headline": "Etro inaugura a New York la mostra \"Etrospective Ny: 96-26\" - FashionUnited",
@@ -427,6 +440,19 @@
     "published_at": "2026-10-14T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxNU2VOT0ZvMEJjcHVMYkh2aHF5LTdGTXB2SHhDX180R0ZMYW10MHliZWdjeVlwNGdFOVloLXZPMGNsSnozM2sxQUJyUWJDZ3JEcDRTcVduSUczbHNyeWxOM2taclBZMGZ4ZG0xcUpBMm1qYVo4cDNsNG8yRl9HanVhdFZsYngzR3lTMmJBaWxiOGdkMXJ5QTF4YnZZTDNPbm9tdV94RmZ5VjBXOWFDelpoWi13Z2h5R1NwbmF0ZnBDenRsb3B5OUVUV3lfOHBVR0pDeVRCeklQNEhMRTBVZFdzTERzb01Wdw?oc=5"
+  },
+  {
+    "key": "93e3741cb6450b8d82f7",
+    "brand": "Onitsuka Tiger",
+    "headline": "Bang Chan visita il nuovo store Onitsuka Tiger a Gangnam - PAP Magazine",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T08:13:19.926054+00:00",
+    "published_at": "2026-10-14T07:00:00+00:00",
+    "source": "PAP Magazine",
+    "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxONWxIQ2lmUkVveDNRSGZOck91aVZWS1hJS2hLMXp0Y3B4anV5VGdYY2RRUGtOODlxNUhXTElsZU1vTlJDeUR2Mk5feU5JV2F6X25UMURDS2ZDOV9rUjhLRHBuakN5clNWeUlmLUNHZlpDOV9JYzgwOGJZcnd3WVp1TTkwS0hGRkhza2V6enBBbw?oc=5"
   },
   {
     "key": "f6c2ee085e181991cec9",
@@ -1350,6 +1376,19 @@
     "published_at": "2026-09-28T07:00:00+00:00",
     "source": "Amica.it",
     "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNZHlwRDRNUEk0dFFKbFVRZGdBWHlOa21pR1ltbGlwWGNJb1BHNVhmRjNQOV9vTWZuR05lMUFwNE11b0xzSlg1QkpudklicEtVdGs3TU9aWDA1NEktalNZZFlkaWU3ZVptUXZSVl94QWZvRGFWVkZDRmxUQkE0NjBzTWZFSkMtWjJwU2dfQm5FcXc?oc=5"
+  },
+  {
+    "key": "6a7ba2a4907a32f4248b",
+    "brand": "Fendi",
+    "headline": "Fendi e la moda che libera il desiderio - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T08:13:19.926054+00:00",
+    "published_at": "2026-09-28T07:00:00+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOejJ3WGpsZWlOS29zVk9fOUYyTFhfaDQ3Zmt4akpnM2prV3N0LUNVVXNuWmxCN2pDX1k5Vjd1clBvV3RnOGE1ei1UUVhsYkwwdC1EdW5ESm84NXBNSE9DT0JwaHdyRVlDdXlUNFVlcGRRQXBQNk5IWGkxTV9sV05MQTVMdnpQUkZGVXd0Xw?oc=5"
   },
   {
     "key": "81fa537f3d3708ffeb44",
