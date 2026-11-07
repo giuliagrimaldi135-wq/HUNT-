@@ -1,29 +1,29 @@
 [
   {
-    "key": "3780e7ed72968b4d1d3d",
-    "brand": "Ferragamo",
-    "headline": "Salvatore Ferragamo - FashionNetwork Italia",
+    "key": "e91df82369cbe363f496",
+    "brand": "Jil Sander",
+    "headline": "Jil Sander - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T17:12:50.816117+00:00",
-    "published_at": "2026-11-06T22:06:58+00:00",
+    "detected_at": "2026-11-07T17:45:48.167627+00:00",
+    "published_at": "2026-11-07T06:46:58+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNdjlsR0JHX3AxTFFWbTRfaU5YNmZuakc0T19fejJ2bGdfYzJRZ0JyU25DNDZ1YXdnaEl5RFJ5d0FMcjV2NzVTZlpyQlhmbmVndzlKRGlpNVBGWURNTUhKM3YwTGU1SlFCN18xSFJDenBQM01mRm10M0lkU3BRclpxWWtYWEtRNkE?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1NazZrOFNpSlRDLVhqZXFDek5qVGx5WUVKWkIwQkx2U2FXMmFYSFczVnJmMFBZUUxPQk1WZjhHeVhyNjhTX3RUZ2lQUkdoaVR5ekdFb0NzM2NxaEZEX1FvZmtLbFpTc3FkZnB2WnpzVVdIVzd3dzZVQUxVSQ?oc=5"
   },
   {
-    "key": "c7230f0695b1b4659216",
-    "brand": "Patrizia Pepe",
-    "headline": "Tessilform (Patrizia Pepe) in amministrazione giudiziaria - FashionNetwork Italia",
+    "key": "827b875ad3066bc09f80",
+    "brand": "Jil Sander",
+    "headline": "Jil Sander - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T17:12:50.816117+00:00",
-    "published_at": "2026-11-06T21:22:57+00:00",
+    "detected_at": "2026-11-07T17:45:48.167627+00:00",
+    "published_at": "2026-11-07T01:53:43+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPWHFVMmVWVXNjS1RHTjJwNUVoQnNJanhSb2tBdjBDNGhGUEVIblNpUzlmZjVuU3pLR3Q3aUdEZ2VMSmg4WEhIZHFDVXI3ZllXNEpQNnN4bWlIUU5xTlFkdUlqNWhQV0V3XzB6RERHVmRpWTlaV1FkeE5RT0ZnQ1hQOHYxejFHTXhfdElYWjhTMnI2T28?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE5Kc2Jwc0NCZjZDMU81RTh0czRBTGxiaWJFVk1HbFNDaW8ydktKRUk0cG9OWnBoajZCTjVnOGdsNnp2UC13MzN0VGkwVjhBR1h1Qm9fTVhhVGxIVmtCWXl2S1Btbjg5Y2xrVkZPQjFqOGh3dC0tZjRTODRwVQ?oc=5"
   },
   {
     "key": "758ab0b0e85cfa6bf822",
@@ -37,6 +37,45 @@
     "published_at": "2026-11-05T14:07:42+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8tYzdDa04yZHRfdU01eE5MUU9VNlVHR1hmZUE4aDRuQjh5VFJDRjVQektxSXF4NWczbzY5MDNXa1Z1Ym44OHhYZFBLM0ZuUHVFVkFFQXZNdGxKcTM4MkhoVmxCeDVvQXF2a0hRWm0talg4WU80dGFVRQ?oc=5"
+  },
+  {
+    "key": "6b38a01c1f835cb7bb9d",
+    "brand": "Moncler",
+    "headline": "Moncler Gamme Bleu - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T17:45:48.167627+00:00",
+    "published_at": "2026-11-05T10:27:46+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPekpEeGlmc0wtVW5qekVXYmVVYlk1M3FKWTNVNjd4R3BXWldwTXdWLVBaSExBRnlqdXozSF9XVldHYTc2SXFLVi1VYXV6b3A3U0JXRUxKNzR1cTBvRzNIZXRjczFTVi1Ec0Y4S3hvZTRnbWJBbHc3SjZlNG5IajVHYmYzTFVhUQ?oc=5"
+  },
+  {
+    "key": "487ff068e02d095d834f",
+    "brand": "Loewe",
+    "headline": "Loewe - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T17:45:48.167627+00:00",
+    "published_at": "2026-11-05T04:54:30+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE55SzhSb19yTmN6NlVWbkRma0k4aTZReUQxZ3MyMXVhZzVuMHRWMGdHQ0RXTXZodGstZjFEdVNXUWQzRXhCREhsbnNzU2FLX2w4UEZWaXEzVVpPRXUzaHFEOUpKb1lZOWxvcVhBdlJZRGNidEZV?oc=5"
+  },
+  {
+    "key": "e01bb22cd301b5e19042",
+    "brand": "Louis Vuitton",
+    "headline": "Louis Vuitton - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T17:45:48.167627+00:00",
+    "published_at": "2026-11-04T17:02:31+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE52QlI2d2NUMU02UEYydUJ3aFhDWjVFZkI2VkZLa1JhbE5WM01uOHo0VjhCMjFraFlHQVhKYlUtdVJEeFA2SjBFWEowTXZBNnd4QTdfcFpVYnN0dWxVaXVRRU43Zl9FMzNMSmtTTjUzR2Z6dGdkUmFYVGx1bG9SUEE?oc=5"
   },
   {
     "key": "19761e76a73257943ed7",
@@ -1365,6 +1404,19 @@
     "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPMVBZbGE2NEJQdUNZOHRoRFNGZmtwQnZQMGlRM1JPTjRrU0tjRWJ4MXVmTGk2bU5kZ0lINWtrQzZ3ZFhPNkhfeU9KSTRTMU5ucHRmamh5TEh1eHp1VzN1bDUxV2VrNV9YcDNoOHdNYVJZWTVmM2xRcUduSF9QRXdoNVJwZjQyZkdkSFVJNERlSnNtZUdFbmRxOVlKY0g4VjU0NUdLN0ZfcVcyRUhyS3FFY013?oc=5"
   },
   {
+    "key": "4bd990205e031b8d9c8e",
+    "brand": "Loro Piana",
+    "headline": "MFW: la storicità e la maestria artigianale di Loro Piana, Pollini, Gherardini e The Bridge - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T17:45:48.167627+00:00",
+    "published_at": "2026-09-29T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPUnBDcVAwQWZuaV9nLVVYdXBkZ3RrUTNmVXNTZDE4Uk9NSDgtT1hBcEZXREgyNGM2N1JEUk0yLWwyZVRhMHAzQUlGOWJLbEZGbmJJcmhsY1ZFTElic3k3cVhianVmVnB1ZGpTaWZRTHlJOHZhRTN4Z2M1ZzhJRVVxQ01nM0RZQXk1TF9FVTRQeHVVYlVJaVBYMk5obXVILXN2RUw1T2dDS042NDBpRzhJdGt5V2NjXzh6TS1rRUZERXc1ejI0YlNKelVMSThOeDItLVE?oc=5"
+  },
+  {
     "key": "2eb80d98968fc10ba1ab",
     "brand": "Brunello Cucinelli",
     "headline": "Brunello Cucinelli - FashionNetwork Italia",
@@ -1532,6 +1584,19 @@
     "published_at": "2026-09-28T07:00:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPdDhoY1FBZnJwdlBwZEhMek9vUEdkdnVsTDVlQThMRHQ4blhaOVdjY0lsNVpmM1N6eENBWUczMzJBVklSV2FndlpDdFIzTGEtaHAtLVZseENLZ0pzTThPVXpGcE56RjRwV2FWd1I3OVVXOG1xb1hmNkhxOUpxZDZMZFlYdW5fT2l4ckZCcm5mRVAxOGNZOGNQSlo3NlBQSU5tUWRjdTNtUkNvN2FzQXA5V1BDTGRLRWUybVZDcGtieE5ndw?oc=5"
+  },
+  {
+    "key": "7da2d7645180f28e006e",
+    "brand": "Giorgio Armani",
+    "headline": "Giorgio Armani - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T17:45:48.167627+00:00",
+    "published_at": "2026-09-28T01:58:59+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE9QMXV0TTlKVlZSZ2tEV0RHTjlTUUZqUFF3alpOV01MN1k5NGZZN2FVOHl3QUhoNTdiR3JBQU16NThRRjVmbFdJNmx1b1k4bEU3LTA0WEd1dGR3cmhJZ2NWajZ3VVR3SURtQXdCNVBfV01acFhId2xQbU5HVQ?oc=5"
   },
   {
     "key": "81fa537f3d3708ffeb44",
