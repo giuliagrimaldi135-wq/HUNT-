@@ -1,42 +1,55 @@
 [
   {
-    "key": "3780e7ed72968b4d1d3d",
-    "brand": "Ferragamo",
-    "headline": "Salvatore Ferragamo - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
+    "key": "69b9e475fc4540bf883b",
+    "brand": "Coccinelle",
+    "headline": "Coccinelle a Parma: debutta Homization, la boutique da vivere - HUB Style Magazine",
+    "signal_type": "category_launch",
+    "score": 75,
     "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T11:44:47.256458+00:00",
-    "published_at": "2026-11-06T22:06:58+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNdjlsR0JHX3AxTFFWbTRfaU5YNmZuakc0T19fejJ2bGdfYzJRZ0JyU25DNDZ1YXdnaEl5RFJ5d0FMcjV2NzVTZlpyQlhmbmVndzlKRGlpNVBGWURNTUhKM3YwTGU1SlFCN18xSFJDenBQM01mRm10M0lkU3BRclpxWWtYWEtRNkE?oc=5"
+    "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
+    "detected_at": "2026-11-07T12:23:42.168390+00:00",
+    "published_at": "2026-11-06T14:41:53+00:00",
+    "source": "HUB Style Magazine",
+    "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPM1VNUm9NdDRmckQ0NURuczdKdnpqWVVXbjhvSnJCRzBzaVZSUm5tTWQzZG1CaldzekhlUW9iOHJYanZWVU1JNE5oMEFPWWdvMVg2bUo3YW1hT1lQZjM1Z0FERDNKellwdE9JOVMwOXplamJ1bGJjRzNFeTJ4c1N5UkJEREFmamloRzhfZ0NLOXhqN29RUHI0X0RweWFDLUY5NDNTaEdGNG13ZHB2RUV6QkJJd1JyVkh0aGtqUg?oc=5"
   },
   {
-    "key": "c7230f0695b1b4659216",
-    "brand": "Patrizia Pepe",
-    "headline": "Tessilform (Patrizia Pepe) in amministrazione giudiziaria - FashionNetwork Italia",
+    "key": "93e3d3f7a9f0c9259780",
+    "brand": "Etro",
+    "headline": "Veronica Etro torna con il nuovo fashion brand Off the menu - Pambianconews",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T11:44:47.256458+00:00",
-    "published_at": "2026-11-06T21:22:57+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPWHFVMmVWVXNjS1RHTjJwNUVoQnNJanhSb2tBdjBDNGhGUEVIblNpUzlmZjVuU3pLR3Q3aUdEZ2VMSmg4WEhIZHFDVXI3ZllXNEpQNnN4bWlIUU5xTlFkdUlqNWhQV0V3XzB6RERHVmRpWTlaV1FkeE5RT0ZnQ1hQOHYxejFHTXhfdElYWjhTMnI2T28?oc=5"
+    "detected_at": "2026-11-07T12:23:42.168390+00:00",
+    "published_at": "2026-11-05T09:47:45+00:00",
+    "source": "Pambianconews",
+    "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPSlRacnNBVEIwczZ1YW5CWWVPdGd6SUlLQ3hMd1F2MHc1czhBU0FpT2p1d0dGNVhBQWI2ZTc4VXN1RldJcXVzOTlVekVYek85SkI0cXV4UW4tSE5QVVUtdllCd1pKdUJpVlhnOE1wSm56NVJJbFpKaHkxVjZIbjFuVXAzZGt6ZnVLWjNYTTMtdno4a3dDeTZ2b1lVMUc3aHVSd1hrNndONzRMSVcx?oc=5"
   },
   {
-    "key": "758ab0b0e85cfa6bf822",
-    "brand": "Magliano",
-    "headline": "Magliano - FashionNetwork Italia",
+    "key": "97beedd4e5307aeb5435",
+    "brand": "Coccinelle",
+    "headline": "Coccinelle, lo store concept Homization debutta nella nuova boutique di Parma - Milano Finanza",
+    "signal_type": "category_launch",
+    "score": 85,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
+    "detected_at": "2026-11-07T12:23:42.168390+00:00",
+    "published_at": "2026-11-04T11:35:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNSmdfSTBXcEtkOXZzZXN2T1lNaTFlNXBGU0c5Vi05dHJGR2x4bTJUajM5cUU1NnZUaGNyNWYtNk9NeGd0NllYVDE4T0FzRjRyelhOb2VEOFM4cWktTzlFQWJDUm5WQkhrQ2JLNTFIQzV2dURIWVdlV0xfQnJFQkZWdmMzcEI0dE94eGI3WFR6YnlWSHZqVlNPT2tTVGptdzdMOG5LNFg0ek9xTUpHUmQtT2ZHMUx6a05qWFVVaFBaeHhiR3J1clRTMkZQd3U?oc=5"
+  },
+  {
+    "key": "19761e76a73257943ed7",
+    "brand": "Etro",
+    "headline": "Etro - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T11:44:47.256458+00:00",
-    "published_at": "2026-11-05T14:07:42+00:00",
+    "detected_at": "2026-11-07T12:23:42.168390+00:00",
+    "published_at": "2026-11-04T09:26:58+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8tYzdDa04yZHRfdU01eE5MUU9VNlVHR1hmZUE4aDRuQjh5VFJDRjVQektxSXF4NWczbzY5MDNXa1Z1Ym44OHhYZFBLM0ZuUHVFVkFFQXZNdGxKcTM4MkhoVmxCeDVvQXF2a0hRWm0talg4WU80dGFVRQ?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE0wQ3llQVFiWHNOY3ZJM0VjVmpvdjBsWEQ4YWE3UWprZDlibkdNdU9DVFE5RXBhc1R1UWN3dFJEVktDeUVLWGpXYmt1blduS2NtS2pYVHp5bzEyNzlyQzMzZG95N3RId3cyQU05bjBNNWEzN0k?oc=5"
   },
   {
     "key": "d15a411a2a431f559399",
@@ -934,6 +947,19 @@
     "published_at": "2026-10-04T07:00:00+00:00",
     "source": "Life&People Magazine",
     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPTHI2TWtWSTRaTHFtMVRlQWR5eUFFRE9GOVdDTzdudlRNTG9MM3BaaW1EUXV4SWNUS3lzRHJqT084X1NuWjFpeVc4TEczUFFKekNHcWR1ZGZ6WDBMZUhtT0ROc3d2SHJNN25ZLVVwNWNZSWwzWEpWN1BUR1puazNrOENRdVl5VGhEZmhKb0Q1cEdlNkRMNFE?oc=5"
+  },
+  {
+    "key": "1c99c2ddc1e205930d04",
+    "brand": "Givenchy",
+    "headline": "Givenchy - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T12:23:42.168390+00:00",
+    "published_at": "2026-10-03T12:12:25+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9tcUtCR1RfSmhLdlJmeF80cmtUSHZYMWU4eENqckQ2Rk1QNlU3b3lDTmtzdy1KTEhXdFlPd0lYdURxOC05OV9RaGNRaDVQY0ZCTV9JRW00d05JS3pSeWkxNUcyV1gydlZqclJXQ243Wk13aFU?oc=5"
   },
   {
     "key": "c55b326a63662e1a5760",
@@ -2624,18 +2650,5 @@
     "published_at": "2026-09-23T14:42:31+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBpYllJTWEtdTdvQ0VlQkpHSlBiUFFuNEcwQjZ3U24xRlczTnNITVJnMXNjWmFxUG9HV1kzaThGcVh4a3M5NlRmYW85SEhfSUFxd0o0UEw5MF9ZS2JBNldUa2hGZ3JjV3FGZlFnY01Bbw?oc=5"
-  },
-  {
-    "key": "d6e6f24d817614db1ef2",
-    "brand": "Jil Sander",
-    "headline": "Jil Sander - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:49:10.498756+00:00",
-    "published_at": "2026-09-23T11:45:47+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBRVUxPYjhNVVB3XzZ6eVFGdzdsU2xJeWFOblRwRnIzUG5HS3lLZFhoaHhHbHE2VEJmVVprbDFBMUExYktsZU1HdHZtWWRXek1EelQwZHJDMG5KeTBpWG1XbjdVRG5HSHZzeEk2bVU2LU9zd0FHVWc?oc=5"
   }
 ]
