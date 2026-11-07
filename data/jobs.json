@@ -1,5 +1,31 @@
 [
   {
+    "key": "4450b91259c69e552232",
+    "brand": "Bottega Veneta",
+    "title": "BOTTEGA VENETA Jewellery Product Development Intern",
+    "location": "Milano",
+    "score": 100,
+    "reasons": [
+      "Ruolo coerente dal titolo",
+      "Seniority junior/intern",
+      "Località target coerente",
+      "Competenze: excel, merchandising",
+      "Priorità Milano"
+    ],
+    "role_family": "Product",
+    "decision": "strong",
+    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/bottega-veneta-jewellery-product-development-intern/",
+    "source_name": "Bottega Veneta careers",
+    "provider": "career_page",
+    "published_at": "2026-11-07T00:00:00+00:00",
+    "years_required": null,
+    "junior_fit": true,
+    "first_seen_at": "2026-11-07T10:24:34.504438+00:00",
+    "last_seen_at": "2026-11-07T10:24:34.504438+00:00"
+  },
+  {
     "key": "b0cb1c8d0110374cf3e9",
     "brand": "Bottega Veneta",
     "title": "BOTTEGA VENETA Global Merchandise & Demand Planning Intern",
@@ -23,7 +49,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-05T18:23:32.619739+00:00",
-    "last_seen_at": "2026-11-07T09:44:03.262374+00:00"
+    "last_seen_at": "2026-11-07T10:24:34.504438+00:00"
   },
   {
     "key": "68ef732d031b2af141ca",
@@ -49,7 +75,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-04T10:51:36.696347+00:00",
-    "last_seen_at": "2026-11-07T09:44:03.262374+00:00"
+    "last_seen_at": "2026-11-07T10:24:34.504438+00:00"
   },
   {
     "key": "a457cc063cb8288560d0",
@@ -75,7 +101,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T19:05:59.550269+00:00",
-    "last_seen_at": "2026-11-07T09:44:03.262374+00:00"
+    "last_seen_at": "2026-11-07T10:24:34.504438+00:00"
   },
   {
     "key": "87ad6510dd6b0946c03c",
@@ -101,7 +127,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-02T15:32:50.971442+00:00",
-    "last_seen_at": "2026-11-07T09:44:03.262374+00:00"
+    "last_seen_at": "2026-11-07T10:24:34.504438+00:00"
   },
   {
     "key": "b9145e91275901c9339c",
@@ -127,6 +153,6 @@
     "years_required": 1,
     "junior_fit": false,
     "first_seen_at": "2026-11-03T02:37:56.737226+00:00",
-    "last_seen_at": "2026-11-07T09:44:03.262374+00:00"
+    "last_seen_at": "2026-11-07T10:24:34.504438+00:00"
   }
 ]
