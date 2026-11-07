@@ -1,29 +1,81 @@
 [
   {
-    "key": "c7230f0695b1b4659216",
-    "brand": "Patrizia Pepe",
-    "headline": "Tessilform (Patrizia Pepe) in amministrazione giudiziaria - FashionNetwork Italia",
+    "key": "47510090196c29492347",
+    "brand": "Louis Vuitton",
+    "headline": "Louis Vuitton Holiday e la magia del viaggio - Fashion Times",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T23:42:32.691049+00:00",
-    "published_at": "2026-11-06T21:22:57+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPWHFVMmVWVXNjS1RHTjJwNUVoQnNJanhSb2tBdjBDNGhGUEVIblNpUzlmZjVuU3pLR3Q3aUdEZ2VMSmg4WEhIZHFDVXI3ZllXNEpQNnN4bWlIUU5xTlFkdUlqNWhQV0V3XzB6RERHVmRpWTlaV1FkeE5RT0ZnQ1hQOHYxejFHTXhfdElYWjhTMnI2T28?oc=5"
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
+    "published_at": "2026-11-05T18:13:46+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNMEVtcXJCX1dRamx1T3pLdmtFNk0wYmU1VE5TYm1lS1hCdlJvZ0dIRTdVTDd3bkd5ZXBxTmwxYlpQM3lsWkNNVm1NYlhVOTFJM3R6emN6SzZSMEpmSU4zS3pXdHJpVHo3cHlUeUU2YVpXaXpNeW1rbmdOaXppUG05YUdTd002VFZO?oc=5"
   },
   {
-    "key": "758ab0b0e85cfa6bf822",
-    "brand": "Magliano",
-    "headline": "Magliano - FashionNetwork Italia",
+    "key": "6b38a01c1f835cb7bb9d",
+    "brand": "Moncler",
+    "headline": "Moncler Gamme Bleu - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T23:42:32.691049+00:00",
-    "published_at": "2026-11-05T14:07:42+00:00",
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
+    "published_at": "2026-11-05T10:27:46+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8tYzdDa04yZHRfdU01eE5MUU9VNlVHR1hmZUE4aDRuQjh5VFJDRjVQektxSXF4NWczbzY5MDNXa1Z1Ym44OHhYZFBLM0ZuUHVFVkFFQXZNdGxKcTM4MkhoVmxCeDVvQXF2a0hRWm0talg4WU80dGFVRQ?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPekpEeGlmc0wtVW5qekVXYmVVYlk1M3FKWTNVNjd4R3BXWldwTXdWLVBaSExBRnlqdXozSF9XVldHYTc2SXFLVi1VYXV6b3A3U0JXRUxKNzR1cTBvRzNIZXRjczFTVi1Ec0Y4S3hvZTRnbWJBbHc3SjZlNG5IajVHYmYzTFVhUQ?oc=5"
+  },
+  {
+    "key": "487ff068e02d095d834f",
+    "brand": "Loewe",
+    "headline": "Loewe - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
+    "published_at": "2026-11-05T04:54:30+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE55SzhSb19yTmN6NlVWbkRma0k4aTZReUQxZ3MyMXVhZzVuMHRWMGdHQ0RXTXZodGstZjFEdVNXUWQzRXhCREhsbnNzU2FLX2w4UEZWaXEzVVpPRXUzaHFEOUpKb1lZOWxvcVhBdlJZRGNidEZV?oc=5"
+  },
+  {
+    "key": "e01bb22cd301b5e19042",
+    "brand": "Louis Vuitton",
+    "headline": "Louis Vuitton - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
+    "published_at": "2026-11-04T17:02:31+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE52QlI2d2NUMU02UEYydUJ3aFhDWjVFZkI2VkZLa1JhbE5WM01uOHo0VjhCMjFraFlHQVhKYlUtdVJEeFA2SjBFWEowTXZBNnd4QTdfcFpVYnN0dWxVaXVRRU43Zl9FMzNMSmtTTjUzR2Z6dGdkUmFYVGx1bG9SUEE?oc=5"
+  },
+  {
+    "key": "d15a411a2a431f559399",
+    "brand": "MSGM",
+    "headline": "Msgm - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
+    "published_at": "2026-11-04T08:57:01+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBtcXJSbk1GYTV6Ui16SWczdk50d0N5T05pQlVOQUdPVHBydXR5MlNvM1d0dTQtLTVhaVlQX1VXU0c0WEQ0WFVXc25pVnJWal9qYzBCZ3lzYU4xNlVUREkxNFBOeWNTZnBDQ1dnbUFUek1DcVE?oc=5"
+  },
+  {
+    "key": "b138c1fa8926ffbe5323",
+    "brand": "N°21",
+    "headline": "Style Capital si assicura il controllo di N°21 - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
+    "published_at": "2026-11-02T12:34:46+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOQnoxWXZTY2V0Sk1meXhITDZheTRUZlNPOXU4dzBlMzh4VW1YNnFmRE9Dc05YQXd6MEY3SHgtTWZIZVFuaEdpd21hTE5LWThfRXNRejZBUHo4amZ6X0RKZmFFeGhRSHFvblhkSUxuUXBwNjBiVlJGVXdJNXpVWHRHY0xGUTF6Z21DbjZVOTd0dzBXdTh3UFVNbEVR?oc=5"
   },
   {
     "key": "2fdc259411e20ca67f9b",
@@ -33,7 +85,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-06T11:34:26.073665+00:00",
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
     "published_at": "2026-11-01T13:39:03+00:00",
     "source": "Harper's BAZAAR",
     "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPODZQU2VHWXFIejRWdVhVX3JKRFE5SXVGZU5Fbnk4VTNNeVFBdHMwc2tYQWwxNGM0QUc1VVp2cGRnUFdYb3R0T2dKRzJyNmJNdnIyemxEWEd1bGx3TDVPMmJPQU4xSmdLMmlTN1lwX3FNMzVJcFR2VEVSQzQyLVNLY1VOT1dnN3pFNUNHMXhCSW5GV1U3Tnd6SQ?oc=5"
@@ -2091,6 +2143,19 @@
     "published_at": "2026-09-25T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQUFdtOVVPcGVDWC1zYnZuem8zX2owdEFWd1NCdHlsakRiMHZkQVcwbmVnRThSaGpXZllwZzRRdXVYSVR3ajF0WTJoVGFCbmRwSE1CNnM1Q3ZVaEFEWXp0cU1uQ1FzNTJKdm0tVnAzakgwRWNsN3JKc2R0blZIYlhob0lrZHdCU01VeDNiQnVGbmoyMlBiV1E?oc=5"
+  },
+  {
+    "key": "6dffd99bd18b4249724d",
+    "brand": "Moschino",
+    "headline": "MOSCHINO - WOMEN SS 2027 - MILANO - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T00:19:02.962492+00:00",
+    "published_at": "2026-09-25T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPTm1nQ0dvQkJRU2pUdzQ2bHl3LWF0c19DSVB6VS1BeXhkQVgyRTFCYlJxUHRaWWIzLVdFV1diMUYzQlZDZHktX3J5SEY5NUYxbEhweFdhQVZqVWh5M3l3Z1QwcWNyTVl2SUZUd2RTc1pIQUJNbEJ6SHUxMXRWVElSREt3ZmZOcGp5bEdV?oc=5"
   },
   {
     "key": "222837c5251d0c6c88f2",
