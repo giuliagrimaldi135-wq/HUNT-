@@ -1,5 +1,18 @@
 [
   {
+    "key": "3780e7ed72968b4d1d3d",
+    "brand": "Ferragamo",
+    "headline": "Salvatore Ferragamo - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-07T06:13:27.674802+00:00",
+    "published_at": "2026-11-06T22:06:58+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNdjlsR0JHX3AxTFFWbTRfaU5YNmZuakc0T19fejJ2bGdfYzJRZ0JyU25DNDZ1YXdnaEl5RFJ5d0FMcjV2NzVTZlpyQlhmbmVndzlKRGlpNVBGWURNTUhKM3YwTGU1SlFCN18xSFJDenBQM01mRm10M0lkU3BRclpxWWtYWEtRNkE?oc=5"
+  },
+  {
     "key": "c7230f0695b1b4659216",
     "brand": "Patrizia Pepe",
     "headline": "Tessilform (Patrizia Pepe) in amministrazione giudiziaria - FashionNetwork Italia",
@@ -7,7 +20,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T05:26:33.377462+00:00",
+    "detected_at": "2026-11-07T06:13:27.674802+00:00",
     "published_at": "2026-11-06T21:22:57+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPWHFVMmVWVXNjS1RHTjJwNUVoQnNJanhSb2tBdjBDNGhGUEVIblNpUzlmZjVuU3pLR3Q3aUdEZ2VMSmg4WEhIZHFDVXI3ZllXNEpQNnN4bWlIUU5xTlFkdUlqNWhQV0V3XzB6RERHVmRpWTlaV1FkeE5RT0ZnQ1hQOHYxejFHTXhfdElYWjhTMnI2T28?oc=5"
@@ -20,7 +33,7 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T05:26:33.377462+00:00",
+    "detected_at": "2026-11-07T06:13:27.674802+00:00",
     "published_at": "2026-11-05T14:07:42+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8tYzdDa04yZHRfdU01eE5MUU9VNlVHR1hmZUE4aDRuQjh5VFJDRjVQektxSXF4NWczbzY5MDNXa1Z1Ym44OHhYZFBLM0ZuUHVFVkFFQXZNdGxKcTM4MkhoVmxCeDVvQXF2a0hRWm0talg4WU80dGFVRQ?oc=5"
@@ -33,23 +46,10 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T05:26:33.377462+00:00",
+    "detected_at": "2026-11-07T06:13:27.674802+00:00",
     "published_at": "2026-10-31T14:41:26+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPZDAwVW1XNWdSbXZTUXVkeERWV2Y1TGJQNXM3eXZQVEhCV05TNG5iRmZPN2ZyTHZaM0JpQTZLc3pnTDlEQ00wNkxSa09fTzZOcHVlVG9JY2NVeThKMGFOd25kWUkzUy00NnNSUnRNZVU4czVuaU5rUkZ2VVBib2lrZUFCbHlZR2EwTmNfMHFDeFFDaUU?oc=5"
-  },
-  {
-    "key": "68e6eaf7ab202c26dd6c",
-    "brand": "Loro Piana",
-    "headline": "Loro Piana inaugura un nuovo store a Tokyo - d la Repubblica",
-    "signal_type": "store_opening",
-    "score": 80,
-    "confidence": "public-signal correlation",
-    "reason": "Il brand sta aprendo, riaprendo o facendo debuttare uno spazio retail. Per te conta perché un'apertura richiede lavoro su assortimento, stock, merchandising, visual e operations e può creare bisogno di nuove persone.",
-    "detected_at": "2026-11-06T11:34:26.073665+00:00",
-    "published_at": "2026-10-29T02:54:00+00:00",
-    "source": "d la Repubblica",
-    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQXzRkTFUtazlTa2paTG1EalNFM0VHeUNrV2JkOG5CT2p3VUo0cFJ4WjA5ZWROcVBmMFNVdXFBM2ZDOC1UQ2ViUEhRUTN1UGtsUGtkZ2xKS0JjVmREQlhIelRFNmJzMHhvSzZTZVU0Z2FLTUNrblpaVm40ZWM1R2pfRkhWNzJRS2FScEJYeXd6OWc2elhfZDVpOVhqMy1WN0FieGptY1RrZENCdw?oc=5"
   },
   {
     "key": "b62b41880b938271b0c2",
