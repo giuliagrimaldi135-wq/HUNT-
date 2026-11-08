@@ -377,11 +377,13 @@ async function getOpportunityFeed(limit=100){
  const [{data:matches,error:matchError},{data:hidden},{data:applications},{data:pref}]=await Promise.all([
    supabase.from("user_job_matches").select("job_id,match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(limit),
    supabase.from("user_job_feedback").select("job_id").eq("user_id",currentUser.id).eq("feedback_type","hide"),
-   supabase.from("applications").select("job_id").eq("user_id",currentUser.id),
+   supabase.from("applications").select("job_id,status").eq("user_id",currentUser.id),
    supabase.from("career_preferences").select("preferred_locations,relocation_locations,preferences").eq("user_id",currentUser.id).maybeSingle()
  ]);
  if(matchError||!matches?.length)return {data:[],error:matchError};
- const excluded=new Set([...(hidden||[]).map(x=>x.job_id),...(applications||[]).map(x=>x.job_id).filter(Boolean)]);
+ // A saved or "preparing" vacancy must stay in the feed; only submitted/closed applications are excluded.
+ const completed=new Set(["applied","interview","offer","accepted","rejected","withdrawn","declined"]);
+ const excluded=new Set([...(hidden||[]).map(x=>x.job_id),...(applications||[]).filter(x=>completed.has(x.status)).map(x=>x.job_id).filter(Boolean)]);
  const ids=matches.map(x=>x.job_id).filter(id=>!excluded.has(id));
  if(!ids.length)return {data:[],error:null};
  const {data:jobs,error:jobError}=await supabase
@@ -403,7 +405,9 @@ async function getOpportunityFeed(limit=100){
  };
  const fresh=(jobs||[]).filter(job=>job.published_at&&new Date(job.published_at)>=cutoff&&cityAllowed(job));
  const byId=new Map(fresh.map(job=>[job.id,job]));
- return {data:matches.map(match=>({...match,job:byId.get(match.job_id)})).filter(x=>x.job&&!excluded.has(x.job_id)&&x.match_score>=minMatch),error:null};
+ const applicationByJob=new Map((applications||[]).map(x=>[x.job_id,x.status]));
+ return {data:matches.map(match=>({...match,job:byId.get(match.job_id),applicationStatus:applicationByJob.get(match.job_id)||null}))
+   .filter(x=>x.job&&!excluded.has(x.job_id)&&x.match_score>=minMatch),error:null};
 }
 
 async function getOpportunityDetail(jobId){
@@ -464,12 +468,13 @@ function opportunityCard(row){
    <div class="jobMeta">${esc(job.city||"Località da verificare")} · ${esc(job.role_family||"Altro")}</div>
    <div class="humanBadges editorialMeta">
     <span class="matchPill">${row.match_score}% compatibile</span>
+    ${row.applicationStatus==="preparing"?'<span class="jobPreparing">In preparazione</span>':""}
     <span>${esc(ageLabel(job.published_at))}</span>
     <span>${esc(verifiedLabel(job))}</span>
    </div>
    <div class="actions editorialActions">
     ${job.primary_apply_url?`<a class="btn primary" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ↗</a>`:""}
-    <button class="btn" data-prepare="${job.id}">Prepara candidatura</button>
+    <button class="btn" data-prepare="${job.id}">${row.applicationStatus==="preparing"?"Riprendi dossier":"Prepara candidatura"}</button>
     <button class="btn" data-applied="${job.id}">Già candidata</button>
     <button class="btn ghostDanger" data-ignore="${job.id}">Ignora</button>
    </div>
