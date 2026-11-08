@@ -94,12 +94,19 @@ async function getProfile(){
  return data;
 }
 
+async function getPersonalization(){
+ const {data}=await supabase.from("user_personalization").select("*").eq("user_id",currentUser.id).maybeSingle();
+ return data;
+}
+
 async function bootstrap(){
  const {data:{session}}=await supabase.auth.getSession();
  currentUser=session?.user||null;
  if(!currentUser){authView();return}
  const profile=await getProfile();
  if(!profile?.onboarding_completed){onboardingView(profile);return}
+ const personalization=await getPersonalization();
+ if(!personalization?.completed){await personalizationView(profile,personalization);return}
  renderShell();
 }
 
@@ -206,6 +213,112 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
    const row=await supabase.from("user_cvs").insert({user_id:currentUser.id,name:fd.get("cvname")||file.name,storage_path:path,target_role_families:primary,parsed_profile:{},is_default:true,active:true});
    if(row.error){await supabase.storage.from("cvs").remove([path]);msg.innerHTML='<div class="msg bad">'+esc(row.error.message)+'</div>';return}
  }
+ renderShell();
+}
+
+async function personalizationView(profile,personalization){
+ const [prefRes,cvRes]=await Promise.all([
+   supabase.from("career_preferences").select("*").eq("user_id",currentUser.id).maybeSingle(),
+   supabase.from("user_cvs").select("id,name,is_default,active").eq("user_id",currentUser.id).eq("active",true)
+ ]);
+ const pref=prefRes.data||{};
+ const cvs=cvRes.data||[];
+ const targets=Array.isArray(pref.primary_role_families)?pref.primary_role_families:[];
+ const cities=Array.isArray(pref.preferred_locations)?pref.preferred_locations:[];
+ const priorityOptions=[
+   ["role_fit","Ruolo giusto"],
+   ["growth","Crescita e apprendimento"],
+   ["brand","Brand / azienda"],
+   ["location","Località"],
+   ["contract","Tipo di contratto"],
+   ["compensation","Retribuzione"]
+ ];
+
+ app.innerHTML=`<div class="main" style="margin:auto">
+  <div class="eyebrow">Profilo personale</div>
+  <h1>Quello che HUNT sa già di te.</h1>
+  <p class="lead">Il CV dirà a HUNT cosa hai fatto. Qui aggiungiamo solo ciò che dal CV non si può capire bene.</p>
+
+  <section class="card section">
+   <div class="eyebrow">Già acquisito</div>
+   <div class="profileLine"><span>Nome</span><strong>${esc(profile?.display_name||"—")}</strong></div>
+   <div class="profileLine"><span>Livello</span><strong>${esc(profile?.seniority||"—")}</strong></div>
+   <div class="profileLine"><span>Aree target</span><strong>${esc(targets.join(", ")||"—")}</strong></div>
+   <div class="profileLine"><span>Città</span><strong>${esc(cities.join(", ")||"—")}</strong></div>
+   <div class="profileLine"><span>CV caricati</span><strong>${cvs.length}</strong></div>
+  </section>
+
+  <form id="personalizationForm" class="stack section">
+   <section class="card">
+    <div class="eyebrow">1 · Obiettivo</div>
+    <h2>Cosa vuoi ottenere nei prossimi 12 mesi?</h2>
+    <textarea class="input" name="career_goal" rows="3" placeholder="Es. entrare nel Retail Merchandising in un brand fashion/luxury e costruire esperienza concreta sul prodotto e sui dati.">${esc(personalization?.career_goal||"")}</textarea>
+   </section>
+
+   <section class="card">
+    <div class="eyebrow">2 · Aziende</div>
+    <h2>Che tipo di realtà vuoi che HUNT privilegi?</h2>
+    <div class="radarGrid">
+     <label class="radarOption"><input type="radio" name="company_preference" value="both" checked><span><strong>Entrambe</strong><small>Grandi maison e brand indipendenti/emergenti, se l'opportunità ha senso.</small></span></label>
+     <label class="radarOption"><input type="radio" name="company_preference" value="large"><span><strong>Maison e gruppi strutturati</strong><small>Privilegia brand con organizzazioni e percorsi più strutturati.</small></span></label>
+     <label class="radarOption"><input type="radio" name="company_preference" value="independent"><span><strong>Indipendenti ed emergenti</strong><small>Privilegia realtà più piccole dove il contatto diretto può contare di più.</small></span></label>
+    </div>
+   </section>
+
+   <section class="card">
+    <div class="eyebrow">3 · Comunicazione</div>
+    <h2>Come vuoi che suonino email e messaggi?</h2>
+    <div class="radarGrid">
+     <label class="radarOption"><input type="radio" name="communication_style" value="adaptive" checked><span><strong>Adatta al brand, ma resta naturale</strong><small>HUNT cambia registro senza farti sembrare una persona diversa.</small></span></label>
+     <label class="radarOption"><input type="radio" name="communication_style" value="direct"><span><strong>Diretto e incisivo</strong><small>Poche parole, valore subito, niente formule inutili.</small></span></label>
+     <label class="radarOption"><input type="radio" name="communication_style" value="polished"><span><strong>Elegante e professionale</strong><small>Più formale, mantenendo comunque un tono umano.</small></span></label>
+     <label class="radarOption"><input type="radio" name="communication_style" value="warm"><span><strong>Caldo e personale</strong><small>Più relazione e motivazione personale quando ha senso.</small></span></label>
+    </div>
+   </section>
+
+   <section class="card">
+    <div class="eyebrow">4 · Candidature</div>
+    <h2>Come vuoi usare le candidature spontanee?</h2>
+    <div class="radarGrid">
+     <label class="radarOption"><input type="radio" name="outreach_preference" value="selective" checked><span><strong>Solo quando c'è un vero motivo</strong><small>HUNT le propone solo con un segnale concreto e un contatto verificato.</small></span></label>
+     <label class="radarOption"><input type="radio" name="outreach_preference" value="live_only"><span><strong>Preferisco vacancy aperte</strong><small>Le spontanee diventano eccezioni.</small></span></label>
+     <label class="radarOption"><input type="radio" name="outreach_preference" value="explore"><span><strong>Esplora anche opportunità non pubblicate</strong><small>Più apertura verso brand piccoli e contatti diretti.</small></span></label>
+    </div>
+   </section>
+
+   <section class="card">
+    <div class="eyebrow">5 · Priorità e limiti</div>
+    <h2>Cosa deve pesare di più?</h2>
+    <div class="choiceGrid">${priorityOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="priority_factor" value="${value}"><span>${label}</span></label>`).join("")}</div>
+    <label style="display:block;margin-top:14px"><div class="eyebrow">Cosa non vuoi ricevere?</div><textarea class="input" name="excluded_notes" rows="2" placeholder="Es. niente Sales Associate puro, niente ruoli troppo senior, niente social media puro.">${esc(personalization?.excluded_notes||"")}</textarea></label>
+   </section>
+
+   <div id="personalizationMsg"></div>
+   <div class="actions"><button class="btn green" type="submit">Salva e entra in HUNT</button></div>
+  </form>
+ </div>`;
+
+ document.getElementById("personalizationForm").onsubmit=savePersonalization;
+}
+
+async function savePersonalization(e){
+ e.preventDefault();
+ const fd=new FormData(e.currentTarget);
+ const msg=document.getElementById("personalizationMsg");
+ const payload={
+   user_id:currentUser.id,
+   career_goal:String(fd.get("career_goal")||"").trim()||null,
+   company_preference:String(fd.get("company_preference")||"both"),
+   communication_style:String(fd.get("communication_style")||"adaptive"),
+   outreach_preference:String(fd.get("outreach_preference")||"selective"),
+   excluded_notes:String(fd.get("excluded_notes")||"").trim()||null,
+   priority_factors:fd.getAll("priority_factor"),
+   completed:true,
+   updated_at:new Date().toISOString()
+ };
+ msg.innerHTML='<div class="msg good">Salvataggio…</div>';
+ const {error}=await supabase.from("user_personalization").upsert(payload);
+ if(error){msg.innerHTML='<div class="msg bad">'+esc(error.message)+'</div>';return}
  renderShell();
 }
 
