@@ -211,23 +211,33 @@ All relevant vacancies with:
 
 ### Opportunity dossier
 - why it fits
+- why apply now
 - possible gaps
 - evidence that the vacancy is active
 - repost history
 - source timeline
-- CV recommendation
+- recommended CV variant
+- what to emphasize
 - ATS keywords
 - application link
-- brand/company intelligence
+- where to contact + provenance
+- ready-to-send application/recruiter message
+- company intelligence and sourced news
+- other live roles at the same company
 - interview preparation
 
 ### Direct / Spontaneous
+A core product surface. It must search broadly and remain evidence-based.
+
 Only when outreach has a real reason to exist:
-- no suitable live vacancy
-- small / independent / emerging brand or weak recruiting infrastructure
-- concrete recent signal
+- no better suitable live vacancy
+- company structure makes direct outreach plausible
+- concrete recent signal or structural reason
 - verified public contact or recommended role/person to find
+- source/evidence shown to the user
 - never invent contact details
+
+Signals may include retail/showroom openings, expansion, new markets, category launches, investment, wholesale growth, hiring movement, management changes and relevant public press/posts.
 
 ### Applications
 Pipeline:
@@ -238,8 +248,14 @@ Pipeline:
 - offer
 - rejected / closed
 
+### Intelligence
+Company and sector intelligence with source provenance.
+
 ### Profile
-CV, goals, preferences and feedback controls.
+Multiple CV variants, goals, preferences and feedback controls.
+
+### Internal admin only
+Company/brand registry, source registry, ATS families, parser health, ingestion diagnostics and raw coverage metrics are not part of normal user navigation.
 
 ## What HUNT must avoid
 
