@@ -22,11 +22,8 @@ function values(formData: FormData, key: string) {
   return formData.getAll(key).map(String).filter(Boolean);
 }
 
-function splitLocations(value: FormDataEntryValue | null) {
-  return String(value || "")
-    .split(/[,;\n]+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+function makeLocation(country: FormDataEntryValue | null, city: FormDataEntryValue | null) {
+  return [String(city || "").trim(), String(country || "").trim()].filter(Boolean).join(", ");
 }
 
 export async function saveOnboarding(formData: FormData) {
@@ -48,8 +45,10 @@ export async function saveOnboarding(formData: FormData) {
   const firstName = String(formData.get("first_name") || "").trim();
   const lastName = String(formData.get("last_name") || "").trim();
   const radarScope = String(formData.get("radar_scope") || "smart");
-  const preferredLocations = splitLocations(formData.get("preferred_locations_text"));
-  const relocationLocations = splitLocations(formData.get("relocation_locations_text"));
+  const preferredLocation = makeLocation(formData.get("preferred_country"), formData.get("preferred_city"));
+  const relocationLocation = makeLocation(formData.get("relocation_country"), formData.get("relocation_city"));
+  const preferredLocations = preferredLocation ? [preferredLocation] : [];
+  const relocationLocations = relocationLocation ? [relocationLocation] : [];
 
   if (!firstName || !lastName || !primaryRoles.length) {
     redirect("/onboarding?error=Completa%20nome%2C%20cognome%20e%20almeno%20un%20obiettivo");
