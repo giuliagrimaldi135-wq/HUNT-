@@ -705,36 +705,61 @@ async function renderOpportunityFolder(jobId){
  </div>
 
  <div data-folder-panel="application">
-   <section class="section fitBrief">
-    <div class="eyebrow">Perché questa posizione</div>
-    <div class="fitBriefGrid">
-      <h2>Perché vale la pena guardarla</h2>
-      <p>${esc(fit)}</p>
-    </div>
+   <section class="section huntDecision">
+     <div class="huntDecisionIntro"><div class="eyebrow">La valutazione di HUNT</div><h2>Perché vale la pena guardarla</h2></div>
+     <p class="huntDecisionText">${esc(fit)}</p>
+     ${dossierGaps.length?`<p class="huntDecisionCaution"><strong>Da verificare:</strong> ${esc(dossierGaps[0])}</p>`:""}
    </section>
 
-   <section class="section applicationDossier">
-     <div class="dossierTitle"><div><div class="eyebrow">Il tuo dossier</div><h2>Preparazione personalizzata</h2></div><span class="dossierNote">Solo competenze realmente documentate</span></div>
-     <div class="dossierControls">
-       <label>CV <select id="dossierCv">${dossierCvOptions}</select></label>
-       <label>Lettera <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
-       <button class="btn primary" id="generateDossier">${row.dossier?"Rigenera dossier":"Prepara dossier e lettera"}</button>
-       ${cv?`<button class="btn" id="downloadDossierCv">Scarica il CV</button>`:""}
+   <section class="section dossierWorkspace">
+     <div class="workspaceHeader">
+       <div><div class="eyebrow">Il tuo dossier</div><h2>Come affrontare questa candidatura</h2></div>
+       <span class="workspaceSub">Preparato sul CV e sui requisiti della posizione</span>
      </div>
+     <div class="workspaceBar">
+       <label>Versione CV <select id="dossierCv">${dossierCvOptions}</select></label>
+       <label>Lingua della lettera <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
+       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna dossier":"Prepara dossier"}</button>
+       ${cv?`<button class="btn workspaceDownload" id="downloadDossierCv">Scarica CV</button>`:""}
+     </div>
+     <div id="dossierMessage" class="workspaceMessage"></div>
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
-     <div id="dossierMessage"></div>
-     ${row.dossier?`<div class="dossierDetails">
-       <h3>Il tuo profilo rispetto alla posizione</h3><p>${esc(row.dossier.why_you||"Il confronto richiede ulteriori verifiche.")}</p>
-       ${dossierEvidence.length?`<h3>Cosa valorizzare nel CV</h3><ul class="dossierEvidence">${dossierEvidence.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
-       ${dossierGaps.length?`<div class="dossierGaps"><strong>Requisiti da verificare</strong>${dossierGaps.map(g=>`<p>${esc(g)}</p>`).join("")}</div>`:""}
-     </div>`:`<p class="lead">Completa o conferma le esperienze del CV nella sezione Profilo, così HUNT potrà preparare una candidatura realmente personalizzata.</p>`}
+     ${row.dossier?`
+     <div class="workspaceBrief">
+       <article><div class="eyebrow">Il messaggio da portare</div><p>${esc(row.dossier.positioning_angle||"Collega un'esperienza pertinente alle responsabilità effettive.")}</p></article>
+       <article><div class="eyebrow">Una domanda intelligente</div><p>${esc(smartQuestion||"Quali sono gli obiettivi più importanti dei primi tre mesi?")}</p></article>
+     </div>
+     ${dossierGaps.length?`<div class="workspaceGap"><strong>Attenzione ai requisiti</strong><p>${esc(dossierGaps.slice(0,2).join(" "))}</p></div>`:""}
+     ${dossierEvidence.length?`<details class="workspaceEvidence"><summary>Vedi quali elementi del CV usa HUNT</summary><ul>${dossierEvidence.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`:""}
+     `:`<p class="workspaceEmpty">Scegli un CV con le informazioni confermate e prepara un dossier per vedere il punto forte della candidatura, i rischi e la domanda da fare al recruiter.</p>`}
    </section>
-   ${row.dossier?.ready_to_send_message?`<section class="section coverLetterReady">
-     <div class="coverLetterHead"><div><div class="eyebrow">Cover letter personalizzata</div><h2>Bozza completa, da rivedere</h2></div><div class="coverLetterActions"><button class="btn" id="saveCoverLetter">Salva modifiche</button><button class="btn primary" id="copyCoverLetter">Copia</button></div></div>
+
+   ${row.dossier?.ready_to_send_message?`<section class="section letterWorkbench">
+     <div class="letterHeading"><div><div class="eyebrow">Cover letter</div><h2>Una lettera che dica qualcosa di nuovo</h2><p>Non un riassunto del CV: usa il ruolo, l'azienda e le tue esperienze per presentare il tuo contributo.</p></div>
+       <div class="letterToolbar"><button class="btn" id="saveCoverLetter">Salva</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
+     </div>
      <label class="dossierSubject">Oggetto: <span>${esc(row.dossier.ready_to_send_subject||"")}</span></label>
-     <textarea class="coverLetterEditor" id="coverLetterText" rows="13" spellcheck="true">${esc(row.dossier.ready_to_send_message)}</textarea>
-     <p class="dossierNote">La bozza usa soltanto il tuo profilo e i dati dell'offerta. Rivedi sempre il testo prima di inviarlo.</p>
+     <textarea class="coverLetterEditor" id="coverLetterText" rows="12" spellcheck="true" aria-label="Modifica la cover letter">${esc(row.dossier.ready_to_send_message)}</textarea>
+     <div class="letterPolish">
+       <div class="letterPolishTitle"><span class="letterAiMark">✦</span><div><strong>Migliora con AI</strong><p>Scrivi che cosa cambieresti: HUNT lavorerà sulla lettera, sul CV selezionato e sulla posizione.</p></div></div>
+       <div class="polishPresets">
+         <button type="button" data-ai-feedback="Rendila meno formale, più umana e naturale, senza perdere professionalità.">Più naturale</button>
+         <button type="button" data-ai-feedback="Rendi l'apertura più incisiva, mettendo subito in evidenza il contributo reale che posso portare, senza inventare risultati.">Apertura più forte</button>
+         <button type="button" data-ai-feedback="Evita di ripetere il CV: usa soltanto le esperienze più rilevanti e collegale al lavoro concreto richiesto.">Meno ripetizioni</button>
+         <button type="button" data-ai-feedback="Rafforza il valore che posso apportare al team usando una leva della perdita sobria e credibile, senza fare promesse non dimostrate.">Più persuasiva</button>
+       </div>
+       <div class="polishComposer"><textarea id="letterAiInstruction" rows="2" maxlength="500" placeholder="Es. Falla più personale, dai peso al progetto di buying e taglia l'introduzione."></textarea><button class="btn primary" id="polishLetter">Migliora</button></div>
+       <div class="letterPolishFooter"><span id="letterAiStatus" role="status">La proposta AI non sovrascrive la tua versione salvata. Potrai accettarla, annullarla o modificarla.</span><button class="btn letterUndo" id="undoLetter" hidden>Ripristina testo precedente</button></div>
+     </div>
    </section>`:""}
+
+   <section class="section companySnapshot">
+     <div class="companySnapshotHead"><div class="eyebrow">Prima di candidarti</div><h2>Cosa sapere su ${esc(brand)}</h2><button type="button" id="openCompanyTab">Apri dossier azienda</button></div>
+     ${signals.length||media.length?`<div class="companySnapshotList">
+       ${signals.slice(0,2).map(x=>`<article><span>Fonte ufficiale · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non disponibile")}</span><strong>${esc(x.title)}</strong>${safeRadarUrl(x.source_url)?`<a href="${esc(x.source_url)}" target="_blank" rel="noopener noreferrer">Fonte</a>`:""}</article>`).join("")}
+       ${media.slice(0,2).map(x=>`<article><span>${esc(x.world_news_sources?.publisher||"Stampa di settore")} · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non disponibile")}</span><strong>${esc(x.title)}</strong>${safeRadarUrl(x.url)?`<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Fonte</a>`:""}</article>`).join("")}
+     </div>`:'<p class="workspaceEmpty">HUNT non ha ancora notizie recenti con fonte verificabile per questo brand. Il dossier azienda mostrerà quelle disponibili quando vengono raccolte.</p>'}
+   </section>
 
    <section class="section compactJobStatus">
      <div class="eyebrow">Stato annuncio</div>
