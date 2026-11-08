@@ -1036,7 +1036,7 @@ async function renderProfile(){
  try{
    const {mountCvManager}=await import("./cv-profile.js?v=20261108-21");
    const root=document.getElementById("cvManagerRoot");
-   if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:renderProfile});
+   if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:renderProfile,roleFamilies:macroAreas});
  }catch(e){
    const root=document.getElementById("cvManagerRoot");
    if(root)root.textContent="Impossibile aprire la gestione dei CV: "+(e.message||String(e));
