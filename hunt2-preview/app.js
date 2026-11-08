@@ -388,7 +388,7 @@ async function getOpportunityFeed(limit=100){
  if(!ids.length)return {data:[],error:null};
  const {data:jobs,error:jobError}=await supabase
    .from("jobs")
-   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,primary_apply_url,state,description,companies(name)")
+   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,companies(name)")
    .in("id",ids);
  if(jobError)return {data:[],error:jobError};
 
@@ -400,10 +400,13 @@ async function getOpportunityFeed(limit=100){
    if(job.remote_mode==="remote")return true;
    if(!cities.length)return true;
    if(!job.city)return false;
-   const city=job.city.toLowerCase();
-   return cities.some(x=>city.includes(x)||x.includes(city));
+   const normalize=v=>String(v||"").toLowerCase().trim()
+     .replace(/milano\b/g,"milan").replace(/parigi\b/g,"paris").replace(/londra\b/g,"london").replace(/roma\b/g,"rome")
+     .replace(/ginevra\b/g,"geneva").replace(/zurigo\b/g,"zurich").replace(/bruxelles\b/g,"brussels");
+   const city=normalize(job.city);
+   return cities.some(x=>{const area=normalize(x);return area.length>2&&(city.includes(area)||area.includes(city))});
  };
- const fresh=(jobs||[]).filter(job=>job.published_at&&new Date(job.published_at)>=cutoff&&cityAllowed(job));
+ const fresh=(jobs||[]).filter(job=>{const date=job.published_at||job.first_seen_at;return date&&new Date(date)>=cutoff&&cityAllowed(job)&&["active_verified","active_likely"].includes(job.state)});
  const byId=new Map(fresh.map(job=>[job.id,job]));
  const applicationByJob=new Map((applications||[]).map(x=>[x.job_id,x.status]));
  return {data:matches.map(match=>({...match,job:byId.get(match.job_id),applicationStatus:applicationByJob.get(match.job_id)||null}))
@@ -443,9 +446,11 @@ async function getOpportunityDetail(jobId){
  return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],sameJobs,dossier:dossier||null};
 }
 
-function ageLabel(value){
- if(!value)return "Data non verificata";
- const days=Math.max(0,Math.floor((Date.now()-new Date(value).getTime())/86400000));
+function ageLabel(value,firstSeen=null){
+ const date=value||firstSeen;
+ if(!date)return "Data non verificata";
+ const days=Math.max(0,Math.floor((Date.now()-new Date(date).getTime())/86400000));
+ if(!value)return days===0?"Rilevata oggi":days===1?"Rilevata ieri":`Rilevata ${days} giorni fa`;
  return days===0?"Pubblicata oggi":days===1?"Pubblicata ieri":`Pubblicata ${days} giorni fa`;
 }
 function verifiedLabel(job){
@@ -469,7 +474,7 @@ function opportunityCard(row){
    <div class="humanBadges editorialMeta">
     <span class="matchPill">${row.match_score}% compatibile</span>
     ${row.applicationStatus==="preparing"?'<span class="jobPreparing">In preparazione</span>':""}
-    <span>${esc(ageLabel(job.published_at))}</span>
+    <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
     <span>${esc(verifiedLabel(job))}</span>
    </div>
    <div class="actions editorialActions">
@@ -538,7 +543,7 @@ async function renderOpportunities(){
  const feed=await getOpportunityFeed(100);
  const rows=[...(feed.data||[])];
  if(opportunitySort==="recent"){
-   rows.sort((a,b)=>new Date(b.job.published_at||0)-new Date(a.job.published_at||0));
+   rows.sort((a,b)=>new Date(b.job.published_at||b.job.first_seen_at||0)-new Date(a.job.published_at||a.job.first_seen_at||0));
  }else{
    rows.sort((a,b)=>(b.priority_score||0)-(a.priority_score||0));
  }
@@ -694,7 +699,7 @@ async function renderOpportunityFolder(jobId){
   <p class="lead">${esc(job.city||"—")} · ${esc(job.role_family||"—")}</p>
   <div class="heroMeta editorialMeta darkMeta">
    <span class="heroMatch">${row.match_score}% compatibile con te</span>
-   <span>${esc(ageLabel(job.published_at))}</span>
+   <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
    <span>${esc(verifiedLabel(job))}</span>
   </div>
   <div class="actions">
@@ -770,7 +775,7 @@ async function renderOpportunityFolder(jobId){
    <section class="section compactJobStatus">
      <div class="eyebrow">Stato annuncio</div>
      <div class="statusLine">
-       <strong>${esc(ageLabel(job.published_at))}</strong>
+       <strong>${esc(ageLabel(job.published_at,job.first_seen_at))}</strong>
        <span>${esc(verifiedLabel(job))}</span>
        <span>${repostCount?`${repostCount} ripubblicazione${repostCount===1?"":"i"} rilevata${repostCount===1?"":"e"}`:"Nessun repost rilevato"}</span>
      </div>
