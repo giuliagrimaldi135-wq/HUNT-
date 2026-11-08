@@ -793,5 +793,29 @@
     "source_name": "Kering Careers",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-bottega-veneta-jewellery-product-development-20261107",
+    "brand": "Bottega Veneta",
+    "title": "Jewellery Product Development Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-07",
+    "detected_at": "2026-11-08T01:59:47+01:00",
+    "priority": "MEDIA",
+    "score": 81,
+    "role_family": "Product",
+    "why_fit": "Stage sviluppo prodotto gioielleria luxury con gestione prototipi, campioni, materiali, codifiche e coordinamento con Design e Merchandising; valorizza la formazione Fashion Management e l'esperienza di supporto a collezioni e ordini, ma è più tecnico del Retail Merchandising.",
+    "reasons": [
+      "Pubblicazione ufficiale Kering 7 novembre 2026",
+      "Stage a Milano, avvio previsto 16 novembre",
+      "Supporto a prototipi e campionari",
+      "Coordinamento Design/Merchandising",
+      "Excel e inglese richiesti; PLM e BOM tra le attività",
+      "Rimborso 750 euro/mese"
+    ],
+    "url": "https://www.kering.cn/en/talent/job-offers/europe/bottega-veneta-jewellery-product-development-intern/",
+    "source_name": "Kering Careers / Bottega Veneta",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
