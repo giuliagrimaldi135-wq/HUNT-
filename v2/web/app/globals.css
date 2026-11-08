@@ -105,3 +105,13 @@ p{line-height:1.55}
 .input:focus{border-color:#999;box-shadow:0 0 0 3px rgba(0,0,0,.04)}
 .formError{margin:0;color:var(--danger);background:var(--danger-soft);border-radius:10px;padding:10px 12px;font-size:13px}
 .formSuccess{margin:0;color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:13px}
+
+.choiceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:16px}
+.choiceGrid.oneCol{grid-template-columns:1fr}
+.choice{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:#faf9f6;border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}
+.choice input{accent-color:var(--accent)}
+.choice:has(input:checked){border-color:#91b9a8;background:var(--accent-soft)}
+select.input{appearance:auto}
+@media(max-width:580px){
+  .choiceGrid{grid-template-columns:1fr}
+}
