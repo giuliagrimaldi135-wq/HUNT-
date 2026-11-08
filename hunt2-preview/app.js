@@ -639,7 +639,7 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v2");
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v3");
  const shouldRefresh=Boolean(!row.dossier||((dossierStale||modelStale)&&!row.dossier?.generated_from?.user_edited));
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
    pendingDossiers.add(jobId);
