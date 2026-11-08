@@ -10,6 +10,7 @@ let selectedJobId=null;
 let opportunitySort="priority";
 let radarSignalFilter="all";
 let radarCompanyFilter="all";
+const pendingDossiers=new Set();
 
 const macroAreas=[
   "Merchandising",
@@ -571,12 +572,38 @@ function hasParsedCv(row){
  return (row.cvs||[]).some(cv=>cv.parsed_profile?.cv_text_extraction_status==="text_extracted"&&String(cv.parsed_profile?.raw_text||"").length>=80);
 }
 
+function verifiedCv(cv){
+ const p=cv?.parsed_profile||{};
+ return Boolean(p.experience?.length||p.projects?.length||p.education?.length);
+}
 function chooseCv(row){
  const role=row.job.role_family;
- const exact=(row.cvs||[]).find(cv=>Array.isArray(cv.target_role_families)&&cv.target_role_families.includes(role));
- return exact||(row.cvs||[]).find(cv=>cv.is_default)||(row.cvs||[])[0]||null;
+ const cvs=(row.cvs||[]).filter(verifiedCv);
+ const saved=row.dossier?.recommended_cv_id;
+ return cvs.find(cv=>cv.id===saved)||cvs.find(cv=>Array.isArray(cv.target_role_families)&&cv.target_role_families.includes(role))||cvs.find(cv=>cv.is_default)||cvs[0]||(row.cvs||[]).find(cv=>cv.is_default)||(row.cvs||[])[0]||null;
 }
-
+async function requestDossier(jobId,language="en",cvId=null){
+ const body={job_id:jobId,language};
+ if(cvId)body.cv_id=cvId;
+ const {data,error}=await supabase.functions.invoke("hunt-application-dossier",{body});
+ if(error){
+   let message=error.message||"Impossibile generare il dossier.";
+   try{if(error.context?.json){const detail=await error.context.json();message=detail.error||message}}catch{}
+   throw new Error(message);
+ }
+ if(data?.error)throw new Error(data.error);
+ return data;
+}
+async function downloadPrivateCv(cvId){
+ const {data:entry,error:infoError}=await supabase.from("user_cvs").select("name,storage_path").eq("user_id",currentUser.id).eq("id",cvId).eq("active",true).maybeSingle();
+ if(infoError||!entry)throw new Error("CV non disponibile.");
+ const {data:blob,error}=await supabase.storage.from("cvs").download(entry.storage_path);
+ if(error||!blob)throw new Error(error?.message||"Impossibile aprire il file privato.");
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download=entry.name||"CV";document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
 function likelyInterviewQuestions(row){
  const brand=row.job.companies?.name||"l'azienda";
  const role=row.job.role_family||"il ruolo";
@@ -591,12 +618,27 @@ async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  const row=await getOpportunityDetail(jobId);
  if(!row)return renderOpportunities();
+ if(!row.dossier&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
+   pendingDossiers.add(jobId);
+   try{
+     await requestDossier(jobId);
+     const {data}=await supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle();
+     row.dossier=data||null;
+   }catch(error){row.dossierError=error instanceof Error?error.message:String(error)}
+   finally{pendingDossiers.delete(jobId)}
+ }
+ if(selectedJobId!==jobId)return;
  const job=row.job;
  const brand=job.companies?.name||"Brand";
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
  const fit=fitSummary(row);
  const cvReady=hasParsedCv(row);
+ const dossierEvidence=Array.isArray(row.dossier?.what_to_emphasize)?row.dossier.what_to_emphasize:[];
+ const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
+ const dossierCvId=row.dossier?.recommended_cv_id||cv?.id||"";
+ const dossierCvOptions=(row.cvs||[]).map(c=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""}>${esc(c.name)}${verifiedCv(c)?"":" · da verificare"}</option>`).join("");
+ const dossierLang=row.dossier?.generated_from?.language==="it"?"it":"en";
  const repostCount=(row.reposts||[]).length;
  const firstSeen=job.published_at?new Date(job.published_at):null;
  const repostSummary=repostCount
