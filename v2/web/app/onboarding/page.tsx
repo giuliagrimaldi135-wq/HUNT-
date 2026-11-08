@@ -1,3 +1,4 @@
+import LocationMultiPicker from "./LocationMultiPicker";
 import { saveOnboarding } from "./actions";
 
 const macroAreas = [
@@ -115,31 +116,19 @@ export default async function OnboardingPage({
         <section className="card">
           <div className="fieldTitle">4 · Dove</div>
           <h2>Dove vuoi lavorare?</h2>
-          <div className="twoCol">
-            <label>
-              <div className="fieldTitle">Paese preferito</div>
-              <select className="input" name="preferred_country" defaultValue="">
-                <option value="">Seleziona un paese</option>
-                {countries.map((country) => <option key={country} value={country}>{country}</option>)}
-              </select>
-            </label>
-            <label>
-              <div className="fieldTitle">Città preferita</div>
-              <input className="input" name="preferred_city" placeholder="Es. Milano" />
-            </label>
-          </div>
-          <div className="twoCol" style={{ marginTop: 14 }}>
-            <label>
-              <div className="fieldTitle">Paese in cui ti trasferiresti</div>
-              <select className="input" name="relocation_country" defaultValue="">
-                <option value="">Nessuna preferenza</option>
-                {countries.map((country) => <option key={country} value={country}>{country}</option>)}
-              </select>
-            </label>
-            <label>
-              <div className="fieldTitle">Città</div>
-              <input className="input" name="relocation_city" placeholder="Es. Parigi" />
-            </label>
+          <div className="stack">
+            <LocationMultiPicker
+              title="Località preferite"
+              name="preferred_locations"
+              countries={countries}
+              cityPlaceholder="Es. Milano"
+            />
+            <LocationMultiPicker
+              title="Dove ti trasferiresti?"
+              name="relocation_locations"
+              countries={countries}
+              cityPlaceholder="Es. Parigi"
+            />
           </div>
         </section>
 
