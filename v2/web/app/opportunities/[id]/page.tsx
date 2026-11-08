@@ -26,18 +26,19 @@ function verificationLabel(source:string,lastVerified?:string){
   return "Da riconfermare";
 }
 
-function fitEvidence(reasons:string[]){
-  const out:string[]=[];
-  for(const reason of reasons){
-    if(/città|milano|livello|stage coerente/i.test(reason))continue;
-    if(reason.startsWith("Target professionale diretto:")){
-      const family=reason.split(":").slice(1).join(":").trim();
-      out.push(family+" è una delle aree professionali che hai scelto come obiettivo.");
-    }else if(/ruolo adiacente/i.test(reason)){
-      out.push("Non è il tuo target principale, ma le responsabilità sono abbastanza vicine alle aree che hai scelto da meritare attenzione.");
-    }else out.push(reason.endsWith(".")?reason:reason+".");
+function fitSummary(role:string,reasons:string[]){
+  const strong=reasons.filter(x=>!/città|milano|livello|stage coerente/i.test(x));
+  const detail=strong.filter(x=>!x.startsWith("Target professionale diretto:")&&!/ruolo adiacente/i.test(x));
+  let opener="";
+  if(strong.some(x=>x.startsWith("Target professionale diretto:"))){
+    opener=`È un ruolo ${role} che rientra direttamente nelle aree che hai scelto come obiettivo.`;
+  }else if(strong.some(x=>/ruolo adiacente/i.test(x))){
+    opener="Non è il tuo target principale, ma è abbastanza vicino alle aree che hai scelto da meritare attenzione.";
+  }else{
+    opener="HUNT ha trovato una coerenza concreta tra questa posizione e il tuo radar professionale.";
   }
-  return [...new Set(out)].slice(0,4);
+  const body=detail.slice(0,2).map(x=>x.replace(/^La vacancy /i,"La posizione ").replace(/^Il lavoro /i,"Il ruolo ")).join(" ");
+  return [opener,body].filter(Boolean).join(" ");
 }
 
 export default async function OpportunityFolder({params}:{params:Promise<{id:string}>}){
@@ -131,7 +132,7 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
 
       <FolderTabs
         brand={job.brand}
-        fitEvidence={fitEvidence(job.reasons||[])}
+        fitSummary={fitSummary(job.role,job.reasons||[])}
         coverLetter={dossier?.ready_to_send_message ? String(dossier.ready_to_send_message) : undefined}
         verificationLabel={verificationLabel(job.source,job.lastVerifiedAt)}
         freshness={job.freshness}
