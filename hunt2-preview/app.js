@@ -399,11 +399,22 @@ async function getOpportunityDetail(jobId){
    supabase.from("repost_events").select("id,detected_at,reason,evidence").eq("job_id",jobId).order("detected_at",{ascending:false})
  ]);
  if(jobError||!job)return null;
- const [{data:signals},{data:sameJobs}]=await Promise.all([
-   supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("relevance_score",{ascending:false}).limit(5),
-   supabase.from("jobs").select("id,canonical_title,city,role_family,published_at,state").eq("company_id",job.company_id).neq("id",jobId).gte("published_at",new Date(Date.now()-20*86400000).toISOString()).order("published_at",{ascending:false}).limit(5)
+ const [{data:signals},{data:relatedMatches}]=await Promise.all([
+   supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("relevance_score",{ascending:false}).limit(8),
+   supabase.from("user_job_matches")
+     .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,state)")
+     .eq("user_id",currentUser.id)
+     .eq("jobs.company_id",job.company_id)
+     .neq("job_id",jobId)
+     .gte("match_score",70)
+     .order("priority_score",{ascending:false})
+     .limit(5)
  ]);
- return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],sameJobs:sameJobs||[]};
+ const cutoff=new Date(Date.now()-20*86400000);
+ const sameJobs=(relatedMatches||[])
+   .map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
+   .filter(x=>x?.published_at&&new Date(x.published_at)>=cutoff);
+ return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],sameJobs};
 }
 
 function ageLabel(value){
@@ -435,7 +446,7 @@ function opportunityCard(row){
     <span>${esc(verifiedLabel(job))}</span>
    </div>
    <div class="actions editorialActions">
-    <button class="btn primary" data-folder="${job.id}">Apri posizione</button>
+    ${job.primary_apply_url?`<a class="btn primary" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ↗</a>`:""}
     <button class="btn" data-prepare="${job.id}">Prepara candidatura</button>
     <button class="btn" data-applied="${job.id}">Già candidata</button>
     <button class="btn ghostDanger" data-ignore="${job.id}">Ignora</button>
@@ -462,6 +473,10 @@ async function saveApplication(jobId,status){
    : await supabase.from("applications").insert(payload);
  if(result.error){alert(result.error.message);return}
  await supabase.from("user_job_feedback").insert({user_id:currentUser.id,job_id:jobId,feedback_type:status==="applied"?"apply":"save",details:{source:"opportunity_action"}});
+ if(status==="preparing"){
+   await openOpportunityFolder(jobId);
+   return;
+ }
  currentView="applications";
  await renderApplications();
 }
@@ -480,7 +495,6 @@ function openOpportunityFolder(jobId,push=true){
 }
 
 function bindOpportunityActions(){
- document.querySelectorAll("[data-folder]").forEach(b=>b.onclick=()=>openOpportunityFolder(b.dataset.folder));
  document.querySelectorAll("[data-prepare]").forEach(b=>b.onclick=()=>saveApplication(b.dataset.prepare,"preparing"));
  document.querySelectorAll("[data-applied]").forEach(b=>b.onclick=()=>saveApplication(b.dataset.applied,"applied"));
  document.querySelectorAll("[data-ignore]").forEach(b=>b.onclick=()=>ignoreJob(b.dataset.ignore));
@@ -584,9 +598,10 @@ async function renderOpportunityFolder(jobId){
  const evidence=fitEvidence(row);
  const cvReady=hasParsedCv(row);
  const repostCount=(row.reposts||[]).length;
- const repostText=repostCount
-   ? `HUNT ha riconosciuto ${repostCount} ripubblicazione${repostCount===1?"":"i"} della stessa posizione. Mantiene la prima data trovata, così un annuncio vecchio non torna in cima al feed fingendo di essere nuovo.`
-   : "Alcuni brand ripubblicano lo stesso annuncio dopo giorni o settimane e può sembrare una nuova vacancy. HUNT conserva la prima data trovata e monitora se questa posizione ricompare. Per ora non ha rilevato ripubblicazioni.";
+ const firstSeen=job.published_at?new Date(job.published_at):null;
+ const repostSummary=repostCount
+   ? `Questa posizione è ricomparsa ${repostCount} volt${repostCount===1?"a":"e"} dopo la prima pubblicazione. HUNT continua a considerare come riferimento la data originale (${firstSeen?firstSeen.toLocaleDateString("it-IT"):"—"}), così una ripubblicazione non viene presentata come una nuova opportunità.`
+   : `HUNT memorizza la prima data in cui trova ogni annuncio. Se lo stesso brand lo ripubblica tra qualche giorno o settimana, non te lo mostrerà come “nuovo”: vedrai la data originale e l'eventuale ripubblicazione. Per questa posizione non sono ancora state rilevate ripubblicazioni.`;
  const signals=row.signals||[];
  const sameJobs=row.sameJobs||[];
  const showInterview=appStatus==="interview";
@@ -597,7 +612,7 @@ async function renderOpportunityFolder(jobId){
  </div>
 
  <section class="folderHero section">
-  <div class="folderLabel">Folder posizione</div>
+  <div class="folderLabel">Preparazione candidatura</div>
   <div class="eyebrow brandEyebrow">${esc(brand)}</div>
   <h1>${esc(job.canonical_title)}</h1>
   <p class="lead">${esc(job.city||"—")} · ${esc(job.role_family||"—")}</p>
@@ -607,9 +622,8 @@ async function renderOpportunityFolder(jobId){
    <span>${esc(verifiedLabel(job))}</span>
   </div>
   <div class="actions">
-   <button class="btn green" data-prepare="${job.id}">Prepara candidatura</button>
-   <button class="btn darkSecondary" data-applied="${job.id}">Già candidata</button>
-   ${job.primary_apply_url?`<a class="btn darkSecondary" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Sito del brand ↗</a>`:""}
+   ${job.primary_apply_url?`<a class="btn green" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ufficiale ↗</a>`:""}
+   <button class="btn darkSecondary" data-applied="${job.id}">Segna come candidata</button>
    <button class="btn darkGhost" data-ignore="${job.id}">Ignora</button>
   </div>
  </section>
@@ -622,37 +636,65 @@ async function renderOpportunityFolder(jobId){
 
  <div data-folder-panel="application">
    <section class="section featureEditorial">
-    <div class="eyebrow">Fit personale</div>
-    <h2>Perché HUNT te la segnala</h2>
+    <div class="eyebrow">Perché questa posizione</div>
+    <h2>Perché HUNT te la consiglia</h2>
     <div class="evidenceList">${evidence.map((x,i)=>`<div class="evidenceRow"><span>0${i+1}</span><p>${esc(x)}</p></div>`).join("")}</div>
+    ${!cvReady?'<p class="cvPendingNote">Questa analisi diventerà molto più precisa quando HUNT avrà letto il contenuto del tuo CV: esperienze, progetti, competenze e strumenti verranno confrontati direttamente con i requisiti della vacancy.</p>':""}
    </section>
 
-   ${cvReady?`<section class="section coverLetterBlock">
-     <div><div class="eyebrow">Cover letter</div><h2>Una lettera costruita su questa posizione</h2><p>HUNT incrocia il testo della vacancy, il tuo CV, le tue preferenze e il contesto del brand. Nessun template standard e nessuna esperienza inventata.</p></div>
-     <button class="btn primary">Apri cover letter</button>
-   </section>`:""}
+   <section class="section applicationTools">
+     <div class="applicationToolsHead">
+       <div><div class="eyebrow">Materiali candidatura</div><h2>Preparala per questa vacancy</h2></div>
+       <span>${cv?esc(cv.name.trim()||"CV"):"CV da collegare"}</span>
+     </div>
+     <div class="applicationToolGrid">
+       <article class="applicationTool ${cvReady?"ready":""}">
+         <div class="toolNumber">01</div>
+         <h3>Cover letter</h3>
+         <p>${cvReady?"Generata incrociando vacancy, CV, profilo personale e informazioni sul brand. Nessun template standard.":"Si attiverà appena HUNT avrà analizzato il CV, così la lettera sarà davvero personale e non generica."}</p>
+         <button class="textAction" ${cvReady?"":"disabled"}>${cvReady?"Apri cover letter →":"In attesa del CV analizzato"}</button>
+       </article>
+       <article class="applicationTool">
+         <div class="toolNumber">02</div>
+         <h3>CV per questa posizione</h3>
+         <p>HUNT userà il CV più adatto e segnalerà solo modifiche supportate da esperienze reali. Niente CV riscritto da zero se non serve.</p>
+         <button class="textAction" disabled>Analisi CV in arrivo</button>
+       </article>
+       <article class="applicationTool">
+         <div class="toolNumber">03</div>
+         <h3>Risposte candidatura</h3>
+         <p>Se il form chiede “Why us?”, motivazione o domande aperte, HUNT prepara risposte specifiche per questa vacancy.</p>
+         <button class="textAction" disabled>Disponibile quando serve</button>
+       </article>
+     </div>
+   </section>
 
    <section class="section historyBlock">
-    <div class="historyHeading"><div><div class="eyebrow">Annuncio & storico</div><h2>${esc(verifiedLabel(job))}</h2></div><span>${esc(ageLabel(job.published_at))}</span></div>
-    <p>Ultimo controllo HUNT: ${job.last_verified_at?new Date(job.last_verified_at).toLocaleString("it-IT"):"—"}.</p>
-    <div class="repostExplainer"><strong>Perché monitoriamo le ripubblicazioni?</strong><p>${esc(repostText)}</p></div>
+    <div class="historyHeading"><div><div class="eyebrow">Stato dell'annuncio</div><h2>${esc(verifiedLabel(job))}</h2></div><span>${esc(ageLabel(job.published_at))}</span></div>
+    <p>HUNT ha controllato che l'annuncio sia ancora raggiungibile il ${job.last_verified_at?new Date(job.last_verified_at).toLocaleString("it-IT"):"—"}.</p>
+    <div class="repostExplainer"><strong>Come HUNT tratta gli annunci ripubblicati</strong><p>${esc(repostSummary)}</p></div>
    </section>
  </div>
 
  <div class="hide" data-folder-panel="company">
    <section class="section companyIntro">
     <div class="eyebrow">Company intelligence</div>
-    <h2>Cosa sapere davvero su ${esc(brand)}</h2>
-    <p>HUNT raccoglie segnali utili da fonti ufficiali, stampa, web e fonti pubbliche social. Qui devono entrare solo informazioni che possono aiutarti a capire il brand, il ruolo o il momento dell'azienda.</p>
+    <h2>Cosa sapere su ${esc(brand)}</h2>
+    <p>Una sola selezione di informazioni utili per capire il brand e questa candidatura: risultati, strategia, prodotto, retail, management, aperture, collaborazioni e segnali recenti. Le fonti restano sempre visibili.</p>
    </section>
-   <section class="section grid2 companyGrid">
-      <article class="intelPanel"><div class="eyebrow">News & segnali</div>${signals.length?signals.map(s=>`<div class="signalItem"><strong>${esc(s.title)}</strong><p>${esc(s.summary||"")}</p><div class="signalSource">${esc(s.source_name||"Fonte")}${s.source_url?` · <a href="${esc(s.source_url)}" target="_blank" rel="noopener">Apri fonte ↗</a>`:""}</div></div>`).join(""):'<p class="lead">Nessun segnale verificato salvato per questo brand in questo momento.</p>'}</article>
-      <article class="intelPanel"><div class="eyebrow">Altre posizioni del brand</div><h2>Cos'altro è aperto</h2>${sameJobs.length?`<div class="relatedJobs">${sameJobs.map(j=>`<button class="relatedJob" data-related-job="${j.id}"><span><strong>${esc(j.canonical_title)}</strong><small>${esc(j.city||"")} · ${esc(ageLabel(j.published_at))}</small></span><b>→</b></button>`).join("")}</div>`:'<p class="lead">Nessun’altra vacancy fresca rilevata per questo brand negli ultimi 20 giorni.</p>'}</article>
+   <section class="section companyIntelligence">
+      ${signals.length?signals.map((s,i)=>`<article class="companyFact"><div class="factIndex">0${i+1}</div><div><div class="factType">${esc((s.signal_type||"segnale").replaceAll("_"," "))}</div><h3>${esc(s.title)}</h3><p>${esc(s.summary||"")}</p><div class="signalSource">${esc(s.source_name||"Fonte")}${s.published_at?` · ${new Date(s.published_at).toLocaleDateString("it-IT")}`:""}${s.source_url?` · <a href="${esc(s.source_url)}" target="_blank" rel="noopener">Fonte ↗</a>`:""}</div></div></article>`).join(""):'<p class="lead">Nessuna informazione verificata salvata per questo brand in questo momento.</p>'}
+   </section>
+
+   <section class="section alignedRoles">
+      <div class="eyebrow">Altre posizioni adatte a te</div>
+      <h2>Nello stesso brand</h2>
+      ${sameJobs.length?`<div class="relatedJobs">${sameJobs.map(j=>`<button class="relatedJob" data-related-job="${j.id}"><span><strong>${esc(j.canonical_title)}</strong><small>${esc(j.city||"")} · ${esc(ageLabel(j.published_at))} · ${j.match_score}% compatibile</small></span><b>→</b></button>`).join("")}</div>`:'<p class="lead">Non risultano altre vacancy fresche dello stesso brand abbastanza coerenti con il tuo profilo.</p>'}
    </section>
  </div>
 
  ${showInterview?`<div class="hide" data-folder-panel="interview">
-   <section class="section companyIntro"><div class="eyebrow">Preparazione colloquio</div><h2>Preparazione specifica, non domande generiche</h2><p>Questa sezione userà il tuo CV, la vacancy, le news recenti dell'azienda e ciò che HUNT sa del ruolo per costruire la preparazione al colloquio. La attiviamo solo quando sei davvero in fase interview.</p></section>
+   <section class="section companyIntro"><div class="eyebrow">Preparazione colloquio</div><h2>Preparazione specifica per questo colloquio</h2><p>Questa sezione userà CV, vacancy, informazioni recenti sul brand e storico della candidatura. Non verrà riempita con domande generiche.</p></section>
  </div>`:""}`);
 
  bindNav();bindOpportunityActions();
