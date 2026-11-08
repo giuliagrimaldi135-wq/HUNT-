@@ -1,44 +1,26 @@
 import { saveOnboarding } from "./actions";
 
-const roleGroups = [
-  ["Merchandising & Buying", [
-    "Retail Merchandising","Product / Collection Merchandising","E-commerce Merchandising",
-    "Buying","Buying Operations","Merchandising Planning","Planning & Allocation",
-    "Allocation","Retail Planning","Demand Planning",
-  ]],
-  ["Retail & Client", [
-    "Retail Performance","Retail Operations","Retail Excellence","Store Operations",
-    "Store Planning","CRM & Clienteling","Client Experience","Visual Merchandising",
-    "Area / Retail Management",
-  ]],
-  ["Product & Collection", [
-    "Product Management","Product Development","Collection Development","Production",
-    "Production Planning","Sourcing","Materials / Fabrics","Quality Control",
-  ]],
-  ["Wholesale & Commercial", [
-    "Wholesale","Showroom / Sales Campaign","Key Account Management","Business Development",
-    "Commercial Planning","Trade Marketing","Sales Operations",
-  ]],
-  ["E-commerce & Digital", [
-    "E-commerce","Omnichannel","Marketplace","Digital Product","CRM","Digital Marketing",
-    "Performance Marketing","Growth","Digital Analytics",
-  ]],
-  ["Brand, Marketing & Communications", [
-    "Marketing","Brand Management","PR & Communications","Events","Influencer Marketing",
-    "Content & Social Media","Media","Partnerships",
-  ]],
-  ["Supply Chain & Operations", [
-    "Supply Chain","Logistics","Inventory / Stock Management","Procurement","Purchasing",
-    "Operations","Distribution","Customer Operations",
-  ]],
-  ["Creative & Design", [
-    "Fashion Design","Accessories Design","Footwear Design","Graphic Design","Art Direction",
-    "Styling","Content Production","Store Design / Architecture",
-  ]],
-  ["Corporate & Strategy", [
-    "Strategy","Project Management","Data / BI / Analytics","Finance","HR / Talent Acquisition",
-    "Legal","Sustainability / ESG","IT / Technology",
-  ]],
+const macroAreas = [
+  "Merchandising",
+  "Buying",
+  "Planning & Allocation",
+  "Retail & Retail Operations",
+  "E-commerce & Digital",
+  "Product Management & Development",
+  "Production & Sourcing",
+  "Wholesale & Commercial",
+  "Marketing & Brand",
+  "PR, Communications & Events",
+  "CRM & Clienteling",
+  "Visual Merchandising",
+  "Supply Chain & Logistics",
+  "Design & Creative",
+  "Data & Analytics",
+  "Strategy & Project Management",
+  "HR & Talent",
+  "Finance & Legal",
+  "Sustainability",
+  "Technology",
 ] as const;
 
 const seniorityLevels = [
@@ -93,28 +75,18 @@ export default async function OnboardingPage({
               ))}
             </select>
           </label>
-          <p className="lead">Usiamo livelli simili a quelli che compaiono negli annunci; HUNT considera comunque il titolo reale della singola vacancy.</p>
         </section>
 
-        <section>
+        <section className="card">
           <div className="fieldTitle">2 · Obiettivo professionale</div>
           <h2>Cosa vuoi davvero fare?</h2>
-          <p className="lead">Scegli una o più aree. Sono raggruppate per funzione così non devi scorrere una lista infinita.</p>
-          <div className="stack">
-            {roleGroups.map(([group, roles], index) => (
-              <details className="card" key={group} open={index < 2}>
-                <summary className="sectionHead" style={{ cursor: "pointer", marginBottom: 0 }}>
-                  <strong>{group}</strong><span className="source">{roles.length} aree</span>
-                </summary>
-                <div className="choiceGrid" style={{ marginTop: 14 }}>
-                  {roles.map((role) => (
-                    <label className="choice" key={role}>
-                      <input type="checkbox" name="primary_roles" value={role} />
-                      <span>{role}</span>
-                    </label>
-                  ))}
-                </div>
-              </details>
+          <p className="lead">Scegli una o più macro-aree. HUNT cercherà automaticamente tutti i ruoli e i titoli pertinenti dentro ogni area.</p>
+          <div className="choiceGrid">
+            {macroAreas.map((role) => (
+              <label className="choice" key={role}>
+                <input type="checkbox" name="primary_roles" value={role} />
+                <span>{role}</span>
+              </label>
             ))}
           </div>
         </section>
@@ -130,25 +102,20 @@ export default async function OnboardingPage({
           </div>
         </section>
 
-        <section className="twoCol">
-          <article className="card">
-            <div className="fieldTitle">4 · Dove</div>
-            <h2>Località</h2>
-            <div className="choiceGrid oneCol">
-              {["Milano","Firenze","Roma","Londra","Svizzera"].map(city=>(
-                <label className="choice" key={city}><input type="checkbox" name="preferred_locations" value={city}/><span>{city}</span></label>
-              ))}
-            </div>
-          </article>
-          <article className="card">
-            <div className="fieldTitle">Disponibilità a trasferirti</div>
-            <h2>Relocation</h2>
-            <div className="choiceGrid oneCol">
-              {["Milano","Firenze","Roma","Londra","Svizzera"].map(city=>(
-                <label className="choice" key={city}><input type="checkbox" name="relocation_locations" value={city}/><span>{city}</span></label>
-              ))}
-            </div>
-          </article>
+        <section className="card">
+          <div className="fieldTitle">4 · Dove</div>
+          <h2>Dove vuoi lavorare?</h2>
+          <p className="lead">Puoi inserire qualsiasi città, paese o area geografica. Separali con una virgola.</p>
+          <div className="twoCol">
+            <label>
+              <div className="fieldTitle">Località preferite</div>
+              <input className="input" name="preferred_locations_text" placeholder="Es. Milano, Parigi, Londra, Zurigo" />
+            </label>
+            <label>
+              <div className="fieldTitle">Dove ti trasferiresti?</div>
+              <input className="input" name="relocation_locations_text" placeholder="Es. Svizzera, Francia, New York" />
+            </label>
+          </div>
         </section>
 
         <section className="card">
