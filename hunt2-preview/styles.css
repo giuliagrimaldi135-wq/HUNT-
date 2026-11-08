@@ -11,3 +11,30 @@
 
 .cvPendingNote{margin:22px 0 0;padding:14px 0;border-top:1px solid var(--line);font-size:13px;color:#6d6861;max-width:780px}.applicationTools{border-top:1px solid var(--line);padding-top:28px}.applicationToolsHead{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:18px}.applicationToolsHead h2{font-family:"Iowan Old Style","Baskerville","Times New Roman",serif;font-size:32px;font-weight:600;letter-spacing:-.03em;margin-top:6px}.applicationToolsHead>span{font-size:12px;color:var(--muted);border-bottom:1px solid #aaa59d;padding-bottom:4px}.applicationToolGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.applicationTool{padding:22px 22px 22px 0;min-height:230px}.applicationTool+.applicationTool{border-left:1px solid var(--line);padding-left:22px}.toolNumber{font-size:10px;color:#aaa59d;letter-spacing:.12em;margin-bottom:28px}.applicationTool h3{font-family:"Iowan Old Style","Baskerville","Times New Roman",serif;font-size:25px;font-weight:600;letter-spacing:-.02em;margin-bottom:12px}.applicationTool p{font-size:13px;color:#625e57;line-height:1.6;min-height:82px}.textAction{border:0;background:transparent;padding:0;font:inherit;font-size:12px;font-weight:800;color:#111;cursor:pointer}.textAction:disabled{color:#aaa59d;cursor:default}.applicationTool.ready .textAction{color:var(--green)}.companyIntelligence{border-top:1px solid var(--line)}.companyFact{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:22px 0;border-bottom:1px solid var(--line)}.factIndex{font-size:10px;color:#aaa59d;letter-spacing:.12em;padding-top:4px}.factType{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--green);font-weight:800;margin-bottom:6px}.companyFact h3{font-family:"Iowan Old Style","Baskerville","Times New Roman",serif;font-size:24px;font-weight:600;letter-spacing:-.02em}.companyFact p{color:#5f5a54;line-height:1.6;max-width:780px}.alignedRoles{border-top:1px solid var(--line);padding-top:26px}.alignedRoles h2{font-family:"Iowan Old Style","Baskerville","Times New Roman",serif;font-size:30px;font-weight:600;letter-spacing:-.03em;margin-top:6px}.cleanJobCard a.btn{text-decoration:none;display:inline-flex}
 @media(max-width:820px){.applicationToolsHead{align-items:flex-start;flex-direction:column}.applicationToolGrid{grid-template-columns:1fr}.applicationTool{padding:18px 0;min-height:auto}.applicationTool+.applicationTool{border-left:0;border-top:1px solid var(--line);padding-left:0}.applicationTool p{min-height:0}.companyFact{grid-template-columns:34px 1fr}}
+
+/* Refine: premium product, not editorial-template */
+.opportunitiesPage h1,.folderHero h1,.featureEditorial h2,.companyIntro h2,.historyBlock h2,.intelPanel h2,.coverLetterBlock h2,.applicationToolsHead h2,.applicationTool h3,.companyFact h3,.alignedRoles h2,.coverLetterReady h2{
+  font-family:inherit!important;
+  font-weight:750!important;
+  letter-spacing:-.035em!important
+}
+.folderHero h1{font-size:42px!important;line-height:1.05!important}
+.featureEditorial h2,.coverLetterReady h2{font-size:28px!important}
+.companyIntro h2,.alignedRoles h2{font-size:29px!important}
+.companyFact h3{font-size:20px!important}
+.coverLetterReady{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 0}
+.coverLetterHead{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:20px}
+.coverLetterText{white-space:pre-wrap;font-size:15px;line-height:1.75;max-width:850px;color:#282621;background:#fff;border:1px solid var(--line);padding:24px;border-radius:2px}
+.compactJobStatus{border-top:1px solid var(--line);padding:22px 0 8px}
+.statusLine{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-top:9px;font-size:13px;color:#67635d}
+.statusLine strong{color:#22201d}
+.statusLine span:before{content:"·";margin:0 10px;color:#aaa59d}
+.repostNote{margin:14px 0 0;max-width:760px;font-size:12px;line-height:1.55;color:#77716a}
+.applicationTools,.cvPendingNote{display:none!important}
+@media(max-width:820px){
+ .folderHero h1{font-size:34px!important}
+ .coverLetterHead{align-items:flex-start;flex-direction:column}
+ .coverLetterText{padding:18px}
+ .statusLine{display:grid;gap:5px}
+ .statusLine span:before{content:none}
+}
