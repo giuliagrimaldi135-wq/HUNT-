@@ -151,6 +151,22 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.user_cvs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  storage_path text not null,
+  target_role_families jsonb not null default '[]'::jsonb,
+  parsed_profile jsonb not null default '{}'::jsonb,
+  is_default boolean not null default false,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists user_cvs_user_idx
+  on public.user_cvs(user_id, active, updated_at desc);
+
 create table if not exists public.career_preferences (
   user_id uuid primary key references auth.users(id) on delete cascade,
   primary_role_families jsonb not null default '[]'::jsonb,
@@ -221,6 +237,46 @@ create table if not exists public.applications (
 create index if not exists applications_user_idx
   on public.applications(user_id, updated_at desc);
 
+create table if not exists public.company_signals (
+  id uuid primary key default gen_random_uuid(),
+  company_id uuid not null references public.companies(id) on delete cascade,
+  signal_type text not null,
+  title text not null,
+  summary text,
+  source_name text not null,
+  source_url text not null,
+  published_at timestamptz,
+  detected_at timestamptz not null default now(),
+  relevance_score integer check (relevance_score between 0 and 100),
+  evidence jsonb not null default '{}'::jsonb,
+  unique(company_id, source_url)
+);
+
+create index if not exists company_signals_company_time_idx
+  on public.company_signals(company_id, detected_at desc);
+
+create table if not exists public.user_job_dossiers (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  job_id uuid not null references public.jobs(id) on delete cascade,
+  recommended_cv_id uuid references public.user_cvs(id) on delete set null,
+  why_you text,
+  why_now text,
+  positioning_angle text,
+  cv_reason text,
+  gaps jsonb not null default '[]'::jsonb,
+  what_to_emphasize jsonb not null default '[]'::jsonb,
+  contact_route jsonb not null default '{}'::jsonb,
+  ready_to_send_subject text,
+  ready_to_send_message text,
+  generated_from jsonb not null default '{}'::jsonb,
+  model_version text,
+  updated_at timestamptz not null default now(),
+  primary key(user_id, job_id)
+);
+
+create index if not exists user_job_dossiers_user_idx
+  on public.user_job_dossiers(user_id, updated_at desc);
+
 create table if not exists public.outreach_candidates (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -252,11 +308,14 @@ alter table public.jobs enable row level security;
 alter table public.job_sources enable row level security;
 alter table public.job_observations enable row level security;
 alter table public.repost_events enable row level security;
+alter table public.company_signals enable row level security;
 alter table public.profiles enable row level security;
+alter table public.user_cvs enable row level security;
 alter table public.career_preferences enable row level security;
 alter table public.user_job_matches enable row level security;
 alter table public.user_job_feedback enable row level security;
 alter table public.applications enable row level security;
+alter table public.user_job_dossiers enable row level security;
 alter table public.outreach_candidates enable row level security;
 alter table public.notification_devices enable row level security;
 
@@ -273,7 +332,14 @@ for select to authenticated using (true);
 create policy "authenticated read repost_events" on public.repost_events
 for select to authenticated using (true);
 
+create policy "authenticated read company_signals" on public.company_signals
+for select to authenticated using (true);
+
 create policy "own profile" on public.profiles
+for all to authenticated using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "own cvs" on public.user_cvs
 for all to authenticated using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
@@ -289,6 +355,10 @@ for all to authenticated using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
 create policy "own applications" on public.applications
+for all to authenticated using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "own dossiers" on public.user_job_dossiers
 for all to authenticated using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
