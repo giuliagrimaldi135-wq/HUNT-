@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
-from dedupe import JobCandidate, compare_jobs
-from vacancy_confidence import VacancySignals, calculate_vacancy_confidence
+from intelligence.dedupe import JobCandidate, compare_jobs
+from intelligence.vacancy_confidence import VacancySignals, calculate_vacancy_confidence
 
 
 def test_same_requisition_is_same_job():
