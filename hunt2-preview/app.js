@@ -209,6 +209,7 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
    updated_at:now
  });
  if(pref.error){msg.innerHTML='<div class="msg bad">'+esc(pref.error.message)+'</div>';return}
+ let newCvId=null;
  const file=fd.get("cv");
  if(file instanceof File && file.size){
    if(file.size>8*1024*1024){msg.innerHTML='<div class="msg bad">CV troppo grande: massimo 8 MB.</div>';return}
@@ -218,10 +219,19 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
    const path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;
    const up=await supabase.storage.from("cvs").upload(path,file,{contentType:fileMimes[ext],upsert:false});
    if(up.error){msg.innerHTML='<div class="msg bad">'+esc(up.error.message)+'</div>';return}
-   const row=await supabase.from("user_cvs").insert({user_id:currentUser.id,name:fd.get("cvname")||file.name,storage_path:path,target_role_families:primary,parsed_profile:{},is_default:true,active:true});
+   const row=await supabase.from("user_cvs").insert({user_id:currentUser.id,name:fd.get("cvname")||file.name,storage_path:path,target_role_families:primary,parsed_profile:{},is_default:true,active:true}).select("id").single();
    if(row.error){await supabase.storage.from("cvs").remove([path]);msg.innerHTML='<div class="msg bad">'+esc(row.error.message)+'</div>';return}
+   newCvId=row.data.id;
  }
- renderShell();
+ if(newCvId){
+   // A first-time member enters their private CV workspace and starts extraction.
+   currentView="profile";
+   await renderProfile();
+   const reader=document.querySelector('#cvManagerRoot [data-cv-action="read"][data-cv-id="'+newCvId+'"]');
+   if(reader)reader.click();
+ }else{
+   await renderShell();
+ }
 }
 
 async function personalizationView(profile,personalization){
