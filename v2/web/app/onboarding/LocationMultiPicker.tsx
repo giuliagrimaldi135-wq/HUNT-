@@ -5,41 +5,34 @@ import { useState } from "react";
 type Props = {
   title: string;
   name: string;
-  countries: readonly string[];
   cityPlaceholder: string;
 };
 
-export default function LocationMultiPicker({ title, name, countries, cityPlaceholder }: Props) {
-  const [country, setCountry] = useState("");
+export default function LocationMultiPicker({ title, name, cityPlaceholder }: Props) {
   const [city, setCity] = useState("");
   const [items, setItems] = useState<string[]>([]);
 
   const add = () => {
-    const value = [city.trim(), country].filter(Boolean).join(", ");
+    const value = city.trim();
     if (!value) return;
     setItems((current) => current.includes(value) ? current : [...current, value]);
-    setCountry("");
     setCity("");
   };
 
   return (
     <div>
       <div className="fieldTitle">{title}</div>
-      <div className="twoCol">
-        <label>
-          <div className="fieldTitle">Paese</div>
-          <select className="input" value={country} onChange={(e) => setCountry(e.target.value)}>
-            <option value="">Seleziona un paese</option>
-            {countries.map((item) => <option key={item} value={item}>{item}</option>)}
-          </select>
-        </label>
-        <label>
-          <div className="fieldTitle">Città</div>
-          <input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder={cityPlaceholder} />
-        </label>
-      </div>
+      <label>
+        <div className="fieldTitle">Città</div>
+        <input
+          className="input"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder={cityPlaceholder}
+        />
+      </label>
       <div className="actions">
-        <button className="btn" type="button" onClick={add}>+ Aggiungi località</button>
+        <button className="btn" type="button" onClick={add}>+ Aggiungi città</button>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
         {items.map((item) => (
