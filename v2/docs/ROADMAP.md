@@ -77,11 +77,15 @@ Top recommendations are explainable and respect explicit exclusions.
 
 Build:
 - opportunity dossier
+- why now / evidence section
 - save/prepare/apply
 - application tracker
-- CV version recommendation
+- multiple CV variants
+- CV recommendation
 - ATS keyword analysis
-- cover-letter assistance
+- ready-to-send application/recruiter messages
+- sourced company intelligence
+- verified contact routes
 - interview dossier
 
 Exit condition:
@@ -90,11 +94,14 @@ A user can go from discovery to interview preparation without leaving HUNT excep
 ## Phase 6 — Direct outreach
 
 Build:
-- small/emerging company discovery
-- no-live-vacancy guard
-- hiring/growth signals
+- broad public-web company discovery
+- small/emerging company prioritization
+- no-better-live-vacancy guard
+- hiring/growth/opening/launch signals
+- source-backed WHY NOW
 - verified public contact routes
 - outreach dossier
+- ready-to-send spontaneous email
 
 Exit condition:
 Direct outreach is shown only when it is more useful than applying to a live vacancy.
