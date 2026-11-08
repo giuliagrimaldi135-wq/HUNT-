@@ -95,6 +95,17 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   targetEditor+interpretation+
   (current?editor(current):"")+'</section>';
  const show=(text,bad=false)=>{const el=root.querySelector("#cvReaderStatus");if(el){el.textContent=text;el.classList.toggle("cvReaderError",bad)}};
+ const interpret=root.querySelector('[data-cv-action="interpret"]');
+ if(interpret){
+   supabase.functions.invoke("hunt-cv-interpret",{body:{action:"status"}}).then(({data,error})=>{
+     if(!error&&data?.configured===false&&root.contains(interpret)){
+       interpret.disabled=true;interpret.textContent="Analisi AI da attivare";
+       const info=root.querySelector(".cvInterpret p");
+       if(info)info.textContent="Il testo del CV può essere letto e verificato manualmente. L'interpretazione automatica tramite AI richiede ancora il collegamento sicuro al provider.";
+     }
+   }).catch(()=>{});
+ }
+
  root.onclick=async event=>{
   const b=event.target.closest("[data-cv-action]");if(!b)return;
   const action=b.dataset.cvAction,id=b.dataset.cvId;
