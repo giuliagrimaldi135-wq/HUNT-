@@ -685,9 +685,27 @@ async function renderOpportunityFolder(jobId){
     </div>
    </section>
 
+   <section class="section applicationDossier">
+     <div class="dossierTitle"><div><div class="eyebrow">Il tuo dossier</div><h2>Preparazione personalizzata</h2></div><span class="dossierNote">Solo competenze realmente documentate</span></div>
+     <div class="dossierControls">
+       <label>CV <select id="dossierCv">${dossierCvOptions}</select></label>
+       <label>Lettera <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
+       <button class="btn primary" id="generateDossier">${row.dossier?"Rigenera dossier":"Prepara dossier e lettera"}</button>
+       ${cv?`<button class="btn" id="downloadDossierCv">Scarica il CV</button>`:""}
+     </div>
+     ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
+     <div id="dossierMessage"></div>
+     ${row.dossier?`<div class="dossierDetails">
+       <h3>Il tuo profilo rispetto alla posizione</h3><p>${esc(row.dossier.why_you||"Il confronto richiede ulteriori verifiche.")}</p>
+       ${dossierEvidence.length?`<h3>Cosa valorizzare nel CV</h3><ul class="dossierEvidence">${dossierEvidence.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+       ${dossierGaps.length?`<div class="dossierGaps"><strong>Requisiti da verificare</strong>${dossierGaps.map(g=>`<p>${esc(g)}</p>`).join("")}</div>`:""}
+     </div>`:`<p class="lead">Completa o conferma le esperienze del CV nella sezione Profilo, così HUNT potrà preparare una candidatura realmente personalizzata.</p>`}
+   </section>
    ${row.dossier?.ready_to_send_message?`<section class="section coverLetterReady">
-     <div class="coverLetterHead"><div><div class="eyebrow">Cover letter</div><h2>Pronta per questa candidatura</h2></div><button class="btn primary" id="copyCoverLetter">Copia</button></div>
-     <div class="coverLetterText" id="coverLetterText">${esc(row.dossier.ready_to_send_message)}</div>
+     <div class="coverLetterHead"><div><div class="eyebrow">Cover letter personalizzata</div><h2>Bozza completa, da rivedere</h2></div><div class="coverLetterActions"><button class="btn" id="saveCoverLetter">Salva modifiche</button><button class="btn primary" id="copyCoverLetter">Copia</button></div></div>
+     <label class="dossierSubject">Oggetto: <span>${esc(row.dossier.ready_to_send_subject||"")}</span></label>
+     <textarea class="coverLetterEditor" id="coverLetterText" rows="13" spellcheck="true">${esc(row.dossier.ready_to_send_message)}</textarea>
+     <p class="dossierNote">La bozza usa soltanto il tuo profilo e i dati dell'offerta. Rivedi sempre il testo prima di inviarlo.</p>
    </section>`:""}
 
    <section class="section compactJobStatus">
@@ -732,10 +750,32 @@ async function renderOpportunityFolder(jobId){
    document.querySelectorAll("[data-folder-tab]").forEach(x=>x.classList.toggle("active",x.dataset.folderTab===tab));
    document.querySelectorAll("[data-folder-panel]").forEach(x=>x.classList.toggle("hide",x.dataset.folderPanel!==tab));
  });
+ const generate=document.getElementById("generateDossier");
+ if(generate)generate.onclick=async()=>{
+   const lang=document.getElementById("dossierLang").value;
+   const cvId=document.getElementById("dossierCv").value;
+   const info=document.getElementById("dossierMessage");
+   generate.disabled=true;info.textContent="Preparazione del dossier…";
+   try{await requestDossier(jobId,lang,cvId);await renderOpportunityFolder(jobId)}
+   catch(e){info.textContent=e instanceof Error?e.message:String(e);info.className="dossierError";generate.disabled=false}
+ };
+ const download=document.getElementById("downloadDossierCv");
+ if(download)download.onclick=async()=>{
+   try{await downloadPrivateCv(document.getElementById("dossierCv").value)}
+   catch(e){document.getElementById("dossierMessage").textContent=e.message||String(e)}
+ };
+ const save=document.getElementById("saveCoverLetter");
+ if(save)save.onclick=async()=>{
+   save.disabled=true;
+   const body=document.getElementById("coverLetterText")?.value||"";
+   const {error}=await supabase.from("user_job_dossiers").update({ready_to_send_message:body,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("job_id",jobId);
+   save.disabled=false;save.textContent=error?"Errore nel salvataggio":"Salvata";
+   setTimeout(()=>save.textContent="Salva modifiche",1800);
+ };
  const copy=document.getElementById("copyCoverLetter");
  if(copy)copy.onclick=async()=>{
-   const text=document.getElementById("coverLetterText")?.textContent||"";
-   await navigator.clipboard.writeText(text);
+   const body=document.getElementById("coverLetterText")?.value||"";
+   await navigator.clipboard.writeText(body);
    copy.textContent="Copiata";
    setTimeout(()=>copy.textContent="Copia",1200);
  };
