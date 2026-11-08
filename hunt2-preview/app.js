@@ -401,7 +401,7 @@ async function getOpportunityDetail(jobId){
    supabase.from("user_job_matches").select("match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("applications").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("user_personalization").select("interest_areas,next_experience_drivers,company_preference,avoid_role_traits").eq("user_id",currentUser.id).maybeSingle(),
-   supabase.from("user_cvs").select("id,name,target_role_families,parsed_profile,is_default,created_at").eq("user_id",currentUser.id).eq("active",true).order("created_at",{ascending:false}),
+   supabase.from("user_cvs").select("id,name,target_role_families,parsed_profile,is_default,created_at,updated_at").eq("user_id",currentUser.id).eq("active",true).order("created_at",{ascending:false}),
    supabase.from("repost_events").select("id,detected_at,reason,evidence").eq("job_id",jobId).order("detected_at",{ascending:false}),
    supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle()
  ]);
@@ -603,7 +603,8 @@ async function downloadPrivateCv(cvId){
  if(error||!blob)throw new Error(error?.message||"Impossibile aprire il file privato.");
  const url=URL.createObjectURL(blob);
  const a=document.createElement("a");
- a.href=url;a.download=entry.name||"CV";document.body.appendChild(a);a.click();a.remove();
+ const ext=entry.storage_path?.split(".").pop()||"pdf";
+ a.href=url;a.download=(entry.name||"CV").replace(/\.[^.]+$/,"")+"."+ext;document.body.appendChild(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 function likelyInterviewQuestions(row){
@@ -620,7 +621,11 @@ async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  const row=await getOpportunityDetail(jobId);
  if(!row)return renderOpportunities();
- if(!row.dossier&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
+ const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
+ const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
+ const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
+ const shouldRefresh=Boolean(!row.dossier||(dossierStale&&!row.dossier.generated_from?.user_edited));
+ if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
    pendingDossiers.add(jobId);
    try{
      await requestDossier(jobId);
@@ -634,7 +639,7 @@ async function renderOpportunityFolder(jobId){
  const brand=job.companies?.name||"Brand";
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
- const fit=fitSummary(row);
+ const fit=row.dossier?.why_you||fitSummary(row);
  const cvReady=hasParsedCv(row);
  const dossierEvidence=Array.isArray(row.dossier?.what_to_emphasize)?row.dossier.what_to_emphasize:[];
  const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
@@ -770,7 +775,8 @@ async function renderOpportunityFolder(jobId){
  if(save)save.onclick=async()=>{
    save.disabled=true;
    const body=document.getElementById("coverLetterText")?.value||"";
-   const {error}=await supabase.from("user_job_dossiers").update({ready_to_send_message:body,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("job_id",jobId);
+   const editedMeta={...(row.dossier?.generated_from||{}),user_edited:true,user_edited_at:new Date().toISOString()};
+   const {error}=await supabase.from("user_job_dossiers").update({ready_to_send_message:body,generated_from:editedMeta,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("job_id",jobId);
    save.disabled=false;save.textContent=error?"Errore nel salvataggio":"Salvata";
    setTimeout(()=>save.textContent="Salva modifiche",1800);
  };
