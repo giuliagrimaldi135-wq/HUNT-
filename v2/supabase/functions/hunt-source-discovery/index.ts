@@ -194,7 +194,7 @@ Deno.serve(async(req)=>{
 
   const {data:sources}=await db.from("sources")
     .select("id,company_id,base_url,official,source_family,last_scan_at,companies(name)")
-    .eq("active",true).eq("official",true).not("base_url","is",null)
+    .eq("active",true).eq("official",true).neq("source_type","public_ats_board").not("base_url","is",null)
     .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(18);
 
   for(const source of sources||[]){
