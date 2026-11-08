@@ -774,12 +774,17 @@ async function renderOpportunityFolder(jobId){
 
  <div class="hide" data-folder-panel="company">
    <section class="section companyIntro">
-    <div class="eyebrow">Company intelligence</div>
-    <h2>Cosa sapere su ${esc(brand)}</h2>
-    <p>Una sola selezione di informazioni utili per capire il brand e questa candidatura: risultati, strategia, prodotto, retail, management, aperture, collaborazioni e segnali recenti. Le fonti restano sempre visibili.</p>
+     <div class="eyebrow">Company intelligence</div>
+     <h2>Cosa sapere su ${esc(brand)}</h2>
+     <p>Informazioni effettivamente pubblicate, con le fonti originali. Usa questi segnali per costruire domande, non per fingere di conoscere le priorità interne del brand.</p>
    </section>
    <section class="section companyIntelligence">
-      ${signals.length?signals.map((s,i)=>`<article class="companyFact"><div class="factIndex">0${i+1}</div><div><div class="factType">${esc((s.signal_type||"segnale").replaceAll("_"," "))}</div><h3>${esc(s.title)}</h3><p>${esc(s.summary||"")}</p><div class="signalSource">${esc(s.source_name||"Fonte")}${s.published_at?` · ${new Date(s.published_at).toLocaleDateString("it-IT")}`:""}${s.source_url?` · <a href="${esc(s.source_url)}" target="_blank" rel="noopener">Fonte ↗</a>`:""}</div></div></article>`).join(""):'<p class="lead">Nessuna informazione verificata salvata per questo brand in questo momento.</p>'}
+     ${signals.length||media.length?
+       `<div class="companyNewsFeed">
+       ${signals.map(x=>`<article><span>Fonte aziendale · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non verificata")}</span><h3>${esc(x.title)}</h3><p>${esc(x.summary||"")}</p>${safeRadarUrl(x.source_url)?`<a href="${esc(x.source_url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>`:""}</article>`).join("")}
+       ${media.map(x=>`<article><span>${esc(x.world_news_sources?.publisher||"Stampa fashion")} · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non verificata")}</span><h3>${esc(x.title)}</h3><p>${esc(x.summary||"")}</p>${safeRadarUrl(x.url)?`<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>`:""}</article>`).join("")}
+       </div>`
+       :'<p class="lead">Non abbiamo ancora notizie con fonte documentata per questo brand. HUNT non inventa aggiornamenti aziendali.</p>'}
    </section>
 
    <section class="section alignedRoles">
