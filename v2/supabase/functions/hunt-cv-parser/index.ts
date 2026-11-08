@@ -38,7 +38,15 @@ Deno.serve(async(req)=>{
    if(bytes.byteLength>8*1024*1024){results.push({id:cv.id,status:"file_too_large"});continue}
    if(String.fromCharCode(...bytes.slice(0,4))!=="%PDF"){results.push({id:cv.id,status:"not_a_pdf"});continue}
    const extracted=await extractPdf(bytes);
-   if(extracted.text.length<80){results.push({id:cv.id,status:"text_not_extractable",chars:extracted.text.length,pages:extracted.pages});continue}
+   if(extracted.text.length<80){
+     const prior=(cv.parsed_profile&&typeof cv.parsed_profile==="object"&&!Array.isArray(cv.parsed_profile))?cv.parsed_profile:{};
+     // Image-only PDFs need a separate visual/OCR reader; preserve all verified facts.
+     await db.from("user_cvs").update({
+       parsed_profile:{...prior,cv_text_extraction_status:"image_pdf_no_text_layer",page_count:extracted.pages},
+       updated_at:new Date().toISOString()
+     }).eq("id",cv.id);
+     results.push({id:cv.id,status:"image_pdf_no_text_layer",chars:extracted.text.length,pages:extracted.pages});continue
+   }
    // Crucial: extraction does NOT replace a previously verified structured profile.
    const prior=(cv.parsed_profile&&typeof cv.parsed_profile==="object"&&!Array.isArray(cv.parsed_profile))?cv.parsed_profile:{};
    const profile={...prior,raw_text:extracted.text.slice(0,40000),raw_text_hash:await sha256Hex(extracted.text),extracted_at:new Date().toISOString(),extractor_version:"pdfjs-text-v3",page_count:extracted.pages,cv_text_extraction_status:"text_extracted"};
