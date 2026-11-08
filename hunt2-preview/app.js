@@ -901,7 +901,7 @@ async function renderProfile(){
  bindNav();
  document.getElementById("logoutBtn").onclick=logout;
  try{
-   const {mountCvManager}=await import("./cv-profile.js");
+   const {mountCvManager}=await import("./cv-profile.js?v=20261108-21");
    const root=document.getElementById("cvManagerRoot");
    if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:renderProfile});
  }catch(e){
