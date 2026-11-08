@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ignoreOpportunity, markApplied, prepareApplication } from "@/app/opportunities/actions";
 
 type Job = {
@@ -16,23 +15,23 @@ function verificationLabel(job:Job){
       ? "Verificato oggi"
       : "Verificato "+date.toLocaleDateString("it-IT",{day:"2-digit",month:"short"});
   }
-  return "Attività da riconfermare";
+  return "Da riconfermare";
 }
 
 export function OpportunityCard({job}:{job:Job}) {
   return (
-    <article className="card jobCard cleanJobCard">
+    <article className="jobCard cleanJobCard">
       <div>
         <div className="eyebrow">{job.brand}</div>
         <h3>{job.title}</h3>
         <div className="jobMeta">{job.location} · {job.role}</div>
-        <div className="humanBadges">
+        <div className="humanBadges editorialMeta">
           <span className="matchPill">{job.match}% compatibile</span>
           <span>{job.freshness}</span>
           <span>{verificationLabel(job)}</span>
         </div>
-        <div className="actions">
-          <Link className="btn primary" href={"/opportunities/"+job.id}>Apri folder</Link>
+        <div className="actions editorialActions">
+          {job.applyUrl ? <a className="btn primary" href={job.applyUrl} target="_blank" rel="noreferrer">Apri posizione ↗</a> : null}
           <form action={prepareApplication}><input type="hidden" name="job_id" value={job.id}/><button className="btn">Prepara candidatura</button></form>
           <form action={markApplied}><input type="hidden" name="job_id" value={job.id}/><button className="btn">Già candidata</button></form>
           <form action={ignoreOpportunity}><input type="hidden" name="job_id" value={job.id}/><button className="btn ghostDanger">Ignora</button></form>
