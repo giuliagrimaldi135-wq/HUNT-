@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 };
 
 const nav = [
-  ["/", "Oggi"],
   ["/opportunities", "Opportunità"],
   ["/direct", "Spontanee"],
   ["/intelligence", "Intelligence"],
@@ -22,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="shell">
           <aside className="sidebar">
-            <Link href="/" className="brand">HUNT<span>.</span></Link>
+            <Link href="/opportunities" className="brand">HUNT<span>.</span></Link>
             <div className="brandSub">Fashion & Luxury Career Intelligence</div>
             <nav className="nav">
               {nav.map(([href, label]) => (
@@ -36,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="main">{children}</main>
         </div>
         <nav className="mobileNav">
-          {nav.slice(0,5).map(([href, label]) => (
+          {nav.map(([href, label]) => (
             <Link key={href} href={href}>{label}</Link>
           ))}
         </nav>
