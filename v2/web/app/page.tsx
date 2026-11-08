@@ -1,24 +1,28 @@
 import Link from "next/link";
 import { OpportunityCard } from "@/components/OpportunityCard";
-import { direct, opportunities } from "@/lib/demo";
+import { direct } from "@/lib/demo";
+import { getOpportunities } from "@/lib/data/opportunities";
 
-export default function TodayPage(){
+export default async function TodayPage(){
+  const opportunities=await getOpportunities();
+  const top=opportunities.slice(0,2);
+
   return (
     <>
-      <div className="eyebrow">Domenica · HUNT Today</div>
-      <h1>Oggi meritano la tua attenzione 7 opportunità.</h1>
+      <div className="eyebrow">HUNT Today</div>
+      <h1>Oggi meritano la tua attenzione {opportunities.length} opportunità.</h1>
       <p className="lead">HUNT ha già cercato, verificato e ordinato il mercato. Qui trovi solo ciò che richiede una decisione o un'azione.</p>
 
       <section className="grid4">
-        <div className="metric"><strong>7</strong><span>opportunità forti</span></div>
-        <div className="metric"><strong>2</strong><span>nuove da ieri</span></div>
-        <div className="metric"><strong>1</strong><span>da prioritizzare oggi</span></div>
-        <div className="metric"><strong>3</strong><span>segnali per spontanee</span></div>
+        <div className="metric"><strong>{opportunities.length}</strong><span>opportunità nel feed</span></div>
+        <div className="metric"><strong>{opportunities.filter(x=>x.freshness==="Nuova").length}</strong><span>nuove</span></div>
+        <div className="metric"><strong>{opportunities.filter(x=>x.priority>=90).length}</strong><span>priorità 90+</span></div>
+        <div className="metric"><strong>{direct.length}</strong><span>segnali per spontanee</span></div>
       </section>
 
       <section className="section">
         <div className="sectionHead"><div><div className="eyebrow">Priorità</div><h2>Da guardare adesso</h2></div><Link href="/opportunities">Tutte le opportunità →</Link></div>
-        <div className="stack">{opportunities.slice(0,2).map(job=><OpportunityCard key={job.id} job={job}/>)}</div>
+        <div className="stack">{top.map(job=><OpportunityCard key={job.id} job={job}/>)}</div>
       </section>
 
       <section className="section infoGrid">
@@ -30,11 +34,11 @@ export default function TodayPage(){
         </div>
         <div className="card">
           <div className="eyebrow">La tua giornata</div>
-          <h2>3 azioni, non 300 annunci.</h2>
+          <h2>Poche azioni, non centinaia di annunci.</h2>
           <ul className="listClean">
-            <li>1. Apri la candidatura Prada</li>
-            <li>2. Controlla il segnale Paris Texas</li>
-            <li>3. Prepara il follow-up Antonioli</li>
+            {top[0] ? <li>1. Apri {top[0].brand} — {top[0].title}</li> : null}
+            <li>2. Controlla il segnale {direct[0].brand}</li>
+            <li>3. Rivedi le candidature che richiedono follow-up</li>
           </ul>
         </div>
       </section>
