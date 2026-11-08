@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ignoreOpportunity, markApplied, prepareApplication } from "@/app/opportunities/actions";
 
 type Job = {
   id:string; brand:string; title:string; location:string; match:number;
@@ -20,8 +21,9 @@ export function OpportunityCard({job}:{job:Job}) {
         <p className="source">{job.why}</p>
         <div className="actions">
           <Link className="btn primary" href={"/opportunities/"+job.id}>Apri folder</Link>
-          <button className="btn">Salva</button>
-          <button className="btn">Ignora</button>
+          <form action={prepareApplication}><input type="hidden" name="job_id" value={job.id}/><button className="btn">Prepara candidatura</button></form>
+          <form action={markApplied}><input type="hidden" name="job_id" value={job.id}/><button className="btn">Già candidata</button></form>
+          <form action={ignoreOpportunity}><input type="hidden" name="job_id" value={job.id}/><button className="btn">Ignora</button></form>
         </div>
       </div>
       <div className="scoreGroup">
