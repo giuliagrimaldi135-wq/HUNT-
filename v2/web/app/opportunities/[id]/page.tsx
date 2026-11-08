@@ -26,24 +26,18 @@ function verificationLabel(source:string,lastVerified?:string){
   return "Da riconfermare";
 }
 
-function fitEvidence(job:any, personalization:any, reasons:string[]){
-  const interests=new Set(strArray(personalization?.interest_areas));
-  const desc=String(job.description||"").toLowerCase();
-  const title=String(job.title||"").toLowerCase();
+function fitEvidence(reasons:string[]){
   const out:string[]=[];
-  if(interests.has("product_assortment")&&/merchandis|assort|collection|product|shoe|jewelry|ready-to-wear/.test(desc+" "+title)){
-    out.push("Hai indicato prodotto e assortimento tra le parti del lavoro che ti interessano di più, e questa posizione lavora direttamente su prodotto e merchandising.");
+  for(const reason of reasons){
+    if(/città|milano|livello|stage coerente/i.test(reason))continue;
+    if(reason.startsWith("Target professionale diretto:")){
+      const family=reason.split(":").slice(1).join(":").trim();
+      out.push(family+" è una delle aree professionali che hai scelto come obiettivo.");
+    }else if(/ruolo adiacente/i.test(reason)){
+      out.push("Non è il tuo target principale, ma le responsabilità sono abbastanza vicine alle aree che hai scelto da meritare attenzione.");
+    }else out.push(reason.endsWith(".")?reason:reason+".");
   }
-  if(interests.has("numbers_performance")&&/sales|performance|sell-in|sell-out|best seller|slow mover|kpi|report|analysis|analisi/.test(desc)){
-    out.push("Nel ruolo c’è una componente concreta di analisi delle performance, in linea con il tuo interesse per numeri e KPI.");
-  }
-  if(interests.has("organization_operations")&&/planning|coordin|process|launch|calendar|budget|stock|inventory/.test(desc)){
-    out.push("La posizione include coordinamento e organizzazione operativa, un’altra area che hai indicato come interessante.");
-  }
-  if(reasons.some(x=>/città|milano/i.test(x)))out.push("È in una delle città che hai scelto per la ricerca.");
-  if(reasons.some(x=>/livello|stage|intern/i.test(x)))out.push("Il livello della posizione è coerente con quello che stai cercando adesso.");
-  if(!out.length)out.push(...reasons.slice(0,3));
-  return out.slice(0,4);
+  return [...new Set(out)].slice(0,4);
 }
 
 export default async function OpportunityFolder({params}:{params:Promise<{id:string}>}){
@@ -62,6 +56,7 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
     {data:reposts},
     {data:signals},
     {data:application},
+    {data:dossier},
   ]=await Promise.all([
     supabase.from("user_personalization").select("interest_areas,next_experience_drivers").eq("user_id",userId).maybeSingle(),
     supabase.from("user_cvs").select("id,name,target_role_families,parsed_profile,is_default,created_at").eq("user_id",userId).eq("active",true).order("created_at",{ascending:false}),
@@ -70,6 +65,7 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
       ? supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.companyId).order("relevance_score",{ascending:false}).limit(8)
       : Promise.resolve({data:[] as any[]}),
     supabase.from("applications").select("status").eq("user_id",userId).eq("job_id",id).maybeSingle(),
+    supabase.from("user_job_dossiers").select("ready_to_send_message").eq("user_id",userId).eq("job_id",id).maybeSingle(),
   ]);
 
   let relatedRows:any[]=[];
@@ -95,12 +91,6 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
       }))
       .filter((row:any)=>row.publishedAt&&new Date(row.publishedAt)>=cutoff);
   }
-
-  const cvList=(cvs||[]) as any[];
-  const cv=cvList.find(x=>strArray(x.target_role_families).includes(job.role))
-    ||cvList.find(x=>x.is_default)
-    ||cvList[0];
-  const cvReady=cvList.some(x=>x.parsed_profile&&typeof x.parsed_profile==="object"&&Object.keys(x.parsed_profile).length>0);
 
   const repostCount=(reposts||[]).length;
   const firstDate=job.publishedAt ? new Date(job.publishedAt).toLocaleDateString("it-IT") : "—";
@@ -141,13 +131,12 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
 
       <FolderTabs
         brand={job.brand}
-        fitEvidence={fitEvidence(job,personalization,job.reasons||[])}
-        cvName={cv?.name ? String(cv.name).trim() : undefined}
-        cvReady={cvReady}
-        repostText={repostText}
+        fitEvidence={fitEvidence(job.reasons||[])}
+        coverLetter={dossier?.ready_to_send_message ? String(dossier.ready_to_send_message) : undefined}
         verificationLabel={verificationLabel(job.source,job.lastVerifiedAt)}
         freshness={job.freshness}
-        lastVerified={job.lastVerifiedAt ? new Date(job.lastVerifiedAt).toLocaleString("it-IT") : "—"}
+        repostCount={repostCount}
+        repostText={repostCount ? repostText : undefined}
         signals={signalRows}
         relatedJobs={relatedRows}
         showInterview={application?.status==="interview"}
