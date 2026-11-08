@@ -238,13 +238,15 @@ async function personalizationView(profile,personalization){
    ["still_exploring","Non lo so ancora"]
  ];
  const driverOptions=[
-   ["learn","Imparare il più possibile"],
-   ["target_role","Avvicinarmi al ruolo che voglio fare"],
-   ["responsibility","Avere responsabilità vere"],
-   ["growth","Avere possibilità di crescita"],
-   ["international","Fare un'esperienza internazionale"],
-   ["product_brand","Lavorare con un prodotto o brand che mi interessa"],
-   ["explore","Capire meglio quale strada fa per me"]
+   ["skills","Imparare competenze nuove"],
+   ["responsibility","Avere responsabilità e autonomia"],
+   ["growth","Avere un percorso di crescita chiaro"],
+   ["international","Lavorare in un ambiente internazionale"],
+   ["product_brand","Lavorare con un prodotto o brand che mi interessa davvero"],
+   ["stability","Avere più stabilità e continuità"],
+   ["compensation","Avere una buona retribuzione e benefit"],
+   ["balance","Avere flessibilità e un buon equilibrio vita-lavoro"],
+   ["explore","Capire meglio quale strada professionale fa per me"]
  ];
  const avoidOptions=[
    ["store_sales","Vendita in negozio come attività principale"],
@@ -275,15 +277,15 @@ async function personalizationView(profile,personalization){
    <section class="card">
     <div class="eyebrow">1 · Cosa ti interessa</div>
     <h2>Quale parte del lavoro ti attira di più?</h2>
-    <p class="lead">Scegline al massimo 2.</p>
-    <div class="choiceGrid">${interestOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="interest_area" value="${value}" data-max-two="interest"><span>${label}</span></label>`).join("")}</div>
+    <p class="lead">Scegli tutte quelle che ti rappresentano.</p>
+    <div class="choiceGrid">${interestOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="interest_area" value="${value}"><span>${label}</span></label>`).join("")}</div>
    </section>
 
    <section class="card">
     <div class="eyebrow">2 · Prossima esperienza</div>
     <h2>Cosa vorresti trovare soprattutto nel tuo prossimo lavoro?</h2>
-    <p class="lead">Scegline al massimo 2.</p>
-    <div class="choiceGrid">${driverOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="next_driver" value="${value}" data-max-two="driver"><span>${label}</span></label>`).join("")}</div>
+    <p class="lead">Scegli tutte quelle che per te contano davvero.</p>
+    <div class="choiceGrid">${driverOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="next_driver" value="${value}"><span>${label}</span></label>`).join("")}</div>
    </section>
 
    <section class="card">
@@ -310,18 +312,6 @@ async function personalizationView(profile,personalization){
  </div>`;
 
  const form=document.getElementById("personalizationForm");
- form.addEventListener("change",(event)=>{
-   const input=event.target;
-   if(!input.matches("[data-max-two]"))return;
-   const group=input.dataset.maxTwo;
-   const checked=form.querySelectorAll(`[data-max-two="${group}"]:checked`);
-   if(checked.length>2){
-     input.checked=false;
-     const msg=document.getElementById("personalizationMsg");
-     msg.innerHTML='<div class="msg bad">Puoi scegliere al massimo 2 opzioni in questa domanda.</div>';
-     setTimeout(()=>{if(msg)msg.innerHTML="";},1800);
-   }
- });
  form.onsubmit=savePersonalization;
 }
 
