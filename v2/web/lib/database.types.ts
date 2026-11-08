@@ -116,6 +116,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_personalization: {
+        Row: {
+          user_id: string
+          career_goal: string | null
+          company_preference: string | null
+          communication_style: string | null
+          outreach_preference: string | null
+          excluded_notes: string | null
+          priority_factors: Json
+          completed: boolean
+          updated_at: string
+          interest_areas: string[]
+          next_experience_drivers: string[]
+          avoid_role_traits: string[]
+        }
+        Insert: {
+          user_id: string
+          career_goal?: string | null
+          company_preference?: string | null
+          communication_style?: string | null
+          outreach_preference?: string | null
+          excluded_notes?: string | null
+          priority_factors?: Json
+          completed?: boolean
+          updated_at?: string
+          interest_areas?: string[]
+          next_experience_drivers?: string[]
+          avoid_role_traits?: string[]
+        }
+        Update: {
+          user_id?: string
+          career_goal?: string | null
+          company_preference?: string | null
+          communication_style?: string | null
+          outreach_preference?: string | null
+          excluded_notes?: string | null
+          priority_factors?: Json
+          completed?: boolean
+          updated_at?: string
+          interest_areas?: string[]
+          next_experience_drivers?: string[]
+          avoid_role_traits?: string[]
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           careers_structure: string | null
