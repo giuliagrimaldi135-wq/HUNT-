@@ -49,7 +49,7 @@ async function setApplication(jobId: string, status: "preparing" | "applied") {
 
   revalidatePath("/opportunities");
   revalidatePath("/applications");
-  redirect("/applications");
+  redirect(status === "preparing" ? "/opportunities/" + jobId : "/applications");
 }
 
 export async function prepareApplication(formData: FormData) {
