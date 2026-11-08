@@ -42,6 +42,15 @@ const seniorityLevels=[
   ["senior_manager","Senior Manager"],
   ["head_director","Head / Director"]
 ];
+const countries=[
+  "Italia","Francia","Regno Unito","Svizzera","Spagna","Germania","Paesi Bassi","Belgio","Austria","Portogallo",
+  "Irlanda","Lussemburgo","Monaco","Danimarca","Svezia","Norvegia","Finlandia","Islanda","Grecia","Polonia",
+  "Repubblica Ceca","Ungheria","Romania","Croazia","Slovenia","Slovacchia","Estonia","Lettonia","Lituania",
+  "Stati Uniti","Canada","Messico","Brasile","Argentina","Cile","Colombia",
+  "Emirati Arabi Uniti","Qatar","Arabia Saudita","Israele","Turchia",
+  "Giappone","Corea del Sud","Singapore","Hong Kong","Cina","India","Thailandia","Vietnam","Indonesia","Malesia",
+  "Australia","Nuova Zelanda","Sudafrica","Marocco","Egitto","Altro"
+];
 const radarScopes=[
   ["focused","Solo i miei target","Mostrami quasi esclusivamente i ruoli che scelgo come obiettivo."],
   ["smart","Allarga in modo intelligente","Consigliami anche ruoli vicini che possono essere un buon ponte verso il mio obiettivo."],
@@ -121,7 +130,16 @@ function onboardingView(profile){
 
   <section class="card"><div class="eyebrow">3 · Ampiezza del radar</div><h2>Quanto vuoi che HUNT allarghi gli orizzonti?</h2><p class="lead">Non ti chiediamo di conoscere in anticipo tutti i “ruoli adiacenti”. Decidi solo quanto vuoi esplorare; sarà HUNT a proporre alternative sensate e a spiegarti il collegamento.</p><div class="radarGrid">${radarHtml}</div></section>
 
-  <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vuoi lavorare?</h2><p class="lead">Puoi inserire qualsiasi città, paese o area geografica. Separali con una virgola.</p>\n   <label><div class="eyebrow">Località preferite</div><input class="input" name="locations_text" placeholder="Es. Milano, Parigi, Londra, Zurigo"></label>\n   <label style="display:block;margin-top:12px"><div class="eyebrow">Dove ti trasferiresti?</div><input class="input" name="relocation_text" placeholder="Es. Svizzera, Francia, New York"></label>\n  </section>
+  <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vuoi lavorare?</h2>
+   <div class="grid2" style="margin-top:12px">
+    <label><div class="eyebrow">Paese preferito</div><select class="input" name="preferred_country"><option value="">Seleziona un paese</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
+    <label><div class="eyebrow">Città preferita</div><input class="input" name="preferred_city" placeholder="Es. Milano"></label>
+   </div>
+   <div class="grid2" style="margin-top:12px">
+    <label><div class="eyebrow">Paese in cui ti trasferiresti</div><select class="input" name="relocation_country"><option value="">Nessuna preferenza</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
+    <label><div class="eyebrow">Città</div><input class="input" name="relocation_city" placeholder="Es. Parigi"></label>
+   </div>
+  </section>
   <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx"></label></div></section>
   <div id="onMsg"></div><div class="actions"><button class="btn green" type="submit">Crea il mio HUNT</button><button class="btn" id="logoutOn" type="button">Esci</button></div>
  </form></div>`;
@@ -133,9 +151,11 @@ async function saveOnboarding(e){
  e.preventDefault();
  const form=e.currentTarget, fd=new FormData(form), msg=document.getElementById("onMsg");
  const primary=fd.getAll("primary");
- const splitLocations=(value)=>String(value||"").split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
- const locations=splitLocations(fd.get("locations_text"));
- const relocationLocations=splitLocations(fd.get("relocation_text"));
+ const makeLocation=(country,city)=>[String(city||"").trim(),String(country||"").trim()].filter(Boolean).join(", ");
+ const preferredLocation=makeLocation(fd.get("preferred_country"),fd.get("preferred_city"));
+ const relocationLocation=makeLocation(fd.get("relocation_country"),fd.get("relocation_city"));
+ const locations=preferredLocation?[preferredLocation]:[];
+ const relocationLocations=relocationLocation?[relocationLocation]:[];
  const firstName=String(fd.get("first_name")||"").trim();
  const lastName=String(fd.get("last_name")||"").trim();
  const radarScope=String(fd.get("radar_scope")||"smart");
