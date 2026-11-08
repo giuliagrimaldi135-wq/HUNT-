@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { opportunities } from "@/lib/demo";
+import { getOpportunity } from "@/lib/data/opportunities";
 
 export default async function OpportunityFolder({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
-  const job=opportunities.find(x=>x.id===id);
+  const job=await getOpportunity(id);
   if(!job) notFound();
 
   return (
@@ -28,23 +28,23 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
         </article>
         <article className="card">
           <div className="fieldTitle">Perché adesso</div>
-          <p className="quote">La vacancy è recente, presente sulla fonte ufficiale e il flusso di candidatura risulta attivo. Priorità alta.</p>
+          <p className="quote">HUNT combina freschezza, verifica della fonte e compatibilità personale per decidere se vale la pena agire ora.</p>
         </article>
       </section>
 
       <section className="section twoCol">
         <article className="card">
           <div className="fieldTitle">CV consigliato</div>
-          <h2>Retail Merchandising CV</h2>
-          <p className="lead">È la versione che valorizza meglio showroom, ordini, prodotto e formazione Fashion Management.</p>
-          <div className="actions"><button className="btn">Apri CV</button><button className="btn">3 modifiche consigliate</button></div>
+          <h2>La versione più adatta al ruolo</h2>
+          <p className="lead">Quando l'utente avrà caricato più CV, HUNT selezionerà qui quello più coerente e spiegherà il perché.</p>
+          <div className="actions"><button className="btn">Apri CV</button><button className="btn">Modifiche consigliate</button></div>
         </article>
         <article className="card">
           <div className="fieldTitle">Cosa valorizzare</div>
           <ul className="listClean">
-            <li>Autonomia con clienti durante la campagna vendite</li>
-            <li>Ordini e attenzione al budget cliente</li>
-            <li>Progetti di assortimento e retail strategy</li>
+            <li>Esperienze direttamente rilevanti per il ruolo</li>
+            <li>Competenze che rispondono alla vacancy</li>
+            <li>Elementi differenzianti presenti nel CV reale</li>
           </ul>
         </article>
       </section>
@@ -52,16 +52,16 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
       <section className="section twoCol">
         <article className="card">
           <div className="fieldTitle">Ready to Send</div>
-          <h2>Email candidatura</h2>
-          <p className="lead">Testo generato usando profilo, CV selezionato, ruolo e informazioni verificate sull'azienda.</p>
-          <p className="quote">Buongiorno, mi chiamo Giulia Grimaldi e vorrei candidarmi per la posizione di Retail Merchandising Intern...</p>
+          <h2>Email / messaggio candidatura</h2>
+          <p className="lead">Sarà costruito usando profilo, CV selezionato, vacancy e intelligence verificata. Nessuna esperienza verrà inventata.</p>
+          <p className="quote">La versione finale apparirà qui pronta da controllare, copiare e inviare.</p>
           <div className="actions"><button className="btn primary">Copia</button><button className="btn">Modifica</button></div>
         </article>
         <article className="card">
           <div className="fieldTitle">Dove contattare</div>
-          <h2>Canale ufficiale</h2>
-          <p>Apply tramite career site ufficiale.</p>
-          <p className="source">Fonte: career page aziendale · verificata oggi</p>
+          <h2>Canale verificato</h2>
+          <p>Career site, recruiter pubblico o contatto aziendale: HUNT mostrerà sempre la provenienza.</p>
+          <p className="source">Mai inventare email o contatti.</p>
           <div className="actions"><button className="btn green">Apri candidatura</button></div>
         </article>
       </section>
@@ -70,18 +70,18 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
         <article className="card">
           <div className="fieldTitle">Vacancy evidence</div>
           <div className="timeline">
-            <div className="timelineItem"><strong>Oggi · verificata</strong><span>Career site ufficiale attivo</span></div>
-            <div className="timelineItem"><strong>5 nov · prima rilevazione</strong><span>Requisition ID identificato</span></div>
-            <div className="timelineItem"><strong>Repost history</strong><span>Nessun pattern evergreen rilevato</span></div>
+            <div className="timelineItem"><strong>Stato: {job.source}</strong><span>Vacancy Confidence {job.confidence}%</span></div>
+            <div className="timelineItem"><strong>Ultima verifica</strong><span>{job.freshness}</span></div>
+            <div className="timelineItem"><strong>Repost history</strong><span>Apparirà qui quando esiste storico sufficiente.</span></div>
           </div>
         </article>
         <article className="card">
           <div className="fieldTitle">Intelligence azienda</div>
           <h2>Segnali da sapere</h2>
           <ul className="listClean">
-            <li>Movimenti retail recenti <span className="source">· fonte pubblica</span></li>
-            <li>Focus prodotto e mercati locali <span className="source">· vacancy ufficiale</span></li>
-            <li><Link href="/intelligence">Apri tutte le news e i segnali →</Link></li>
+            <li>News e segnali pertinenti con fonte</li>
+            <li>Altre posizioni vive nello stesso brand</li>
+            <li><Link href="/intelligence">Apri Intelligence →</Link></li>
           </ul>
         </article>
       </section>
