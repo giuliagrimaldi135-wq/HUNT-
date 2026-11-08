@@ -24,16 +24,6 @@ const macroAreas = [
   "Technology",
 ] as const;
 
-const countries = [
-  "Italia","Francia","Regno Unito","Svizzera","Spagna","Germania","Paesi Bassi","Belgio","Austria","Portogallo",
-  "Irlanda","Lussemburgo","Monaco","Danimarca","Svezia","Norvegia","Finlandia","Islanda","Grecia","Polonia",
-  "Repubblica Ceca","Ungheria","Romania","Croazia","Slovenia","Slovacchia","Estonia","Lettonia","Lituania",
-  "Stati Uniti","Canada","Messico","Brasile","Argentina","Cile","Colombia",
-  "Emirati Arabi Uniti","Qatar","Arabia Saudita","Israele","Turchia",
-  "Giappone","Corea del Sud","Singapore","Hong Kong","Cina","India","Thailandia","Vietnam","Indonesia","Malesia",
-  "Australia","Nuova Zelanda","Sudafrica","Marocco","Egitto","Altro",
-] as const;
-
 const seniorityLevels = [
   ["internship", "Internship / Stage"],
   ["trainee", "Trainee / Graduate Program"],
@@ -118,15 +108,13 @@ export default async function OnboardingPage({
           <h2>Dove vuoi lavorare?</h2>
           <div className="stack">
             <LocationMultiPicker
-              title="Località preferite"
+              title="Città preferite"
               name="preferred_locations"
-              countries={countries}
               cityPlaceholder="Es. Milano"
             />
             <LocationMultiPicker
-              title="Dove ti trasferiresti?"
+              title="Città in cui ti trasferiresti"
               name="relocation_locations"
-              countries={countries}
               cityPlaceholder="Es. Parigi"
             />
           </div>
