@@ -474,7 +474,7 @@ function opportunityCard(row){
    </div>
    <div class="actions editorialActions">
     ${job.primary_apply_url?`<a class="btn primary" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ↗</a>`:""}
-    <button class="btn" data-prepare="${job.id}">${row.applicationStatus==="preparing"?"Riprendi dossier":"Prepara candidatura"}</button>
+    <button class="btn" data-prepare="${job.id}" data-resume="${row.applicationStatus==="preparing"?"true":"false"}">${row.applicationStatus==="preparing"?"Riprendi dossier":"Prepara candidatura"}</button>
     <button class="btn" data-applied="${job.id}">Già candidata</button>
     <button class="btn ghostDanger" data-ignore="${job.id}">Ignora</button>
    </div>
@@ -522,7 +522,7 @@ function openOpportunityFolder(jobId,push=true){
 }
 
 function bindOpportunityActions(){
- document.querySelectorAll("[data-prepare]").forEach(b=>b.onclick=()=>saveApplication(b.dataset.prepare,"preparing"));
+ document.querySelectorAll("[data-prepare]").forEach(b=>b.onclick=()=>b.dataset.resume==="true"?openOpportunityFolder(b.dataset.prepare):saveApplication(b.dataset.prepare,"preparing"));
  document.querySelectorAll("[data-applied]").forEach(b=>b.onclick=()=>saveApplication(b.dataset.applied,"applied"));
  document.querySelectorAll("[data-ignore]").forEach(b=>b.onclick=()=>ignoreJob(b.dataset.ignore));
  document.querySelectorAll("[data-related-job]").forEach(b=>b.onclick=()=>openOpportunityFolder(b.dataset.relatedJob));
@@ -660,7 +660,7 @@ async function renderOpportunityFolder(jobId){
  const brand=job.companies?.name||"Brand";
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
- const fit=row.dossier?.why_you||fitSummary(row);
+ const fit=row.dossier?.model_version==="evidence_dossier_v4"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
  const smartQuestion=row.dossier?.generated_from?.interview_question||"";
