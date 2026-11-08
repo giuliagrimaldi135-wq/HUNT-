@@ -3,6 +3,7 @@ import Link from "next/link";
 type Job = {
   id:string; brand:string; title:string; location:string; match:number;
   confidence:number; priority:number; freshness:string; role:string; source:string; why:string;
+  official?:boolean; reasons?:string[]; gaps?:string[]; applyUrl?:string;
 };
 
 export function OpportunityCard({job}:{job:Job}) {
@@ -13,9 +14,10 @@ export function OpportunityCard({job}:{job:Job}) {
         <h3>{job.title}</h3>
         <div className="jobMeta">{job.location} · {job.role} · {job.freshness}</div>
         <div className="badges">
-          <span className="badge good">Fonte ufficiale</span>
+          {job.official ? <span className="badge good">Fonte ufficiale</span> : <span className="badge">Fonte secondaria</span>}
           <span className="badge">{job.source}</span>
         </div>
+        <p className="source">{job.why}</p>
         <div className="actions">
           <Link className="btn primary" href={"/opportunities/"+job.id}>Apri folder</Link>
           <button className="btn">Salva</button>
