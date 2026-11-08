@@ -1,30 +1,50 @@
-import { applications } from "@/lib/demo";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-const groups=["Preparing","Applied","Follow-up","Interview","Offer / Closed"];
+const labels: Record<string,string> = {
+  preparing:"Da preparare",
+  applied:"Candidata",
+  interview:"Colloquio",
+  follow_up:"Follow-up",
+  rejected:"Rifiutata",
+  offer:"Offerta",
+  closed:"Chiusa",
+};
 
-export default function ApplicationsPage(){
+export default async function ApplicationsPage(){
+  const supabase=await createClient();
+  const {data:claims}=await supabase.auth.getClaims();
+  const userId=claims?.claims?.sub;
+
+  const {data,error}=userId
+    ? await supabase
+        .from("applications")
+        .select("id,status,updated_at,job_id,jobs(id,canonical_title,city,companies(name))")
+        .eq("user_id",userId)
+        .order("updated_at",{ascending:false})
+    : {data:[],error:null};
+
+  const rows=(data||[]) as any[];
+
   return (
     <>
-      <div className="eyebrow">Pipeline personale</div>
+      <div className="eyebrow">Il tuo percorso</div>
       <h1>Candidature</h1>
-      <p className="lead">Una vista semplice di quello che stai facendo e della prossima azione.</p>
-      <section className="section">
-        {groups.map(group=>{
-          const rows=applications.filter(x=>x.status.toLowerCase().replace(" ","-")===group.toLowerCase().replace(" ","-") || x.status===group);
+      <p className="lead">Da preparare → Candidata → Colloquio → Follow-up → Rifiutata / Offerta.</p>
+      <section className="section stack">
+        {error ? <div className="card">Impossibile caricare le candidature.</div> : null}
+        {!error && !rows.length ? <div className="card">Nessuna candidatura ancora.</div> : null}
+        {rows.map((row)=>{
+          const job=row.jobs;
           return (
-            <div key={group} style={{marginBottom:26}}>
-              <div className="sectionHead"><h2>{group}</h2><span className="source">{rows.length} elementi</span></div>
-              <div className="stack">
-                {rows.length ? rows.map((x,i)=>(
-                  <article className="card" key={i}>
-                    <div className="eyebrow">{x.brand}</div>
-                    <h3>{x.role}</h3>
-                    <p className="lead">Prossima azione: {x.next}</p>
-                    <div className="actions"><button className="btn">Apri folder</button></div>
-                  </article>
-                )) : <div className="card source">Nessuna candidatura qui.</div>}
+            <article className="card" key={row.id}>
+              <div className="eyebrow">{job?.companies?.name || "Candidatura"}</div>
+              <h3>{job?.canonical_title || "Opportunità"}</h3>
+              <p className="lead">{job?.city || ""} · {labels[row.status] || row.status}</p>
+              <div className="actions">
+                {row.job_id ? <Link className="btn primary" href={"/opportunities/"+row.job_id}>Apri folder</Link> : null}
               </div>
-            </div>
+            </article>
           )
         })}
       </section>
