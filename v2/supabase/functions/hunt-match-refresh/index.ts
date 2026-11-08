@@ -119,8 +119,16 @@ function adjacency(primary:string[],family:string|null){
   return primary.some(p=>(map[p]||[]).includes(family));
 }
 function locationHit(city:string|null,arr:any[]){
-  if(!city)return false;const c=city.toLowerCase();
-  return (arr||[]).some(x=>{const a=String(x).toLowerCase();return c.includes(a)||a.includes(c)});
+  if(!city)return false;
+  const normalize=(v:string)=>{
+    const n=v.toLowerCase().trim();
+    return n.replace(/milano\b/g,"milan").replace(/parigi\b/g,"paris")
+      .replace(/londra\b/g,"london").replace(/roma\b/g,"rome")
+      .replace(/ginevra\b/g,"geneva").replace(/zurigo\b/g,"zurich")
+      .replace(/bruxelles\b/g,"brussels").replace(/monaco di baviera/g,"munich");
+  };
+  const c=normalize(city);
+  return (arr||[]).some(x=>{const a=normalize(String(x));return a.length>2&&(c.includes(a)||a.includes(c))});
 }
 function roleEvidence(desc:string,title:string,family:string|null,personal:any){
   const t=(title+" "+desc).toLowerCase();
@@ -210,7 +218,10 @@ Deno.serve(async(req)=>{
   cutoffDate.setUTCHours(0,0,0,0);
   const cutoff=cutoffDate.toISOString();
   const [{data:jobs},{data:prefs},{data:profiles},{data:personal},{data:cvs}]=await Promise.all([
-    db.from("jobs").select("id,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,vacancy_confidence,state,metadata").gte("published_at",cutoff).in("state",["active_verified","active_likely"]),
+    db.from("jobs").select("id,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,vacancy_confidence,state,metadata")
+      .in("state",["active_verified","active_likely"])
+      .or(`published_at.gte.${cutoff},and(published_at.is.null,first_seen_at.gte.${cutoff})`)
+      .limit(2000),
     db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences"),
     db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true),
     db.from("user_personalization").select("user_id,interest_areas,avoid_role_traits"),
@@ -335,7 +346,7 @@ Deno.serve(async(req)=>{
       if(specialist.length&&Object.keys(cv||{}).length===0)gaps.push("La vacancy richiede competenze specialistiche che HUNT verificherà sul CV prima di consigliarla con alta confidenza")
       score=Math.max(0,Math.min(100,score));
 
-      const age=Math.max(0,Math.floor((Date.now()-new Date(job.published_at).getTime())/DAY));
+      const age=Math.max(0,Math.floor((Date.now()-new Date(job.published_at||job.first_seen_at).getTime())/DAY));
       const fresh=Math.max(20,100-age*4);
       const priority=Math.min(100,Math.round(score*.7+(job.vacancy_confidence||70)*.2+fresh*.1));
       const minScore=radar==="explore"?60:radar==="focused"?72:68;
