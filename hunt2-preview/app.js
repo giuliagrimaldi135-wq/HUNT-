@@ -225,22 +225,45 @@ async function personalizationView(profile,personalization){
  const cvs=cvRes.data||[];
  const targets=Array.isArray(pref.primary_role_families)?pref.primary_role_families:[];
  const cities=Array.isArray(pref.preferred_locations)?pref.preferred_locations:[];
- const priorityOptions=[
-   ["role_fit","Ruolo giusto"],
-   ["growth","Crescita e apprendimento"],
-   ["brand","Brand / azienda"],
-   ["location","Località"],
-   ["contract","Tipo di contratto"],
-   ["compensation","Retribuzione"]
+
+ const interestOptions=[
+   ["product_assortment","Prodotto, assortimenti e collezioni"],
+   ["numbers_performance","Numeri, KPI e performance"],
+   ["retail_market","Clienti, negozi e mercato"],
+   ["product_development","Sviluppo prodotto"],
+   ["commercial_relationships","Commerciale e relazioni"],
+   ["organization_operations","Organizzazione e processi"],
+   ["brand_communication","Brand, comunicazione e immagine"],
+   ["creative","Creatività e contenuti"],
+   ["still_exploring","Non lo so ancora"]
+ ];
+ const driverOptions=[
+   ["learn","Imparare il più possibile"],
+   ["target_role","Avvicinarmi al ruolo che voglio fare"],
+   ["responsibility","Avere responsabilità vere"],
+   ["growth","Avere possibilità di crescita"],
+   ["international","Fare un'esperienza internazionale"],
+   ["product_brand","Lavorare con un prodotto o brand che mi interessa"],
+   ["explore","Capire meglio quale strada fa per me"]
+ ];
+ const avoidOptions=[
+   ["store_sales","Vendita in negozio come attività principale"],
+   ["social_content","Social o content come attività principale"],
+   ["pure_commercial","Ruoli quasi solo commerciali"],
+   ["backoffice_admin","Ruoli quasi solo amministrativi / back office"],
+   ["operations_logistics","Ruoli molto operativi o logistici"],
+   ["constant_customer_contact","Contatto cliente continuo"],
+   ["technical_it","Ruoli molto tecnici / IT"],
+   ["none","Non voglio escludere niente per ora"]
  ];
 
  app.innerHTML=`<div class="main" style="margin:auto">
   <div class="eyebrow">Profilo personale</div>
-  <h1>Quello che HUNT sa già di te.</h1>
-  <p class="lead">Il CV dirà a HUNT cosa hai fatto. Qui aggiungiamo solo ciò che dal CV non si può capire bene.</p>
+  <h1>Conosciamoci un po' meglio.</h1>
+  <p class="lead">Poche domande su ciò che ti interessa davvero. Niente testi lunghi: HUNT userà queste risposte insieme al CV e alle tue scelte nel tempo.</p>
 
   <section class="card section">
-   <div class="eyebrow">Già acquisito</div>
+   <div class="eyebrow">Quello che HUNT sa già</div>
    <div class="profileLine"><span>Nome</span><strong>${esc(profile?.display_name||"—")}</strong></div>
    <div class="profileLine"><span>Livello</span><strong>${esc(profile?.seniority||"—")}</strong></div>
    <div class="profileLine"><span>Aree target</span><strong>${esc(targets.join(", ")||"—")}</strong></div>
@@ -250,69 +273,75 @@ async function personalizationView(profile,personalization){
 
   <form id="personalizationForm" class="stack section">
    <section class="card">
-    <div class="eyebrow">1 · Obiettivo</div>
-    <h2>Cosa vuoi ottenere nei prossimi 12 mesi?</h2>
-    <textarea class="input" name="career_goal" rows="3" placeholder="Es. entrare nel Retail Merchandising in un brand fashion/luxury e costruire esperienza concreta sul prodotto e sui dati.">${esc(personalization?.career_goal||"")}</textarea>
+    <div class="eyebrow">1 · Cosa ti interessa</div>
+    <h2>Quale parte del lavoro ti attira di più?</h2>
+    <p class="lead">Scegline al massimo 2.</p>
+    <div class="choiceGrid">${interestOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="interest_area" value="${value}" data-max-two="interest"><span>${label}</span></label>`).join("")}</div>
    </section>
 
    <section class="card">
-    <div class="eyebrow">2 · Aziende</div>
-    <h2>Che tipo di realtà vuoi che HUNT privilegi?</h2>
+    <div class="eyebrow">2 · Prossima esperienza</div>
+    <h2>Cosa vorresti trovare soprattutto nel tuo prossimo lavoro?</h2>
+    <p class="lead">Scegline al massimo 2.</p>
+    <div class="choiceGrid">${driverOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="next_driver" value="${value}" data-max-two="driver"><span>${label}</span></label>`).join("")}</div>
+   </section>
+
+   <section class="card">
+    <div class="eyebrow">3 · Tipo di azienda</div>
+    <h2>Che tipo di realtà ti incuriosisce di più?</h2>
     <div class="radarGrid">
-     <label class="radarOption"><input type="radio" name="company_preference" value="both" checked><span><strong>Entrambe</strong><small>Grandi maison e brand indipendenti/emergenti, se l'opportunità ha senso.</small></span></label>
-     <label class="radarOption"><input type="radio" name="company_preference" value="large"><span><strong>Maison e gruppi strutturati</strong><small>Privilegia brand con organizzazioni e percorsi più strutturati.</small></span></label>
-     <label class="radarOption"><input type="radio" name="company_preference" value="independent"><span><strong>Indipendenti ed emergenti</strong><small>Privilegia realtà più piccole dove il contatto diretto può contare di più.</small></span></label>
+     <label class="radarOption"><input type="radio" name="company_preference" value="both" checked><span><strong>Entrambe</strong><small>Mi interessano sia grandi maison sia brand indipendenti, se il ruolo è giusto.</small></span></label>
+     <label class="radarOption"><input type="radio" name="company_preference" value="large"><span><strong>Maison e gruppi strutturati</strong><small>Mi attira di più un ambiente grande e organizzato.</small></span></label>
+     <label class="radarOption"><input type="radio" name="company_preference" value="independent"><span><strong>Brand indipendenti o emergenti</strong><small>Mi attira di più una realtà piccola o in crescita.</small></span></label>
+     <label class="radarOption"><input type="radio" name="company_preference" value="no_preference"><span><strong>Non ho preferenze</strong><small>Per me conta soprattutto l'opportunità.</small></span></label>
     </div>
    </section>
 
    <section class="card">
-    <div class="eyebrow">3 · Comunicazione</div>
-    <h2>Come vuoi che suonino email e messaggi?</h2>
-    <div class="radarGrid">
-     <label class="radarOption"><input type="radio" name="communication_style" value="adaptive" checked><span><strong>Adatta al brand, ma resta naturale</strong><small>HUNT cambia registro senza farti sembrare una persona diversa.</small></span></label>
-     <label class="radarOption"><input type="radio" name="communication_style" value="direct"><span><strong>Diretto e incisivo</strong><small>Poche parole, valore subito, niente formule inutili.</small></span></label>
-     <label class="radarOption"><input type="radio" name="communication_style" value="polished"><span><strong>Elegante e professionale</strong><small>Più formale, mantenendo comunque un tono umano.</small></span></label>
-     <label class="radarOption"><input type="radio" name="communication_style" value="warm"><span><strong>Caldo e personale</strong><small>Più relazione e motivazione personale quando ha senso.</small></span></label>
-    </div>
-   </section>
-
-   <section class="card">
-    <div class="eyebrow">4 · Candidature</div>
-    <h2>Come vuoi usare le candidature spontanee?</h2>
-    <div class="radarGrid">
-     <label class="radarOption"><input type="radio" name="outreach_preference" value="selective" checked><span><strong>Solo quando c'è un vero motivo</strong><small>HUNT le propone solo con un segnale concreto e un contatto verificato.</small></span></label>
-     <label class="radarOption"><input type="radio" name="outreach_preference" value="live_only"><span><strong>Preferisco vacancy aperte</strong><small>Le spontanee diventano eccezioni.</small></span></label>
-     <label class="radarOption"><input type="radio" name="outreach_preference" value="explore"><span><strong>Esplora anche opportunità non pubblicate</strong><small>Più apertura verso brand piccoli e contatti diretti.</small></span></label>
-    </div>
-   </section>
-
-   <section class="card">
-    <div class="eyebrow">5 · Priorità e limiti</div>
-    <h2>Cosa deve pesare di più?</h2>
-    <div class="choiceGrid">${priorityOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="priority_factor" value="${value}"><span>${label}</span></label>`).join("")}</div>
-    <label style="display:block;margin-top:14px"><div class="eyebrow">Cosa non vuoi ricevere?</div><textarea class="input" name="excluded_notes" rows="2" placeholder="Es. niente Sales Associate puro, niente ruoli troppo senior, niente social media puro.">${esc(personalization?.excluded_notes||"")}</textarea></label>
+    <div class="eyebrow">4 · Cosa vuoi evitare</div>
+    <h2>Ci sono tipi di ruolo che sai già che non fanno per te?</h2>
+    <p class="lead">Puoi sceglierne più di uno oppure non escludere niente.</p>
+    <div class="choiceGrid">${avoidOptions.map(([value,label])=>`<label class="choice"><input type="checkbox" name="avoid_trait" value="${value}"><span>${label}</span></label>`).join("")}</div>
    </section>
 
    <div id="personalizationMsg"></div>
-   <div class="actions"><button class="btn green" type="submit">Salva e entra in HUNT</button></div>
+   <div class="actions"><button class="btn green" type="submit">Continua</button></div>
   </form>
  </div>`;
 
- document.getElementById("personalizationForm").onsubmit=savePersonalization;
+ const form=document.getElementById("personalizationForm");
+ form.addEventListener("change",(event)=>{
+   const input=event.target;
+   if(!input.matches("[data-max-two]"))return;
+   const group=input.dataset.maxTwo;
+   const checked=form.querySelectorAll(`[data-max-two="${group}"]:checked`);
+   if(checked.length>2){
+     input.checked=false;
+     const msg=document.getElementById("personalizationMsg");
+     msg.innerHTML='<div class="msg bad">Puoi scegliere al massimo 2 opzioni in questa domanda.</div>';
+     setTimeout(()=>{if(msg)msg.innerHTML="";},1800);
+   }
+ });
+ form.onsubmit=savePersonalization;
 }
 
 async function savePersonalization(e){
  e.preventDefault();
  const fd=new FormData(e.currentTarget);
  const msg=document.getElementById("personalizationMsg");
+ const interests=fd.getAll("interest_area");
+ const drivers=fd.getAll("next_driver");
+ const avoids=fd.getAll("avoid_trait");
+ if(!interests.length||!drivers.length){
+   msg.innerHTML='<div class="msg bad">Scegli almeno una risposta nelle prime due domande.</div>';
+   return;
+ }
  const payload={
    user_id:currentUser.id,
-   career_goal:String(fd.get("career_goal")||"").trim()||null,
+   interest_areas:interests,
+   next_experience_drivers:drivers,
    company_preference:String(fd.get("company_preference")||"both"),
-   communication_style:String(fd.get("communication_style")||"adaptive"),
-   outreach_preference:String(fd.get("outreach_preference")||"selective"),
-   excluded_notes:String(fd.get("excluded_notes")||"").trim()||null,
-   priority_factors:fd.getAll("priority_factor"),
+   avoid_role_traits:avoids,
    completed:true,
    updated_at:new Date().toISOString()
  };
