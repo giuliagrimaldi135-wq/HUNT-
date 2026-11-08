@@ -356,10 +356,11 @@ async function renderShell(){
 }
 
 async function getOpportunityFeed(limit=100){
- const [{data:matches,error:matchError},{data:hidden},{data:applications}]=await Promise.all([
+ const [{data:matches,error:matchError},{data:hidden},{data:applications},{data:pref}]=await Promise.all([
    supabase.from("user_job_matches").select("job_id,match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(limit),
    supabase.from("user_job_feedback").select("job_id").eq("user_id",currentUser.id).eq("feedback_type","hide"),
-   supabase.from("applications").select("job_id").eq("user_id",currentUser.id)
+   supabase.from("applications").select("job_id").eq("user_id",currentUser.id),
+   supabase.from("career_preferences").select("preferred_locations,relocation_locations,preferences").eq("user_id",currentUser.id).maybeSingle()
  ]);
  if(matchError||!matches?.length)return {data:[],error:matchError};
  const excluded=new Set([...(hidden||[]).map(x=>x.job_id),...(applications||[]).map(x=>x.job_id).filter(Boolean)]);
@@ -367,13 +368,24 @@ async function getOpportunityFeed(limit=100){
  if(!ids.length)return {data:[],error:null};
  const {data:jobs,error:jobError}=await supabase
    .from("jobs")
-   .select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,primary_apply_url,state,description,companies(name)")
+   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,primary_apply_url,state,description,companies(name)")
    .in("id",ids);
  if(jobError)return {data:[],error:jobError};
+
  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-20);cutoff.setHours(0,0,0,0);
- const fresh=(jobs||[]).filter(job=>job.published_at&&new Date(job.published_at)>=cutoff);
+ const cities=[...(pref?.preferred_locations||[]),...(pref?.relocation_locations||[])].map(x=>String(x).toLowerCase());
+ const radar=String(pref?.preferences?.radar_scope||"smart");
+ const minMatch=radar==="explore"?60:radar==="focused"?75:70;
+ const cityAllowed=(job)=>{
+   if(job.remote_mode==="remote")return true;
+   if(!cities.length)return true;
+   if(!job.city)return false;
+   const city=job.city.toLowerCase();
+   return cities.some(x=>city.includes(x)||x.includes(city));
+ };
+ const fresh=(jobs||[]).filter(job=>job.published_at&&new Date(job.published_at)>=cutoff&&cityAllowed(job));
  const byId=new Map(fresh.map(job=>[job.id,job]));
- return {data:matches.map(match=>({...match,job:byId.get(match.job_id)})).filter(x=>x.job&&!excluded.has(x.job_id)),error:null};
+ return {data:matches.map(match=>({...match,job:byId.get(match.job_id)})).filter(x=>x.job&&!excluded.has(x.job_id)&&x.match_score>=minMatch),error:null};
 }
 
 async function getOpportunityDetail(jobId){
