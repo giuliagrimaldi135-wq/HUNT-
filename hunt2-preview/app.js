@@ -664,7 +664,7 @@ async function renderOpportunityFolder(jobId){
  const dossierEvidence=Array.isArray(row.dossier?.what_to_emphasize)?row.dossier.what_to_emphasize:[];
  const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
  const dossierCvId=row.dossier?.recommended_cv_id||cv?.id||"";
- const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""}>${esc(c.name||"CV "+(index+1))}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · da verificare"}</option>`).join("");
+ const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""}>${index+1}. ${esc(c.name||"Curriculum")}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · dati da verificare"}</option>`).join("");
  const dossierLang=row.dossier?.generated_from?.language==="it"?"it":"en";
  const repostCount=(row.reposts||[]).length;
  const firstSeen=job.published_at?new Date(job.published_at):null;
