@@ -8,6 +8,8 @@ let currentUser=null;
 let currentView="opportunities";
 let selectedJobId=null;
 let opportunitySort="priority";
+let radarSignalFilter="all";
+let radarCompanyFilter="all";
 
 const macroAreas=[
   "Merchandising",
@@ -345,14 +347,15 @@ async function savePersonalization(e){
 
 function shell(inner){
  return `<div class="shell"><aside class="side"><div class="logo">HUNT<span>.</span></div><div class="sub">Fashion & Luxury Career Intelligence</div>
- <div class="nav">${["opportunities","applications","profile"].map(v=>`<button data-view="${v}" class="${currentView===v?"active":""}">${({opportunities:"Opportunità",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</div>
+ <div class="nav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}" class="${currentView===v?"active":""}">${({opportunities:"Opportunità",radar:"World Radar",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</div>
  <div class="sideFoot">Beta connected · Supabase</div></aside><main class="main">${inner}</main></div>
- <nav class="mobileNav">${["opportunities","applications","profile"].map(v=>`<button data-view="${v}">${({opportunities:"Opportunità",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</nav>`;
+ <nav class="mobileNav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}">${({opportunities:"Opportunità",radar:"World Radar",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</nav>`;
 }
 
 async function renderShell(){
  if(currentView==="opportunities") return renderOpportunities();
  if(currentView==="applications") return renderApplications();
+  if(currentView==="radar") return renderWorldRadar();
  return renderProfile();
 }
 
@@ -719,6 +722,64 @@ async function renderApplications(){
  <section class="section stack">${error?`<div class="msg bad">${esc(error.message)}</div>`:(cards||'<div class="card">Nessuna candidatura ancora.</div>')}</section>`);
  bindNav();
  document.querySelectorAll("[data-app-folder]").forEach(b=>b.onclick=()=>renderOpportunityFolder(b.dataset.appFolder));
+}
+
+
+const RADAR_TYPES={
+  retail_expansion:["Retail & aperture","Espansione o presenza commerciale"],
+  leadership:["Leadership","Nuove responsabilità e organizzazione"],
+  results:["Risultati","Andamento e priorità aziendali"],
+  strategy:["Strategia","Decisioni e direzione del brand"],
+  product:["Prodotto","Collezioni, categorie e lanci"],
+  sustainability:["Sostenibilità","Progetti e impegni aziendali"],
+  news:["Altre notizie","Contesto e aggiornamenti"]
+};
+function safeRadarUrl(raw){
+  try{const u=new URL(String(raw));return ["https:","http:"].includes(u.protocol)?u.href:null}
+  catch{return null}
+}
+async function renderWorldRadar(){
+  currentView="radar";
+  const {data,error}=await supabase.from("company_signals")
+    .select("id,signal_type,title,summary,source_name,source_url,published_at,detected_at,relevance_score,companies(name)")
+    .order("published_at",{ascending:false,nullsFirst:false}).limit(120);
+  const all=(data||[]).filter(s=>Boolean(s.title)&&Boolean(s.source_url));
+  const brands=[...new Set(all.map(s=>s.companies?.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"it"));
+  const types=[...new Set(all.map(s=>s.signal_type||"news"))];
+  const rows=all.filter(s=>(radarSignalFilter==="all"||s.signal_type===radarSignalFilter)&&(radarCompanyFilter==="all"||s.companies?.name===radarCompanyFilter));
+  const options=(items,chosen,labels)=>items.map(x=>`<option value="${esc(x)}" ${x===chosen?"selected":""}>${esc(labels?.[x]||x)}</option>`).join("");
+  const cards=rows.map(s=>{
+    const category=RADAR_TYPES[s.signal_type]||RADAR_TYPES.news;
+    const url=safeRadarUrl(s.source_url);
+    const date=s.published_at?new Date(s.published_at):null;
+    const dateText=date&&!isNaN(date.getTime())?date.toLocaleDateString("it-IT"):"Data da verificare";
+    return `<article class="worldSignal">
+      <div class="worldSignalMeta"><span class="worldSignalBrand">${esc(s.companies?.name||s.source_name||"Azienda")}</span><span>${esc(category[0])}</span><span>${esc(dateText)}</span></div>
+      <h2>${esc(s.title)}</h2>
+      ${s.summary?`<p class="worldSignalSummary">${esc(s.summary)}</p>`:""}
+      <div class="worldSignalBottom"><span>${esc(category[1])} · Fonte: ${esc(s.source_name||"Sito di origine")}</span>
+       ${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>`:""}
+      </div>
+    </article>`;
+  }).join("");
+  app.innerHTML=shell(`<div class="worldRadar">
+    <div class="eyebrow">Fashion & Luxury Intelligence</div>
+    <h1>World Radar</h1>
+    <p class="lead">Aperture, strategie, risultati, prodotto e cambiamenti aziendali: segnali verificabili da fonti pubbliche per capire dove si muove il settore.</p>
+    <div class="worldRadarToolbar section">
+      <strong>${rows.length} segnali documentati</strong>
+      <div class="worldRadarFilters">
+        <label>Argomento <select id="radarType"><option value="all">Tutti</option>${options(types,radarSignalFilter,Object.fromEntries(Object.entries(RADAR_TYPES).map(([k,v])=>[k,v[0]])))}</select></label>
+        <label>Azienda <select id="radarCompany"><option value="all">Tutte</option>${options(brands,radarCompanyFilter)}</select></label>
+      </div>
+    </div>
+    <section class="worldRadarList">${error?`<div class="msg bad">${esc(error.message)}</div>`:(cards||'<div class="emptyState"><h3>Nessun segnale verificato con questi filtri.</h3><p>Il radar continua a raccogliere e verificare nuove fonti. Le notizie non sono automaticamente offerte di lavoro.</p></div>')}</section>
+    <p class="worldRadarFoot">HUNT distingue le notizie aziendali dalle vacancy: un'apertura, un risultato finanziario o un cambio di leadership non provano da soli che l'azienda stia assumendo.</p>
+  </div>`);
+  bindNav();
+  const type=document.getElementById("radarType"),company=document.getElementById("radarCompany");
+  if(type)type.onchange=()=>{radarSignalFilter=type.value;renderWorldRadar()};
+  if(company)company.onchange=()=>{radarCompanyFilter=company.value;renderWorldRadar()};
 }
 
 async function renderProfile(){
