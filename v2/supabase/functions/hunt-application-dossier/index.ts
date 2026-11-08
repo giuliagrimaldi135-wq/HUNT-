@@ -59,30 +59,37 @@ function vacancyHighlights(text:string){
  for(const [re,en,it] of rules){if(re.test(text))out.push([en,it])}
  return out.slice(0,2);
 }
+
 function letter(args:any){
- const lang=args.language,company=args.company,role=args.role,name=args.name;
- const exp=args.experience,projects=args.projects,tools=args.tools;
- const school=args.school,program=args.program,area=lang==="it"?args.areaIt:args.areaEn;
- const highlights=Array.isArray(args.highlights)?args.highlights:[];
- const interests=Array.isArray(args.interests)?args.interests:[];
- const jdFocus=highlights.length?(lang==="it"?"Mi colpiscono le attività legate a "+connect(highlights.map(x=>x[1]),"it")+". ":"The focus on "+connect(highlights.map(x=>x[0]))+" particularly caught my attention. "):"";
- const preferredAngle=interests.includes("product_assortment")&&interests.includes("numbers_performance")?(lang==="it"?"Mi interessa particolarmente il legame tra prodotto e analisi delle performance. ":"I am particularly interested in the connection between product decisions and performance analysis. "):"";
- const examples=list(exp?.evidence).slice(0,3).map(clause).filter(Boolean);
- const proj=projects.slice(0,2).map((x:any)=>({name:short(x.name,100),points:list(x.evidence).slice(0,2).map(clause).filter(Boolean)}));
- let experienceText="";
- if(lang==="it"){
-  if(exp&&examples.length)experienceText="Durante l'esperienza presso "+short(exp.company,120)+" ho svolto attività di "+connect(examples,"it")+".";
-  if(proj.length)experienceText+=" Nei progetti accademici "+connect(proj.map((p:any)=>p.name),"it")+" ho approfondito "+connect(proj.flatMap((p:any)=>p.points).slice(0,3),"it")+".";
-  if(tools.length)experienceText+=" Ho inoltre utilizzato "+connect(tools.slice(0,2),"it")+".";
-  const education=school&&program?"Il mio percorso in "+program+" presso "+school+" mi ha dato una base formativa nel settore. ":"";
-  return "Gentile team Recruiting di "+company+",\n\nmi candido per la posizione di "+role+". Vorrei sviluppare il mio percorso professionale in attività legate a "+area+", mettendo a disposizione ciò che ho imparato attraverso esperienze pratiche e progetti di formazione."+jdFocus+preferredAngle+"\n\n"+education+(experienceText.trim()||"Il mio percorso formativo mi ha permesso di approfondire le dinamiche del settore.")+"\n\nMi piacerebbe contribuire con attenzione ai dettagli, curiosità e voglia di apprendere. Sarei felice di approfondire la mia motivazione in un colloquio.\n\nCordiali saluti,\n"+name;
+ const {language,company,role,name}=args;
+ const it=language==="it",exp=args.experience,projects=list(args.projects),school=str(args.school),program=str(args.program);
+ const focusEn=str(args.areaEn),focusIt=str(args.areaIt);
+ const duties=list(args.highlights).slice(0,2),allFacts=list(exp?.evidence).map(clause).filter(Boolean);
+ const relevantFacts=allFacts.slice(0,2);
+ const project=projects.find((x:any)=>list(x.evidence).length>0);
+ const projectFact=project?clause(list(project.evidence)[0]):"";
+ const tool=list(args.tools).map((x:any)=>str(x)).filter(Boolean)[0]||"";
+ const selection=it?duties.map((x:any)=>x[1]):duties.map((x:any)=>x[0]);
+ const skillArea=it?focusIt:focusEn;
+ const mention=(it?"specialmente per le attività di ":"particularly its work involving ")+(selection.length?connect(selection,it?"it":"en"):skillArea);
+ if(it){
+  const first="Gentile team Recruiting di "+company+",\n\nla posizione di "+role+" mi interessa "+mention+". È un ambito in cui desidero crescere mettendo a frutto esperienze concrete e una forte attenzione al prodotto e ai processi.";
+  const experience=exp&&relevantFacts.length?"Durante l'esperienza presso "+str(exp.company)+", ho lavorato su "+connect(relevantFacts,"it")+".":"";
+  const academic=project&&projectFact?"Nel progetto "+str(project.name)+" ho inoltre approfondito "+projectFact+".":"";
+  const education=school&&program?"La formazione in "+program+" presso "+school+" mi ha dato una base per comprendere il settore.":"";
+  const toolLine=tool?" Ho lavorato anche con "+tool+".":"";
+  const connection="Questo percorso mi ha insegnato quanto sia importante non perdere precisione nei passaggi tra prodotto, dati e attività operative: è un'attenzione che vorrei portare nel vostro team, continuando a imparare sul campo.";
+  return [first,[experience,academic,education].filter(Boolean).join(" ")+toolLine,connection,"Sarei felice di approfondire in un colloquio il contributo che potrei offrire alla squadra.\n\nCordiali saluti,\n"+name].filter(Boolean).join("\n\n");
  }
- if(exp&&examples.length)experienceText="During my experience at "+short(exp.company,120)+", I worked on "+connect(examples)+".";
- if(proj.length)experienceText+=" Through academic projects such as "+connect(proj.map((p:any)=>p.name))+", I explored "+connect(proj.flatMap((p:any)=>p.points).slice(0,3))+".";
- if(tools.length)experienceText+=" I have also worked with "+connect(tools.slice(0,2))+".";
- const education=school&&program?"My studies in "+program+" at "+school+" gave me a foundation in the industry. ":"";
- return "Dear "+company+" Hiring Team,\n\nI am applying for the "+role+" position because I would like to develop my career in "+area+". I am interested in contributing to a team where I can combine what I have learned with practical, hands-on experience."+jdFocus+preferredAngle+"\n\n"+education+(experienceText.trim()||"My background has helped me develop an interest in the responsibilities described in the role.")+"\n\nI would bring attention to detail, curiosity and a willingness to learn. Thank you for considering my application; I would welcome the opportunity to discuss my motivation further.\n\nKind regards,\n"+name;
+ const first="Dear "+company+" Hiring Team,\n\nThe "+role+" opportunity stands out to me for "+mention+". I am interested in building my career in "+skillArea+", where careful product and operational decisions matter.";
+ const experience=exp&&relevantFacts.length?"At "+str(exp.company)+", I gained hands-on experience with "+connect(relevantFacts)+".":"";
+ const academic=project&&projectFact?"In my "+str(project.name)+" project, I also explored "+projectFact+".":"";
+ const education=school&&program?"My "+program+" studies at "+school+" helped me understand the wider industry context.":"";
+ const toolLine=tool?" I have also worked with "+tool+".":"";
+ const connection="I know that small details can be missed when information moves between product, commercial and operational teams. I would bring a careful approach, curiosity and the willingness to learn, helping support the decisions behind the work rather than simply repeating what is already in my CV.";
+ return [first,[experience,academic,education].filter(Boolean).join(" ")+toolLine,connection,"I would welcome the opportunity to discuss how I could contribute to your team.\n\nKind regards,\n"+name].filter(Boolean).join("\n\n");
 }
+
 Deno.serve(async(req)=>{
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
  if(req.method!=="POST")return reply({error:"Method not allowed"},405);
@@ -162,7 +169,7 @@ Deno.serve(async(req)=>{
  const why=blocked?"Non consigliata senza chiarimenti: "+gaps.join(" "):valueNarrative;
  const edu=education[0]||{};
  const body=blocked?null:letter({language,name,role,company,school:short(edu.school,100),program:short(edu.program,100),experience:exp[0],projects,tools:list(cv.tools).map(x=>short(x,100)),areaEn:area[0],areaIt:area[1],highlights:vacancyHighlights(description),interests:list(personalR.data?.interest_areas)});
- const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?selectedDuty[1]+" × "+(relevantEvidence[0]?.origin||"CV da approfondire"):str(job.role_family||role),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v2",updated_at:new Date().toISOString()};
+ const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?selectedDuty[1]+" × "+(relevantEvidence[0]?.origin||"CV da approfondire"):str(job.role_family||role),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v3",updated_at:new Date().toISOString()};
  const {error:saveError}=await db.from("user_job_dossiers").upsert(record,{onConflict:"user_id,job_id"});
  if(saveError)return reply({error:"Impossibile salvare la preparazione della candidatura.",detail:saveError.message},500);
  return reply({ok:true,blocked,cv_name:chosen.name,job_id:job.id,why_you:why,gaps:record.gaps,letter_created:Boolean(body),language});
