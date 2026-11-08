@@ -417,8 +417,9 @@ async function getOpportunityDetail(jobId){
    supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle()
  ]);
  if(jobError||!job)return null;
- const [{data:signals},{data:relatedMatches}]=await Promise.all([
-   supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("relevance_score",{ascending:false}).limit(8),
+ const companyName=String(job.companies?.name||"").trim();
+ const [{data:signals},{data:relatedMatches},{data:brandMedia}]=await Promise.all([
+   supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("published_at",{ascending:false,nullsFirst:false}).limit(8),
    supabase.from("user_job_matches")
      .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,state)")
      .eq("user_id",currentUser.id)
@@ -426,13 +427,16 @@ async function getOpportunityDetail(jobId){
      .neq("job_id",jobId)
      .gte("match_score",70)
      .order("priority_score",{ascending:false})
-     .limit(5)
+     .limit(5),
+   companyName.length>=3
+     ?supabase.from("world_news_items").select("id,title,summary,url,published_at,world_news_sources(publisher)").ilike("title","%"+companyName.replace(/[%_,]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(5)
+     :Promise.resolve({data:[]})
  ]);
  const cutoff=new Date(Date.now()-20*86400000);
  const sameJobs=(relatedMatches||[])
    .map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
    .filter(x=>x?.published_at&&new Date(x.published_at)>=cutoff);
- return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],sameJobs,dossier:dossier||null};
+ return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],sameJobs,dossier:dossier||null};
 }
 
 function ageLabel(value){
@@ -635,7 +639,8 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const shouldRefresh=Boolean(!row.dossier||(dossierStale&&!row.dossier.generated_from?.user_edited));
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v2");
+ const shouldRefresh=Boolean(!row.dossier||((dossierStale||modelStale)&&!row.dossier?.generated_from?.user_edited));
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
    pendingDossiers.add(jobId);
    try{
@@ -651,11 +656,15 @@ async function renderOpportunityFolder(jobId){
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
  const fit=row.dossier?.why_you||fitSummary(row);
+ const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
+ const topDuty=focusItems[0]?.[1]||"";
+ const smartQuestion=row.dossier?.generated_from?.interview_question||"";
+ const opportunityValue=row.dossier?.generated_from?.opportunity_cost||"";
  const cvReady=hasParsedCv(row);
  const dossierEvidence=Array.isArray(row.dossier?.what_to_emphasize)?row.dossier.what_to_emphasize:[];
  const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
  const dossierCvId=row.dossier?.recommended_cv_id||cv?.id||"";
- const dossierCvOptions=(row.cvs||[]).map(c=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""}>${esc(c.name)}${verifiedCv(c)?"":" · da verificare"}</option>`).join("");
+ const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""}>${esc(c.name||"CV "+(index+1))}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · da verificare"}</option>`).join("");
  const dossierLang=row.dossier?.generated_from?.language==="it"?"it":"en";
  const repostCount=(row.reposts||[]).length;
  const firstSeen=job.published_at?new Date(job.published_at):null;
@@ -663,6 +672,7 @@ async function renderOpportunityFolder(jobId){
    ? `Questa posizione è ricomparsa ${repostCount} volt${repostCount===1?"a":"e"} dopo la prima pubblicazione. HUNT continua a considerare come riferimento la data originale (${firstSeen?firstSeen.toLocaleDateString("it-IT"):"—"}), così una ripubblicazione non viene presentata come una nuova opportunità.`
    : `HUNT memorizza la prima data in cui trova ogni annuncio. Se lo stesso brand lo ripubblica tra qualche giorno o settimana, non te lo mostrerà come “nuovo”: vedrai la data originale e l'eventuale ripubblicazione. Per questa posizione non sono ancora state rilevate ripubblicazioni.`;
  const signals=row.signals||[];
+ const media=row.brandMedia||[];
  const sameJobs=row.sameJobs||[];
  const showInterview=appStatus==="interview";
 
