@@ -68,14 +68,15 @@ function letter(args:any){
  const relevantFacts=allFacts.slice(0,2);
  const project=projects.find((x:any)=>list(x.evidence).length>0);
  const projectFact=project?clause(list(project.evidence)[0]):"";
+ const projectName=project?str(project.name).replace(/\s+(academic\s+)?project$/i,"").trim():"";
  const tool=list(args.tools).map((x:any)=>str(x)).filter(Boolean)[0]||"";
  const selection=it?duties.map((x:any)=>x[1]):duties.map((x:any)=>x[0]);
  const skillArea=it?focusIt:focusEn;
- const mention=(it?"specialmente per le attività di ":"particularly its work involving ")+(selection.length?connect(selection,it?"it":"en"):skillArea);
+ const mention=(it?"soprattutto per le attività di ":"its focus on ")+(selection.length?connect(selection,it?"it":"en"):skillArea);
  if(it){
   const first="Gentile team Recruiting di "+company+",\n\nla posizione di "+role+" mi interessa "+mention+". È un ambito in cui desidero crescere mettendo a frutto esperienze concrete e una forte attenzione al prodotto e ai processi.";
   const experience=exp&&relevantFacts.length?"Durante l'esperienza presso "+str(exp.company)+", ho lavorato su "+connect(relevantFacts,"it")+".":"";
-  const academic=project&&projectFact?"Nel progetto "+str(project.name)+" ho inoltre approfondito "+projectFact+".":"";
+  const academic=project&&projectFact?"In un progetto dedicato a "+(projectName||str(project.name))+" ho inoltre approfondito "+projectFact+".":"";
   const education=school&&program?"La formazione in "+program+" presso "+school+" mi ha dato una base per comprendere il settore.":"";
   const toolLine=tool?" Ho lavorato anche con "+tool+".":"";
   const connection="Questo percorso mi ha insegnato quanto sia importante non perdere precisione nei passaggi tra prodotto, dati e attività operative: è un'attenzione che vorrei portare nel vostro team, continuando a imparare sul campo.";
@@ -83,10 +84,10 @@ function letter(args:any){
  }
  const first="Dear "+company+" Hiring Team,\n\nThe "+role+" opportunity stands out to me for "+mention+". I am interested in building my career in "+skillArea+", where careful product and operational decisions matter.";
  const experience=exp&&relevantFacts.length?"At "+str(exp.company)+", I gained hands-on experience with "+connect(relevantFacts)+".":"";
- const academic=project&&projectFact?"In my "+str(project.name)+" project, I also explored "+projectFact+".":"";
+ const academic=project&&projectFact?"Through an academic project focused on "+(projectName||str(project.name))+", I also explored "+projectFact+".":"";
  const education=school&&program?"My "+program+" studies at "+school+" helped me understand the wider industry context.":"";
  const toolLine=tool?" I have also worked with "+tool+".":"";
- const connection="I know that small details can be missed when information moves between product, commercial and operational teams. I would bring a careful approach, curiosity and the willingness to learn, helping support the decisions behind the work rather than simply repeating what is already in my CV.";
+ const connection="When product information and commercial decisions move across teams, careful coordination matters. I would bring attention to detail, curiosity and a willingness to learn, with the aim of supporting the team and building on the responsibilities described in the role.";
  return [first,[experience,academic,education].filter(Boolean).join(" ")+toolLine,connection,"I would welcome the opportunity to discuss how I could contribute to your team.\n\nKind regards,\n"+name].filter(Boolean).join("\n\n");
 }
 
