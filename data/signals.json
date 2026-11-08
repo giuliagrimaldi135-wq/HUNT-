@@ -1,55 +1,42 @@
 [
   {
-    "key": "c0c7a56e2640399ff143",
-    "brand": "Diesel",
-    "headline": "Diesel Black Gold - FashionNetwork Italia",
+    "key": "212bf1fd9b2836f26bc5",
+    "brand": "Missoni",
+    "headline": "Missoni - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-08T19:55:56.375212+00:00",
-    "published_at": "2026-11-07T21:56:34+00:00",
+    "detected_at": "2026-11-08T21:39:06.640719+00:00",
+    "published_at": "2026-11-08T00:40:57+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxPOFdjWDNtemZ1RjhmcUhNeE16QzhiUkdHdzFFMFk3OFZkekVsYlVDdFpsR0pXanFDVHZUeTc3ZEFUVXJ6LVo5cGNEbnNRTUNVVUgybGQ5ZUxiaktnV1FydWhMTGg4VW56Mkk1anRTNGgwYXYySExsWmJQXzJQc1d2TGhxX3A?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE5QVmVyZGkzNEQyWkw4MXI4bmRMZ3NjbmNxdl9xZFVQNzZQMjItSDRkZnVCcUU2YXNCYlV4c1ZVSVJ4Q2QwajNjRVp5d1AtZmU0ZzhlUE9hSzFjRFRXeHZQT1lBVlJTblJqQ05iVC1MQ0t4Mjh1c3g4?oc=5"
   },
   {
-    "key": "eeb1d7c9ec3095504477",
-    "brand": "Versace",
-    "headline": "Versace - FashionNetwork Italia",
+    "key": "692ca47c43cc4184d32a",
+    "brand": "Dhruv Kapoor",
+    "headline": "Dhruv Kapoor - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-08T19:55:56.375212+00:00",
-    "published_at": "2026-11-07T17:31:51+00:00",
+    "detected_at": "2026-11-08T21:39:06.640719+00:00",
+    "published_at": "2026-11-07T14:54:28+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE5ScDRjSlpEUHVGcGxiUG5CUUVRZm1YWGJZNmlib3JFYWc3d0RaYU9DTVNlMW5ENi1XWlpWUERZUjJLVkNJbGhud1prVE1XbkNzZTYyNU16eW5IeW5JSWFWeFJROU9yZGt2RDBEeWdLRk1ydnlHR0Rz?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1uVTlDNXpSMVdYNzgzSXNsamNfSVF1SGFNdmRqOHpyUEhVSDRzb1FYQWxWSDVScmlrSnFBbWd1ZUhzdUJfdFY2U3VvMElaVVEta2t3Y3BiZTBfQ1JDRGdvcW5xUXIwSERWVkJkbXNxOTM4b21ZZTJaeWNxZ1hrZw?oc=5"
   },
   {
-    "key": "f68a66c42bdd4f4aafd6",
-    "brand": "Alberta Ferretti",
-    "headline": "Alberta Ferretti - FashionNetwork Italia",
+    "key": "4b96b2d70df2be95246c",
+    "brand": "Dolce & Gabbana",
+    "headline": "Dolce & Gabbana - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-08T19:55:56.375212+00:00",
-    "published_at": "2026-11-07T16:34:50+00:00",
+    "detected_at": "2026-11-08T21:39:06.640719+00:00",
+    "published_at": "2026-11-07T13:47:30+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNalVLZEJsNXhzRUp1VnB1SXgtOXI5eVV1Wi10ZWxIMFAzbnpQZFJBNTBHdHd6aU5fQlJmYU1uZmdkbjhoZHZjNUJrN2cxN2IwNkxaRkpldWpoR1FuQklVcnRzX0NkSm5OUV9XcWFNVnFMUDloaWZhVEc5V3BDSVhDaUZDVQ?oc=5"
-  },
-  {
-    "key": "12714e44ed37f1339960",
-    "brand": "Sportmax",
-    "headline": "Sportmax - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-08T21:04:59.288863+00:00",
-    "published_at": "2026-11-07T15:11:06+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBXRVpLV0VoOS16WUlqWHNFQ1pWbDB2Nk0yV0FESE53Zk04SDV5ckN2TDFTcXd3WUZWOGVZMU90T1pKLUNIUi1NWlBuSDV2dEdKdHpDUUR4UlNPRWh0MGJTbE1pdkJvcksxcTcyclRzUk1Icm9xRE5TdQ?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9VNHJlcFZ5bFJoYnJpSldfTmRqRjB2VGdlcnV0NURLQVpDM1VjWDlmWE12MWR0SkdKS1B0b2dvd0J2UGs2SHZwQThmN1gxdHBnUWJUTDdOZTJPUjFRTlB3eGx0NXNESnVRWkliRTBxTHkydl85N0hKb1NUSzdrTlU?oc=5"
   },
   {
     "key": "e91df82369cbe363f496",
@@ -76,6 +63,19 @@
     "published_at": "2026-11-07T01:53:43+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE5Kc2Jwc0NCZjZDMU81RTh0czRBTGxiaWJFVk1HbFNDaW8ydktKRUk0cG9OWnBoajZCTjVnOGdsNnp2UC13MzN0VGkwVjhBR1h1Qm9fTVhhVGxIVmtCWXl2S1Btbjg5Y2xrVkZPQjFqOGh3dC0tZjRTODRwVQ?oc=5"
+  },
+  {
+    "key": "d9d67a51bed1d629a738",
+    "brand": "Maison Margiela",
+    "headline": "Maison Margiela - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-08T21:39:06.640719+00:00",
+    "published_at": "2026-11-06T23:28:29+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQUVpuRkNrZ2lnSFp3a2F1aU5HQ3RWUEtMTnhLS3JKak1hd0dsV3h2VDBEQzNlMmVpVFFYejhWQ1hlQmR5eXdObE5UTGhFbk5CR0FjWmNNeEFjZDA2SW9qeV90ZjYzMGNDR3BhS3pydnl0c1laVk9SWTU1OHc2eHlzVHV3?oc=5"
   },
   {
     "key": "3780e7ed72968b4d1d3d",
@@ -117,6 +117,19 @@
     "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQdEh0MUVyWHpOenVRLTN5Q0EybFJHZDBlbDdvUXNMRjhHdmNfUHNpODRNZFhqT0IxRDZIRUtzaWUxejVpQl9od3ZrSURUQ0NTdmVDTThfSUNvcE0zSkZnOG45Z3RzeVF5aXZLb1JTQzhPbG4yVUlmeEFPa3daZ2pzNVM5Q2x2eGx5bzRBcFB3MV9tWEN1aDJYQ01jdG1aQ25WenhRa0xEc01ENjM3MU1ENA?oc=5"
   },
   {
+    "key": "69b9e475fc4540bf883b",
+    "brand": "Coccinelle",
+    "headline": "Coccinelle a Parma: debutta Homization, la boutique da vivere - HUB Style Magazine",
+    "signal_type": "category_launch",
+    "score": 75,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
+    "detected_at": "2026-11-08T21:39:06.640719+00:00",
+    "published_at": "2026-11-06T14:41:53+00:00",
+    "source": "HUB Style Magazine",
+    "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPM1VNUm9NdDRmckQ0NURuczdKdnpqWVVXbjhvSnJCRzBzaVZSUm5tTWQzZG1CaldzekhlUW9iOHJYanZWVU1JNE5oMEFPWWdvMVg2bUo3YW1hT1lQZjM1Z0FERDNKellwdE9JOVMwOXplamJ1bGJjRzNFeTJ4c1N5UkJEREFmamloRzhfZ0NLOXhqN29RUHI0X0RweWFDLUY5NDNTaEdGNG13ZHB2RUV6QkJJd1JyVkh0aGtqUg?oc=5"
+  },
+  {
     "key": "18c83deb010f61de4481",
     "brand": "Brunello Cucinelli",
     "headline": "Brunello Cucinelli - FashionNetwork Italia",
@@ -128,6 +141,19 @@
     "published_at": "2026-11-06T02:03:16+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPWllJQlBCWGZNV1hKS0F3QWktbjF6VlRBcjd6THpwc0tDbmhXQ2UwN2lBbktFUmZhQ09NOHg3dEJaWXRxbXk5ODZIVGtVQ2JKd1dSMXhLWmNLcW5GcDIzcXZDbDMzLTVfalo0VUJiQ2l1UnozSXVhQjZ6ZnFkWGpRd0oydzFBdw?oc=5"
+  },
+  {
+    "key": "5198df752ef3fda17fed",
+    "brand": "Etro",
+    "headline": "Etro - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-08T21:39:06.640719+00:00",
+    "published_at": "2026-11-05T19:31:37+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBEa2hFSWExdzBpdm5zejZZSlBySDAzOUNNMjZEdG5XYzZ4WWFpVFJ1X0hsVXJpa2J3ZHpVcWNYWFhnV08zUDk5V0plekZXSVBKT3d1WjF4UGFnYklZZVRRV3JBdFhVMjdCVGhFd2hEakZQS3c?oc=5"
   },
   {
     "key": "758ab0b0e85cfa6bf822",
