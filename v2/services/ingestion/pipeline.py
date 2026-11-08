@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 from .canonicalize import canonicalize
 from .models import CanonicalJobDraft, RawJob
-from ..intelligence.dedupe import JobCandidate, compare_jobs
+from intelligence.dedupe import JobCandidate, compare_jobs
 
 
 @dataclass
