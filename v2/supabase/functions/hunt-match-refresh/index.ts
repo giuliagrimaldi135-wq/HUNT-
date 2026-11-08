@@ -226,9 +226,14 @@ Deno.serve(async(req)=>{
   }
   const chooseForFamily=(userId:string,family:string,desc:string)=>{
     const versions=cvMap.get(userId)||[];
-    if(!versions.length)return {};
+    // An uploaded but unread PDF must not displace a CV containing documented experience.
+    const ready=versions.filter((v:any)=>{
+      const p=v.parsed_profile||{};
+      return Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history||p.experience?.length||p.projects?.length);
+    });
+    if(!ready.length)return {};
     const common=new Set((family+" "+desc.slice(0,1600)).toLowerCase().match(/[a-z]{5,}/g)||[]);
-    const rated=versions.map((v:any)=>{
+    const rated=ready.map((v:any)=>{
       const p=v.parsed_profile||{},target=Array.isArray(v.target_role_families)?v.target_role_families:[];
       const evidence=[...(p.experience||[]).flatMap((x:any)=>x.evidence||[]),...(p.projects||[]).flatMap((x:any)=>x.evidence||[]),...(p.tools||[])].join(" ").toLowerCase();
       const words=new Set(evidence.match(/[a-z]{5,}/g)||[]);
