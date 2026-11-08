@@ -107,6 +107,7 @@ Deno.serve(async(req)=>{
     const raw=await response.text();
     if(raw.length>4500000)throw Error("ATS board response too large");
     const entries=mapped(source,JSON.parse(raw));
+    const liveURLs=new Set(entries.map((x:any)=>x.url).filter(Boolean));
     available+=entries.length;
     const recentLinks=new Set<string>();
     for(const item of entries.slice(0,250)){
@@ -146,10 +147,29 @@ Deno.serve(async(req)=>{
       if(linkError){await db.from("jobs").delete().eq("id",job.id);throw Error(linkError.message)}
       created++;inserted++;
     }
+    // After three or more missed rotations, a posting absent from the full official
+    // board list becomes stale. This is safer than treating web search snippets as current.
+    let stale=0;
+    if(entries.length>0&&entries.length<=250){
+      const {data:linked}=await db.from("job_sources")
+        .select("job_id,listing_url,last_seen_at").eq("source_id",source.id).eq("active",true).limit(700);
+      const staleCutoff=Date.now()-15*60*1000;
+      for(const link of linked||[]){
+        if(liveURLs.has(link.listing_url))continue;
+        if(link.last_seen_at&&new Date(link.last_seen_at).getTime()>staleCutoff)continue;
+        const {error:jobError}=await db.from("jobs").update({
+          state:"stale_possible",vacancy_confidence:50,confidence_label:"STALE / NEEDS RECHECK",
+          updated_at:at
+        }).eq("id",link.job_id).eq("state","active_verified");
+        if(jobError)continue;
+        await db.from("job_sources").update({active:false}).eq("source_id",source.id).eq("listing_url",link.listing_url);
+        stale++;
+      }
+    }
     await db.from("sources").update({
       last_scan_at:at,last_success_at:at,health_status:"healthy",consecutive_failures:0
     }).eq("id",source.id);
-    details.push({family:source.source_family,board:source.config?.board,status:"healthy",fetched:entries.length,created,checked:scanned,ignored});
+    details.push({family:source.source_family,board:source.config?.board,status:"healthy",fetched:entries.length,created,checked:scanned,ignored,stale});
    }catch(e){
     await db.from("sources").update({
       last_scan_at:at,health_status:"degraded",consecutive_failures:(source.consecutive_failures||0)+1
