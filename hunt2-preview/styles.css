@@ -49,3 +49,23 @@
  .fitBrief h2{font-size:26px}
  .fitBrief p{font-size:15px}
 }
+
+
+/* World Radar: editorial signal feed with compact functional filters */
+.worldRadar{max-width:1110px}
+.worldRadar h1{letter-spacing:-.05em}
+.worldRadarToolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:19px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.worldRadarToolbar strong{font-size:13px}
+.worldRadarFilters{display:flex;align-items:center;gap:14px}
+.worldRadarFilters label{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}
+.worldRadarFilters select{max-width:210px;min-width:125px;border:1px solid var(--line);background:#fff;padding:9px 12px;font:inherit;color:#272421;border-radius:3px}
+.worldSignal{padding:29px 0 27px;border-bottom:1px solid var(--line)}
+.worldSignalMeta{display:flex;align-items:center;gap:11px;flex-wrap:wrap;color:var(--muted);font-size:11px}
+.worldSignalMeta span+span:before{content:"·";margin-right:11px;color:#b0aba5}
+.worldSignalMeta .worldSignalBrand{font-size:12px;font-weight:800;color:var(--green)}
+.worldSignal h2{font-family:inherit;font-weight:750;letter-spacing:-.035em;line-height:1.2;font-size:23px;margin:13px 0}
+.worldSignalSummary{font-size:14px;line-height:1.65;max-width:850px;color:#59554f}
+.worldSignalBottom{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:17px;font-size:12px;color:var(--muted)}
+.worldSignalBottom a{white-space:nowrap;font-weight:800;color:#20201c;text-decoration:none;border-bottom:1px solid #8c877f;padding-bottom:3px}
+.worldRadarFoot{margin:24px 0;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:820px){.worldRadarToolbar{align-items:flex-start;flex-direction:column}.worldRadarFilters{width:100%;flex-wrap:wrap}.worldRadarFilters label{flex:1;justify-content:space-between}.worldRadarFilters select{min-width:130px}.worldSignal h2{font-size:20px}.worldSignalBottom{align-items:flex-start;flex-direction:column;gap:10px}}
