@@ -390,13 +390,14 @@ async function getOpportunityFeed(limit=100){
 }
 
 async function getOpportunityDetail(jobId){
- const [{data:job,error:jobError},{data:match},{data:application},{data:personalization},{data:cvs},{data:reposts}]=await Promise.all([
+ const [{data:job,error:jobError},{data:match},{data:application},{data:personalization},{data:cvs},{data:reposts},{data:dossier}]=await Promise.all([
    supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,companies(name)").eq("id",jobId).maybeSingle(),
    supabase.from("user_job_matches").select("match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("applications").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("user_personalization").select("interest_areas,next_experience_drivers,company_preference,avoid_role_traits").eq("user_id",currentUser.id).maybeSingle(),
    supabase.from("user_cvs").select("id,name,target_role_families,parsed_profile,is_default,created_at").eq("user_id",currentUser.id).eq("active",true).order("created_at",{ascending:false}),
-   supabase.from("repost_events").select("id,detected_at,reason,evidence").eq("job_id",jobId).order("detected_at",{ascending:false})
+   supabase.from("repost_events").select("id,detected_at,reason,evidence").eq("job_id",jobId).order("detected_at",{ascending:false}),
+   supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle()
  ]);
  if(jobError||!job)return null;
  const [{data:signals},{data:relatedMatches}]=await Promise.all([
@@ -414,7 +415,7 @@ async function getOpportunityDetail(jobId){
  const sameJobs=(relatedMatches||[])
    .map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
    .filter(x=>x?.published_at&&new Date(x.published_at)>=cutoff);
- return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],sameJobs};
+ return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],sameJobs,dossier:dossier||null};
 }
 
 function ageLabel(value){
@@ -547,24 +548,22 @@ function interestPhrase(personalization){
 }
 
 function fitEvidence(row){
- const p=row.personalization||{};
- const interests=new Set(p.interest_areas||[]);
- const desc=(row.job.description||"").toLowerCase();
  const reasons=Array.isArray(row.reasons)?row.reasons:[];
  const out=[];
- if(interests.has("product_assortment")&&/merchandis|assort|collection|product|shoe|jewelry|ready-to-wear/.test(desc+" "+row.job.canonical_title.toLowerCase())){
-   out.push("Hai indicato prodotto e assortimento tra le parti del lavoro che ti interessano di più, e questa posizione lavora direttamente su prodotto e merchandising.");
+ for(const reason of reasons){
+   if(/città|milano|livello|stage coerente/i.test(reason))continue;
+   if(reason.startsWith("Target professionale diretto:")){
+     const family=reason.split(":").slice(1).join(":").trim();
+     out.push(family+" è una delle aree professionali che hai scelto come obiettivo.");
+     continue;
+   }
+   if(/ruolo adiacente/i.test(reason)){
+     out.push("Non è il tuo target principale, ma le responsabilità sono abbastanza vicine alle aree che hai scelto da meritare attenzione.");
+     continue;
+   }
+   out.push(reason.endsWith(".")?reason:reason+".");
  }
- if(interests.has("numbers_performance")&&/sales|performance|sell-in|sell-out|best seller|slow mover|kpi|report|analysis|analisi/.test(desc)){
-   out.push("Nel ruolo c’è una componente concreta di analisi delle performance, in linea con il tuo interesse per numeri e KPI.");
- }
- if(interests.has("organization_operations")&&/planning|coordin|process|launch|calendar|budget|stock|inventory/.test(desc)){
-   out.push("La posizione include coordinamento e organizzazione operativa, un’altra area che hai indicato come interessante.");
- }
- if(reasons.some(x=>/città|milano/i.test(x)))out.push("È in una delle città che hai scelto per la ricerca.");
- if(reasons.some(x=>/livello|stage|intern/i.test(x)))out.push("Il livello della posizione è coerente con quello che stai cercando adesso.");
- if(!out.length&&reasons.length)out.push(...reasons.slice(0,3));
- return out.slice(0,4);
+ return [...new Set(out)].slice(0,4);
 }
 
 function hasParsedCv(row){
@@ -638,41 +637,22 @@ async function renderOpportunityFolder(jobId){
    <section class="section featureEditorial">
     <div class="eyebrow">Perché questa posizione</div>
     <h2>Perché HUNT te la consiglia</h2>
-    <div class="evidenceList">${evidence.map((x,i)=>`<div class="evidenceRow"><span>0${i+1}</span><p>${esc(x)}</p></div>`).join("")}</div>
-    ${!cvReady?'<p class="cvPendingNote">Questa analisi diventerà molto più precisa quando HUNT avrà letto il contenuto del tuo CV: esperienze, progetti, competenze e strumenti verranno confrontati direttamente con i requisiti della vacancy.</p>':""}
+    <div class="evidenceList">${evidence.length?evidence.map((x,i)=>`<div class="evidenceRow"><span>0${i+1}</span><p>${esc(x)}</p></div>`).join(""):'<p class="lead">HUNT non ha ancora abbastanza evidenze forti per motivare questa raccomandazione.</p>'}</div>
    </section>
 
-   <section class="section applicationTools">
-     <div class="applicationToolsHead">
-       <div><div class="eyebrow">Materiali candidatura</div><h2>Preparala per questa vacancy</h2></div>
-       <span>${cv?esc(cv.name.trim()||"CV"):"CV da collegare"}</span>
-     </div>
-     <div class="applicationToolGrid">
-       <article class="applicationTool ${cvReady?"ready":""}">
-         <div class="toolNumber">01</div>
-         <h3>Cover letter</h3>
-         <p>${cvReady?"Generata incrociando vacancy, CV, profilo personale e informazioni sul brand. Nessun template standard.":"Si attiverà appena HUNT avrà analizzato il CV, così la lettera sarà davvero personale e non generica."}</p>
-         <button class="textAction" ${cvReady?"":"disabled"}>${cvReady?"Apri cover letter →":"In attesa del CV analizzato"}</button>
-       </article>
-       <article class="applicationTool">
-         <div class="toolNumber">02</div>
-         <h3>CV per questa posizione</h3>
-         <p>HUNT userà il CV più adatto e segnalerà solo modifiche supportate da esperienze reali. Niente CV riscritto da zero se non serve.</p>
-         <button class="textAction" disabled>Analisi CV in arrivo</button>
-       </article>
-       <article class="applicationTool">
-         <div class="toolNumber">03</div>
-         <h3>Risposte candidatura</h3>
-         <p>Se il form chiede “Why us?”, motivazione o domande aperte, HUNT prepara risposte specifiche per questa vacancy.</p>
-         <button class="textAction" disabled>Disponibile quando serve</button>
-       </article>
-     </div>
-   </section>
+   ${row.dossier?.ready_to_send_message?`<section class="section coverLetterReady">
+     <div class="coverLetterHead"><div><div class="eyebrow">Cover letter</div><h2>Pronta per questa candidatura</h2></div><button class="btn primary" id="copyCoverLetter">Copia</button></div>
+     <div class="coverLetterText" id="coverLetterText">${esc(row.dossier.ready_to_send_message)}</div>
+   </section>`:""}
 
-   <section class="section historyBlock">
-    <div class="historyHeading"><div><div class="eyebrow">Stato dell'annuncio</div><h2>${esc(verifiedLabel(job))}</h2></div><span>${esc(ageLabel(job.published_at))}</span></div>
-    <p>HUNT ha controllato che l'annuncio sia ancora raggiungibile il ${job.last_verified_at?new Date(job.last_verified_at).toLocaleString("it-IT"):"—"}.</p>
-    <div class="repostExplainer"><strong>Come HUNT tratta gli annunci ripubblicati</strong><p>${esc(repostSummary)}</p></div>
+   <section class="section compactJobStatus">
+     <div class="eyebrow">Stato annuncio</div>
+     <div class="statusLine">
+       <strong>${esc(ageLabel(job.published_at))}</strong>
+       <span>${esc(verifiedLabel(job))}</span>
+       <span>${repostCount?`${repostCount} ripubblicazione${repostCount===1?"":"i"} rilevata${repostCount===1?"":"e"}`:"Nessun repost rilevato"}</span>
+     </div>
+     ${repostCount?`<p class="repostNote">${esc(repostSummary)}</p>`:""}
    </section>
  </div>
 
@@ -707,6 +687,13 @@ async function renderOpportunityFolder(jobId){
    document.querySelectorAll("[data-folder-tab]").forEach(x=>x.classList.toggle("active",x.dataset.folderTab===tab));
    document.querySelectorAll("[data-folder-panel]").forEach(x=>x.classList.toggle("hide",x.dataset.folderPanel!==tab));
  });
+ const copy=document.getElementById("copyCoverLetter");
+ if(copy)copy.onclick=async()=>{
+   const text=document.getElementById("coverLetterText")?.textContent||"";
+   await navigator.clipboard.writeText(text);
+   copy.textContent="Copiata";
+   setTimeout(()=>copy.textContent="Copia",1200);
+ };
 }
 
 function statusLabel(status){
