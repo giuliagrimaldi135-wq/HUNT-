@@ -1,0 +1,17 @@
+name: HUNT Preview Syntax
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'hunt2-preview/**'
+      - '.github/workflows/hunt-preview-syntax.yml'
+  workflow_dispatch:
+
+jobs:
+  verify-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: node --check hunt2-preview/app.js
