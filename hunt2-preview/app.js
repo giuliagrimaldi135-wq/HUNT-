@@ -355,22 +355,76 @@ async function renderShell(){
  return renderProfile();
 }
 
+async function getOpportunityFeed(limit=50){
+ const {data:matches,error:matchError}=await supabase
+   .from("user_job_matches")
+   .select("job_id,match_score,priority_score,reasons,gaps")
+   .eq("user_id",currentUser.id)
+   .order("priority_score",{ascending:false})
+   .limit(limit);
+ if(matchError||!matches?.length)return {data:[],error:matchError};
+ const ids=matches.map(x=>x.job_id);
+ const {data:jobs,error:jobError}=await supabase
+   .from("jobs")
+   .select("id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,primary_apply_url,state,description,companies(name)")
+   .in("id",ids);
+ if(jobError)return {data:[],error:jobError};
+ const byId=new Map((jobs||[]).map(job=>[job.id,job]));
+ return {data:matches.map(match=>({...match,job:byId.get(match.job_id)})).filter(x=>x.job),error:null};
+}
+
+function opportunityCard(row,compact=false){
+ const job=row.job;
+ const brand=job.companies?.name||"Brand";
+ const reasons=Array.isArray(row.reasons)?row.reasons:[];
+ const gaps=Array.isArray(row.gaps)?row.gaps:[];
+ const verified=job.confidence_label==="VERIFIED ACTIVE";
+ const checked=job.last_verified_at?new Date(job.last_verified_at).toLocaleDateString("it-IT",{day:"2-digit",month:"short"}):"—";
+ return `<article class="card jobCard">
+  <div class="jobMain">
+   <div class="eyebrow">${esc(brand)}</div>
+   <h3>${esc(job.canonical_title)}</h3>
+   <div class="jobMeta">${esc(job.city||"Località da verificare")} · ${esc(job.role_family||"Altro")} · verificata ${esc(checked)}</div>
+   <div class="jobBadges"><span class="statusBadge ${verified?"verified":"likely"}">${esc(job.confidence_label||job.state)}</span></div>
+   ${compact?"":`<div class="whyGrid">
+      <div><div class="eyebrow">Perché per te</div><ul>${reasons.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+      <div><div class="eyebrow">Da considerare</div><ul>${gaps.map(x=>`<li>${esc(x)}</li>`).join("")||"<li>Nessun gap rilevante segnalato.</li>"}</ul></div>
+    </div>`}
+   <div class="actions">
+    <a class="btn primary" href="${esc(job.primary_apply_url||"#")}" target="_blank" rel="noopener">Apri candidatura</a>
+   </div>
+  </div>
+  <div class="scoreGroup">
+   <div class="score"><strong>${row.match_score}</strong><span>Match</span></div>
+   <div class="score"><strong>${job.vacancy_confidence??0}</strong><span>Vacancy</span></div>
+   <div class="score"><strong>${row.priority_score}</strong><span>Priority</span></div>
+  </div>
+ </article>`;
+}
+
 function bindNav(){
  document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{currentView=b.dataset.view;renderShell()});
 }
 
 async function renderToday(){
- const [prof,matches]=await Promise.all([getProfile(),supabase.from("user_job_matches").select("match_score,priority_score,job_id").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(10)]);
- const count=matches.data?.length||0;
- app.innerHTML=shell(`<div class="eyebrow">HUNT Today</div><h1>Ciao ${esc((prof?.display_name||"").split(" ")[0]||"")}. Il tuo radar è acceso.</h1><p class="lead">Il tuo account e il profilo sono collegati al database reale. Il motore vacancy verrà popolato nel prossimo blocco.</p>
- <div class="grid3 section"><div class="card metric"><strong>${count}</strong><span>match nel tuo feed</span></div><div class="card metric"><strong>✓</strong><span>profilo attivo</span></div><div class="card metric"><strong>Private</strong><span>CV storage</span></div></div>
- <section class="card section"><div class="eyebrow">Stato beta</div><h2>La parte utente ora funziona davvero.</h2><p class="lead">Registrazione, sessione, onboarding, preferenze e CV sono sul progetto Supabase HUNT 2. Adesso colleghiamo il motore che importa le vacancy vere.</p></section>`);
+ const [prof,feed]=await Promise.all([getProfile(),getOpportunityFeed(3)]);
+ const rows=feed.data||[];
+ app.innerHTML=shell(`<div class="eyebrow">HUNT Today</div><h1>Ciao ${esc((prof?.display_name||"").split(" ")[0]||"")}. Il tuo radar ha trovato qualcosa.</h1>
+ <p class="lead">Queste sono le opportunità che HUNT considera più urgenti per te oggi, combinando fit personale, affidabilità della vacancy e freschezza.</p>
+ <div class="grid3 section"><div class="card metric"><strong>${rows.length}</strong><span>top match di oggi</span></div><div class="card metric"><strong>${rows.filter(x=>x.job?.confidence_label==="VERIFIED ACTIVE").length}</strong><span>verificate</span></div><div class="card metric"><strong>${rows[0]?.priority_score||0}</strong><span>priorità massima</span></div></div>
+ <section class="section stack">${feed.error?`<div class="msg bad">${esc(feed.error.message)}</div>`:(rows.length?rows.map(x=>opportunityCard(x,true)).join(""):`<div class="card"><h3>Nessun match ancora.</h3></div>`)}</section>
+ <div class="actions"><button class="btn green" id="seeAllJobs">Vedi tutte le opportunità</button></div>`);
  bindNav();
+ const all=document.getElementById("seeAllJobs");if(all)all.onclick=()=>{currentView="opportunities";renderShell()};
 }
 
 async function renderOpportunities(){
- const {data,error}=await supabase.from("user_job_matches").select("match_score,priority_score,job_id").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(50);
- app.innerHTML=shell(`<div class="eyebrow">Personal feed</div><h1>Opportunità</h1><p class="lead">Qui appariranno solo vacancy deduplicate, verificate e ordinate per te.</p><section class="section stack">${error?`<div class="msg bad">${esc(error.message)}</div>`:(data?.length?`<div class="card">${data.length} match disponibili.</div>`:`<div class="card"><h3>Il feed è pronto, ma ancora vuoto.</h3><p class="lead">Non è un errore: non abbiamo ancora avviato l'importazione delle vacancy reali nel nuovo database.</p></div>`)}</section>`);
+ const feed=await getOpportunityFeed(50);
+ const rows=feed.data||[];
+ app.innerHTML=shell(`<div class="eyebrow">Personal feed</div><h1>Opportunità</h1>
+ <p class="lead">Non è una lista grezza: le vacancy sono ordinate per te. Un Match alto non basta se HUNT non è convinto che l'annuncio sia ancora realmente attivo.</p>
+ <div class="grid3 section"><div class="card metric"><strong>${rows.length}</strong><span>opportunità nel feed</span></div><div class="card metric"><strong>${rows.filter(x=>x.match_score>=90).length}</strong><span>match 90+</span></div><div class="card metric"><strong>${rows.filter(x=>x.job?.confidence_label==="VERIFIED ACTIVE").length}</strong><span>verified active</span></div></div>
+ <section class="section stack">${feed.error?`<div class="msg bad">${esc(feed.error.message)}</div>`:(rows.length?rows.map(x=>opportunityCard(x,false)).join(""):`<div class="card"><h3>Nessuna opportunità da mostrare.</h3></div>`)}</section>`);
  bindNav();
 }
 
