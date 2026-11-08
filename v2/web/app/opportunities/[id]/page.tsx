@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOpportunity } from "@/lib/data/opportunities";
+import { ignoreOpportunity, markApplied, prepareApplication } from "../actions";
 
 export default async function OpportunityFolder({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
@@ -18,7 +19,12 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
           <div><strong>{job.confidence}%</strong><span>Vacancy confidence</span></div>
           <div><strong>{job.priority}%</strong><span>Priorità</span></div>
         </div>
-        <div className="actions">{job.applyUrl ? <a className="btn green" href={job.applyUrl} target="_blank" rel="noreferrer">Candidati adesso</a> : null}<button className="btn">Salva</button></div>
+        <div className="actions">
+          <form action={prepareApplication}><input type="hidden" name="job_id" value={job.id}/><button className="btn green">Prepara candidatura</button></form>
+          <form action={markApplied}><input type="hidden" name="job_id" value={job.id}/><button className="btn">Già candidata</button></form>
+          <form action={ignoreOpportunity}><input type="hidden" name="job_id" value={job.id}/><button className="btn">Ignora</button></form>
+          {job.applyUrl ? <a className="btn" href={job.applyUrl} target="_blank" rel="noreferrer">Vai al sito del brand ↗</a> : null}
+        </div>
       </div>
 
       <section className="twoCol">
