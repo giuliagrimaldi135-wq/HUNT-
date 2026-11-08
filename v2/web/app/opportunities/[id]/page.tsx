@@ -18,13 +18,14 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
           <div><strong>{job.confidence}%</strong><span>Vacancy confidence</span></div>
           <div><strong>{job.priority}%</strong><span>Priorità</span></div>
         </div>
-        <div className="actions"><button className="btn green">Candidati adesso</button><button className="btn">Salva</button></div>
+        <div className="actions">{job.applyUrl ? <a className="btn green" href={job.applyUrl} target="_blank" rel="noreferrer">Candidati adesso</a> : null}<button className="btn">Salva</button></div>
       </div>
 
       <section className="twoCol">
         <article className="card">
           <div className="fieldTitle">Perché tu</div>
           <p className="quote">{job.why}</p>
+          {job.reasons?.length ? <ul className="listClean">{job.reasons.map((reason)=><li key={reason}>{reason}</li>)}</ul> : null}
         </article>
         <article className="card">
           <div className="fieldTitle">Perché adesso</div>
@@ -41,11 +42,9 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
         </article>
         <article className="card">
           <div className="fieldTitle">Cosa valorizzare</div>
-          <ul className="listClean">
-            <li>Esperienze direttamente rilevanti per il ruolo</li>
-            <li>Competenze che rispondono alla vacancy</li>
-            <li>Elementi differenzianti presenti nel CV reale</li>
-          </ul>
+          {job.gaps?.length
+            ? <ul className="listClean">{job.gaps.map((gap)=><li key={gap}>{gap}</li>)}</ul>
+            : <p className="lead">Nessun gap rilevante segnalato.</p>}
         </article>
       </section>
 
@@ -62,7 +61,7 @@ export default async function OpportunityFolder({params}:{params:Promise<{id:str
           <h2>Canale verificato</h2>
           <p>Career site, recruiter pubblico o contatto aziendale: HUNT mostrerà sempre la provenienza.</p>
           <p className="source">Mai inventare email o contatti.</p>
-          <div className="actions"><button className="btn green">Apri candidatura</button></div>
+          <div className="actions">{job.applyUrl ? <a className="btn green" href={job.applyUrl} target="_blank" rel="noreferrer">Apri candidatura</a> : null}</div>
         </article>
       </section>
 
