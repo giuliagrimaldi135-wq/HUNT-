@@ -214,12 +214,30 @@ Deno.serve(async(req)=>{
     db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences"),
     db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true),
     db.from("user_personalization").select("user_id,interest_areas,avoid_role_traits"),
-    db.from("user_cvs").select("user_id,parsed_profile,is_default,active").eq("active",true)
+    db.from("user_cvs").select("user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true)
   ]);
   const profileMap=new Map((profiles||[]).map((x:any)=>[x.user_id,x]));
   const personalMap=new Map((personal||[]).map((x:any)=>[x.user_id,x]));
-  const cvMap=new Map<string,any>();
-  for(const cv of cvs||[]){if(!cvMap.has(cv.user_id)||cv.is_default)cvMap.set(cv.user_id,cv.parsed_profile||{})}
+  // Keep every CV version. Different vacancies can require different evidence.
+  const cvMap=new Map<string,any[]>();
+  for(const cv of cvs||[]){
+    if(!cvMap.has(cv.user_id))cvMap.set(cv.user_id,[]);
+    cvMap.get(cv.user_id)!.push(cv);
+  }
+  const chooseForFamily=(userId:string,family:string,desc:string)=>{
+    const versions=cvMap.get(userId)||[];
+    if(!versions.length)return {};
+    const common=new Set((family+" "+desc.slice(0,1600)).toLowerCase().match(/[a-z]{5,}/g)||[]);
+    const rated=versions.map((v:any)=>{
+      const p=v.parsed_profile||{},target=Array.isArray(v.target_role_families)?v.target_role_families:[];
+      const evidence=[...(p.experience||[]).flatMap((x:any)=>x.evidence||[]),...(p.projects||[]).flatMap((x:any)=>x.evidence||[]),...(p.tools||[])].join(" ").toLowerCase();
+      const words=new Set(evidence.match(/[a-z]{5,}/g)||[]);
+      let overlap=0;for(const t of common){if(words.has(t))overlap++}
+      const score=(target.includes(family)?70:0)+Math.min(25,overlap*3)+(v.is_default?4:0)+((p.profile_confirmed_by_user||p.profile_verified_from_user_history)?12:0)+((p.experience?.length||p.projects?.length)?8:0);
+      return {score,p};
+    }).sort((a:any,b:any)=>b.score-a.score);
+    return rated[0]?.p||{};
+  };
 
   let considered=0,matched=0,rejected=0;
   for(const job of jobs||[]){
@@ -249,7 +267,7 @@ Deno.serve(async(req)=>{
       considered++;
       const profile=profileMap.get(pref.user_id) as any;
       const pers=personalMap.get(pref.user_id) as any;
-      const cv=cvMap.get(pref.user_id)||{};
+      const cv=chooseForFamily(pref.user_id,family,desc);
       const primary=pref.primary_role_families||[];
       const radar=String(pref.preferences?.radar_scope||"smart");
       const direct=Boolean(family&&primary.includes(family));
