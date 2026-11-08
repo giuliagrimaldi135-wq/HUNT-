@@ -6,18 +6,22 @@ export default async function OpportunitiesPage(){
 
   return (
     <>
-      <div className="eyebrow">Market scan</div>
+      <div className="eyebrow">Il tuo radar</div>
       <h1>Opportunità</h1>
-      <p className="lead">Non è un elenco grezzo. Ogni ruolo viene deduplicato, verificato e poi ordinato per il singolo utente.</p>
-      <div className="badges">
-        <span className="badge good">Tutte</span><span className="badge">Match 80+</span>
-        <span className="badge">Nuove</span><span className="badge">Verificate</span>
-        <span className="badge">Adiacenti intelligenti</span>
+      <p className="lead">HUNT cerca molto più in largo di quello che mostra. Qui entrano solo vacancy fresche, pertinenti e con una data affidabile.</p>
+
+      <div className="feedToolbar section">
+        <strong>{opportunities.length} opportunità per te</strong>
+        <div className="filterPills">
+          <span>Ultimi 20 giorni</span>
+          <span>Ordinate per priorità</span>
+        </div>
       </div>
+
       <section className="section stack">
         {opportunities.length
           ? opportunities.map(job=><OpportunityCard key={job.id} job={job}/>)
-          : <div className="card"><h3>Nessuna opportunità da mostrare.</h3><p className="lead">Il motore sta costruendo il tuo feed.</p></div>}
+          : <div className="card"><h3>Nessuna opportunità fresca da mostrare.</h3><p className="lead">HUNT continua a cercare sul mercato, ma non riempie il feed con vacancy vecchie o senza data affidabile.</p></div>}
       </section>
     </>
   );
