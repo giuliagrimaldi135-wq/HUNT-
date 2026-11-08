@@ -106,6 +106,9 @@ export async function mountCvManager(root,{supabase,user,refresh}){
     const {data:created,error:dbError}=await supabase.from("user_cvs").insert({user_id:user.id,name,storage_path:path,target_role_families:[],parsed_profile:{},is_default:rows.length===0,active:true}).select("id").single();
     if(dbError){await supabase.storage.from("cvs").remove([path]);throw dbError}
     selectedId=created.id;await refresh();
+    // Start reading the newly uploaded CV without a second manual action.
+    const readButton=document.querySelector('#cvManagerRoot [data-cv-action="read"][data-cv-id="'+created.id+'"]');
+    if(readButton)readButton.click();
    }catch(e){show("Upload non riuscito: "+(e.message||String(e)),true);b.disabled=false}
    return;
   }
