@@ -132,30 +132,56 @@ function onboardingView(profile){
 
   <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vuoi lavorare?</h2>
    <div class="grid2" style="margin-top:12px">
-    <label><div class="eyebrow">Paese preferito</div><select class="input" name="preferred_country"><option value="">Seleziona un paese</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
-    <label><div class="eyebrow">Città preferita</div><input class="input" name="preferred_city" placeholder="Es. Milano"></label>
+    <label><div class="eyebrow">Paese</div><select class="input" id="preferredCountry"><option value="">Seleziona un paese</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
+    <label><div class="eyebrow">Città</div><input class="input" id="preferredCity" placeholder="Es. Milano"></label>
    </div>
+   <div class="actions"><button class="btn" type="button" id="addPreferredLocation">+ Aggiungi località</button></div>
+   <div id="preferredLocationsList" class="tagList"></div>
+
+   <div style="height:1px;background:var(--line);margin:20px 0"></div>
+
+   <div class="eyebrow">Dove ti trasferiresti?</div>
    <div class="grid2" style="margin-top:12px">
-    <label><div class="eyebrow">Paese in cui ti trasferiresti</div><select class="input" name="relocation_country"><option value="">Nessuna preferenza</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
-    <label><div class="eyebrow">Città</div><input class="input" name="relocation_city" placeholder="Es. Parigi"></label>
+    <label><div class="eyebrow">Paese</div><select class="input" id="relocationCountry"><option value="">Seleziona un paese</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
+    <label><div class="eyebrow">Città</div><input class="input" id="relocationCity" placeholder="Es. Parigi"></label>
    </div>
+   <div class="actions"><button class="btn" type="button" id="addRelocationLocation">+ Aggiungi località</button></div>
+   <div id="relocationLocationsList" class="tagList"></div>
   </section>
   <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx"></label></div></section>
   <div id="onMsg"></div><div class="actions"><button class="btn green" type="submit">Crea il mio HUNT</button><button class="btn" id="logoutOn" type="button">Esci</button></div>
  </form></div>`;
+ const preferredLocations=[];
+ const relocationLocations=[];
+ const renderLocationTags=(id,items,type)=>{document.getElementById(id).innerHTML=items.map((item,index)=>`<span class="locationTag">${esc(item)}<button type="button" data-remove-location="${type}" data-index="${index}" aria-label="Rimuovi">×</button></span>`).join("")};
+ const addLocation=(countryId,cityId,items,listId,type)=>{
+   const country=document.getElementById(countryId).value;
+   const city=document.getElementById(cityId).value.trim();
+   if(!country&&!city)return;
+   const location=[city,country].filter(Boolean).join(", ");
+   if(!items.includes(location))items.push(location);
+   document.getElementById(countryId).value="";
+   document.getElementById(cityId).value="";
+   renderLocationTags(listId,items,type);
+ };
+ document.getElementById("addPreferredLocation").onclick=()=>addLocation("preferredCountry","preferredCity",preferredLocations,"preferredLocationsList","preferred");
+ document.getElementById("addRelocationLocation").onclick=()=>addLocation("relocationCountry","relocationCity",relocationLocations,"relocationLocationsList","relocation");
+ document.getElementById("onboarding").onclick=(event)=>{
+   const btn=event.target.closest("[data-remove-location]");
+   if(!btn)return;
+   const target=btn.dataset.removeLocation==="preferred"?preferredLocations:relocationLocations;
+   target.splice(Number(btn.dataset.index),1);
+   renderLocationTags(btn.dataset.removeLocation==="preferred"?"preferredLocationsList":"relocationLocationsList",target,btn.dataset.removeLocation);
+ };
  document.getElementById("logoutOn").onclick=logout;
- document.getElementById("onboarding").onsubmit=saveOnboarding;
+ document.getElementById("onboarding").onsubmit=(event)=>saveOnboarding(event,preferredLocations,relocationLocations);
 }
 
-async function saveOnboarding(e){
+async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
  e.preventDefault();
  const form=e.currentTarget, fd=new FormData(form), msg=document.getElementById("onMsg");
  const primary=fd.getAll("primary");
- const makeLocation=(country,city)=>[String(city||"").trim(),String(country||"").trim()].filter(Boolean).join(", ");
- const preferredLocation=makeLocation(fd.get("preferred_country"),fd.get("preferred_city"));
- const relocationLocation=makeLocation(fd.get("relocation_country"),fd.get("relocation_city"));
- const locations=preferredLocation?[preferredLocation]:[];
- const relocationLocations=relocationLocation?[relocationLocation]:[];
+ const locations=preferredLocations;
  const firstName=String(fd.get("first_name")||"").trim();
  const lastName=String(fd.get("last_name")||"").trim();
  const radarScope=String(fd.get("radar_scope")||"smart");
