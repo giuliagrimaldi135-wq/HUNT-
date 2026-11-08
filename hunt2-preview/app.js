@@ -808,11 +808,21 @@ async function renderOpportunityFolder(jobId){
    document.querySelectorAll("[data-folder-tab]").forEach(x=>x.classList.toggle("active",x.dataset.folderTab===tab));
    document.querySelectorAll("[data-folder-panel]").forEach(x=>x.classList.toggle("hide",x.dataset.folderPanel!==tab));
  });
+ const openBrand=document.getElementById("openCompanyTab");
+ if(openBrand)openBrand.onclick=()=>document.querySelector('[data-folder-tab="company"]')?.click();
+ const cvSelect=document.getElementById("dossierCv");
+ const languageSelect=document.getElementById("dossierLang");
+ const selectionNote=()=>{const notice=document.getElementById("dossierMessage");if(notice)notice.textContent="Selezione aggiornata. Premi Aggiorna dossier per applicarla alla lettera e al confronto con i requisiti.";};
+ if(cvSelect)cvSelect.onchange=selectionNote;
+ if(languageSelect)languageSelect.onchange=selectionNote;
  const generate=document.getElementById("generateDossier");
  if(generate)generate.onclick=async()=>{
    const lang=document.getElementById("dossierLang").value;
    const cvId=document.getElementById("dossierCv").value;
    const info=document.getElementById("dossierMessage");
+   const editor=document.getElementById("coverLetterText");
+   if(editor&&editor.value!==row.dossier?.ready_to_send_message&&!window.confirm("Hai modifiche non salvate nella lettera. Rigenerando il dossier saranno sostituite. Continuare?"))return;
+   if(row.dossier?.generated_from?.user_edited&&!window.confirm("La lettera attuale è stata salvata manualmente. Rigenerarla sostituirà quella versione. Continuare?"))return;
    generate.disabled=true;info.textContent="Preparazione del dossier…";
    try{await requestDossier(jobId,lang,cvId);await renderOpportunityFolder(jobId)}
    catch(e){info.textContent=e instanceof Error?e.message:String(e);info.className="dossierError";generate.disabled=false}
@@ -830,6 +840,41 @@ async function renderOpportunityFolder(jobId){
    const {error}=await supabase.from("user_job_dossiers").update({ready_to_send_message:body,generated_from:editedMeta,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("job_id",jobId);
    save.disabled=false;save.textContent=error?"Errore nel salvataggio":"Salvata";
    setTimeout(()=>save.textContent="Salva modifiche",1800);
+ };
+ const instruction=document.getElementById("letterAiInstruction");
+ document.querySelectorAll("[data-ai-feedback]").forEach(x=>x.onclick=()=>{
+   if(instruction){instruction.value=x.dataset.aiFeedback||"";instruction.focus()}
+ });
+ const improve=document.getElementById("polishLetter");
+ const undo=document.getElementById("undoLetter");
+ const aiStatus=document.getElementById("letterAiStatus");
+ let earlierLetter="";
+ if(improve)improve.onclick=async()=>{
+   const editor=document.getElementById("coverLetterText");
+   if(!editor||!instruction)return;
+   const requested=instruction.value.trim();
+   if(requested.length<3){aiStatus.textContent="Scrivi o scegli una modifica da chiedere all'AI.";return}
+   const original=editor.value;
+   const chosenCv=document.getElementById("dossierCv")?.value||row.dossier?.recommended_cv_id;
+   improve.disabled=true;improve.textContent="Rielaborazione…";aiStatus.textContent="Analisi della richiesta e del CV verificato…";
+   try{
+     const {data,error}=await supabase.functions.invoke("hunt-letter-polish",{body:{job_id:jobId,cv_id:chosenCv,language:document.getElementById("dossierLang")?.value||"en",draft:original,instructions:requested}});
+     if(error){
+       let msg=error.message||"Il servizio AI non è disponibile.";
+       try{const details=await error.context?.json?.();if(details?.error)msg=details.error}catch{}
+       throw new Error(msg);
+     }
+     if(!data?.ok||typeof data.text!=="string")throw new Error(data?.error||"La proposta AI non è utilizzabile.");
+     earlierLetter=original;
+     editor.value=data.text;
+     if(undo)undo.hidden=false;
+     aiStatus.textContent="Nuova proposta pronta. Rileggila: puoi annullarla o premere Salva per conservarla.";
+   }catch(e){aiStatus.textContent=e.message||String(e)}
+   finally{improve.disabled=false;improve.textContent="Migliora"}
+ };
+ if(undo)undo.onclick=()=>{
+   const editor=document.getElementById("coverLetterText");
+   if(editor&&earlierLetter){editor.value=earlierLetter;undo.hidden=true;aiStatus.textContent="Testo precedente ripristinato (non ancora salvato)."}
  };
  const copy=document.getElementById("copyCoverLetter");
  if(copy)copy.onclick=async()=>{
