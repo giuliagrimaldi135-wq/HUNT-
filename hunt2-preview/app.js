@@ -347,9 +347,9 @@ async function savePersonalization(e){
 
 function shell(inner){
  return `<div class="shell"><aside class="side"><div class="logo">HUNT<span>.</span></div><div class="sub">Fashion & Luxury Career Intelligence</div>
- <div class="nav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}" class="${currentView===v?"active":""}">${({opportunities:"Opportunità",radar:"World Radar",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</div>
+ <div class="nav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}" class="${currentView===v?"active":""}">${({opportunities:"Opportunità",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</div>
  <div class="sideFoot">Beta connected · Supabase</div></aside><main class="main">${inner}</main></div>
- <nav class="mobileNav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}">${({opportunities:"Opportunità",radar:"World Radar",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</nav>`;
+ <nav class="mobileNav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}">${({opportunities:"Opportunità",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</nav>`;
 }
 
 async function renderShell(){
@@ -764,7 +764,7 @@ async function renderWorldRadar(){
   }).join("");
   app.innerHTML=shell(`<div class="worldRadar">
     <div class="eyebrow">Fashion & Luxury Intelligence</div>
-    <h1>World Radar</h1>
+    <h1>Fashion News</h1>
     <p class="lead">Aperture, strategie, risultati, prodotto e cambiamenti aziendali: segnali verificabili da fonti pubbliche per capire dove si muove il settore.</p>
     <div class="worldRadarToolbar section">
       <strong>${rows.length} segnali documentati</strong>
