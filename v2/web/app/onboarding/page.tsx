@@ -23,6 +23,16 @@ const macroAreas = [
   "Technology",
 ] as const;
 
+const countries = [
+  "Italia","Francia","Regno Unito","Svizzera","Spagna","Germania","Paesi Bassi","Belgio","Austria","Portogallo",
+  "Irlanda","Lussemburgo","Monaco","Danimarca","Svezia","Norvegia","Finlandia","Islanda","Grecia","Polonia",
+  "Repubblica Ceca","Ungheria","Romania","Croazia","Slovenia","Slovacchia","Estonia","Lettonia","Lituania",
+  "Stati Uniti","Canada","Messico","Brasile","Argentina","Cile","Colombia",
+  "Emirati Arabi Uniti","Qatar","Arabia Saudita","Israele","Turchia",
+  "Giappone","Corea del Sud","Singapore","Hong Kong","Cina","India","Thailandia","Vietnam","Indonesia","Malesia",
+  "Australia","Nuova Zelanda","Sudafrica","Marocco","Egitto","Altro",
+] as const;
+
 const seniorityLevels = [
   ["internship", "Internship / Stage"],
   ["trainee", "Trainee / Graduate Program"],
@@ -105,15 +115,30 @@ export default async function OnboardingPage({
         <section className="card">
           <div className="fieldTitle">4 · Dove</div>
           <h2>Dove vuoi lavorare?</h2>
-          <p className="lead">Puoi inserire qualsiasi città, paese o area geografica. Separali con una virgola.</p>
           <div className="twoCol">
             <label>
-              <div className="fieldTitle">Località preferite</div>
-              <input className="input" name="preferred_locations_text" placeholder="Es. Milano, Parigi, Londra, Zurigo" />
+              <div className="fieldTitle">Paese preferito</div>
+              <select className="input" name="preferred_country" defaultValue="">
+                <option value="">Seleziona un paese</option>
+                {countries.map((country) => <option key={country} value={country}>{country}</option>)}
+              </select>
             </label>
             <label>
-              <div className="fieldTitle">Dove ti trasferiresti?</div>
-              <input className="input" name="relocation_locations_text" placeholder="Es. Svizzera, Francia, New York" />
+              <div className="fieldTitle">Città preferita</div>
+              <input className="input" name="preferred_city" placeholder="Es. Milano" />
+            </label>
+          </div>
+          <div className="twoCol" style={{ marginTop: 14 }}>
+            <label>
+              <div className="fieldTitle">Paese in cui ti trasferiresti</div>
+              <select className="input" name="relocation_country" defaultValue="">
+                <option value="">Nessuna preferenza</option>
+                {countries.map((country) => <option key={country} value={country}>{country}</option>)}
+              </select>
+            </label>
+            <label>
+              <div className="fieldTitle">Città</div>
+              <input className="input" name="relocation_city" placeholder="Es. Parigi" />
             </label>
           </div>
         </section>
