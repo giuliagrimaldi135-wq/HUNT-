@@ -20,6 +20,16 @@ function ageLabel(value?: string) {
   return `Pubblicata ${days} giorni fa`;
 }
 
+function asStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.map(String) : [];
+}
+
+function preferenceObject(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+}
+
 function cityAllowed(city: string | null, remoteMode: string | null, cities: string[]) {
   if (remoteMode === "remote") return true;
   if (!cities.length) return true;
@@ -94,10 +104,11 @@ export async function getOpportunities(): Promise<Opportunity[]> {
     ...(applications || []).map((x: any) => x.job_id).filter(Boolean),
   ]);
   const cities = [
-    ...(pref?.preferred_locations || []),
-    ...(pref?.relocation_locations || []),
-  ].map((x: unknown) => String(x).toLowerCase());
-  const radar = String(pref?.preferences?.radar_scope || "smart");
+    ...asStringArray(pref?.preferred_locations),
+    ...asStringArray(pref?.relocation_locations),
+  ].map((x) => x.toLowerCase());
+  const prefs = preferenceObject(pref?.preferences);
+  const radar = String(prefs.radar_scope || "smart");
   const minMatch = radar === "explore" ? 60 : radar === "focused" ? 75 : 70;
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 20);
