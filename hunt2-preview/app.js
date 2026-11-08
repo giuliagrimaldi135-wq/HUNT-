@@ -732,6 +732,7 @@ const RADAR_TYPES={
   strategy:["Strategia","Decisioni e direzione del brand"],
   product:["Prodotto","Collezioni, categorie e lanci"],
   sustainability:["Sostenibilità","Progetti e impegni aziendali"],
+  industry:["News dal mondo","Aggiornamenti dai media internazionali"],
   news:["Altre notizie","Contesto e aggiornamenti"]
 };
 function safeRadarUrl(raw){
@@ -740,13 +741,21 @@ function safeRadarUrl(raw){
 }
 async function renderWorldRadar(){
   currentView="radar";
-  const {data,error}=await supabase.from("company_signals")
-    .select("id,signal_type,title,summary,source_name,source_url,published_at,detected_at,relevance_score,companies(name)")
-    .order("published_at",{ascending:false,nullsFirst:false}).limit(120);
-  const all=(data||[]).filter(s=>Boolean(s.title)&&Boolean(s.source_url));
+  const [companyRes,globalRes]=await Promise.all([
+    supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,detected_at,relevance_score,companies(name)").order("published_at",{ascending:false,nullsFirst:false}).limit(120),
+    supabase.from("world_news_items").select("id,theme,title,summary,url,published_at,detected_at,relevance_score,world_news_sources(publisher,region,language)").order("published_at",{ascending:false,nullsFirst:false}).limit(350)
+  ]);
+  const global=(globalRes.data||[]).map(item=>({
+    id:item.id,signal_type:item.theme||"industry",title:item.title,summary:item.summary,source_name:item.world_news_sources?.publisher||"Fonte",source_url:item.url,published_at:item.published_at,relevance_score:item.relevance_score,companies:{name:item.world_news_sources?.publisher||"Fonte"},region:item.world_news_sources?.region||"global",kind:"industry"
+  }));
+  const corporate=(companyRes.data||[]).map(item=>({...item,region:"aziende",kind:"company"}));
+  const unique=new Map();
+  for(const item of [...global,...corporate]){if(item.title&&item.source_url&&!unique.has(item.source_url))unique.set(item.source_url,item)}
+  const all=[...unique.values()].sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0));
+  const error=(companyRes.error&&globalRes.error)?{message:"Fonti aziendali e internazionali non disponibili: "+globalRes.error.message}:null;
   const brands=[...new Set(all.map(s=>s.companies?.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"it"));
   const types=[...new Set(all.map(s=>s.signal_type||"news"))];
-  const rows=all.filter(s=>(radarSignalFilter==="all"||s.signal_type===radarSignalFilter)&&(radarCompanyFilter==="all"||s.companies?.name===radarCompanyFilter));
+  const rows=all.filter(s=>(radarSignalFilter==="all"||s.signal_type===radarSignalFilter)&&(radarCompanyFilter==="all"||s.companies?.name===radarCompanyFilter)).slice(0,130);
   const options=(items,chosen,labels)=>items.map(x=>`<option value="${esc(x)}" ${x===chosen?"selected":""}>${esc(labels?.[x]||x)}</option>`).join("");
   const cards=rows.map(s=>{
     const category=RADAR_TYPES[s.signal_type]||RADAR_TYPES.news;
@@ -754,7 +763,7 @@ async function renderWorldRadar(){
     const date=s.published_at?new Date(s.published_at):null;
     const dateText=date&&!isNaN(date.getTime())?date.toLocaleDateString("it-IT"):"Data da verificare";
     return `<article class="worldSignal">
-      <div class="worldSignalMeta"><span class="worldSignalBrand">${esc(s.companies?.name||s.source_name||"Azienda")}</span><span>${esc(category[0])}</span><span>${esc(dateText)}</span></div>
+      <div class="worldSignalMeta"><span class="worldSignalBrand">${esc(s.companies?.name||s.source_name||"Fonte")}</span><span>${esc(category[0])}</span><span>${esc(s.region==="aziende"?"Fonte aziendale":s.region||"Internazionale")}</span><span>${esc(dateText)}</span></div>
       <h2>${esc(s.title)}</h2>
       ${s.summary?`<p class="worldSignalSummary">${esc(s.summary)}</p>`:""}
       <div class="worldSignalBottom"><span>${esc(category[1])} · Fonte: ${esc(s.source_name||"Sito di origine")}</span>
@@ -765,16 +774,16 @@ async function renderWorldRadar(){
   app.innerHTML=shell(`<div class="worldRadar">
     <div class="eyebrow">Fashion & Luxury Intelligence</div>
     <h1>Fashion News</h1>
-    <p class="lead">Aperture, strategie, risultati, prodotto e cambiamenti aziendali: segnali verificabili da fonti pubbliche per capire dove si muove il settore.</p>
+    <p class="lead">Notizie dal fashion e dal lusso nel mondo: stampa internazionale, mercati e comunicazioni ufficiali dei brand. Ogni aggiornamento rimanda alla fonte originale.</p>
     <div class="worldRadarToolbar section">
-      <strong>${rows.length} segnali documentati</strong>
+      <strong>${all.length} notizie raccolte · ${rows.length} mostrate</strong>
       <div class="worldRadarFilters">
         <label>Argomento <select id="radarType"><option value="all">Tutti</option>${options(types,radarSignalFilter,Object.fromEntries(Object.entries(RADAR_TYPES).map(([k,v])=>[k,v[0]])))}</select></label>
-        <label>Azienda <select id="radarCompany"><option value="all">Tutte</option>${options(brands,radarCompanyFilter)}</select></label>
+        <label>Fonte / azienda <select id="radarCompany"><option value="all">Tutte</option>${options(brands,radarCompanyFilter)}</select></label>
       </div>
     </div>
     <section class="worldRadarList">${error?`<div class="msg bad">${esc(error.message)}</div>`:(cards||'<div class="emptyState"><h3>Nessun segnale verificato con questi filtri.</h3><p>Il radar continua a raccogliere e verificare nuove fonti. Le notizie non sono automaticamente offerte di lavoro.</p></div>')}</section>
-    <p class="worldRadarFoot">HUNT distingue le notizie aziendali dalle vacancy: un'apertura, un risultato finanziario o un cambio di leadership non provano da soli che l'azienda stia assumendo.</p>
+    <p class="worldRadarFoot">Fonti ufficiali e testate internazionali monitorate a rotazione. Le notizie non sono prove di assunzione: verifica sempre il link originale.</p>
   </div>`);
   bindNav();
   const type=document.getElementById("radarType"),company=document.getElementById("radarCompany");
