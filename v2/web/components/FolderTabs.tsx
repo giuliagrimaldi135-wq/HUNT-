@@ -6,7 +6,7 @@ import { useState } from "react";
 type Signal={id:string;type?:string;title:string;summary:string;sourceName?:string;sourceUrl?:string;publishedAt?:string};
 type RelatedJob={id:string;title:string;city?:string;age:string;match:number};
 type Props={
-  brand:string;fitEvidence:string[];coverLetter?:string;verificationLabel:string;freshness:string;
+  brand:string;fitSummary:string;coverLetter?:string;verificationLabel:string;freshness:string;
   repostCount:number;repostText?:string;signals:Signal[];relatedJobs:RelatedJob[];showInterview:boolean;
 };
 
@@ -22,11 +22,11 @@ export default function FolderTabs(props:Props){
   </div>
 
   {tab==="application"?<>
-   <section className="section featureEditorial">
+   <section className="section fitBrief">
     <div className="eyebrow">Perché questa posizione</div>
-    <h2>Perché HUNT te la consiglia</h2>
-    <div className="evidenceList">
-     {props.fitEvidence.length?props.fitEvidence.map((item,index)=><div className="evidenceRow" key={item}><span>{String(index+1).padStart(2,"0")}</span><p>{item}</p></div>):<p className="lead">HUNT non ha ancora abbastanza evidenze forti per motivare questa raccomandazione.</p>}
+    <div className="fitBriefGrid">
+      <h2>Perché vale la pena guardarla</h2>
+      <p>{props.fitSummary}</p>
     </div>
    </section>
 
