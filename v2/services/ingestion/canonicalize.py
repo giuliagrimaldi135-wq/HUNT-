@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 
 from .models import CanonicalJobDraft, RawJob
-from ..intelligence.dedupe import description_fingerprint, normalize_text
+from intelligence.dedupe import description_fingerprint, normalize_text
 
 
 ROLE_RULES: list[tuple[str, tuple[str, ...]]] = [
