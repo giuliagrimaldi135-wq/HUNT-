@@ -44,20 +44,38 @@ function focus(role:string){
  if(/product/.test(s))return ["product development and collection decisions","sviluppo prodotto e collezioni"];
  return ["the responsibilities outlined in this vacancy","le attività descritte nell'annuncio"];
 }
+
 function vacancyHighlights(text:string){
+ // Only surface tasks actually mentioned in the vacancy, in Italian or English.
  const out:[string,string][]=[];
  const rules:[RegExp,string,string][]=[
-  [/assortment|assortimento|product mix|range planning/i,"assortment planning","pianificazione dell'assortimento"],
-  [/sales reporting|sales analysis|kpi|sell.through|performance report/i,"sales and KPI analysis","analisi vendite e KPI"],
-  [/stock allocation|allocation|inventory allocation/i,"allocation and stock decisions","allocazione e gestione stock"],
-  [/buying|open.to.buy|supplier|vendor/i,"buying decisions","decisioni di acquisto"],
-  [/showroom|wholesale|order management|sales campaign/i,"wholesale and order processes","processi wholesale e gestione ordini"],
-  [/ecommerce|e-commerce|online|digital merchandising/i,"digital product performance","performance del prodotto online"],
-  [/store operations|retail operations|store network/i,"retail operations","operazioni della rete retail"],
-  [/forecast|demand planning|budget planning/i,"planning and forecasting","pianificazione e previsioni"]
+  [/assortment|assortimento|assortimenti|product mix|range planning|selezione prodotto|selezione dei prodotti/i,"assortment and product selection","selezione di prodotto e assortimento"],
+  [/sell[\s-]?in|sell[\s-]?out|sell[\s-]?through|sales analysis|sales reporting|analisi vendite|analisi delle vendite|best[\s-]?seller|slow[\s-]?mover|performance|kpi|report(?:ing)?/i,"commercial performance and sell-through analysis","analisi vendite e performance"],
+  [/stock|inventory|inventario|giacenz|allocation|allocazione|copertura prodotto/i,"inventory management and allocation","gestione stock e allocazione"],
+  [/buying|buyer|open[\s-]?to[\s-]?buy|budget.*acquist|fornitor|supplier|vendor/i,"buying and budget decisions","buying e gestione dei budget"],
+  [/showroom|wholesale|order (management|entry|process)|gestione ordini|inserimento ordini|campagna vendite/i,"wholesale and order management","gestione ordini e processi wholesale"],
+  [/ecommerce|e-commerce|online|digital merchandising|e[\s-]?shop/i,"digital merchandise performance","assortimento e performance online"],
+  [/store operations|store network|boutique|outlet|rete (dei )?negozi|rete (di )?boutique|aperture stagionali|procedure retail|retail operations/i,"store network coordination","coordinamento operativo della rete retail"],
+  [/forecast|demand planning|planning|financial plan|pianificazion|previsioni|stock planning/i,"planning and forecasting","pianificazione e forecasting"],
+  [/competitor|benchmark|concorren|ricerca (di )?mercato|market research|pricing research|ricerca (su|dei?) concorrenti/i,"competitive and product research","analisi competitor e prodotto"],
+  [/collection plan|collection database|line lists?|sample files?|sample management|sviluppo collezion|collezion/i,"collection and line-list management","pianificazione collezione e strumenti prodotto"],
+  [/product cod|codici prodotto|product data|dati prodotto|attributi prodotto/i,"product-data accuracy","qualità e gestione dei dati prodotto"]
  ];
  for(const [re,en,it] of rules){if(re.test(text))out.push([en,it])}
- return out.slice(0,2);
+ return out.slice(0,3);
+}
+function experienceBridge(cv:any,duty:[string,string]|null){
+ if(!duty)return null;
+ const topic=duty[1];
+ const evidences=[...list(cv.experience).flatMap((x:any)=>list(x.evidence)),...list(cv.projects).flatMap((x:any)=>list(x.evidence))].map(x=>str(x).toLowerCase());
+ const includes=(regex:RegExp)=>evidences.some(t=>regex.test(t));
+ if(/assortimento|collezione|prodotto/.test(topic)&&includes(/merchandis|capsule|assortment|collection|product|costing/i))return "i progetti di assortimento e collezione";
+ if(/performance|forecast|stock|budget/.test(topic)&&includes(/kpi|budget|excel|performance|planning|costing|sales|order/i))return "l'analisi di budget, KPI e pianificazione";
+ if(/competitor/.test(topic)&&includes(/market|research|positioning|strategy|merchandis|capsule/i))return "l'analisi di posizionamento e prodotto";
+ if(/ordini|wholesale/.test(topic)&&includes(/order|sales campaign|showroom/i))return "il lavoro operativo su ordini e campagna vendite";
+ if(/rete retail|operativo/.test(topic)&&includes(/retail|showroom|order|client|store/i))return "l'esperienza operativa a contatto con i processi commerciali";
+ if(/dati prodotto/.test(topic)&&includes(/product coding|codes|codici|data|excel/i))return "la gestione di codici prodotto e dati";
+ return null;
 }
 
 function letter(args:any){
@@ -126,7 +144,9 @@ Deno.serve(async(req)=>{
    let overlaps=0;for(const word of roleWords)if(evidence.includes(word))overlaps++;
    return (targets.includes(role)?65:0)+Math.min(overlaps*3,21)+strength(x)*12+(x.is_default?4:0);
  };
- chosen=chosen||[...cvs].sort((a,b)=>rankCv(b)-rankCv(a))[0];
+ // An unparsed PDF may have role tags but cannot outrank a CV with confirmed evidence.
+ const readyCv=cvs.filter(x=>strength(x)>0);
+ chosen=chosen||[...readyCv].sort((a,b)=>rankCv(b)-rankCv(a))[0]||[...cvs].sort((a,b)=>rankCv(b)-rankCv(a))[0];
  if(!chosen)return reply({error:"Carica un CV o completa il profilo professionale."},422);
  const cv=chosen.parsed_profile||{};
  const exp=list(cv.experience),projects=list(cv.projects),education=list(cv.education);
@@ -154,23 +174,33 @@ Deno.serve(async(req)=>{
  const area=focus(str(job.role_family||role));
  const specificDuties=vacancyHighlights(description);
  const selectedDuty=specificDuties[0]||null;
- const valueAngle=selectedDuty
-   ? "Questa posizione riguarda "+selectedDuty[1]+"."
-   : "Controlla le attività concrete riportate nell'annuncio originale prima di decidere.";
  const relevantEvidence=unique.filter(x=>x.kind!=="tool").slice(0,2);
- const proofLine=relevantEvidence.map(x=>x.origin+" ("+x.value+")").join("; ");
- const opportunityCost=!blocked&&selectedDuty
-   ? "Se vuoi sviluppare esperienza in "+selectedDuty[1]+", questa posizione può meritare priorità rispetto a ruoli meno vicini al tuo obiettivo."
-   : "";
- const sharpQuestion=selectedDuty?
-   "Quali indicatori utilizzate per valutare il successo delle attività di "+selectedDuty[1]+" nei primi mesi?"
-   :"Quali sarebbero le due responsabilità più importanti nei primi tre mesi?";
- const valueNarrative=[valueAngle,proofLine?"Il punto da dimostrare è il collegamento con "+proofLine+".":"",opportunityCost].filter(Boolean).join(" ");
+ const bridge=experienceBridge(cv,selectedDuty);
+ const vacancyIsThin=description.length<100;
+ const detail=selectedDuty?selectedDuty[1]:null;
+ // Never display a concatenation of raw CV bullets as a reason to apply.
+ const valueAngle=detail?("L'annuncio prevede "+detail+"."):"";
+ const directTarget=list(cv.target_role_families).some((r:any)=>String(r).toLowerCase()===String(job.role_family).toLowerCase());
+ const bridgeText=bridge
+   ?" Qui puoi trasformare "+bridge+" in un contributo concreto su attività svolte all'interno di un team."
+   :detail?" È utile soltanto se vuoi acquisire esperienza pratica proprio su queste responsabilità.":"";
+ const opportunityCost=!blocked&&detail&&!vacancyIsThin
+   ?(directTarget
+      ?" Scartarla senza approfondire significherebbe non valutare un'esperienza coerente con l'area professionale che hai selezionato."
+      :" Valuta se queste attività ti portano più vicino al tuo prossimo obiettivo rispetto alle altre offerte.")
+   :"";
+ const weakText=description.length<90
+   ?"La descrizione disponibile è troppo breve per motivare una candidatura: verifica le attività e i requisiti nell'annuncio ufficiale."
+   :"La descrizione non permette di identificare con sicurezza attività specifiche pertinenti: consulta l'annuncio ufficiale prima di darle priorità.";
+ const sharpQuestion=selectedDuty
+   ?"Quali risultati vi aspettate da chi supporta "+selectedDuty[1]+" durante i primi mesi?"
+   :"Quali responsabilità operative e risultati specifici avrà la persona nei primi tre mesi?";
+ const valueNarrative=detail?(valueAngle+bridgeText+opportunityCost):weakText;
  const recommended=unique.map(x=>x.origin+": "+x.value);
  const why=blocked?"Non consigliata senza chiarimenti: "+gaps.join(" "):valueNarrative;
  const edu=education[0]||{};
  const body=blocked?null:letter({language,name,role,company,school:short(edu.school,100),program:short(edu.program,100),experience:exp[0],projects,tools:list(cv.tools).map(x=>short(x,100)),areaEn:area[0],areaIt:area[1],highlights:vacancyHighlights(description),interests:list(personalR.data?.interest_areas)});
- const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?selectedDuty[1]+" × "+(relevantEvidence[0]?.origin||"CV da approfondire"):str(job.role_family||role),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v3",updated_at:new Date().toISOString()};
+ const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v4",updated_at:new Date().toISOString()};
  const {error:saveError}=await db.from("user_job_dossiers").upsert(record,{onConflict:"user_id,job_id"});
  if(saveError)return reply({error:"Impossibile salvare la preparazione della candidatura.",detail:saveError.message},500);
  return reply({ok:true,blocked,cv_name:chosen.name,job_id:job.id,why_you:why,gaps:record.gaps,letter_created:Boolean(body),language});
