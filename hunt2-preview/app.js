@@ -547,23 +547,21 @@ function interestPhrase(personalization){
  return (personalization?.interest_areas||[]).map(x=>map[x]).filter(Boolean).slice(0,3);
 }
 
-function fitEvidence(row){
+function fitSummary(row){
  const reasons=Array.isArray(row.reasons)?row.reasons:[];
- const out=[];
- for(const reason of reasons){
-   if(/città|milano|livello|stage coerente/i.test(reason))continue;
-   if(reason.startsWith("Target professionale diretto:")){
-     const family=reason.split(":").slice(1).join(":").trim();
-     out.push(family+" è una delle aree professionali che hai scelto come obiettivo.");
-     continue;
-   }
-   if(/ruolo adiacente/i.test(reason)){
-     out.push("Non è il tuo target principale, ma le responsabilità sono abbastanza vicine alle aree che hai scelto da meritare attenzione.");
-     continue;
-   }
-   out.push(reason.endsWith(".")?reason:reason+".");
+ const family=row.job.role_family||"questa area";
+ const strong=reasons.filter(x=>!/città|milano|livello|stage coerente/i.test(x));
+ const detail=strong.filter(x=>!x.startsWith("Target professionale diretto:")&&!/ruolo adiacente/i.test(x));
+ let opener="";
+ if(strong.some(x=>x.startsWith("Target professionale diretto:"))){
+   opener=`È un ruolo ${family} che rientra direttamente nelle aree che hai scelto come obiettivo.`;
+ }else if(strong.some(x=>/ruolo adiacente/i.test(x))){
+   opener=`Non è il tuo target principale, ma è abbastanza vicino alle aree che hai scelto da meritare attenzione.`;
+ }else{
+   opener=`HUNT ha trovato una coerenza concreta tra questa posizione e il tuo radar professionale.`;
  }
- return [...new Set(out)].slice(0,4);
+ const body=detail.slice(0,2).map(x=>x.replace(/^La vacancy /i,"La posizione ").replace(/^Il lavoro /i,"Il ruolo ")).join(" ");
+ return [opener,body].filter(Boolean).join(" ");
 }
 
 function hasParsedCv(row){
@@ -594,7 +592,7 @@ async function renderOpportunityFolder(jobId){
  const brand=job.companies?.name||"Brand";
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
- const evidence=fitEvidence(row);
+ const fit=fitSummary(row);
  const cvReady=hasParsedCv(row);
  const repostCount=(row.reposts||[]).length;
  const firstSeen=job.published_at?new Date(job.published_at):null;
@@ -634,10 +632,12 @@ async function renderOpportunityFolder(jobId){
  </div>
 
  <div data-folder-panel="application">
-   <section class="section featureEditorial">
+   <section class="section fitBrief">
     <div class="eyebrow">Perché questa posizione</div>
-    <h2>Perché HUNT te la consiglia</h2>
-    <div class="evidenceList">${evidence.length?evidence.map((x,i)=>`<div class="evidenceRow"><span>0${i+1}</span><p>${esc(x)}</p></div>`).join(""):'<p class="lead">HUNT non ha ancora abbastanza evidenze forti per motivare questa raccomandazione.</p>'}</div>
+    <div class="fitBriefGrid">
+      <h2>Perché vale la pena guardarla</h2>
+      <p>${esc(fit)}</p>
+    </div>
    </section>
 
    ${row.dossier?.ready_to_send_message?`<section class="section coverLetterReady">
