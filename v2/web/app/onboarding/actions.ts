@@ -36,14 +36,24 @@ export async function saveOnboarding(formData: FormData) {
   }
 
   const primaryRoles = values(formData, "primary_roles");
-  const secondaryRoles = values(formData, "secondary_roles");
-  const excludedRoles = values(formData, "excluded_roles");
+  const secondaryRoles: string[] = [];
+  const excludedRoles: string[] = [];
+  const firstName = String(formData.get("first_name") || "").trim();
+  const lastName = String(formData.get("last_name") || "").trim();
+  const radarScope = String(formData.get("radar_scope") || "smart");
   const preferredLocations = values(formData, "preferred_locations");
   const relocationLocations = values(formData, "relocation_locations");
 
+  if (!firstName || !lastName || !primaryRoles.length) {
+    redirect("/onboarding?error=Completa%20nome%2C%20cognome%20e%20almeno%20un%20obiettivo");
+  }
+
   const profileResult = await supabase.from("profiles").upsert({
     user_id: userId,
-    seniority: String(formData.get("seniority") || "entry"),
+    first_name: firstName,
+    last_name: lastName,
+    display_name: firstName + " " + lastName,
+    seniority: String(formData.get("seniority") || "entry_level"),
     onboarding_completed: true,
     updated_at: new Date().toISOString(),
   });
@@ -63,7 +73,7 @@ export async function saveOnboarding(formData: FormData) {
     preferred_brands: [],
     excluded_brands: [],
     industries: ["fashion", "luxury"],
-    preferences: {},
+    preferences: { radar_scope: radarScope },
     updated_at: new Date().toISOString(),
   });
 
