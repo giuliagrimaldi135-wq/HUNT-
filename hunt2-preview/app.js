@@ -10,6 +10,7 @@ let selectedJobId=null;
 let opportunitySort="priority";
 let radarSignalFilter="all";
 let radarCompanyFilter="all";
+let radarShowRead=false;
 const pendingDossiers=new Set();
 
 const macroAreas=[
@@ -843,9 +844,23 @@ async function renderWorldRadar(){
   for(const item of [...global,...corporate]){if(item.title&&item.source_url&&!unique.has(item.source_url))unique.set(item.source_url,item)}
   const all=[...unique.values()].sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0));
   const error=(companyRes.error&&globalRes.error)?{message:"Fonti aziendali e internazionali non disponibili: "+globalRes.error.message}:null;
+  // Per-user read state is stored in Supabase, not localStorage. Read only IDs shown by this feed.
+  const readQueries=[];
+  for(let i=0;i<all.length;i+=100){
+    readQueries.push(supabase.from("user_news_reads")
+      .select("source_kind,item_id")
+      .eq("user_id",currentUser.id)
+      .in("item_id",all.slice(i,i+100).map(x=>x.id)));
+  }
+  const readResponses=await Promise.all(readQueries);
+  const readError=readResponses.find(x=>x.error)?.error||null;
+  const readIds=new Set(readResponses.flatMap(x=>x.data||[]).map(x=>x.source_kind+":"+x.item_id));
+  const wasRead=item=>readIds.has(item.kind+":"+item.id);
+  const unread=all.filter(item=>!wasRead(item));
+  const available=radarShowRead?all.filter(wasRead):unread;
   const brands=[...new Set(all.map(s=>s.companies?.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"it"));
   const types=[...new Set(all.map(s=>s.signal_type||"news"))];
-  const rows=all.filter(s=>(radarSignalFilter==="all"||s.signal_type===radarSignalFilter)&&(radarCompanyFilter==="all"||s.companies?.name===radarCompanyFilter)).slice(0,130);
+  const rows=available.filter(s=>(radarSignalFilter==="all"||s.signal_type===radarSignalFilter)&&(radarCompanyFilter==="all"||s.companies?.name===radarCompanyFilter)).slice(0,130);
   const options=(items,chosen,labels)=>items.map(x=>`<option value="${esc(x)}" ${x===chosen?"selected":""}>${esc(labels?.[x]||x)}</option>`).join("");
   const cards=rows.map(s=>{
     const category=RADAR_TYPES[s.signal_type]||RADAR_TYPES.news;
@@ -857,7 +872,10 @@ async function renderWorldRadar(){
       <h2>${esc(s.title)}</h2>
       ${s.summary?`<p class="worldSignalSummary">${esc(s.summary)}</p>`:""}
       <div class="worldSignalBottom"><span>${esc(category[1])} · Fonte: ${esc(s.source_name||"Sito di origine")}</span>
-       ${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>`:""}
+        <div class="worldSignalActions">
+          ${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>`:""}
+          <button type="button" class="worldReadAction" data-news-action="${radarShowRead?"unread":"read"}" data-news-kind="${esc(s.kind)}" data-news-id="${esc(s.id)}">${radarShowRead?"Ripristina":"✓ Letto"}</button>
+        </div>
       </div>
     </article>`;
   }).join("");
@@ -866,19 +884,39 @@ async function renderWorldRadar(){
     <h1>Fashion News</h1>
     <p class="lead">Notizie dal fashion e dal lusso nel mondo: stampa internazionale, mercati e comunicazioni ufficiali dei brand. Ogni aggiornamento rimanda alla fonte originale.</p>
     <div class="worldRadarToolbar section">
-      <strong>${all.length} notizie raccolte · ${rows.length} mostrate</strong>
+      <strong>${unread.length} da leggere · ${rows.length} ${radarShowRead?"lette":"mostrate"}</strong>
       <div class="worldRadarFilters">
         <label>Argomento <select id="radarType"><option value="all">Tutti</option>${options(types,radarSignalFilter,Object.fromEntries(Object.entries(RADAR_TYPES).map(([k,v])=>[k,v[0]])))}</select></label>
         <label>Fonte / azienda <select id="radarCompany"><option value="all">Tutte</option>${options(brands,radarCompanyFilter)}</select></label>
+        <button type="button" id="radarReadToggle" class="worldReadToggle">${radarShowRead?"← Torna alle notizie da leggere":"Archivio lette"}</button>
       </div>
     </div>
-    <section class="worldRadarList">${error?`<div class="msg bad">${esc(error.message)}</div>`:(cards||'<div class="emptyState"><h3>Nessun segnale verificato con questi filtri.</h3><p>Il radar continua a raccogliere e verificare nuove fonti. Le notizie non sono automaticamente offerte di lavoro.</p></div>')}</section>
+    ${readError?`<p id="radarReadError" class="worldReadError">Non riesco a caricare lo stato di lettura: ${esc(readError.message)}</p>`:`<p id="radarReadError" class="worldReadError" role="alert" hidden></p>`}
+    <section class="worldRadarList">${error?`<div class="msg bad">${esc(error.message)}</div>`:(cards||`<div class="emptyState"><h3>${radarShowRead?"Nessuna notizia letta con questi filtri.":"Hai letto tutte le notizie disponibili con questi filtri."}</h3><p>${radarShowRead?"Torna alle novità da leggere oppure cambia i filtri.":"Le nuove notizie appariranno qui quando HUNT le raccoglierà."}</p></div>`)}</section>
     <p class="worldRadarFoot">Fonti ufficiali e testate internazionali monitorate a rotazione. Le notizie non sono prove di assunzione: verifica sempre il link originale.</p>
   </div>`);
   bindNav();
   const type=document.getElementById("radarType"),company=document.getElementById("radarCompany");
   if(type)type.onchange=()=>{radarSignalFilter=type.value;renderWorldRadar()};
   if(company)company.onchange=()=>{radarCompanyFilter=company.value;renderWorldRadar()};
+  const toggle=document.getElementById("radarReadToggle");
+  if(toggle)toggle.onclick=()=>{radarShowRead=!radarShowRead;renderWorldRadar()};
+  document.querySelectorAll("[data-news-action]").forEach(button=>button.onclick=async()=>{
+    if(readError)return;
+    const kind=button.dataset.newsKind,id=button.dataset.newsId,action=button.dataset.newsAction;
+    if(!["industry","company"].includes(kind)||!/^[0-9a-f-]{36}$/i.test(id))return;
+    const original=button.textContent;
+    button.disabled=true;button.textContent="Salvataggio…";
+    const result=action==="read"
+      ?await supabase.from("user_news_reads").upsert({user_id:currentUser.id,source_kind:kind,item_id:id},{onConflict:"user_id,source_kind,item_id",ignoreDuplicates:true})
+      :await supabase.from("user_news_reads").delete().eq("user_id",currentUser.id).eq("source_kind",kind).eq("item_id",id);
+    if(result.error){
+      const notice=document.getElementById("radarReadError");
+      if(notice){notice.hidden=false;notice.textContent="Impossibile aggiornare la notizia: "+result.error.message}
+      button.disabled=false;button.textContent=original;return;
+    }
+    await renderWorldRadar();
+  });
 }
 
 async function renderProfile(){
