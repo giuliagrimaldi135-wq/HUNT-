@@ -1,17 +1,59 @@
 import { saveOnboarding } from "./actions";
 
-const primaryRoles = [
-  "Retail Merchandising",
-  "Buying",
-  "Planning & Allocation",
-  "Product",
-  "Wholesale",
-  "E-commerce",
-  "Retail Performance",
-  "Visual Merchandising",
-  "Marketing",
-  "PR & Communications",
-];
+const roleGroups = [
+  ["Merchandising & Buying", [
+    "Retail Merchandising","Product / Collection Merchandising","E-commerce Merchandising",
+    "Buying","Buying Operations","Merchandising Planning","Planning & Allocation",
+    "Allocation","Retail Planning","Demand Planning",
+  ]],
+  ["Retail & Client", [
+    "Retail Performance","Retail Operations","Retail Excellence","Store Operations",
+    "Store Planning","CRM & Clienteling","Client Experience","Visual Merchandising",
+    "Area / Retail Management",
+  ]],
+  ["Product & Collection", [
+    "Product Management","Product Development","Collection Development","Production",
+    "Production Planning","Sourcing","Materials / Fabrics","Quality Control",
+  ]],
+  ["Wholesale & Commercial", [
+    "Wholesale","Showroom / Sales Campaign","Key Account Management","Business Development",
+    "Commercial Planning","Trade Marketing","Sales Operations",
+  ]],
+  ["E-commerce & Digital", [
+    "E-commerce","Omnichannel","Marketplace","Digital Product","CRM","Digital Marketing",
+    "Performance Marketing","Growth","Digital Analytics",
+  ]],
+  ["Brand, Marketing & Communications", [
+    "Marketing","Brand Management","PR & Communications","Events","Influencer Marketing",
+    "Content & Social Media","Media","Partnerships",
+  ]],
+  ["Supply Chain & Operations", [
+    "Supply Chain","Logistics","Inventory / Stock Management","Procurement","Purchasing",
+    "Operations","Distribution","Customer Operations",
+  ]],
+  ["Creative & Design", [
+    "Fashion Design","Accessories Design","Footwear Design","Graphic Design","Art Direction",
+    "Styling","Content Production","Store Design / Architecture",
+  ]],
+  ["Corporate & Strategy", [
+    "Strategy","Project Management","Data / BI / Analytics","Finance","HR / Talent Acquisition",
+    "Legal","Sustainability / ESG","IT / Technology",
+  ]],
+] as const;
+
+const seniorityLevels = [
+  ["internship", "Internship / Stage"],
+  ["trainee", "Trainee / Graduate Program"],
+  ["entry_level", "Entry Level"],
+  ["assistant", "Assistant"],
+  ["junior", "Junior"],
+  ["associate", "Associate"],
+  ["coordinator_specialist", "Coordinator / Specialist"],
+  ["mid_level", "Mid-level"],
+  ["manager", "Manager"],
+  ["senior_manager", "Senior Manager"],
+  ["head_director", "Head / Director"],
+] as const;
 
 export default async function OnboardingPage({
   searchParams,
@@ -22,49 +64,69 @@ export default async function OnboardingPage({
 
   return (
     <>
-      <div className="eyebrow">3 minuti · Personalizzazione</div>
+      <div className="eyebrow">Personalizzazione</div>
       <h1>Costruiamo il tuo HUNT.</h1>
       <p className="lead">
-        Non ti chiediamo di compilare un altro CV. Ci servono solo le informazioni che cambiano davvero ciò che HUNT cerca e ordina per te.
+        Tu ci dici dove vuoi andare. HUNT può allargare il radar senza perdere di vista il tuo obiettivo.
       </p>
 
       <form action={saveOnboarding} className="section stack">
         {error ? <p className="formError">{error}</p> : null}
 
         <section className="card">
-          <div className="fieldTitle">1 · Direzione principale</div>
+          <div className="fieldTitle">1 · Chi sei</div>
+          <div className="twoCol">
+            <label>
+              <div className="fieldTitle">Nome</div>
+              <input className="input" name="first_name" required />
+            </label>
+            <label>
+              <div className="fieldTitle">Cognome</div>
+              <input className="input" name="last_name" required />
+            </label>
+          </div>
+          <label style={{ display: "block", marginTop: 14 }}>
+            <div className="fieldTitle">A che livello sei oggi?</div>
+            <select className="input" name="seniority" defaultValue="entry_level">
+              {seniorityLevels.map(([value,label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </label>
+          <p className="lead">Usiamo livelli simili a quelli che compaiono negli annunci; HUNT considera comunque il titolo reale della singola vacancy.</p>
+        </section>
+
+        <section>
+          <div className="fieldTitle">2 · Obiettivo professionale</div>
           <h2>Cosa vuoi davvero fare?</h2>
-          <p className="lead">Scegli uno o più target principali. Questi pesano più di tutto il resto.</p>
-          <div className="choiceGrid">
-            {primaryRoles.map((role) => (
-              <label className="choice" key={role}>
-                <input type="checkbox" name="primary_roles" value={role} />
-                <span>{role}</span>
-              </label>
+          <p className="lead">Scegli una o più aree. Sono raggruppate per funzione così non devi scorrere una lista infinita.</p>
+          <div className="stack">
+            {roleGroups.map(([group, roles], index) => (
+              <details className="card" key={group} open={index < 2}>
+                <summary className="sectionHead" style={{ cursor: "pointer", marginBottom: 0 }}>
+                  <strong>{group}</strong><span className="source">{roles.length} aree</span>
+                </summary>
+                <div className="choiceGrid" style={{ marginTop: 14 }}>
+                  {roles.map((role) => (
+                    <label className="choice" key={role}>
+                      <input type="checkbox" name="primary_roles" value={role} />
+                      <span>{role}</span>
+                    </label>
+                  ))}
+                </div>
+              </details>
             ))}
           </div>
         </section>
 
         <section className="card">
-          <div className="fieldTitle">2 · Ruoli adiacenti</div>
-          <h2>Cosa prenderesti in considerazione?</h2>
-          <div className="choiceGrid">
-            {primaryRoles.map((role) => (
-              <label className="choice" key={role}>
-                <input type="checkbox" name="secondary_roles" value={role} />
-                <span>{role}</span>
-              </label>
-            ))}
-          </div>
-        </section>
-
-        <section className="card">
-          <div className="fieldTitle">3 · Cosa non vuoi</div>
-          <h2>Fermiamo il rumore prima che arrivi.</h2>
-          <div className="choiceGrid">
-            <label className="choice"><input type="checkbox" name="excluded_roles" value="Sales Associate" /><span>Sales Associate puro</span></label>
-            <label className="choice"><input type="checkbox" name="excluded_roles" value="Store Operations" /><span>Store Operations puro</span></label>
-            <label className="choice"><input type="checkbox" name="excluded_roles" value="Data / BI" /><span>Data / BI puro</span></label>
+          <div className="fieldTitle">3 · Ampiezza del radar</div>
+          <h2>Quanto vuoi che HUNT allarghi gli orizzonti?</h2>
+          <p className="lead">Non devi scegliere tu i “ruoli adiacenti”: HUNT può farlo automaticamente e spiegarti perché un ruolo alternativo può avere senso.</p>
+          <div className="stack">
+            <label className="choice"><input type="radio" name="radar_scope" value="focused"/><span><strong>Solo i miei target</strong> — quasi esclusivamente i ruoli che scelgo.</span></label>
+            <label className="choice"><input type="radio" name="radar_scope" value="smart" defaultChecked/><span><strong>Allarga in modo intelligente</strong> — anche ruoli vicini che possono essere un buon ponte.</span></label>
+            <label className="choice"><input type="radio" name="radar_scope" value="explore"/><span><strong>Fammi esplorare</strong> — alternative più ampie se il profilo è forte, sempre con spiegazione.</span></label>
           </div>
         </section>
 
@@ -90,23 +152,12 @@ export default async function OnboardingPage({
         </section>
 
         <section className="card">
-          <div className="fieldTitle">5 · Livello e contratto</div>
-          <div className="twoCol">
-            <label>
-              <div className="fieldTitle">Seniority</div>
-              <select className="input" name="seniority" defaultValue="entry">
-                <option value="entry">Internship / Entry level</option>
-                <option value="early_career">Junior / Early career</option>
-                <option value="experienced">Experienced</option>
-              </select>
-            </label>
-            <div>
-              <div className="fieldTitle">Contratti</div>
-              <div className="choiceGrid oneCol">
-                <label className="choice"><input type="checkbox" name="employment_types" value="internship" defaultChecked/><span>Stage / Internship</span></label>
-                <label className="choice"><input type="checkbox" name="employment_types" value="full_time" defaultChecked/><span>Full-time junior</span></label>
-              </div>
-            </div>
+          <div className="fieldTitle">5 · Contratto</div>
+          <div className="choiceGrid">
+            <label className="choice"><input type="checkbox" name="employment_types" value="internship" defaultChecked/><span>Stage / Internship</span></label>
+            <label className="choice"><input type="checkbox" name="employment_types" value="graduate_program"/><span>Graduate / Trainee Program</span></label>
+            <label className="choice"><input type="checkbox" name="employment_types" value="full_time" defaultChecked/><span>Full-time</span></label>
+            <label className="choice"><input type="checkbox" name="employment_types" value="fixed_term"/><span>Tempo determinato</span></label>
           </div>
         </section>
 
