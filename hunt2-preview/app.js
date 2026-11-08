@@ -483,6 +483,7 @@ function opportunityCard(row){
 }
 
 async function saveApplication(jobId,status){
+ if(status==="preparing")return openOpportunityFolder(jobId);
  const detail=await getOpportunityDetail(jobId);
  if(!detail)return;
  const now=new Date().toISOString();
@@ -522,7 +523,7 @@ function openOpportunityFolder(jobId,push=true){
 }
 
 function bindOpportunityActions(){
- document.querySelectorAll("[data-prepare]").forEach(b=>b.onclick=()=>b.dataset.resume==="true"?openOpportunityFolder(b.dataset.prepare):saveApplication(b.dataset.prepare,"preparing"));
+ document.querySelectorAll("[data-prepare]").forEach(b=>b.onclick=()=>openOpportunityFolder(b.dataset.prepare));
  document.querySelectorAll("[data-applied]").forEach(b=>b.onclick=()=>saveApplication(b.dataset.applied,"applied"));
  document.querySelectorAll("[data-ignore]").forEach(b=>b.onclick=()=>ignoreJob(b.dataset.ignore));
  document.querySelectorAll("[data-related-job]").forEach(b=>b.onclick=()=>openOpportunityFolder(b.dataset.relatedJob));
@@ -905,7 +906,7 @@ function statusLabel(status){
 
 async function renderApplications(){
  currentView="applications";
- const {data:applications,error}=await supabase.from("applications").select("*").eq("user_id",currentUser.id).order("updated_at",{ascending:false});
+ const {data:applications,error}=await supabase.from("applications").select("*").eq("user_id",currentUser.id).in("status",["applied","interview","offer","accepted","rejected","withdrawn","declined"]).order("updated_at",{ascending:false});
  const ids=(applications||[]).map(x=>x.job_id).filter(Boolean);
  let jobs=[];
  if(ids.length){
@@ -918,7 +919,7 @@ async function renderApplications(){
    return `<article class="card applicationCard"><div><div class="eyebrow">${esc(job?.companies?.name||"Candidatura")}</div><h3>${esc(job?.canonical_title||"Opportunità")}</h3><div class="jobMeta">${esc(job?.city||"")} · ${esc(statusLabel(item.status))}</div></div><div class="actions">${item.job_id?`<button class="btn primary" data-app-folder="${item.job_id}">Apri folder</button>`:""}</div></article>`;
  }).join("");
  app.innerHTML=shell(`<div class="eyebrow">Il tuo percorso</div><h1>Candidature</h1>
- <p class="lead">Da preparare → Candidata → Colloquio → Follow-up → Rifiutata / Offerta.</p>
+ <p class="lead">Qui trovi soltanto le posizioni per cui hai indicato di esserti candidata. I dossier in preparazione restano in Opportunità.</p>
  <section class="section stack">${error?`<div class="msg bad">${esc(error.message)}</div>`:(cards||'<div class="card">Nessuna candidatura ancora.</div>')}</section>`);
  bindNav();
  document.querySelectorAll("[data-app-folder]").forEach(b=>b.onclick=()=>renderOpportunityFolder(b.dataset.appFolder));
