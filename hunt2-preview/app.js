@@ -42,15 +42,6 @@ const seniorityLevels=[
   ["senior_manager","Senior Manager"],
   ["head_director","Head / Director"]
 ];
-const countries=[
-  "Italia","Francia","Regno Unito","Svizzera","Spagna","Germania","Paesi Bassi","Belgio","Austria","Portogallo",
-  "Irlanda","Lussemburgo","Monaco","Danimarca","Svezia","Norvegia","Finlandia","Islanda","Grecia","Polonia",
-  "Repubblica Ceca","Ungheria","Romania","Croazia","Slovenia","Slovacchia","Estonia","Lettonia","Lituania",
-  "Stati Uniti","Canada","Messico","Brasile","Argentina","Cile","Colombia",
-  "Emirati Arabi Uniti","Qatar","Arabia Saudita","Israele","Turchia",
-  "Giappone","Corea del Sud","Singapore","Hong Kong","Cina","India","Thailandia","Vietnam","Indonesia","Malesia",
-  "Australia","Nuova Zelanda","Sudafrica","Marocco","Egitto","Altro"
-];
 const radarScopes=[
   ["focused","Solo i miei target","Mostrami quasi esclusivamente i ruoli che scelgo come obiettivo."],
   ["smart","Allarga in modo intelligente","Consigliami anche ruoli vicini che possono essere un buon ponte verso il mio obiettivo."],
@@ -131,21 +122,15 @@ function onboardingView(profile){
   <section class="card"><div class="eyebrow">3 · Ampiezza del radar</div><h2>Quanto vuoi che HUNT allarghi gli orizzonti?</h2><p class="lead">Non ti chiediamo di conoscere in anticipo tutti i “ruoli adiacenti”. Decidi solo quanto vuoi esplorare; sarà HUNT a proporre alternative sensate e a spiegarti il collegamento.</p><div class="radarGrid">${radarHtml}</div></section>
 
   <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vuoi lavorare?</h2>
-   <div class="grid2" style="margin-top:12px">
-    <label><div class="eyebrow">Paese</div><select class="input" id="preferredCountry"><option value="">Seleziona un paese</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
-    <label><div class="eyebrow">Città</div><input class="input" id="preferredCity" placeholder="Es. Milano"></label>
-   </div>
-   <div class="actions"><button class="btn" type="button" id="addPreferredLocation">+ Aggiungi località</button></div>
+   <label><div class="eyebrow">Città</div><input class="input" id="preferredCity" placeholder="Es. Milano"></label>
+   <div class="actions"><button class="btn" type="button" id="addPreferredLocation">+ Aggiungi città</button></div>
    <div id="preferredLocationsList" class="tagList"></div>
 
    <div style="height:1px;background:var(--line);margin:20px 0"></div>
 
    <div class="eyebrow">Dove ti trasferiresti?</div>
-   <div class="grid2" style="margin-top:12px">
-    <label><div class="eyebrow">Paese</div><select class="input" id="relocationCountry"><option value="">Seleziona un paese</option>${countries.map(country=>`<option value="${esc(country)}">${esc(country)}</option>`).join("")}</select></label>
-    <label><div class="eyebrow">Città</div><input class="input" id="relocationCity" placeholder="Es. Parigi"></label>
-   </div>
-   <div class="actions"><button class="btn" type="button" id="addRelocationLocation">+ Aggiungi località</button></div>
+   <label style="display:block;margin-top:12px"><div class="eyebrow">Città</div><input class="input" id="relocationCity" placeholder="Es. Parigi"></label>
+   <div class="actions"><button class="btn" type="button" id="addRelocationLocation">+ Aggiungi città</button></div>
    <div id="relocationLocationsList" class="tagList"></div>
   </section>
   <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx"></label></div></section>
@@ -154,18 +139,15 @@ function onboardingView(profile){
  const preferredLocations=[];
  const relocationLocations=[];
  const renderLocationTags=(id,items,type)=>{document.getElementById(id).innerHTML=items.map((item,index)=>`<span class="locationTag">${esc(item)}<button type="button" data-remove-location="${type}" data-index="${index}" aria-label="Rimuovi">×</button></span>`).join("")};
- const addLocation=(countryId,cityId,items,listId,type)=>{
-   const country=document.getElementById(countryId).value;
+ const addLocation=(cityId,items,listId,type)=>{
    const city=document.getElementById(cityId).value.trim();
-   if(!country&&!city)return;
-   const location=[city,country].filter(Boolean).join(", ");
-   if(!items.includes(location))items.push(location);
-   document.getElementById(countryId).value="";
+   if(!city)return;
+   if(!items.includes(city))items.push(city);
    document.getElementById(cityId).value="";
    renderLocationTags(listId,items,type);
  };
- document.getElementById("addPreferredLocation").onclick=()=>addLocation("preferredCountry","preferredCity",preferredLocations,"preferredLocationsList","preferred");
- document.getElementById("addRelocationLocation").onclick=()=>addLocation("relocationCountry","relocationCity",relocationLocations,"relocationLocationsList","relocation");
+ document.getElementById("addPreferredLocation").onclick=()=>addLocation("preferredCity",preferredLocations,"preferredLocationsList","preferred");
+ document.getElementById("addRelocationLocation").onclick=()=>addLocation("relocationCity",relocationLocations,"relocationLocationsList","relocation");
  document.getElementById("onboarding").onclick=(event)=>{
    const btn=event.target.closest("[data-remove-location]");
    if(!btn)return;
