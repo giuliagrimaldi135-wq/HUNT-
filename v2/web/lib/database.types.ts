@@ -534,7 +534,9 @@ export type Database = {
           display_name: string | null
           education: Json
           experience: Json
+          first_name: string | null
           languages: Json
+          last_name: string | null
           onboarding_completed: boolean
           profile_summary: string | null
           seniority: string | null
@@ -548,7 +550,9 @@ export type Database = {
           display_name?: string | null
           education?: Json
           experience?: Json
+          first_name?: string | null
           languages?: Json
+          last_name?: string | null
           onboarding_completed?: boolean
           profile_summary?: string | null
           seniority?: string | null
@@ -562,7 +566,9 @@ export type Database = {
           display_name?: string | null
           education?: Json
           experience?: Json
+          first_name?: string | null
           languages?: Json
+          last_name?: string | null
           onboarding_completed?: boolean
           profile_summary?: string | null
           seniority?: string | null
