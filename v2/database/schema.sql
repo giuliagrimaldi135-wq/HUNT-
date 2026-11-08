@@ -15,6 +15,8 @@ create table if not exists public.companies (
   size_band text,
   is_independent boolean,
   careers_structure text,
+  monitored boolean not null default true,
+  discovery_source text,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -24,14 +26,57 @@ create table if not exists public.sources (
   id uuid primary key default gen_random_uuid(),
   company_id uuid references public.companies(id) on delete cascade,
   source_type text not null,
+  source_family text,
   name text not null,
   base_url text,
+  official boolean not null default false,
   trust_level integer not null default 50 check (trust_level between 0 and 100),
   active boolean not null default true,
+  health_status text not null default 'unknown',
+  last_scan_at timestamptz,
+  last_success_at timestamptz,
+  consecutive_failures integer not null default 0,
+  config jsonb not null default '{}'::jsonb,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   unique(company_id, source_type, base_url)
 );
+
+create table if not exists public.source_candidates (
+  id uuid primary key default gen_random_uuid(),
+  company_name_hint text,
+  source_url text not null unique,
+  source_family text,
+  confidence integer check (confidence between 0 and 100),
+  reason text,
+  status text not null default 'discovered'
+    check (status in ('discovered','verified','rejected','promoted','needs_review')),
+  discovered_from text,
+  first_seen_at timestamptz not null default now(),
+  last_seen_at timestamptz not null default now(),
+  metadata jsonb not null default '{}'::jsonb
+);
+
+create index if not exists source_candidates_status_idx
+  on public.source_candidates(status, confidence desc);
+
+create table if not exists public.source_scan_runs (
+  id bigserial primary key,
+  source_id uuid references public.sources(id) on delete cascade,
+  started_at timestamptz not null default now(),
+  finished_at timestamptz,
+  request_ok boolean,
+  parser_ok boolean,
+  extracted_jobs integer,
+  prior_extracted_jobs integer,
+  health_status text,
+  allow_mass_close boolean not null default false,
+  error_code text,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+create index if not exists source_scan_runs_source_time_idx
+  on public.source_scan_runs(source_id, started_at desc);
 
 create table if not exists public.jobs (
   id uuid primary key default gen_random_uuid(),
@@ -304,6 +349,8 @@ create table if not exists public.notification_devices (
 -- RLS: global market data is readable by authenticated users.
 alter table public.companies enable row level security;
 alter table public.sources enable row level security;
+alter table public.source_candidates enable row level security;
+alter table public.source_scan_runs enable row level security;
 alter table public.jobs enable row level security;
 alter table public.job_sources enable row level security;
 alter table public.job_observations enable row level security;
