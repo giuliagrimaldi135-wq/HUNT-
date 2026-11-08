@@ -7,45 +7,27 @@ const app=document.getElementById("app");
 let currentUser=null;
 let currentView="today";
 
-const roleGroups=[
-  ["Merchandising & Buying",[
-    "Retail Merchandising","Product / Collection Merchandising","E-commerce Merchandising",
-    "Buying","Buying Operations","Merchandising Planning","Planning & Allocation",
-    "Allocation","Retail Planning","Demand Planning"
-  ]],
-  ["Retail & Client",[
-    "Retail Performance","Retail Operations","Retail Excellence","Store Operations",
-    "Store Planning","CRM & Clienteling","Client Experience","Visual Merchandising",
-    "Area / Retail Management"
-  ]],
-  ["Product & Collection",[
-    "Product Management","Product Development","Collection Development","Production",
-    "Production Planning","Sourcing","Materials / Fabrics","Quality Control"
-  ]],
-  ["Wholesale & Commercial",[
-    "Wholesale","Showroom / Sales Campaign","Key Account Management","Business Development",
-    "Commercial Planning","Trade Marketing","Sales Operations"
-  ]],
-  ["E-commerce & Digital",[
-    "E-commerce","Omnichannel","Marketplace","Digital Product","CRM","Digital Marketing",
-    "Performance Marketing","Growth","Digital Analytics"
-  ]],
-  ["Brand, Marketing & Communications",[
-    "Marketing","Brand Management","PR & Communications","Events","Influencer Marketing",
-    "Content & Social Media","Media","Partnerships"
-  ]],
-  ["Supply Chain & Operations",[
-    "Supply Chain","Logistics","Inventory / Stock Management","Procurement","Purchasing",
-    "Operations","Distribution","Customer Operations"
-  ]],
-  ["Creative & Design",[
-    "Fashion Design","Accessories Design","Footwear Design","Graphic Design","Art Direction",
-    "Styling","Content Production","Store Design / Architecture"
-  ]],
-  ["Corporate & Strategy",[
-    "Strategy","Project Management","Data / BI / Analytics","Finance","HR / Talent Acquisition",
-    "Legal","Sustainability / ESG","IT / Technology"
-  ]]
+const macroAreas=[
+  "Merchandising",
+  "Buying",
+  "Planning & Allocation",
+  "Retail & Retail Operations",
+  "E-commerce & Digital",
+  "Product Management & Development",
+  "Production & Sourcing",
+  "Wholesale & Commercial",
+  "Marketing & Brand",
+  "PR, Communications & Events",
+  "CRM & Clienteling",
+  "Visual Merchandising",
+  "Supply Chain & Logistics",
+  "Design & Creative",
+  "Data & Analytics",
+  "Strategy & Project Management",
+  "HR & Talent",
+  "Finance & Legal",
+  "Sustainability",
+  "Technology"
 ];
 const seniorityLevels=[
   ["internship","Internship / Stage"],
@@ -122,7 +104,7 @@ async function bootstrap(){
 }
 
 function onboardingView(profile){
- const roleHtml=roleGroups.map(([group,items],index)=>`<details class="card roleGroup" ${index<2?"open":""}><summary><strong>${esc(group)}</strong><span class="muted">${items.length} aree</span></summary><div class="choiceGrid">${items.map(r=>`<label class="choice"><input type="checkbox" name="primary" value="${esc(r)}"><span>${esc(r)}</span></label>`).join("")}</div></details>`).join("");
+ const roleHtml=`<div class="choiceGrid">${macroAreas.map(r=>`<label class="choice"><input type="checkbox" name="primary" value="${esc(r)}"><span>${esc(r)}</span></label>`).join("")}</div>`;
  const seniorityHtml=seniorityLevels.map(([value,label])=>`<option value="${value}">${label}</option>`).join("");
  const radarHtml=radarScopes.map(([value,title,description],i)=>`<label class="radarOption"><input type="radio" name="radar_scope" value="${value}" ${i===1?"checked":""}><span><strong>${title}</strong><small>${description}</small></span></label>`).join("");
 
@@ -133,13 +115,13 @@ function onboardingView(profile){
    <label><div class="eyebrow">Nome</div><input class="input" name="first_name" placeholder="Es. Giulia" value="${esc(profile?.first_name||"")}" required></label>
    <label><div class="eyebrow">Cognome</div><input class="input" name="last_name" placeholder="Es. Grimaldi" value="${esc(profile?.last_name||"")}" required></label>
   </div><label style="display:block;margin-top:12px"><div class="eyebrow">A che livello sei oggi?</div><select class="input" name="seniority">${seniorityHtml}</select></label>
-  <p class="muted" style="font-size:12px;margin-bottom:0">Usiamo livelli simili a quelli che compaiono negli annunci. HUNT terrà comunque conto anche del titolo reale della singola vacancy.</p></section>
+  </section>
 
-  <section><div class="eyebrow">2 · Obiettivo professionale</div><h2 style="margin:5px 0">Cosa vuoi davvero fare?</h2><p class="lead">Scegli una o più aree. Sono raggruppate per funzione, così puoi aprire solo quelle che ti interessano.</p>${roleHtml}</section>
+  <section class="card"><div class="eyebrow">2 · Obiettivo professionale</div><h2 style="margin:5px 0">Cosa vuoi davvero fare?</h2><p class="lead">Scegli una o più macro-aree. HUNT cercherà poi automaticamente tutti i ruoli e i titoli pertinenti dentro ogni area.</p>${roleHtml}</section>
 
   <section class="card"><div class="eyebrow">3 · Ampiezza del radar</div><h2>Quanto vuoi che HUNT allarghi gli orizzonti?</h2><p class="lead">Non ti chiediamo di conoscere in anticipo tutti i “ruoli adiacenti”. Decidi solo quanto vuoi esplorare; sarà HUNT a proporre alternative sensate e a spiegarti il collegamento.</p><div class="radarGrid">${radarHtml}</div></section>
 
-  <section class="card"><div class="eyebrow">4 · Dove</div><div class="choiceGrid">${["Milano","Firenze","Roma","Londra","Svizzera"].map(c=>`<label class="choice"><input type="checkbox" name="location" value="${c}"><span>${c}</span></label>`).join("")}</div></section>
+  <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vuoi lavorare?</h2><p class="lead">Puoi inserire qualsiasi città, paese o area geografica. Separali con una virgola.</p>\n   <label><div class="eyebrow">Località preferite</div><input class="input" name="locations_text" placeholder="Es. Milano, Parigi, Londra, Zurigo"></label>\n   <label style="display:block;margin-top:12px"><div class="eyebrow">Dove ti trasferiresti?</div><input class="input" name="relocation_text" placeholder="Es. Svizzera, Francia, New York"></label>\n  </section>
   <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx"></label></div></section>
   <div id="onMsg"></div><div class="actions"><button class="btn green" type="submit">Crea il mio HUNT</button><button class="btn" id="logoutOn" type="button">Esci</button></div>
  </form></div>`;
@@ -150,7 +132,7 @@ function onboardingView(profile){
 async function saveOnboarding(e){
  e.preventDefault();
  const form=e.currentTarget, fd=new FormData(form), msg=document.getElementById("onMsg");
- const primary=fd.getAll("primary"), locations=fd.getAll("location");
+ const primary=fd.getAll("primary");\n const splitLocations=(value)=>String(value||"").split(/[,;\\n]+/).map(x=>x.trim()).filter(Boolean);\n const locations=splitLocations(fd.get("locations_text"));\n const relocationLocations=splitLocations(fd.get("relocation_text"));
  const firstName=String(fd.get("first_name")||"").trim();
  const lastName=String(fd.get("last_name")||"").trim();
  const radarScope=String(fd.get("radar_scope")||"smart");
@@ -174,7 +156,7 @@ async function saveOnboarding(e){
    secondary_role_families:[],
    excluded_role_families:[],
    preferred_locations:locations,
-   relocation_locations:[],
+   relocation_locations:relocationLocations,
    employment_types:["internship","full_time"],
    preferred_brands:[],
    excluded_brands:[],
