@@ -100,3 +100,8 @@ p{line-height:1.55}
   .score{min-width:68px}
   .score strong{font-size:18px}
 }
+
+.input{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px 13px;font:inherit;outline:none}
+.input:focus{border-color:#999;box-shadow:0 0 0 3px rgba(0,0,0,.04)}
+.formError{margin:0;color:var(--danger);background:var(--danger-soft);border-radius:10px;padding:10px 12px;font-size:13px}
+.formSuccess{margin:0;color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:13px}
