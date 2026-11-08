@@ -559,6 +559,19 @@
     "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPQjRBVnJ5N0FMNU0wa1RTbTZ0UUYzN2J6VzV4TWlzZUoxRDd1Y1VGN0hpNHcyOENjSXdWWnNxcU50Vm9vc2RocEszYWpUTjBEdXFWUnhxUEE2VTdtdmFFczR4aFc5el9pV29HdGRnQ0FRSC1IXzc0VV9wZm9ObHZEQ0RNdFVFUEU4X2pzLThxYlZsMVFxUzZPWWxmN1NPVDdfQmp0Q0Z2dTBIcWpHYnJJTHpKVWdhd29ZMHVqU24yNERiNzN1R2MzN0ZnVi1SSE9sLUpLX1FPSVNwQQ?oc=5"
   },
   {
+    "key": "03a7e7d552372a624e50",
+    "brand": "Brunello Cucinelli",
+    "headline": "Brunello Cucinelli stima un 2026 con una crescita dei ricavi pari al +12% a cambi costanti - FashionUnited",
+    "signal_type": "expansion",
+    "score": 80,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta crescendo, investendo o entrando in nuovi mercati. Per te conta perché la crescita può aumentare budget, team, wholesale, retail e bisogno di profili junior.",
+    "detected_at": "2026-11-08T08:32:07.287832+00:00",
+    "published_at": "2026-10-15T07:00:00+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxONWRNSVZQdmRCZ01LSENKNHBNOFFsOU1oM1BVMl9SU09Bb21ndkVHUEhLZ1ByZl9ERXhpd0psV0hYcG1RMF9mWGEyWmsxb0FlUzlyMVBVQ29fcXA3bWRJR1ZRSlkxSUJXa25SdFNVNDhuZEg5emVDbjZERlVaSUIzdUp0RW1seUF0YmxpSTR4RWdXanlJYmNaN0ZGbnhnNlA5UWtvN0ZEZ1RWR19uR3QzcTBwaFl3Y21wYmpaWVI4am5jOVZDMGpUYTB4c1dTemhmd3B0ZVZLcFQ?oc=5"
+  },
+  {
     "key": "04a044e803d771978242",
     "brand": "Patrizia Pepe",
     "headline": "Patrizia Pepe - FashionNetwork Italia",
@@ -1636,6 +1649,19 @@
     "published_at": "2026-09-28T07:00:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPdDhoY1FBZnJwdlBwZEhMek9vUEdkdnVsTDVlQThMRHQ4blhaOVdjY0lsNVpmM1N6eENBWUczMzJBVklSV2FndlpDdFIzTGEtaHAtLVZseENLZ0pzTThPVXpGcE56RjRwV2FWd1I3OVVXOG1xb1hmNkhxOUpxZDZMZFlYdW5fT2l4ckZCcm5mRVAxOGNZOGNQSlo3NlBQSU5tUWRjdTNtUkNvN2FzQXA5V1BDTGRLRWUybVZDcGtieE5ndw?oc=5"
+  },
+  {
+    "key": "2589f6f2727aaa76faec",
+    "brand": "Jil Sander",
+    "headline": "A chi parla la moda? Cinque risposte da Fendi a Gucci, fino a Jil Sander - Esquire",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-08T08:32:07.287832+00:00",
+    "published_at": "2026-09-28T07:00:00+00:00",
+    "source": "Esquire",
+    "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNVU16OE42aDlWakhBMEVnbW9rUjZKYlF4UjVuNDJfRUNERTU4VWY3V29mZ0dHTkdLS3YyYWF5QUpaeGQxWVdNUnYwM05CaDgwdDdRbGM2emxrM0lFWm5uMEJxRC03QnNtck9HcldsemtmTkJ3bkxFZEhjdGZqWmhKT2lhVFcweURKYzFIblR6eWVmcGJiYkxmcUg3M1lBUl9WWGo0U1hUTmc4eXF2N3h3RTFDRQ?oc=5"
   },
   {
     "key": "7da2d7645180f28e006e",
