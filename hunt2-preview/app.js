@@ -604,8 +604,8 @@ function chooseCv(row){
  const saved=row.dossier?.recommended_cv_id;
  return cvs.find(cv=>cv.id===saved)||cvs.find(cv=>Array.isArray(cv.target_role_families)&&cv.target_role_families.includes(role))||cvs.find(cv=>cv.is_default)||cvs[0]||(row.cvs||[]).find(cv=>cv.is_default)||(row.cvs||[])[0]||null;
 }
-async function requestDossier(jobId,language="en",cvId=null){
- const body={job_id:jobId,language};
+async function requestDossier(jobId,language="en",cvId=null,forceRegenerate=false){
+ const body={job_id:jobId,language,force_regenerate:forceRegenerate};
  if(cvId)body.cv_id=cvId;
  const {data,error}=await supabase.functions.invoke("hunt-application-dossier",{body});
  if(error){
@@ -644,8 +644,8 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v3");
- const shouldRefresh=Boolean(!row.dossier||((dossierStale||modelStale)&&!row.dossier?.generated_from?.user_edited));
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v4");
+ const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale);
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
    pendingDossiers.add(jobId);
    try{
@@ -829,7 +829,7 @@ async function renderOpportunityFolder(jobId){
    if(editor&&editor.value!==row.dossier?.ready_to_send_message&&!window.confirm("Hai modifiche non salvate nella lettera. Rigenerando il dossier saranno sostituite. Continuare?"))return;
    if(row.dossier?.generated_from?.user_edited&&!window.confirm("La lettera attuale è stata salvata manualmente. Rigenerarla sostituirà quella versione. Continuare?"))return;
    generate.disabled=true;info.textContent="Preparazione del dossier…";
-   try{await requestDossier(jobId,lang,cvId);await renderOpportunityFolder(jobId)}
+   try{await requestDossier(jobId,lang,cvId,true);await renderOpportunityFolder(jobId)}
    catch(e){info.textContent=e instanceof Error?e.message:String(e);info.className="dossierError";generate.disabled=false}
  };
  const download=document.getElementById("downloadDossierCv");
