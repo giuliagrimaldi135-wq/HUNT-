@@ -22,6 +22,13 @@ function values(formData: FormData, key: string) {
   return formData.getAll(key).map(String).filter(Boolean);
 }
 
+function splitLocations(value: FormDataEntryValue | null) {
+  return String(value || "")
+    .split(/[,;\n]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 export async function saveOnboarding(formData: FormData) {
   if (!isSupabaseConfigured()) {
     redirect("/onboarding?error=Database%20non%20ancora%20collegato");
@@ -41,8 +48,8 @@ export async function saveOnboarding(formData: FormData) {
   const firstName = String(formData.get("first_name") || "").trim();
   const lastName = String(formData.get("last_name") || "").trim();
   const radarScope = String(formData.get("radar_scope") || "smart");
-  const preferredLocations = values(formData, "preferred_locations");
-  const relocationLocations = values(formData, "relocation_locations");
+  const preferredLocations = splitLocations(formData.get("preferred_locations_text"));
+  const relocationLocations = splitLocations(formData.get("relocation_locations_text"));
 
   if (!firstName || !lastName || !primaryRoles.length) {
     redirect("/onboarding?error=Completa%20nome%2C%20cognome%20e%20almeno%20un%20obiettivo");
