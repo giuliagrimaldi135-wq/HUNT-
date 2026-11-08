@@ -108,7 +108,17 @@ Deno.serve(async(req)=>{
  let chosen=cvs.find(x=>payload?.cv_id&&x.id===payload.cv_id);
  if(payload?.cv_id&&!chosen)return reply({error:"Il CV non appartiene al tuo account."},403);
  const strength=(x:any)=>Number(Boolean(x.parsed_profile?.profile_verified_from_user_history||x.parsed_profile?.profile_confirmed_by_user))+Number(Boolean(x.parsed_profile?.experience?.length||x.parsed_profile?.projects?.length));
- chosen=chosen||[...cvs].sort((a,b)=>strength(b)-strength(a)||Number(b.is_default)-Number(a.is_default))[0];
+ // Choose the strongest CV for this *specific vacancy*, not just the default CV.
+ const roleWords=new Set((str(job.role_family)+" "+str(job.canonical_title)+" "+str(job.description).slice(0,2400)).toLowerCase().match(/[a-z]{5,}/g)||[]);
+ const rankCv=(x:any)=>{
+   const p=x.parsed_profile||{};
+   const targets=list(x.target_role_families).map((v:any)=>str(v).toLowerCase());
+   const role=str(job.role_family).toLowerCase();
+   const evidence=[...list(p.experience).flatMap((y:any)=>list(y.evidence)),...list(p.projects).flatMap((y:any)=>list(y.evidence)),...list(p.tools)].join(" ").toLowerCase();
+   let overlaps=0;for(const word of roleWords)if(evidence.includes(word))overlaps++;
+   return (targets.includes(role)?65:0)+Math.min(overlaps*3,21)+strength(x)*12+(x.is_default?4:0);
+ };
+ chosen=chosen||[...cvs].sort((a,b)=>rankCv(b)-rankCv(a))[0];
  if(!chosen)return reply({error:"Carica un CV o completa il profilo professionale."},422);
  const cv=chosen.parsed_profile||{};
  const exp=list(cv.experience),projects=list(cv.projects),education=list(cv.education);
@@ -134,11 +144,25 @@ Deno.serve(async(req)=>{
  const unique=evidence.filter(x=>{const k=x.origin+"|"+x.value;if(seen.has(k))return false;seen.add(k);return true}).slice(0,6);
  const company=short(job.companies?.name||"Company",120),role=short(job.canonical_title,150),name=short(profileR.data?.display_name||"Applicant",120);
  const area=focus(str(job.role_family||role));
+ const specificDuties=vacancyHighlights(description);
+ const selectedDuty=specificDuties[0]||null;
+ const valueAngle=selectedDuty
+   ? "Questa posizione riguarda "+selectedDuty[1]+"."
+   : "Controlla le attività concrete riportate nell'annuncio originale prima di decidere.";
+ const relevantEvidence=unique.filter(x=>x.kind!=="tool").slice(0,2);
+ const proofLine=relevantEvidence.map(x=>x.origin+" ("+x.value+")").join("; ");
+ const opportunityCost=!blocked&&selectedDuty
+   ? "Se vuoi sviluppare esperienza in "+selectedDuty[1]+", questa posizione può meritare priorità rispetto a ruoli meno vicini al tuo obiettivo."
+   : "";
+ const sharpQuestion=selectedDuty?
+   "Quali indicatori utilizzate per valutare il successo delle attività di "+selectedDuty[1]+" nei primi mesi?"
+   :"Quali sarebbero le due responsabilità più importanti nei primi tre mesi?";
+ const valueNarrative=[valueAngle,proofLine?"Il punto da dimostrare è il collegamento con "+proofLine+".":"",opportunityCost].filter(Boolean).join(" ");
  const recommended=unique.map(x=>x.origin+": "+x.value);
- const why=blocked?"Requisiti essenziali non documentati: "+gaps.join(" "):unique.length?"Dal CV emergono evidenze concrete: "+recommended.slice(0,2).join("; ")+".":"Serve una verifica manuale del profilo.";
+ const why=blocked?"Non consigliata senza chiarimenti: "+gaps.join(" "):valueNarrative;
  const edu=education[0]||{};
  const body=blocked?null:letter({language,name,role,company,school:short(edu.school,100),program:short(edu.program,100),experience:exp[0],projects,tools:list(cv.tools).map(x=>short(x,100)),areaEn:area[0],areaIt:area[1],highlights:vacancyHighlights(description),interests:list(personalR.data?.interest_areas)});
- const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:str(job.role_family||role),cv_reason:"CV selezionato: "+chosen.name+". Solo informazioni documentate.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated"},model_version:"evidence_dossier_v1",updated_at:new Date().toISOString()};
+ const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?selectedDuty[1]+" × "+(relevantEvidence[0]?.origin||"CV da approfondire"):str(job.role_family||role),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v2",updated_at:new Date().toISOString()};
  const {error:saveError}=await db.from("user_job_dossiers").upsert(record,{onConflict:"user_id,job_id"});
  if(saveError)return reply({error:"Impossibile salvare la preparazione della candidatura.",detail:saveError.message},500);
  return reply({ok:true,blocked,cv_name:chosen.name,job_id:job.id,why_you:why,gaps:record.gaps,letter_created:Boolean(body),language});
