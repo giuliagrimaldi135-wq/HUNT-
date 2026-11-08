@@ -132,7 +132,10 @@ function onboardingView(profile){
 async function saveOnboarding(e){
  e.preventDefault();
  const form=e.currentTarget, fd=new FormData(form), msg=document.getElementById("onMsg");
- const primary=fd.getAll("primary");\n const splitLocations=(value)=>String(value||"").split(/[,;\\n]+/).map(x=>x.trim()).filter(Boolean);\n const locations=splitLocations(fd.get("locations_text"));\n const relocationLocations=splitLocations(fd.get("relocation_text"));
+ const primary=fd.getAll("primary");
+ const splitLocations=(value)=>String(value||"").split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
+ const locations=splitLocations(fd.get("locations_text"));
+ const relocationLocations=splitLocations(fd.get("relocation_text"));
  const firstName=String(fd.get("first_name")||"").trim();
  const lastName=String(fd.get("last_name")||"").trim();
  const radarScope=String(fd.get("radar_scope")||"smart");
