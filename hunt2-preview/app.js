@@ -625,7 +625,7 @@ async function renderOpportunityFolder(jobId){
    <section class="section card">
     <div class="eyebrow">Altre posizioni del brand</div>
     <h2>Cos'altro è aperto adesso</h2>
-    ${sameJobs.length?`<div class="relatedJobs">${sameJobs.map(j=>`<button class="relatedJob" data-related-job="${j.id}"><span><strong>${esc(j.canonical_title)}</strong><small>${esc(j.city||"")} · ${esc(ageLabel(j.published_at))}</small></span><b>→</b></button>`).join("")}</div>`:'<p class="lead">Nessun'altra vacancy fresca rilevata per questo brand negli ultimi 20 giorni.</p>'}
+    ${sameJobs.length?`<div class="relatedJobs">${sameJobs.map(j=>`<button class="relatedJob" data-related-job="${j.id}"><span><strong>${esc(j.canonical_title)}</strong><small>${esc(j.city||"")} · ${esc(ageLabel(j.published_at))}</small></span><b>→</b></button>`).join("")}</div>`:'<p class="lead">Nessun’altra vacancy fresca rilevata per questo brand negli ultimi 20 giorni.</p>'}
    </section>
  </div>`);
 
