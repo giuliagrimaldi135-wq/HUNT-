@@ -32,14 +32,14 @@ async function extractPdf(blob,language,onStatus){
  const lib=await pdfjs();
  const pdf=await lib.getDocument({data:new Uint8Array(await blob.arrayBuffer()),useSystemFonts:true}).promise;
  const total=pdf.numPages;
- const limit=Math.min(total,8);
+ const limit=Math.min(total,12);
  const blocks=[];let usedOcr=false,worker=null;
  try{
   for(let n=1;n<=limit;n++){
    onStatus("Analisi pagina "+n+" di "+total+"…");
    const page=await pdf.getPage(n);
    const content=await page.getTextContent();
-   let text=(content.items||[]).map(x=>x.str||"").join(" ");
+   let text=(content.items||[]).map(x=>(x.str||"")+(x.hasEOL?"\n":" ")).join("");
    if(text.trim().length<70){
     if(!worker){onStatus("Avvio lettura visuale OCR nel browser…");worker=await createOcrWorker(language)}
     onStatus("Lettura visuale della pagina "+n+" di "+total+"…");
