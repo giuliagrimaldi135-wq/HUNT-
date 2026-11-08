@@ -849,6 +849,15 @@ async function renderOpportunityFolder(jobId){
  const undo=document.getElementById("undoLetter");
  const aiStatus=document.getElementById("letterAiStatus");
  let earlierLetter="";
+ // Only advertise a working AI editor when a provider key is actually configured.
+ if(improve){
+   supabase.functions.invoke("hunt-cv-interpret",{body:{action:"status"}}).then(({data,error})=>{
+     if(!error&&data?.configured===false){
+       improve.disabled=true;improve.textContent="AI da attivare";
+       if(aiStatus)aiStatus.textContent="L'editor AI è predisposto ma non ancora attivo: serve il collegamento sicuro al provider AI. Puoi comunque modificare, salvare e copiare la lettera.";
+     }
+   }).catch(()=>{});
+ }
  if(improve)improve.onclick=async()=>{
    const editor=document.getElementById("coverLetterText");
    if(!editor||!instruction)return;
