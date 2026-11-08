@@ -145,7 +145,7 @@ function onboardingView(profile){
    <div class="actions"><button class="btn" type="button" id="addRelocationLocation">+ Aggiungi città</button></div>
    <div id="relocationLocationsList" class="tagList"></div>
   </section>
-  <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx"></label></div></section>
+  <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"></label></div></section>
   <div id="onMsg"></div><div class="actions"><button class="btn green" type="submit">Crea il mio HUNT</button><button class="btn" id="logoutOn" type="button">Esci</button></div>
  </form></div>`;
  const preferredLocations=[];
@@ -212,8 +212,10 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
  if(file instanceof File && file.size){
    if(file.size>8*1024*1024){msg.innerHTML='<div class="msg bad">CV troppo grande: massimo 8 MB.</div>';return}
    const ext=(file.name.split(".").pop()||"pdf").toLowerCase();
+   const fileMimes={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
+   if(!fileMimes[ext]){msg.innerHTML='<div class="msg bad">Formato CV non supportato.</div>';return}
    const path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;
-   const up=await supabase.storage.from("cvs").upload(path,file,{contentType:file.type,upsert:false});
+   const up=await supabase.storage.from("cvs").upload(path,file,{contentType:fileMimes[ext],upsert:false});
    if(up.error){msg.innerHTML='<div class="msg bad">'+esc(up.error.message)+'</div>';return}
    const row=await supabase.from("user_cvs").insert({user_id:currentUser.id,name:fd.get("cvname")||file.name,storage_path:path,target_role_families:primary,parsed_profile:{},is_default:true,active:true});
    if(row.error){await supabase.storage.from("cvs").remove([path]);msg.innerHTML='<div class="msg bad">'+esc(row.error.message)+'</div>';return}
