@@ -73,3 +73,29 @@
 /* CV extraction state: distinguish image-only PDF from a verified profile */
 .cvStatus{display:block;font-size:11px;font-weight:500;color:#77716b;margin-top:4px;line-height:1.4}
 .cvNotice{margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;line-height:1.6;color:#69645e}
+
+/* Personalized application dossier and editable cover letters */
+.applicationDossier{border-top:1px solid var(--line);padding:30px 0 22px}
+.dossierTitle{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.dossierTitle h2{font-size:25px;font-weight:740;letter-spacing:-.035em;margin:5px 0 0}
+.dossierNote{color:#77716a;font-size:12px;line-height:1.65}
+.dossierControls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin:22px 0}
+.dossierControls label{display:flex;flex-direction:column;gap:6px;font-size:11px;letter-spacing:.025em;font-weight:700;color:#68645d}
+.dossierControls select{background:#fff;border:1px solid var(--line);border-radius:4px;min-width:142px;max-width:260px;padding:10px;font-size:13px;font-weight:500;color:#24211e}
+.dossierControls label:first-child{flex:1;min-width:185px;max-width:310px}
+.dossierControls label:first-child select{width:100%;max-width:none}
+.dossierControls button{min-height:40px}
+.dossierDetails{padding:18px 0 4px;border-top:1px solid var(--line);max-width:850px}
+.dossierDetails h3{font-size:14px;letter-spacing:-.01em;font-weight:760;margin:16px 0 8px}
+.dossierDetails p{font-size:14px;line-height:1.65;color:#494640;margin:0 0 10px}
+.dossierEvidence{padding:0 0 0 18px;margin:8px 0 20px;color:#504b45;font-size:13px;line-height:1.65}
+.dossierEvidence li{margin-bottom:6px}
+.dossierGaps{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}
+.dossierGaps strong{display:block;font-size:13px;margin:0 0 8px;color:#7a433c}
+.dossierGaps p{font-size:13px;color:#7a433c}
+.dossierError{font-size:13px;color:#a4332c;line-height:1.6;padding:8px 0}
+.coverLetterActions{display:flex;gap:8px;flex-wrap:wrap}
+.coverLetterEditor{display:block;width:100%;min-height:350px;box-sizing:border-box;resize:vertical;font-family:inherit;background:#fff;color:#272421;border:1px solid var(--line);border-radius:4px;padding:22px 24px;font-size:14px;line-height:1.75}
+.dossierSubject{display:block;margin:0 0 12px;font-size:12px;color:#69645e}
+.dossierSubject span{font-weight:700;color:#302d29}
+@media(max-width:820px){.dossierTitle{align-items:flex-start;flex-direction:column}.dossierControls{align-items:stretch}.dossierControls label:first-child{max-width:none}.dossierControls button{width:100%}.coverLetterActions{width:100%}.coverLetterEditor{min-height:460px;padding:15px}}
