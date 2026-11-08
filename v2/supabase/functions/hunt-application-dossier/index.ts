@@ -180,7 +180,7 @@ Deno.serve(async(req)=>{
  const detail=selectedDuty?selectedDuty[1]:null;
  // Never display a concatenation of raw CV bullets as a reason to apply.
  const valueAngle=detail?("L'annuncio prevede "+detail+"."):"";
- const directTarget=list(cv.target_role_families).some((r:any)=>String(r).toLowerCase()===String(job.role_family).toLowerCase());
+ const directTarget=list(chosen.target_role_families).some((r:any)=>String(r).toLowerCase()===String(job.role_family).toLowerCase());
  const bridgeText=bridge
    ?" Qui puoi trasformare "+bridge+" in un contributo concreto su attività svolte all'interno di un team."
    :detail?" È utile soltanto se vuoi acquisire esperienza pratica proprio su queste responsabilità.":"";
@@ -201,6 +201,13 @@ Deno.serve(async(req)=>{
  const edu=education[0]||{};
  const body=blocked?null:letter({language,name,role,company,school:short(edu.school,100),program:short(edu.program,100),experience:exp[0],projects,tools:list(cv.tools).map(x=>short(x,100)),areaEn:area[0],areaIt:area[1],highlights:vacancyHighlights(description),interests:list(personalR.data?.interest_areas)});
  const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v4",updated_at:new Date().toISOString()};
+ // Refresh relevance without silently destroying a previously edited letter.
+ const {data:previous}=await db.from("user_job_dossiers").select("ready_to_send_message,ready_to_send_subject,generated_from").eq("user_id",userId).eq("job_id",job.id).maybeSingle();
+ if(previous?.generated_from?.user_edited&&!payload?.force_regenerate){
+   record.ready_to_send_message=previous.ready_to_send_message;
+   record.ready_to_send_subject=previous.ready_to_send_subject;
+   record.generated_from={...record.generated_from,user_edited:true,user_edited_at:previous.generated_from.user_edited_at||null,letter_cv_id:previous.generated_from.cv_id,letter_saved_manually:true};
+ }
  const {error:saveError}=await db.from("user_job_dossiers").upsert(record,{onConflict:"user_id,job_id"});
  if(saveError)return reply({error:"Impossibile salvare la preparazione della candidatura.",detail:saveError.message},500);
  return reply({ok:true,blocked,cv_name:chosen.name,job_id:job.id,why_you:why,gaps:record.gaps,letter_created:Boolean(body),language});
