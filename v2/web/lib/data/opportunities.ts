@@ -10,6 +10,8 @@ export type Opportunity = (typeof demo)[number] & {
   official?: boolean;
   state?: string;
   publishedAt?: string;
+  lastVerifiedAt?: string;
+  companyId?: string;
 };
 
 function ageLabel(value?: string) {
@@ -63,6 +65,8 @@ function mapOpportunity(row: any): Opportunity {
       : false,
     state: job.state || undefined,
     publishedAt: job.published_at || undefined,
+    lastVerifiedAt: job.last_verified_at || undefined,
+    companyId: job.company_id || undefined,
   };
 }
 
@@ -91,7 +95,7 @@ export async function getOpportunities(): Promise<Opportunity[]> {
       .eq("user_id", userId),
     supabase
       .from("user_job_matches")
-      .select("match_score,priority_score,reasons,gaps,jobs(id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,primary_apply_url,state,description,companies(name),job_sources(sources(official)))")
+      .select("match_score,priority_score,reasons,gaps,jobs(id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,primary_apply_url,state,description,companies(name),job_sources(sources(official)))")
       .eq("user_id", userId)
       .order("priority_score", { ascending: false })
       .limit(100),
@@ -141,7 +145,7 @@ export async function getOpportunity(id: string): Promise<Opportunity | undefine
       .maybeSingle(),
     supabase
       .from("jobs")
-      .select("id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,primary_apply_url,state,description,companies(name),job_sources(sources(official))")
+      .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,primary_apply_url,state,description,companies(name),job_sources(sources(official))")
       .eq("id", id)
       .maybeSingle(),
   ]);
