@@ -79,13 +79,13 @@ Deno.serve(async(req)=>{
    for(const item of found){
      const official=item.platform==="web"||item.type==="social";
      const trust=item.platform==="web"?100:90;
-     const {error}=await db.from("intelligence_sources").upsert({
+     const {data:inserted,error}=await db.from("intelligence_sources").upsert({
        company_id:company.id,source_type:item.type,platform:item.platform,name:item.text||null,url:item.url,
        official,trust_level:trust,active:true,health_status:"unknown",
        metadata:{discovered_from:company.website_url,discovered_at:new Date().toISOString()}
      },{onConflict:"company_id,url",ignoreDuplicates:true}).select("id");
      // Conflict-free inserts only: never reset health/last success on a rediscovery.
-     if(!error)discovered++;
+     if(!error&&inserted?.length)discovered+=inserted.length;
    }
    await db.from("companies").update({
      metadata:{...(company.metadata||{}),last_intelligence_discovery_at:new Date().toISOString()},
