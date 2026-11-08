@@ -874,20 +874,32 @@ async function renderWorldRadar(){
 }
 
 async function renderProfile(){
- const [p,pref,cvs]=await Promise.all([getProfile(),supabase.from("career_preferences").select("*").eq("user_id",currentUser.id).maybeSingle(),supabase.from("user_cvs").select("id,name,is_default,created_at,parsed_profile").eq("user_id",currentUser.id).eq("active",true).order("created_at",{ascending:false})]);
+ currentView="profile";
+ const [p,pref]=await Promise.all([
+  getProfile(),
+  supabase.from("career_preferences").select("primary_role_families").eq("user_id",currentUser.id).maybeSingle()
+ ]);
  const roles=pref.data?.primary_role_families||[];
- const cvState=(cv)=>{
-  const x=cv.parsed_profile||{};
-  if(x.cv_text_extraction_status==="text_extracted")return "Testo PDF letto";
-  if(x.source==="beta_verified_profile")return "Profilo verificato · PDF grafico";
-  if(x.cv_text_extraction_status==="image_pdf_no_text_layer")return "PDF grafico · lettura visuale necessaria";
-  return "Lettura CV da completare";
- };
- const hasImagePdf=(cvs.data||[]).some(x=>x.parsed_profile?.cv_text_extraction_status==="image_pdf_no_text_layer");
- app.innerHTML=shell(`<div class="eyebrow">Il tuo HUNT</div><h1>Profilo</h1><p class="lead">Quello che HUNT sa di te e usa per ordinare il mercato.</p>
- <div class="grid2 section"><section class="card"><div class="eyebrow">Profilo</div><div class="profileLine"><span>Nome</span><strong>${esc(p?.display_name||"—")}</strong></div><div class="profileLine"><span>Email</span><strong>${esc(currentUser.email||"")}</strong></div><div class="profileLine"><span>Target</span><strong>${esc(Array.isArray(roles)?roles.join(", "):"—")}</strong></div></section>
- <section class="card"><div class="eyebrow">CV e lettura del profilo</div>${cvs.data?.length?cvs.data.map(x=>`<div class="profileLine"><span>${esc(x.name)}<small class="cvStatus">${esc(cvState(x))}</small></span><strong>${x.is_default?"Default":""}</strong></div>`).join(""):`<p class="lead">Nessun CV caricato.</p>`}${hasImagePdf?`<p class="cvNotice">I PDF caricati sono grafici: non hanno testo estraibile. Il profilo professionale verificato resta disponibile, mentre la lettura visuale integrale è ancora da completare.</p>`:""}<div class="actions"><button id="logoutBtn" class="btn">Esci dall'account</button></div></section></div>`);
- bindNav();document.getElementById("logoutBtn").onclick=logout;
+ app.innerHTML=shell(`<div class="profilePage">
+  <div class="eyebrow">Il tuo HUNT</div><h1>Profilo</h1>
+  <p class="lead">Le tue informazioni confermate guidano il matching, la scelta del CV e la preparazione delle candidature.</p>
+  <div class="profileIdentity section">
+    <span><strong>${esc(p?.display_name||"—")}</strong><small>${esc(currentUser.email||"")}</small></span>
+    <span><small>Target</small><strong>${esc(Array.isArray(roles)?roles.join(", "):"—")}</strong></span>
+    <button class="btn" id="logoutBtn">Esci</button>
+  </div>
+  <div id="cvManagerRoot"><p class="lead">Caricamento archivio CV privato…</p></div>
+ </div>`);
+ bindNav();
+ document.getElementById("logoutBtn").onclick=logout;
+ try{
+   const {mountCvManager}=await import("./cv-profile.js");
+   const root=document.getElementById("cvManagerRoot");
+   if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:renderProfile});
+ }catch(e){
+   const root=document.getElementById("cvManagerRoot");
+   if(root)root.textContent="Impossibile aprire la gestione dei CV: "+(e.message||String(e));
+ }
 }
 
 window.addEventListener("popstate",(event)=>{
