@@ -76,10 +76,10 @@ function isArticlePath(url:string){
 function articleFromHtml(html:string,url:string){
  const structured=jsonLdArticles(html);
  const a=structured[0]||{};
- const title=clean(String(a.headline||meta(html,"og:title")||meta(html,"twitter:title")||html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i)?.[1]||""));
+ const title=clean(String(a.headline||meta(html,"og:title")||meta(html,"twitter:title")||html.match(/<title[^>]*>(.*?)<[/]title>/is)?.[1]||""));
  const description=clean(String(a.description||meta(html,"description")||meta(html,"og:description")||""));
  const metaDate=String(a.datePublished||meta(html,"article:published_time")||meta(html,"datePublished")||"");
- const timeTag=(html.match(/<time\\b[^>]*datetime=["']([^"']+)["']/i)||[])[1]||"";
+ const timeTag=(html.match(/<time[^>]*datetime=["\x27]([^"\x27]+)["\x27]/i)||[])[1]||"";
  const rawDate=metaDate||timeTag;
  const d=rawDate?new Date(rawDate):null;
  const published=d&&!Number.isNaN(d.getTime())?d.toISOString():(isArticlePath(url)?visibleDate(html):null);
