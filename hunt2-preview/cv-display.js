@@ -57,3 +57,40 @@ export function cvReviewSummary(profile){
  const get=key=>Array.isArray(p[key])&&p[key].length?p[key]:Array.isArray(d[key])?d[key]:[];
  return {experience:get("experience"),projects:get("projects"),education:get("education"),tools:get("tools"),languages:get("languages"),confirmed:!!(p.profile_confirmed_by_user||p.profile_verified_from_user_history),language:p.source_language||d.source_language||"it"};
 }
+
+const professionalCatalog=[
+ ["Merchandising",/merchandis|assort|capsule|product mix/i],
+ ["Buying",/\bbuying\b|\bbuyer\b|open.to.buy|\botb\b|acquisti/i],
+ ["Planning & Allocation",/planning|pianific|forecast|allocat|\botb\b/i],
+ ["Retail & Retail Operations",/retail strategy|retail operations|store operations|retail planning|rete (?:retail|negozi)/i],
+ ["E-commerce & Digital",/e.commerce|ecommerce|e.shop|digital experience|online retail/i],
+ ["Product Management & Development",/product development|sviluppo prodotto|product coding|costing|sviluppo collezion/i],
+ ["Production & Sourcing",/\bsourcing\b|production planning|pianificazion[ei] produzione/i],
+ ["Wholesale & Commercial",/showroom|wholesale|sales campaign|campagna vendite|order taking|order entry|raccolta ordini/i],
+ ["Marketing & Brand",/brand strategy|brand positioning|marketing|posizionamento del brand/i],
+ ["PR, Communications & Events",/public relations|\bpr\b|event management|press office/i],
+ ["CRM & Clienteling",/\bcrm\b|clienteling|loyalty program|customer retention/i],
+ ["Visual Merchandising",/visual merchandising|window display|vetrin|allestimento/i],
+ ["Supply Chain & Logistics",/supply chain|logistics|logistica|inventory distribution/i],
+ ["Design & Creative",/design research|graphic design|creative direction|direzione creativa/i],
+ ["Data & Analytics",/data analysis|\bkpi\b|analisi comparativa|business intelligence|analytics/i],
+ ["Strategy & Project Management",/project management|gestione progetti|strategic planning/i],
+ ["HR & Talent",/human resources|\bhr\b|recruitment|talent acquisition/i],
+ ["Finance & Legal",/financial analysis|accounting|contabilità|legal compliance/i],
+ ["Sustainability",/sustainability|sostenibilit|circular economy/i],
+ ["Technology",/software development|programming|coding in python|information technology/i]
+];
+export function cvProfessionalCategories(profile,available=professionalCatalog.map(x=>x[0])){
+ const p=profile||{},d=p.draft_profile||{};
+ const get=key=>Array.isArray(p[key])&&p[key].length?p[key]:Array.isArray(d[key])?d[key]:[];
+ const proofs=[
+  ...get("experience").flatMap(x=>(x.evidence||[]).map(z=>({text:String(z),kind:"Esperienza",source:String(x.company||x.role||"CV")}))),
+  ...get("projects").flatMap(x=>(x.evidence||[]).map(z=>({text:String(z),kind:"Progetto",source:String(x.name||"CV")})))
+ ];
+ const names=Array.isArray(available)&&available.length?available:professionalCatalog.map(x=>x[0]);
+ return names.map(name=>{
+  const entry=professionalCatalog.find(x=>x[0]===name),rule=entry?.[1];
+  const evidence=rule?proofs.find(x=>rule.test(x.text)):null;
+  return {name,related:Boolean(evidence),basis:evidence?evidence.kind+" · "+evidence.source:""};
+ });
+}
