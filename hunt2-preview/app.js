@@ -834,24 +834,32 @@ async function renderOpportunityFolder(jobId){
  </div>
 
  <div class="hide" data-folder-panel="company">
-   <section class="section companyIntro">
-     <div class="eyebrow">Company intelligence</div>
-     <h2>Cosa sapere su ${esc(brand)}</h2>
-     <p>Informazioni effettivamente pubblicate, con le fonti originali. Usa questi segnali per costruire domande, non per fingere di conoscere le priorità interne del brand.</p>
+   <section class="section brandGlobalNews">
+     <div class="brandGlobalNewsHead">
+       <div><div class="eyebrow">News & mondo fashion</div><h2>${esc(brand)} nel mondo</h2>
+         <p>Notizie aziendali e stampa internazionale raccolte dalle fonti monitorate da HUNT. Ogni articolo riporta la fonte. Non sono annunci di lavoro.</p>
+       </div>
+       <button type="button" class="worldReadToggle" id="brandReadToggle">Archivio lette</button>
+     </div>
+     <p id="brandNewsCounter" class="brandNewsCounter"></p>
+     <p id="brandNewsError" class="dossierError" role="alert" hidden></p>
+     <div id="brandNewsList" class="brandGlobalNewsList"></div>
    </section>
-   <section class="section companyIntelligence">
-     ${signals.length||media.length?
-       `<div class="companyNewsFeed">
-       ${signals.map(x=>`<article><span>Fonte aziendale · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non verificata")}</span><h3>${esc(x.title)}</h3><p>${esc(x.summary||"")}</p>${safeRadarUrl(x.source_url)?`<a href="${esc(x.source_url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>`:""}</article>`).join("")}
-       ${media.map(x=>`<article><span>${esc(x.world_news_sources?.publisher||"Stampa fashion")} · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non verificata")}</span><h3>${esc(x.title)}</h3><p>${esc(x.summary||"")}</p>${safeRadarUrl(x.url)?`<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>`:""}</article>`).join("")}
-       </div>`
-       :'<p class="lead">Non abbiamo ancora notizie con fonte documentata per questo brand. HUNT non inventa aggiornamenti aziendali.</p>'}
-   </section>
-
-   <section class="section alignedRoles">
-      <div class="eyebrow">Altre posizioni adatte a te</div>
-      <h2>Nello stesso brand</h2>
-      ${sameJobs.length?`<div class="relatedJobs">${sameJobs.map(j=>`<button class="relatedJob" data-related-job="${j.id}"><span><strong>${esc(j.canonical_title)}</strong><small>${esc(j.city||"")} · ${esc(ageLabel(j.published_at))} · ${j.match_score}% compatibile</small></span><b>→</b></button>`).join("")}</div>`:'<p class="lead">Non risultano altre vacancy fresche dello stesso brand abbastanza coerenti con il tuo profilo.</p>'}
+   <section class="section companyOpenRoles">
+     <div class="companyOpenRolesHead"><div class="eyebrow">Opportunità nel brand</div><h2>Altre posizioni aperte di ${esc(brand)}</h2>
+       <p>Annunci attivi verificati dalle fonti disponibili. Il loro numero dipende dalla copertura dei portali aziendali, non rappresenta necessariamente tutte le assunzioni del brand.</p>
+     </div>
+     ${companyOpenings.length?`<div class="companyOpenRolesList">
+       ${[...companyOpenings].sort((a,b)=>(knownMatches.has(b.id)?1:0)-(knownMatches.has(a.id)?1:0)).map(j=>`<article class="brandJobItem">
+         <div class="brandJobContent"><div class="eyebrow">${esc(j.role_family||"Fashion / Luxury")} ${knownMatches.has(j.id)?`· Match ${knownMatches.get(j.id)}%`:""}</div>
+           <h3>${esc(j.canonical_title)}</h3><p>${esc(j.city||"Località da verificare")} · ${esc(ageLabel(j.published_at,j.first_seen_at))} · ${esc(j.confidence_label==="VERIFIED ACTIVE"?"Annuncio verificato":"Disponibilità da ricontrollare")}</p>
+         </div>
+         <div class="brandJobActions">
+           <button class="btn" type="button" data-related-job="${esc(j.id)}">Apri dossier</button>
+           ${safeRadarUrl(j.primary_apply_url)?`<a href="${esc(j.primary_apply_url)}" class="btn primary" target="_blank" rel="noopener noreferrer">Annuncio originale</a>`:""}
+         </div>
+       </article>`).join("")}
+     </div>`:`<p class="workspaceEmpty">Non risultano altre posizioni attive verificate nelle fonti attualmente collegate a questo brand.</p>`}
    </section>
  </div>
 
