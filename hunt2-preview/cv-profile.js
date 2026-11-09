@@ -26,6 +26,7 @@ function cvStatus(x){
  const p=x.parsed_profile||{};
  if(p.profile_confirmed_by_user)return "Profilo confermato";
  if(p.profile_verified_from_user_history)return "Profilo noto e verificato";
+ if(String(p.raw_text||"").length>=80)return p.draft_profile?.extracted_chars?"Analizzato · da confermare":"Testo letto · da confermare";
  if(p.cv_text_extraction_status==="ocr_text_extracted")return p.draft_profile?.extracted_chars?"OCR analizzato · dati da confermare":"Testo OCR letto · da interpretare";
  if(p.cv_text_extraction_status==="text_extracted")return p.draft_profile?.extracted_chars?"Testo analizzato · dati da confermare":"Testo letto · da interpretare";
  if(p.cv_text_extraction_status==="ocr_partial")return "Testo parziale, da controllare";
@@ -161,6 +162,8 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
    failedReadIds.clear();await refresh();return;
   }
   if(action==="upload"){
+   if(editingDirty&&!window.confirm("Hai modifiche non salvate. Vuoi caricare un nuovo CV senza salvare quelle attuali?"))return;
+   editingDirty=false;
    const file=root.querySelector("#cvUploadFile")?.files?.[0];
    if(!file){show("Seleziona un file.",true);return}
    const ext=file.name.split(".").pop().toLowerCase();
