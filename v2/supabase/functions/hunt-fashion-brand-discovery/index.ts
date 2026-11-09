@@ -25,20 +25,22 @@ function siteFromProfile(html:string,name:string){
  }
  return null;
 }
-const markets=[["Italy","Womenswear","IT"],["Italy","Menswear","IT"],["Italy","Accessories","IT"],
- ["France","Womenswear","FR"],["France","Footwear","FR"],["Netherlands","Womenswear","NL"],
- ["Netherlands","Menswear","NL"],["Germany","Womenswear","DE"],["Germany","Menswear","DE"],
- ["Belgium","Accessories","BE"],["Spain","Womenswear","ES"],["Japan","Womenswear","JP"],
- ["United Kingdom of Great Britain and Northern Ireland","Womenswear","GB"],["Switzerland","Accessories","CH"],
- ["Italy","Bags","IT"],["France","Jewelry","FR"],["Netherlands","Sustainable","NL"],
- ["United States of America","Womenswear","US"]];
+const countries=["Italy","France","Netherlands","Germany","Belgium","Spain",
+ "United Kingdom of Great Britain and Northern Ireland","Switzerland","Japan",
+ "United States of America","Sweden","Denmark","Portugal","Austria","Canada",
+ "Australia","Brazil","India","Turkey","South Korea"];
+const categories=["Womenswear","Menswear","Accessories","Footwear","Bags","Jewelry",
+ "Sportswear","Sustainable","Kidswear","Bodywear","Swimwear","Eyewear"];
+// Rotate through international public directory filters. A filtered country is not
+// verified proof of head-office location, so no country_code is inferred.
+const markets=countries.flatMap(country=>categories.map(category=>[country,category]));
 Deno.serve(async(req)=>{
  try{
   const db=admin(),token=req.headers.get("x-hunt-cron")||"";
   const {data:sec,error}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(error||!sec||!token||!eq(await sha(token),sec.secret_hash))return Response.json({error:"unauthorized"},{status:401});
   const slot=Math.floor(Date.now()/1800000)%markets.length;
-  const [country,category,countryCode]=markets[slot];
+  const [country,category]=markets[slot];
   const listing="https://fashionunited.com/brands?country="+encodeURIComponent(country)+"&industries="+encodeURIComponent(category);
   const response=await fetch(listing,{redirect:"follow",signal:AbortSignal.timeout(11000),headers:{"accept":"text/html","user-agent":"HUNT/2.0 fashion-industry-source-discovery"}});
   if(!response.ok)return Response.json({ok:false,reason:"Directory HTTP "+response.status,route:listing},{status:502});
@@ -62,7 +64,7 @@ Deno.serve(async(req)=>{
       if(name.length<3||name.length>100||/^(companies|international fashion|brands directory)$/i.test(name))continue;
       const website=siteFromProfile(content,name);
       const {data:company,error:insertError}=await db.from("companies").upsert({
-        name,slug,website_url:website,country_code:countryCode,sector:"fashion_luxury",monitored:true,
+        name,slug,website_url:website,sector:"fashion_luxury",monitored:true,
         discovery_source:"fashionunited_public_brand_directory",
         metadata:{discovery_profile:profile,directory_category:category,directory_country:country,
           brand_verified_in_directory:true,careers_verified:false,website_source_verified:false}
