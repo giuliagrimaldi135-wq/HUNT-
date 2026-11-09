@@ -38,3 +38,22 @@ test("A list of only unverifiable personality adjectives renders no CV match ver
  const r=prioritizeRequirements(["Capacità comunicative e relazionali","Attenzione al dettaglio","Proattività e spirito di squadra"]);
  assert.deepEqual(r,[]);
 });
+
+test("An Excel advanced claim in the selected CV is displayed locally, even if other CVs also have it",()=>{
+ const req=prioritizeRequirements(["Competenze Excel richieste"])[0];
+ const match=compareKeyRequirement(req,{type:"detected",proof:"Excel (avanzato)",suggested_cv_id:null},
+   {profile_verified_from_user_history:true,tools:["Excel"],draft_profile:{tools:["Excel (avanzato)"]}});
+ assert.equal(match.state,"detected");
+ assert.equal(match.label,"Indicato nel CV");
+ assert.equal(match.evidence,"Excel (avanzato)");
+});
+test("Missing professional experience is described as missing from this CV, not as a personal deficit",()=>{
+ const req=prioritizeRequirements(["1–2 anni di esperienza in planning o sourcing"])[0];
+ const match=compareKeyRequirement(req,{type:"missing"},{
+   experience:[{role:"Showroom Sales Intern",evidence:["Order taking and customer assistance"]}]
+ });
+ assert.equal(match.state,"missing");
+ assert.equal(match.label,"Non indicato nel CV");
+ assert.match(match.evidence,/Non risultano esperienze professionali specifiche/);
+ assert.doesNotMatch(match.evidence,/0\.33|non possiedi|non sei capace/i);
+});
