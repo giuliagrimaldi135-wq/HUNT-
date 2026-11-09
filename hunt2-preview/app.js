@@ -1,6 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-62";
-import { interpretCvText } from "./cv-interpreter.js?v=20261109-62";
+import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-63";
+import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -1414,7 +1414,7 @@ async function renderProfile(){
  bindNav();
  document.getElementById("logoutBtn").onclick=logout;
  try{
-   const {mountCvManager}=await import("./cv-profile.js?v=20261109-62");
+   const {mountCvManager}=await import("./cv-profile.js?v=20261109-63");
    const root=document.getElementById("cvManagerRoot");
    if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:renderProfile,roleFamilies:macroAreas});
  }catch(e){
