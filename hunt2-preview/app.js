@@ -907,6 +907,11 @@ async function renderOpportunityFolder(jobId){
        </div>
        <div class="brandGlobalNewsNav"><button type="button" class="worldReadToggle" id="brandReadToggle">Archivio lette</button><button type="button" class="worldReadToggle" id="brandGoFashionNews">Tutte le Fashion News</button></div>
      </div>
+     <div class="brandNewsSwitch" role="group" aria-label="Filtra le notizie del brand">
+       <button type="button" class="active" data-brand-news-filter="all">Tutte le notizie</button>
+       <button type="button" data-brand-news-filter="company">Comunicati ufficiali</button>
+       <button type="button" data-brand-news-filter="industry">Stampa internazionale</button>
+     </div>
      <p id="brandNewsCounter" class="brandNewsCounter"></p>
      <p id="brandNewsError" class="dossierError" role="alert" hidden></p>
      <div id="brandNewsList" class="brandGlobalNewsList"></div>
@@ -935,13 +940,15 @@ async function renderOpportunityFolder(jobId){
 
  bindNav();bindOpportunityActions();
  let brandArchive=false;
+ let brandFeedFilter="all";
  const renderBrandFeed=()=>{
    const area=document.getElementById("brandNewsList");
    const counter=document.getElementById("brandNewsCounter");
    const toggle=document.getElementById("brandReadToggle");
    if(!area)return;
-   const rows=companyNews.filter(n=>brandReadIds.has(n.kind+":"+n.id)===brandArchive);
+   const rows=companyNews.filter(n=>brandReadIds.has(n.kind+":"+n.id)===brandArchive&&(brandFeedFilter==="all"||n.kind===brandFeedFilter));
    const unreadCount=companyNews.filter(n=>!brandReadIds.has(n.kind+":"+n.id)).length;
+   document.querySelectorAll("[data-brand-news-filter]").forEach(el=>el.classList.toggle("active",el.dataset.brandNewsFilter===brandFeedFilter));
    if(counter)counter.textContent=unreadCount+" da leggere · "+rows.length+(brandArchive?" nell'archivio":" mostrate");
    if(toggle)toggle.textContent=brandArchive?"← Torna alle notizie":"Archivio lette";
    area.innerHTML=rows.length?rows.map(item=>{
@@ -974,6 +981,10 @@ async function renderOpportunityFolder(jobId){
      renderBrandFeed();
    });
  };
+ document.querySelectorAll("[data-brand-news-filter]").forEach(btn=>btn.onclick=()=>{
+   brandFeedFilter=btn.dataset.brandNewsFilter||"all";
+   renderBrandFeed();
+ });
  const toggleBrandArchive=document.getElementById("brandReadToggle");
  if(toggleBrandArchive)toggleBrandArchive.onclick=()=>{brandArchive=!brandArchive;renderBrandFeed()};
  const goAllNews=document.getElementById("brandGoFashionNews");
