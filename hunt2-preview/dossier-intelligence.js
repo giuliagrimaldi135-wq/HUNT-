@@ -88,11 +88,15 @@ export function assessDossier(job,profile,duties,checks,incomplete,language="it"
   proof=it?"Non emerge una prova diretta nel CV acquisito per queste mansioni: non considerare il match già dimostrato.":
     "No direct supporting example was found in the uploaded CV. Do not treat the match as verified.";
  }
+ const significant=missing.filter(x=>/english|inglese|c1|excel|powerpoint|laurea|degree|master|years?|anni|esperienza/i.test(x.text));
+ const lead=significant.map(x=>brief(x.text,72)).slice(0,2).join(" e ");
  const judgement=incomplete
   ?(it?"Annuncio parziale: non è ancora possibile valutarlo con affidabilità.":"Incomplete posting: a reliable evaluation is not yet possible.")
-  :missing.length
-   ?(it?"Da approfondire: le attività sono pertinenti, ma alcuni requisiti non sono documentati.":"Worth exploring, but some requirements are not yet documented.")
-   :(it?"Da approfondire: emergono attività collegabili a esperienze del CV.":"Worth exploring: some responsibilities link to documented CV experience.");
+  :significant.length
+   ?(it?"Prima di darle priorità, verifica i requisiti su "+lead+".":"Before prioritizing this role, check "+lead+".")
+   :missing.length
+    ?(it?"Le mansioni meritano attenzione, ma alcune capacità richieste non risultano ancora dimostrate.":"The duties are worth exploring, but some expected abilities are not yet evidenced.")
+    :(it?"Da approfondire: emergono attività collegabili a esperienze del CV.":"Worth exploring: some responsibilities link to documented CV experience.");
  const watch=missing.length?(it?"Requisiti da controllare: ":"Requirements to check: ")+label.slice(0,3).join(" · ")+"."
   :(it?"Controlla comunque la descrizione completa prima dell'invio.":"Review the complete job posting before applying.");
  return {judgement,work,why:proof,watch,missingCount:missing.length};
