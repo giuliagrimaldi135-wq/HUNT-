@@ -717,15 +717,22 @@ function evidenceItSummary(text,type="task"){
  const hits=[];
  const add=(test,label)=>{if(test.test(t)&&!hits.includes(label))hits.push(label)};
  if(type==="requirement"){
-   add(/\b(english|inglese)\b.{0,80}\b(required|proficien|fluent|advanced|ottimo|necessari|requisit)/i,"Conoscenza dell'inglese richiesta");
+   if(/\b(english|inglese)\b/i.test(t)){
+     if(/\b(c1|cefr c1|qcer c1)\b/i.test(t))hits.push("Inglese C1 richiesto");
+     else hits.push("Conoscenza dell'inglese richiesta");
+   }
    add(/\b(excel|spreadsheet|fogli di calcolo)\b/i,"Competenze Excel richieste");
    add(/\b(powerpoint|power point|presentation software)\b/i,"Conoscenza di PowerPoint richiesta");
    add(/\b(interpersonal|communication skills|capacità comunicative)\b/i,"Capacità comunicative e relazionali");
    add(/\b(curricular|university activit|universitar|volunteer)\b/i,"Partecipazione ad attività universitarie o di volontariato");
    add(/\b(fashion and luxury|luxury trends|passion for fashion)\b/i,"Interesse per moda e lusso");
-   add(/\b(\d+)\s*(?:years?|anni)\s+(?:of\s+)?experience\b/i,"Esperienza professionale richiesta, con durata specificata nella fonte");
+   const years=t.match(/\b(\d{1,2})\s*\+?\s*(?:years?|anni)\s+(?:of\s+)?experience\b/i);
+   if(years)hits.push("Almeno "+years[1]+" anni di esperienza richiesti");
    add(/\b(french|français|francese)\b/i,"Conoscenza della lingua francese");
-   add(/\b(degree|bachelor|master|laurea)\b/i,"Percorso di studi o titolo di studio richiesto");
+   if(/\b(master'?s?\s+degree|master of|laurea magistrale)\b/i.test(t)){
+     if(/econom|finance|business/i.test(t))hits.push("Laurea magistrale in Economia o disciplina affine richiesta");
+     else hits.push("Laurea magistrale richiesta");
+   }else if(/\b(degree|bachelor|laurea)\b/i.test(t))hits.push("Titolo di studio richiesto");
    return hits.slice(0,6);
  }
  if(/(collection|collezion)/i.test(t)&&/(creat|structur|present|ciclo|lifecycle|life of the product)/i.test(t))
@@ -1132,36 +1139,49 @@ async function renderOpportunityFolder(jobId){
  if(profileButton)profileButton.onclick=()=>renderProfile();
  const cvSelect=document.getElementById("dossierCv");
  const languageSelect=document.getElementById("dossierLang");
- const syncDossier=async()=>{
-   const lang=languageSelect?.value||"en";
+ const showDossierLanguage=lang=>{
+   document.querySelectorAll("[data-fact-display],[data-decision-lang]").forEach(el=>{
+     const target=el.dataset.factDisplay||el.dataset.decisionLang;
+     el.classList.toggle("hide",target!==lang);
+   });
+ };
+ const syncDossier=async(kind)=>{
+   const lang=languageSelect?.value||"it";
    const cvId=cvSelect?.value||null;
-   const priorLang=dossierLang,priorCv=dossierCvId;
    const notice=document.getElementById("dossierMessage");
    const editor=document.getElementById("coverLetterText");
-   const changedText=Boolean(editor&&editor.value!==row.dossier?.ready_to_send_message);
-   if(changedText||row.dossier?.generated_from?.user_edited){
-     const ok=window.confirm("Vuoi aggiornare il dossier e generare la lettera nella lingua scelta? La lettera modificata o salvata manualmente sarà sostituita. Se preferisci conservarla, premi Annulla.");
-     if(!ok){if(languageSelect)languageSelect.value=priorLang;if(cvSelect)cvSelect.value=priorCv;return}
+   if(kind==="language"){
+     try{localStorage.setItem("hunt_dossier_language",lang)}catch{}
+     // The visible job analysis NEVER depends on an API request to change language.
+     showDossierLanguage(lang);
    }
    if(cvId&&!row.cvs?.some(cv=>cv.id===cvId&&verifiedCv(cv))){
-     if(notice)notice.textContent="Completa la verifica di questo CV nel Profilo prima di utilizzarlo.";
-     if(cvSelect)cvSelect.value=priorCv;
+     if(notice)notice.textContent="Per usare questo CV, controlla prima le informazioni nel Profilo. La lingua dell'analisi è stata aggiornata comunque.";
+     if(cvSelect)cvSelect.value=dossierCvId;
      return;
    }
-   if(notice)notice.textContent="Aggiorno CV, requisiti e lettera nella lingua selezionata…";
+   const changedText=Boolean(editor&&editor.value!==row.dossier?.ready_to_send_message);
+   if(changedText||row.dossier?.generated_from?.user_edited){
+     const ok=window.confirm("La lettera contiene modifiche personali. Vuoi rigenerarla nella lingua scelta? Le modifiche saranno sostituite. Premi Annulla per conservare la lettera: l'analisi resterà nella nuova lingua.");
+     if(!ok){
+       if(notice)notice.textContent="Analisi aggiornata. La tua lettera personalizzata è stata conservata senza modifiche.";
+       return;
+     }
+   }
+   if(notice)notice.textContent="Aggiorno la lettera usando questo CV e la lingua selezionata…";
    if(cvSelect)cvSelect.disabled=true;
    if(languageSelect)languageSelect.disabled=true;
    try{
      await requestDossier(jobId,lang,cvId,true);
      await renderOpportunityFolder(jobId);
    }catch(error){
-     if(notice)notice.textContent=error?.message||String(error);
-     if(cvSelect){cvSelect.disabled=false;cvSelect.value=priorCv}
-     if(languageSelect){languageSelect.disabled=false;languageSelect.value=priorLang}
+     if(notice)notice.textContent="Analisi in "+(lang==="it"?"italiano":"inglese")+" aggiornata; non è stato possibile rigenerare la lettera: "+(error?.message||String(error));
+     if(cvSelect)cvSelect.disabled=false;
+     if(languageSelect)languageSelect.disabled=false;
    }
  };
- if(cvSelect)cvSelect.onchange=syncDossier;
- if(languageSelect)languageSelect.onchange=syncDossier;
+ if(cvSelect)cvSelect.onchange=()=>syncDossier("cv");
+ if(languageSelect)languageSelect.onchange=()=>syncDossier("language");
  const generate=document.getElementById("generateDossier");
  if(generate)generate.onclick=async()=>{
    const lang=document.getElementById("dossierLang").value;
