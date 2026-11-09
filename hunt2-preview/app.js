@@ -806,7 +806,7 @@ async function renderOpportunityFolder(jobId){
  const dossierEvidence=Array.isArray(row.dossier?.what_to_emphasize)?row.dossier.what_to_emphasize:[];
  const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
  const dossierCvId=row.dossier?.recommended_cv_id||cv?.id||"";
- const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""}>${index+1}. ${esc(c.name||"Curriculum")}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · dati da verificare"}</option>`).join("");
+ const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""} ${verifiedCv(c)?"":"disabled"}>${index+1}. ${esc(c.name||"Curriculum")}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · completa lettura e conferma nel Profilo"}</option>`).join("");
  const dossierLang=row.dossier?.generated_from?.language==="it"?"it":"en";
  const repostCount=(row.reposts||[]).length;
  const firstSeen=job.published_at?new Date(job.published_at):null;
@@ -904,7 +904,7 @@ async function renderOpportunityFolder(jobId){
      <div class="workspaceBar">
        <label>CV da utilizzare <select id="dossierCv">${dossierCvOptions}</select></label>
        <label>Lingua <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
-       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna candidatura":"Analizza CV e offerta"}</button>
+       <button class="btn primary" id="generateDossier">${row.dossier?"Ricalcola dossier":"Analizza CV e offerta"}</button>
      </div>
      <div id="dossierMessage" class="workspaceMessage"></div>
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
@@ -1086,13 +1086,36 @@ async function renderOpportunityFolder(jobId){
  if(openBrand)openBrand.onclick=()=>document.querySelector('[data-folder-tab="company"]')?.click();
  const cvSelect=document.getElementById("dossierCv");
  const languageSelect=document.getElementById("dossierLang");
- const selectionNote=()=>{const notice=document.getElementById("dossierMessage");if(notice)notice.textContent="Selezione aggiornata. Premi Aggiorna dossier per applicarla alla lettera e al confronto con i requisiti.";};
- if(cvSelect)cvSelect.onchange=selectionNote;
- if(languageSelect)languageSelect.onchange=()=>{
-   document.querySelectorAll("[data-fact-display]").forEach(el=>el.classList.toggle("hide",el.dataset.factDisplay!==languageSelect.value));
+ const syncDossier=async()=>{
+   const lang=languageSelect?.value||"en";
+   const cvId=cvSelect?.value||null;
+   const priorLang=dossierLang,priorCv=dossierCvId;
    const notice=document.getElementById("dossierMessage");
-   if(notice)notice.textContent=(haveVerifiedSections?"Analisi mostrata nella lingua selezionata. ":"Dati disponibili nella lingua originale acquisita. ")+"Premi Aggiorna candidatura per aggiornare anche la cover letter.";
+   const editor=document.getElementById("coverLetterText");
+   const changedText=Boolean(editor&&editor.value!==row.dossier?.ready_to_send_message);
+   if(changedText||row.dossier?.generated_from?.user_edited){
+     const ok=window.confirm("Vuoi aggiornare il dossier e generare la lettera nella lingua scelta? La lettera modificata o salvata manualmente sarà sostituita. Se preferisci conservarla, premi Annulla.");
+     if(!ok){if(languageSelect)languageSelect.value=priorLang;if(cvSelect)cvSelect.value=priorCv;return}
+   }
+   if(cvId&&!row.cvs?.some(cv=>cv.id===cvId&&verifiedCv(cv))){
+     if(notice)notice.textContent="Completa la verifica di questo CV nel Profilo prima di utilizzarlo.";
+     if(cvSelect)cvSelect.value=priorCv;
+     return;
+   }
+   if(notice)notice.textContent="Aggiorno CV, requisiti e lettera nella lingua selezionata…";
+   if(cvSelect)cvSelect.disabled=true;
+   if(languageSelect)languageSelect.disabled=true;
+   try{
+     await requestDossier(jobId,lang,cvId,true);
+     await renderOpportunityFolder(jobId);
+   }catch(error){
+     if(notice)notice.textContent=error?.message||String(error);
+     if(cvSelect){cvSelect.disabled=false;cvSelect.value=priorCv}
+     if(languageSelect){languageSelect.disabled=false;languageSelect.value=priorLang}
+   }
  };
+ if(cvSelect)cvSelect.onchange=syncDossier;
+ if(languageSelect)languageSelect.onchange=syncDossier;
  const generate=document.getElementById("generateDossier");
  if(generate)generate.onclick=async()=>{
    const lang=document.getElementById("dossierLang").value;
