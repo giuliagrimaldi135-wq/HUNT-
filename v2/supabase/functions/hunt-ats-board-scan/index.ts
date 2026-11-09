@@ -31,17 +31,20 @@ function family(title:string){
  if(/marketing|growth|brand/.test(t))return "Marketing & Brand";
  return null;
 }
+// Source ingestion is global and must NEVER inherit a specific candidate's role filters.
+// CV, seniority, geography and unwanted-role exclusions belong to hunt-match-refresh.
 function eligible(title:string){
- const t=title.toLowerCase();
- if(/senior|sr\.|director|head of|vice president|chief|lead |manager|architect|facilities|maintenance|store design|construction|sales (assistant|associate|specialist|advisor|consultant)|store associate|client advisor|sales consultant/.test(t))return false;
- if(!/intern|internship|stage|stagiaire|apprentice|graduate|trainee|junior|assistant|coordinator|analyst|specialist|associate/.test(t))return false;
- return Boolean(family(title));
+ const t=title.trim();
+ return t.length>=4&&t.length<=200&&!/^(all jobs|view all positions|job search|careers homepage)$/i.test(t);
 }
 function sen(title:string){
  if(/intern|stage|stagiaire/i.test(title))return "internship";
  if(/apprentice|trainee|graduate/i.test(title))return "trainee";
  if(/assistant/i.test(title))return "assistant";
  if(/junior|jr[.\s]/i.test(title))return "junior";
+ if(/head of|director|chief|vice president/i.test(title))return "head_director";
+ if(/senior|sr\.|principal/i.test(title))return "senior_manager";
+ if(/manager|lead/i.test(title))return "manager";
  return "entry_level";
 }
 function safeURL(v:unknown){
@@ -123,7 +126,11 @@ Deno.serve(async(req)=>{
     const liveURLs=new Set(entries.map((x:any)=>x.url).filter(Boolean));
     available+=entries.length;
     const recentLinks=new Set<string>();
-    for(const item of entries.slice(0,250)){
+    const previousCursor=Math.max(0,Number(source.config?.catalog_cursor)||0);
+    const pageSize=source.source_family==="ats_smartrecruiters"?12:35;
+    const selected=entries.length?Array.from({length:Math.min(entries.length,pageSize)},(_,i)=>entries[(previousCursor+i)%entries.length]):[];
+    const nextCursor=entries.length?(previousCursor+selected.length)%entries.length:0;
+    for(const item of selected){
       if(!item.title||!eligible(item.title)){rejected++;ignored++;continue}
       if(source.source_family==="ats_smartrecruiters"&&item.id){
         const board=trim(source.config?.board,90),id=encodeURIComponent(item.id);
@@ -172,7 +179,7 @@ Deno.serve(async(req)=>{
         published_at:item.posted&&Number.isFinite(new Date(item.posted).getTime())&&new Date(item.posted).getTime()<=Date.now()
           ?new Date(item.posted).toISOString():null,
         first_seen_at:stamp,last_seen_at:stamp,last_verified_at:stamp,
-        metadata:{discovered_by:"hunt-ats-board-v2",public_ats:source.source_family,posted_date:item.posted?"provider_released_date":"not_exposed",source_verified_at:stamp}
+        metadata:{discovered_by:"hunt-ats-board-v3",catalog_scope:"all_public_roles",public_ats:source.source_family,posted_date:item.posted?"provider_released_date":"not_exposed",employment_type_inferred_from_title:true,source_verified_at:stamp}
       }).select("id").single();
       if(insertError||!job)throw Error(insertError?.message||"Job insert failed");
       const {error:linkError}=await db.from("job_sources").insert({
@@ -202,9 +209,10 @@ Deno.serve(async(req)=>{
       }
     }
     await db.from("sources").update({
-      last_scan_at:at,last_success_at:at,health_status:"healthy",consecutive_failures:0
+      last_scan_at:at,last_success_at:at,health_status:"healthy",consecutive_failures:0,
+      config:{...(source.config||{}),catalog_cursor:nextCursor}
     }).eq("id",source.id);
-    details.push({family:source.source_family,board:source.config?.board,status:"healthy",fetched:entries.length,created,checked:scanned,ignored,stale});
+    details.push({family:source.source_family,board:source.config?.board,status:"healthy",fetched:entries.length,created,checked:scanned,ignored,stale,catalog_cursor:nextCursor});
    }catch(e){
     await db.from("sources").update({
       last_scan_at:at,health_status:"degraded",consecutive_failures:(source.consecutive_failures||0)+1
