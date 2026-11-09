@@ -1,5 +1,57 @@
 [
   {
+    "key": "df13ecd02ac7edc638b3",
+    "brand": "Max Mara",
+    "headline": "Max Mara Fashion group lancia il marchio M-M For Mondays and More - FashionUnited",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-09T20:57:43.181230+00:00",
+    "published_at": "2026-11-09T10:37:24+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPVzBwN1VvdnZvSDMzLWMyX1A3cVhCclNsWHdYelNnQWNFTVY2NlRKU3lYNXdFelF4TFJKeE5CYWM4d2d6YWNidXl5Qzdjd3Q3ZjNzNnVONG1PbkVfSUtLRHBoWHVDdmhUMVRhYmZYcDl0WHVJOGJyTWZVQXdlSVJPLXF4dlFyVVJWRXZ5MTJjb3FQOUdyZGNjaTlFZmZULWl2X1QxZGdnd1o2SVNo?oc=5"
+  },
+  {
+    "key": "c5281e83363f366069ea",
+    "brand": "Max Mara",
+    "headline": "Max Mara Fashion Group lancia il brand M-M For Mondays and More - Pambianconews",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-09T20:57:43.181230+00:00",
+    "published_at": "2026-11-09T08:26:33+00:00",
+    "source": "Pambianconews",
+    "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPOWhqM1QwSTN1QVFndEZXU2JpdHZnVl9OMzV1SmpwN01KOXJVTE1UWWtreG1NemNDOEk5VS1ubnNua2traWRyam1IOUNYdzBOWUlxZFJUMjk4LUhNYy1uMFlPVnFadERWR1hGMlpkeFRMQTdzUHYyYkdZMldIOUxsTFZhRHd5U191d1hHWld6b0dualUtVklnaHJra1Jnb0E4b0FVZWlxaFoxOEFGeEMweG1R?oc=5"
+  },
+  {
+    "key": "7a803ce0b7ac885dda19",
+    "brand": "Max Mara",
+    "headline": "M-M For Mondays and More: Max Mara Fashion Group lancia un nuovo brand di womenswear - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-09T20:57:43.181230+00:00",
+    "published_at": "2026-11-09T08:25:12+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPV2ZxSGZUN2Z3dFZfUE5pdWRrbnZFaVRzdG9yZTVPOTR4RmUwelo2RDMxWnNIY2JQRlFqSlBRZXJ3ckhBNUUxRGRQYXNlel9iQ3NreDJaUXFXWUNHdkZ1bDlYMy1pWGVLUFN4MXZscGJyX19MeTFyMDdKUkVTMlhtY1ptQVk3SHRpbmxNYkk5N2N3ajhsalJzUkdZY1VhTktyc1JFVW5rWmRnS2NZSmhRTm9fSjdMa210V3lTQldZM0UyVXRBc3loZXcxMA?oc=5"
+  },
+  {
+    "key": "57d78b9d507a5fc58ee1",
+    "brand": "SUNNEI",
+    "headline": "Sunnei - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-09T20:57:43.181230+00:00",
+    "published_at": "2026-11-08T13:02:33+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBzU3ZlcnRFTXFKdVQ0SXByZzFNVG1VN3hvX2Q1aTZDOW5zX2xiakU0Y1Y1MFJlMm5EOWdRSW9hS1RzYzY1WTl5SXQxSDZXazFKZ19XazBwTEFHQ05IQUh3NG02RFc3Q3BzT3BLM3JLM0VVdmFKX2c?oc=5"
+  },
+  {
     "key": "18dfd3dd67258e58edc6",
     "brand": "Dolce & Gabbana",
     "headline": "Dolce & Gabbana - FashionNetwork Italia",
@@ -2533,57 +2585,5 @@
     "published_at": "2026-09-26T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQNFZOSmhJYk5zV05RY2s4YUdMTjZybjdaUzVNeVZZQWRubVJrc1p4QWpwbk81LXlmUU42WU5RUDRWWHluaFRJWUMtOVh2aUlRRjMwZzZWM2NCa3ZVeGZ6RnFNdmVhZHZ3dVFtQkozS2dJUXM1RUp3OHY1ZWZtZkhjMjNFNlVWdTdFZk5KRWxIRUQ3OExMbWVFRzFFOWRQMzdzWnhxTVVmOUN5SzgyMnp1WEp2Z3ktZ2tnWUswTg?oc=5"
-  },
-  {
-    "key": "3a0ef922782a32a21b0c",
-    "brand": "Elisabetta Franchi",
-    "headline": "Elisabetta Franchi - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-04T15:33:36.147422+00:00",
-    "published_at": "2026-09-25T20:44:57+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPN2hWNzJGa1BoaVpyaWNzTWl5UzFKY0hyNHhKMlRiWWpsYkJVak1aUWpIYXk2WWhuMDREMnBlcUVBOGoyZE1JTzdrUEd3WWp0WmszOFRfX0o3RXRwMVBhSl9BSmNaVnc0ZVFQX1N1VWl5ZVNReE4taHlxUTVEMWNnZg?oc=5"
-  },
-  {
-    "key": "a987390323e159c6f938",
-    "brand": "Elisabetta Franchi",
-    "headline": "Elisabetta Franchi - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:49:10.498756+00:00",
-    "published_at": "2026-09-25T20:39:40+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQT1g5SEU1QU9mSXZ3N0hLbWFPaWRVSnM3eUxZZUVwQ25hWDlFV29EXzBOd0xPV19sNFJ6UEprNG02aWRHSWVRVUtXWDN1UlhjRGRiMWprLS1NMmRGeGRhSFV0eENlMThTM0V1UDFXeEJISWNTSUhHS3UzM3czUmV0Sg?oc=5"
-  },
-  {
-    "key": "167701145bb638b6b8a7",
-    "brand": "Galib Gassanoff",
-    "headline": "Institution By Galib Gassanoff - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:59:08.629849+00:00",
-    "published_at": "2026-09-25T20:34:05+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNUVVLSnBBWXRCaThkQ1VaOWhJV0lOZXQ4QkhnbVRDdlJEMVAyTVdfTkUzZnJFdDVfemtTMzlEUHVscE9ZUVpyak5rVGh1azlzSGtfcC1oZHBReGRqY2FYTVA5TkVQR0VKcmpsRjJ2Y3RhYTI1UzZxMFFLemd5YmZXT2doTmxyZG5KNWpuQ3V5cy0?oc=5"
-  },
-  {
-    "key": "59b65f10fbc43bdf0e21",
-    "brand": "Institution",
-    "headline": "Institution By Galib Gassanoff - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T22:02:29.121469+00:00",
-    "published_at": "2026-09-25T20:34:05+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNUVVLSnBBWXRCaThkQ1VaOWhJV0lOZXQ4QkhnbVRDdlJEMVAyTVdfTkUzZnJFdDVfemtTMzlEUHVscE9ZUVpyak5rVGh1azlzSGtfcC1oZHBReGRqY2FYTVA5TkVQR0VKcmpsRjJ2Y3RhYTI1UzZxMFFLemd5YmZXT2doTmxyZG5KNWpuQ3V5cy0?oc=5"
   }
 ]
