@@ -387,3 +387,27 @@
 .manualLetterGuide{background:#f8f8f5;border:1px solid #e5e3db;padding:14px 17px;border-radius:5px}
 .manualLetterGuide strong{font-size:12px}
 .manualLetterGuide p{font-size:12px;line-height:1.6;color:#676960;margin:6px 0 0}
+
+
+/* Source-first job review: decisions, CV evidence and independently curated articles */
+.huntDecisionV3 .huntDecisionVerdict{font-size:17px;line-height:1.5;letter-spacing:-.01em;color:#25352b;margin:12px 0 10px}
+.huntDecisionV3 .huntDecisionVerdict strong{font-weight:730}
+.huntDecisionV3 .huntDecisionText{max-width:860px;font-size:13.5px;line-height:1.72;margin:10px 0}
+.huntDecisionV3 .huntDecisionEvidence{font-size:12px;line-height:1.75;color:#525e54;margin:14px 0 10px;max-width:860px;padding:13px 16px;border-left:2px solid #8ca496;background:#f5f7f3}
+.huntDecisionV3 .huntDecisionCaution{font-size:12px;line-height:1.7;margin-top:12px;padding-top:13px;border-top:1px solid #e6e3db;color:#775c49}
+.requirementsWithCv .requirementDetail{min-width:0;display:flex;flex-direction:column;gap:4px;flex:1}
+.requirementsWithCv .requirementDetail>span{font-size:12.5px;line-height:1.6}
+.requirementsWithCv .requirementDetail>p{font-size:10.5px;line-height:1.55;color:#64665f;margin:0}
+.requirementsWithCv li small.cvProof{white-space:normal;text-align:center;max-width:155px;flex-shrink:0;padding:7px 9px;border-radius:4px;font-weight:690;line-height:1.45}
+.requirementsWithCv li small.cvProof-found{background:#eef4ec;color:#365a3c}
+.requirementsWithCv li small.cvProof-partial{background:#f7f1e3;color:#756044}
+.requirementsWithCv li small.cvProof-missing{background:#f2eeee;color:#805a56}
+.cvProofAction{border:0;background:transparent;color:#346444;padding:5px 0 2px;margin:8px 0 2px;text-decoration:underline;text-underline-offset:3px;font-weight:720;font-family:inherit;font-size:12px;cursor:pointer}
+.brandNewsItem .brandNewsTeaser{display:block;color:#666b61;font-size:12px;line-height:1.6;margin:6px 0 15px}
+.companyNoJobs{padding:18px 20px;background:#f8f8f6;border:1px solid #e5e4df;border-radius:5px}
+.companyNoJobs strong{font-size:13px;font-weight:720}
+.companyNoJobs p{font-size:12px;line-height:1.65;color:#75736b;margin:7px 0 0}
+.companyAlternatives{padding:34px 0 42px;border-top:1px solid #e4e1d9}
+.companyAlternatives h2{font-size:23px;letter-spacing:-.025em;margin:8px 0 7px}
+.companyAlternatives>p{font-size:12px;line-height:1.65;color:#77736d;max-width:670px;margin:5px 0 20px}
+@media(max-width:760px){.huntDecisionV3 .huntDecisionVerdict{font-size:15px}.requirementsWithCv li small.cvProof{max-width:none;text-align:left}.companyNoJobs{padding:14px}}
