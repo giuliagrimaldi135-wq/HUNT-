@@ -411,3 +411,10 @@
 .companyAlternatives h2{font-size:23px;letter-spacing:-.025em;margin:8px 0 7px}
 .companyAlternatives>p{font-size:12px;line-height:1.65;color:#77736d;max-width:670px;margin:5px 0 20px}
 @media(max-width:760px){.huntDecisionV3 .huntDecisionVerdict{font-size:15px}.requirementsWithCv li small.cvProof{max-width:none;text-align:left}.companyNoJobs{padding:14px}}
+
+
+.brandOtherPositions{margin-top:20px;border-top:1px solid #dedfd9;padding:17px 0}
+.brandOtherPositions summary{cursor:pointer;font-size:12px;font-weight:740;color:#536a57;line-height:1.5}
+.brandOtherPositions>p{font-size:11px;color:#78746b;line-height:1.6;margin:10px 0 16px}
+.brandOtherPositions .brandJobItem{opacity:.92}
+.brandOtherPositions .brandJobItem h3{font-size:14px}
