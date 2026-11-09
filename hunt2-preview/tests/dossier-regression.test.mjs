@@ -3,6 +3,8 @@ import {test} from "node:test";
 import assert from "node:assert/strict";
 const app=readFileSync(new URL("../app.js",import.meta.url),"utf8");
 const cv=readFileSync(new URL("../cv-profile.js",import.meta.url),"utf8");
+const cvWorkspace=readFileSync(new URL("../cv-workspace.js",import.meta.url),"utf8");
+const jobWorkspace=readFileSync(new URL("../job-workspace.js",import.meta.url),"utf8");
 const folderStart=app.indexOf("async function renderOpportunityFolder(jobId){");
 const folderEnd=app.indexOf("function statusLabel(",folderStart);
 const folder=app.slice(folderStart,folderEnd);
@@ -19,27 +21,29 @@ test("Every job navigation enters the same dossier flow",()=>{
  assert.doesNotMatch(app,/data-related-job=|data-prepare=/);
  assert.match(app,/Riprova/);
 });
-test("Paused letter creation does not run when opening a dossier",()=>{
+test("Letter work remains paused and the candidate can still control CVs",()=>{
  assert.doesNotMatch(folder,/id="saveCoverLetter"|id="copyCoverLetter"|id="regenerateCoverLetter"|id="generateDossier"/);
  assert.doesNotMatch(folder,/await requestDossier\(jobId,preferredLocale\)/);
  assert.match(folder,/The cover-letter feature is paused/);
  assert.match(cv,/const readSingleCv=async/);
  assert.match(cv,/if\(!autoReading\)/);
- assert.match(cv,/data-cv-action="delete-cv"/);
+ assert.match(cvWorkspace,/data-cv-action="delete-cv"/);
+ assert.match(cvWorkspace,/data-cv-action="default"/);
 });
 
-test("Single Italian employer view shows only key professional requirements, not personality scores",()=>{
+test("Job dossier is a navigable product workspace, not a wall of personality ratings",()=>{
  assert.match(folder,/it:normalizeVacancyFacts\(haveVerifiedSections\?bilingualFacts\.it:italianEvidenceFromJob\(job\.description,evidence\)\)/);
  assert.match(folder,/const dossierLang="it"/);
  assert.match(folder,/applicationInsight\(assessmentIt,cvChecklistIt,factLists\.it\.duties\)/);
  assert.match(folder,/prioritizeRequirements\(factLists\.it\.requirements,4\)/);
  assert.match(folder,/compareKeyRequirement\(x,cvChecklistIt\[x\.sourceIndex\],evidencedProfile\)/);
- assert.match(folder,/Non valutiamo qualità personali da un CV/);
- assert.match(folder,/id="dossierCv"/);
+ assert.match(folder,/renderJobWorkspace\(/);
+ assert.match(jobWorkspace,/role="tablist"/);
+ assert.match(jobWorkspace,/hwAsideCard/);
+ assert.match(jobWorkspace,/id="dossierCv"/);
+ assert.match(jobWorkspace,/Non sono aggiunti compiti ipotizzati da HUNT/);
  assert.match(folder,/dossierCvChoices\.set\(jobId,next\)/);
- assert.match(folder,/class="huntEditorialMore"/);
- assert.match(folder,/huntEditorialFooter/);
- assert.match(folder,/Cover letter/);
+ assert.match(folder,/jobWorkspaceTabs\.set\(jobId,tab\)/);
  assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
  assert.doesNotMatch(folder,/relevant_years_experience/);
 });
