@@ -22,7 +22,7 @@ test("Italian merchandising letter uses actual vacancy duties and relevant CV ex
  assert.match(result.text,/Example Fashion/);
  assert.match(result.text,/Retail Merchandising Intern/);
  assert.match(result.text,/assortimento/i);
- assert.match(result.text,/Gucci academic project/);
+ assert.match(result.text,/Nel progetto Gucci/);
  assert.match(result.text,/Showroom Example/);
  assert.doesNotMatch(result.text,/\b(30%|raddoppiato|increased sales|leadership|C1|Excel avanzato)\b/i);
  assert.ok(result.evidence.some(e=>e.origin==="Gucci academic project"));
@@ -31,7 +31,7 @@ test("English version is professional and uses sourced evidence",()=>{
  const result=generateEditorialLetter({...candidate,language:"en",highlights:merch});
  assert.ok(result?.text.startsWith("Dear Recruitment Team,"));
  assert.match(result.text,/assortment/);
- assert.match(result.text,/Gucci academic project/);
+ assert.match(result.text,/Gucci project/);
  assert.doesNotMatch(result.text,/Mi candido|Gentile|Cordiali saluti/);
 });
 test("Two different vacancies produce genuinely different letters and selected projects",()=>{
@@ -40,7 +40,7 @@ test("Two different vacancies produce genuinely different letters and selected p
  assert.notEqual(merchLetter.text,wholesaleLetter.text);
  assert.match(wholesaleLetter.text,/ordini|wholesale/i);
  assert.match(wholesaleLetter.text,/Showroom Example/);
- assert.doesNotMatch(wholesaleLetter.text,/Gucci academic project/);
+ assert.doesNotMatch(wholesaleLetter.text,/Gucci project|progetto Gucci/);
 });
 test("No letter without user-confirmed CV or real vacancy responsibilities",()=>{
  assert.equal(generateEditorialLetter({...candidate,verified:false,language:"it",highlights:merch}),null);
@@ -78,4 +78,14 @@ test("Client analysis is not misrepresented as face-to-face retail experience",(
   experiences:[{company:"Research Lab",evidence:["Client segmentation analysis"]}],projects:[]
  });
  assert.equal(result,null);
+});
+
+test("Editorial output never includes common generated grammar mistakes",()=>{
+ const it=generateEditorialLetter({...candidate,language:"it",highlights:merch});
+ const en=generateEditorialLetter({...candidate,language:"en",highlights:merch});
+ assert.ok(it?.text&&en?.text);
+ assert.doesNotMatch(it.text,/su l['’]|legate a selezione|academic project/i);
+ assert.doesNotMatch(en.text,/worked on working|assortment work and merchandising-mix work/i);
+ assert.ok(it.text.split(" ").length<180);
+ assert.ok(en.text.split(" ").length<180);
 });
