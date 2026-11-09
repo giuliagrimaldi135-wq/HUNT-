@@ -1,5 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { generateEditorialLetter } from "./letter-editorial.js";
 const ORIGIN="https://giuliagrimaldi135-wq.github.io";
 const cors={"Access-Control-Allow-Origin":ORIGIN,"Access-Control-Allow-Headers":"authorization, apikey, x-client-info, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin"};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -80,71 +81,8 @@ function experienceBridge(cv:any,duty:[string,string]|null){
 
 
 
-// Source-backed editorial letter. Deliberately no generic skills or made-up company claims.
-function letter(args:any){
- const {language,company,role,name}=args,it=language==="it";
- const exp=args.experience||null,experienceFacts=list(exp?.evidence).map((v:any)=>str(v));
- const projects=list(args.projects).filter((x:any)=>list(x.evidence).length);
- const highlights=list(args.highlights).slice(0,2);
- const focus=highlights.map((d:any)=>str(it?d[1]:d[0])).filter(Boolean);
- const roleFocus=focus.length?connect(focus,it?"it":"en"):str(it?args.areaIt:args.areaEn);
- const companyName=str(company),roleName=str(role),candidate=str(name);
- const hasSalesCampaign=list(exp?.evidence).some((v:any)=>/sales campaign|campagna vendite|showroom/i.test(str(v)));
- const hasBusyShifts=list(exp?.evidence).some((v:any)=>/peak|picchi|busy|alta affluenza/i.test(str(v)));
- const projectCandidates=projects.map((x:any)=>{
-   const facts=list(x.evidence).map((v:any)=>str(v));
-   const search=(roleName+" "+roleFocus+" "+companyName).toLowerCase();
-   const body=(str(x.name)+" "+facts.join(" ")).toLowerCase();
-   const overlap=(search.match(/[a-z]{5,}/g)||[]).filter((w:string)=>!["company","intern","retail","group","support","roles"].includes(w)&&body.includes(w)).length;
-   const sameEmployer=str(x.name).toLowerCase().includes(companyName.toLowerCase().replace(/\s+group$/,""))?3:0;
-   return {name:str(x.name).replace(/\s+academic project$/i,""),facts,score:overlap+sameEmployer};
- }).sort((x:any,y:any)=>y.score-x.score);
- const project=projectCandidates[0]||null;
- const expCompany=str(exp?.company);
- const allFacts=experienceFacts.join(" | ").toLowerCase();
- const themes=roleFocus.toLowerCase();
- const has=(v:RegExp)=>v.test(allFacts);
- const isMerch=/merchand|assort|collection|prodotto|product/.test(themes+" "+roleName.toLowerCase());
- const isBusiness=/budget|performance|sales|report|planning|commercial|buying|pianific|vendite/.test(themes+" "+roleName.toLowerCase());
- const partsIt:string[]=[],partsEn:string[]=[];
- if(has(/welcome|greet|clients?|customers?|accoglienz/)){partsIt.push("accolto i clienti durante la campagna vendite");partsEn.push("welcomed clients during the sales campaign")}
- if(has(/garment|show.*item|present.*product|presentazione.*capi/)){partsIt.push("presentato i capi");partsEn.push("presented garments")}
- if(has(/orders?|ordini|order entry|order taking/)){
-  partsIt.push(has(/product cod|codici prodotto/)?"raccolto ordini usando l'applicazione aziendale e i codici prodotto":"raccolto e inserito ordini tramite gli strumenti aziendali");
-  partsEn.push(has(/product cod|codici prodotto/)?"entered orders using the company's application and product codes":"recorded orders using the company's own systems");
- }
- if(has(/minimum.budget|client budget|budget minimo/)){partsIt.push("seguito i budget minimi previsti per i clienti");partsEn.push("tracked minimum order budgets for clients")}
- if(!partsIt.length&&expCompany){partsIt.push("svolto attività operative durante la mia esperienza");partsEn.push("worked on operational tasks during my placement")}
- // Keep supported facts only, do not create new achievements from inferred responsibilities.
- const activities=(it?partsIt:partsEn).slice(0,3);
- const pdata=(project?.facts||[]).join(" ").toLowerCase();
- const projectPartsIt:string[]=[],projectPartsEn:string[]=[];
- if(/merchandis|assort/.test(pdata)){projectPartsIt.push("mix di merchandising e assortimenti");projectPartsEn.push("merchandising mix and assortments")}
- if(/capsule|collection plan|pianificazion.*collezion/.test(pdata)){projectPartsIt.push("pianificazione di una capsule o collezione");projectPartsEn.push("capsule and collection planning")}
- if(/costing|cost analysis|costi/.test(pdata)){projectPartsIt.push("costing di prodotto");projectPartsEn.push("product costing")}
- if(/otb|open.to.buy|budget|kpi/.test(pdata)){projectPartsIt.push("budget e KPI");projectPartsEn.push("budgets and KPIs")}
- if(/product coding|codici prodotto/.test(pdata)){projectPartsIt.push("codifica di prodotto");projectPartsEn.push("product coding")}
- const projectHighlights=(it?projectPartsIt:projectPartsEn).slice(0,2);
- // A CV with no concrete evidence is NOT enough to generate a polished sounding letter.
- if((!expCompany||!activities.length)&&(!project||!projectHighlights.length))return null;
- const intro=it
-  ?"La posizione di "+roleName+" in "+companyName+" mi ha colpito per il lavoro su "+roleFocus+". Nel mio percorso ho affrontato temi collegati sia attraverso "+(expCompany?"un'esperienza operativa":"la formazione")+" sia attraverso "+(project?"progetti su prodotto e scelte commerciali":"lo studio del settore")+". Mi piacerebbe mettere insieme queste prospettive nel vostro team."
-  :"The "+roleName+" position at "+companyName+" stood out for its focus on "+roleFocus+". My background brings together "+(expCompany?"hands-on experience":"academic training")+" and "+(project?"project work on product and commercial decisions":"a grounding in fashion")+". I would like to put these perspectives to work in your team.";
- const work=expCompany&&activities.length
-  ?it?"Durante la mia esperienza presso "+expCompany+" ho "+connect(activities,"it")+"."+(hasBusyShifts?" Nei momenti di maggiore affluenza ho imparato quanto contino precisione e autonomia.":" Queste attività mi hanno avvicinato al processo concreto che collega prodotto, cliente e ordini."):
-      "At "+expCompany+", I "+connect(activities)+"."+(hasBusyShifts?" Busy periods taught me the importance of accuracy and working independently.":" This gave me a practical view of how product, customers and orders come together.")
-  :"";
- const academic=project&&projectHighlights.length
-  ?it?"Nel progetto formativo "+project.name+" ho invece lavorato su "+connect(projectHighlights,"it")+". Mi interessa portare queste due prospettive nello stesso contesto: capire il prodotto e tradurre le decisioni in attività commerciali curate.":
-      "In an academic project focused on "+project.name+", I worked on "+connect(projectHighlights)+". It gave me a different perspective on the same questions: how product choices connect to real commercial activity."
-  :"";
- const value=it
-  ?"Mi piacerebbe approfondire come queste esperienze possano essere utili nelle attività di "+roleFocus+". Grazie per l'attenzione alla mia candidatura: sarei felice di parlarne in un colloquio."
-  :"I would welcome the opportunity to discuss how these experiences could support the team on "+roleFocus+". Thank you for considering my application.";
- const heading=it?"Gentile team Recruiting,":"Dear Recruitment Team,";
- const signature=it?"Cordiali saluti,\n"+candidate:"Kind regards,\n"+candidate;
- return [heading,intro,[work,academic].filter(Boolean).join("\n\n"),value,signature].filter(Boolean).join("\n\n");
-}
+// Editorial letter generation is implemented in the separately tested, pure evidence-based module.
+// Never put private CV data or API credentials in the public web app.
 
 Deno.serve(async(req)=>{
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
@@ -182,9 +120,11 @@ Deno.serve(async(req)=>{
    return (targets.includes(role)?65:0)+Math.min(overlaps*3,21)+strength(x)*12+(x.is_default?4:0);
  };
  // An unparsed PDF may have role tags but cannot outrank a CV with confirmed evidence.
- const readyCv=cvs.filter(x=>strength(x)>0);
+ const confirmedCv=x=>x.parsed_profile?.profile_confirmed_by_user===true||x.parsed_profile?.profile_verified_from_user_history===true;
+ const readyCv=cvs.filter(x=>strength(x)>0&&confirmedCv(x));
  chosen=chosen||[...readyCv].sort((a,b)=>rankCv(b)-rankCv(a))[0]||[...cvs].sort((a,b)=>rankCv(b)-rankCv(a))[0];
  if(!chosen)return reply({error:"Carica un CV o completa il profilo professionale."},422);
+ if(!confirmedCv(chosen))return reply({error:"Prima di generare una lettera, conferma esperienze e progetti di questo CV nel Profilo. HUNT non attribuisce competenze non verificate.",code:"CV_NOT_VERIFIED"},422);
  const cv=chosen.parsed_profile||{};
  const exp=list(cv.experience),projects=list(cv.projects),education=list(cv.education);
  if(!exp.length&&!projects.length&&!education.length)return reply({error:"Il PDF è caricato, ma non contiene ancora esperienze confermate. Apri Profilo, controlla il testo estratto e conferma le informazioni prima di generare la lettera.",code:"CV_NOT_VERIFIED"},422);
@@ -236,8 +176,9 @@ Deno.serve(async(req)=>{
  const recommended=unique.map(x=>x.origin+": "+x.value);
  const why=blocked?"Non consigliata senza chiarimenti: "+gaps.join(" "):valueNarrative;
  const edu=education[0]||{};
- const body=blocked?null:letter({language,name,role,company,school:short(edu.school,100),program:short(edu.program,100),experience:exp[0],projects,tools:list(cv.tools).map(x=>short(x,100)),areaEn:area[0],areaIt:area[1],highlights:vacancyHighlights(description),interests:list(personalR.data?.interest_areas)});
- const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v8",updated_at:new Date().toISOString()};
+ const editorial=blocked||vacancyIsThin?null:generateEditorialLetter({language,name,role,company,verified:confirmedCv(chosen),experiences:exp,projects,highlights:specificDuties});
+ const body=editorial?.text||null;
+ const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2",letter_evidence:editorial?.evidence||[],letter_scope:editorial?.scope||null,editorial_version:editorial?.editorial_version||"evidence_editorial_v9"},model_version:"evidence_dossier_v9",updated_at:new Date().toISOString()};
  // Refresh relevance without silently destroying a previously edited letter.
  const {data:previous}=await db.from("user_job_dossiers").select("ready_to_send_message,ready_to_send_subject,generated_from").eq("user_id",userId).eq("job_id",job.id).maybeSingle();
  if(previous?.generated_from?.user_edited&&!payload?.force_regenerate){
