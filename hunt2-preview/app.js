@@ -487,6 +487,8 @@ function sourceLabel(job){
  if(source==="ats_greenhouse")return "Fonte diretta · Greenhouse";
  if(source==="ats_ashby")return "Fonte diretta · Ashby";
  if(source==="ats_smartrecruiters")return "Fonte diretta · SmartRecruiters";
+ if(source==="ats_workable")return "Fonte diretta · Workable";
+ if(source==="ats_successfactors")return "Portale ufficiale · SuccessFactors";
  return "Fonte · Annuncio aziendale";
 }
 function partialJobSource(job){
