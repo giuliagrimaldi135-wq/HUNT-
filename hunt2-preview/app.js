@@ -12,6 +12,7 @@ let currentUser=null;
 let currentView="opportunities";
 let selectedJobId=null;
 let selectedDossierCvId=null;
+const dossierCvChoices=new Map();
 let opportunitySort="priority";
 let radarSignalFilter="all";
 let radarCompanyFilter="all";
@@ -561,7 +562,7 @@ async function ignoreJob(jobId){
 async function openOpportunityFolder(jobId,push=true){
  if(!/^[0-9a-f-]{36}$/i.test(String(jobId||"")))return;
  const previousJob=selectedJobId;
- if(previousJob!==jobId)selectedDossierCvId=null;
+ if(previousJob!==jobId)selectedDossierCvId=dossierCvChoices.get(jobId)||null;
  selectedJobId=jobId;
  app.innerHTML=shell('<div class="folderLoading" role="status"><div class="eyebrow">HUNT · Dossier candidatura</div><h2>Caricamento della posizione…</h2><p>Recupero annuncio, CV, informazioni aziendali e notizie senza modificare lo stato della candidatura.</p></div>');
  try{
@@ -928,7 +929,7 @@ async function renderOpportunityFolder(jobId){
   <h1>${esc(job.canonical_title)}</h1>
   <p class="lead">${esc(job.city||"—")} · ${esc(job.role_family||"—")}</p>
   <div class="heroMeta editorialMeta darkMeta">
-   <span class="heroMatch">${summaryOnly||cvAssessment.missingCount?"Verifica i requisiti del CV":row.match_score+"% compatibilità indicativa"}</span>
+   <span class="heroMatch">${haveVerifiedSections?"Analisi su "+factLists.it.requirements.length+" requisiti aziendali":"Analisi basata sul testo acquisito"}</span>
    <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
    <span>${esc(verifiedLabel(job))}</span>
    <span>${esc(sourceLabel(job))}</span>
