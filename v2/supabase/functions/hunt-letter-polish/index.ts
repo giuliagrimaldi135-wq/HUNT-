@@ -71,6 +71,14 @@ Deno.serve(async(req)=>{
   "Candidate's prior personally edited letters, if any, are style examples ONLY. Learn natural rhythm and tone, but NEVER copy their past experience claims, company context, or wording.",
   "If the user's stated preferred style conflicts with the default tone, follow their preferred tone while retaining professional clarity."
  ].join(" ");
+ // Prevent runaway API costs if the beta is shared publicly.
+ const since=new Date(Date.now()-24*60*60*1000).toISOString();
+ const {count,error:quotaError}=await supa.from("hunt_ai_request_events").select("id",{count:"exact",head:true})
+   .eq("user_id",user.id).gte("created_at",since);
+ if(quotaError)return send({error:"Impossibile verificare il limite d'uso AI in questo momento."},503);
+ if((count||0)>=20)return send({error:"Hai raggiunto il limite beta di 20 revisioni o generazioni nelle ultime 24 ore.",code:"AI_RATE_LIMIT"},429);
+ const {error:recordError}=await supa.from("hunt_ai_request_events").insert({user_id:user.id,feature:mode});
+ if(recordError)return send({error:"Non riesco a registrare l'utilizzo AI in modo sicuro."},503);
  const payload={
   model:Deno.env.get("HUNT_WRITER_MODEL")||"gpt-4.1",
   instructions:instructionsAI,
