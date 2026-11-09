@@ -19,28 +19,21 @@ test("Every job navigation enters the same dossier flow",()=>{
  assert.doesNotMatch(app,/data-related-job=|data-prepare=/);
  assert.match(app,/Riprova/);
 });
-test("Paused AI is not advertised as a working control",()=>{
- assert.doesNotMatch(app,/HUNT AI|id="writeLetterAI"|id="polishLetter"|hunt-letter-polish/);
- assert.doesNotMatch(cv,/HUNT AI|data-cv-action="interpret"|id="cvAutoAI"/);
- assert.match(app,/id="saveCoverLetter"/);
- assert.match(app,/id="copyCoverLetter"/);
+test("Paused letter creation does not run when opening a dossier",()=>{
+ assert.doesNotMatch(folder,/id="saveCoverLetter"|id="copyCoverLetter"|id="regenerateCoverLetter"|id="generateDossier"/);
+ assert.doesNotMatch(folder,/await requestDossier\(jobId,preferredLocale\)/);
+ assert.match(folder,/The cover-letter feature is paused/);
  assert.match(cv,/const readSingleCv=async/);
  assert.match(cv,/if\(!autoReading\)/);
  assert.match(cv,/data-cv-action="delete-cv"/);
 });
 
-test("Italian dossier uses Italian evidence and switches without waiting for letter service",()=>{
+test("One Italian requirement list and one source-grounded synthesis are displayed",()=>{
  assert.match(folder,/it:normalizeVacancyFacts\(haveVerifiedSections\?bilingualFacts\.it:italianEvidenceFromJob\(job\.description,evidence\)\)/);
- assert.match(folder,/const dossierLang=preferredLocale/);
- assert.match(folder,/showDossierLanguage\(lang\)/);
- assert.match(folder,/localStorage\.setItem\("hunt_dossier_language",lang\)/);
- assert.doesNotMatch(folder,/<details class="sourceVerification"/);
- assert.match(folder,/data-decision-lang=/);
-});
-test("Letter generator v11 is used and manual edits are preserved",()=>{
- assert.match(folder,/evidence_dossier_v11/);
- assert.match(folder,/user_edited/);
- assert.match(folder,/Controllo qualità HUNT/);
+ assert.match(folder,/const dossierLang="it"/);
+ assert.match(folder,/applicationInsight\(assessmentIt,cvChecklistIt\)/);
+ assert.match(folder,/Perché candidarti/);
+ assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=|id="dossierCv"/);
 });
 
 test("Gucci's English posting is summarized as Italian duties and requirements without fabricated claims",async()=>{
