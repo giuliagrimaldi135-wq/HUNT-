@@ -24,5 +24,7 @@ jobs:
           node --check hunt2-preview/cv-display.js
           node --check hunt2-preview/cv-ranking.js
           node --check hunt2-preview/opportunity-similarity.js
+          node --check hunt2-preview/job-workspace.js
+          node --check hunt2-preview/cv-workspace.js
           node --check hunt2-preview/requirement-priority.js
-          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/requirement-priority.test.mjs
+          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/job-workspace.test.mjs hunt2-preview/tests/cv-workspace.test.mjs hunt2-preview/tests/requirement-priority.test.mjs
