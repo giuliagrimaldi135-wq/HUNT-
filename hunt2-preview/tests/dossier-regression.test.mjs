@@ -70,3 +70,25 @@ test("Italian tasks, official duties and absent sections all normalize safely",a
  assert.match(folder,/normalizeVacancyFacts\(haveVerifiedSections/);
  assert.match(app,/history\.replaceState\(\{\},"",location\.pathname\+location\.search\)/);
 });
+
+test("Generic vacancy parsing retains a full list of explicitly stated qualifications",async()=>{
+ const from=app.indexOf("function evidenceItSummary("),to=app.indexOf("function documentedRequirement(",from);
+ const code=app.slice(from,to)+"\nexport {italianEvidenceFromJob};";
+ const {italianEvidenceFromJob}=await import("data:text/javascript;base64,"+Buffer.from(code).toString("base64"));
+ const requirements=[
+  "Has advanced Excel skills and strong numerical capability.",
+  "Has 1-2 years' experience within planning, sourcing, buying or merchandising.",
+  "Demonstrates strong analytical skills and a commercial mindset.",
+  "Enjoys building collaborative relationships and partnering with stakeholders.",
+  "Can interpret data and translate analytical findings into clear commercial insights.",
+  "Has excellent communication and interpersonal skills.",
+  "Takes ownership, shows initiative and delivers with accuracy and attention to detail.",
+  "Can effectively manage priorities and work to tight deadlines.",
+  "Has the ambition to develop their planning expertise and take on increasing responsibility."
+ ];
+ const facts=italianEvidenceFromJob(requirements.join(" "),{requirements,tasks:["Supporting allocation planning and reporting","Monitoring stock and inventory"]});
+ assert.ok(facts.requirements.length>=9,"Do not silently truncate employer requirements");
+ assert.ok(facts.requirements.some(x=>/1–2 anni/.test(x)));
+ assert.ok(facts.requirements.some(x=>/Excel/.test(x)));
+ assert.ok(facts.tasks.some(x=>/stock|allocazion/.test(x)));
+});
