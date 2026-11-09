@@ -11,17 +11,17 @@ const join=(a,it)=>a.length>1?a.slice(0,-1).join(", ")+(it?" e ":" and ")+a[a.le
 const signals=[
  {id:"order_entry",re:/order entry|order processing|entered orders|inseriment[oa] (?:degli )?ordini|registrazion[ei] (?:degli )?ordini/i,it:"l'inserimento degli ordini",en:"entering orders"},
  {id:"order_taking",re:/presa ordini|raccolta ordini|taking orders|took (?:customer )?orders|order taking/i,it:"la raccolta degli ordini",en:"taking customer orders"},
- {id:"product_codes",re:/product cod(?:e|es)|codici prodotto|product identification code/i,it:"l'utilizzo dei codici prodotto",en:"working with product codes"},
- {id:"clients",re:/welcom(?:ed|ing)? clients|greet(?:ed|ing)? customers|customer.facing|client contact|client interaction|accoglienz|assistenza clienti|relazioni con (?:i )?clienti/i,it:"il contatto diretto con i clienti",en:"direct client contact"},
+ {id:"product_codes",re:/product cod(?:e|es)|codici prodotto|product identification code/i,it:"l'utilizzo dei codici prodotto",en:"the use of product codes"},
+ {id:"clients",re:/welcom(?:ed|ing)? clients|greet(?:ed|ing)? customers|customer.facing|client contact|client interaction|accoglienz|assistenza clienti|relazioni con (?:i )?clienti/i,it:"il contatto diretto con i clienti",en:"direct contact with clients"},
  {id:"presentation",re:/present(?:ed|ation|ing)? (?:the )?(?:garments|items|products)|show(?:ed|ing)? (?:the )?garments|presentazion[ei] (?:dei |di )?(?:capi|prodott)|mostra(?:re|to) (?:i |dei )?capi/i,it:"la presentazione dei prodotti",en:"presenting products"},
  {id:"minimum_budget",re:/minimum (?:client |order )?budgets?|budget minim[oi]|minimum order (?:value|threshold)/i,it:"il monitoraggio dei budget minimi dei clienti",en:"tracking clients' minimum order budgets"},
- {id:"assortment",re:/assortment|assortiment|product mix|mix di prodotto/i,it:"il lavoro sugli assortimenti",en:"assortment work"},
- {id:"merch_mix",re:/merchandising mix/i,it:"il merchandising mix",en:"merchandising-mix work"},
- {id:"performance",re:/sell.?through|sales (?:analysis|report|data|performance)|analisi (?:dei dati di )?vendite|report(?:ing)? vendite|retail performance|\bKPI\b/i,it:"le attività su KPI e performance",en:"work with KPIs and performance"},
+ {id:"assortment",re:/assortment|assortiment|product mix|mix di prodotto/i,it:"il lavoro sugli assortimenti",en:"assortment decisions"},
+ {id:"merch_mix",re:/merchandising mix/i,it:"il merchandising mix",en:"merchandising mix"},
+ {id:"performance",re:/sell.?through|sales (?:analysis|report|data|performance)|analisi (?:dei dati di )?vendite|report(?:ing)? vendite|retail performance|\bKPI\b/i,it:"le attività su KPI e performance",en:"KPI and performance analysis"},
  {id:"stock",re:/\bstock\b|inventory|inventar|giacenz/i,it:"il lavoro sulle disponibilità di stock",en:"stock availability work"},
  {id:"allocation",re:/allocazion|allocation/i,it:"le allocazioni di prodotto",en:"product allocation"},
  {id:"costing",re:/costing|cost analysis|analisi dei costi|costi di prodotto/i,it:"l'analisi dei costi di prodotto",en:"product-cost analysis"},
- {id:"planning",re:/forecast|planning|pianificazion|open.to.buy|\bOTB\b/i,it:"le attività di pianificazione",en:"planning work"},
+ {id:"planning",re:/forecast|planning|pianificazion|open.to.buy|\bOTB\b/i,it:"le attività di pianificazione",en:"planning activities"},
  {id:"research",re:/competitor|market (?:analysis|research)|benchmark|analisi competitor|ricerca di mercato|posizionamento/i,it:"l'analisi di mercato",en:"market analysis"},
  {id:"collection",re:/capsule|collection (?:planning|development)|sviluppo collezion|pianificazione collezion/i,it:"il lavoro su capsule e collezioni",en:"capsule and collection work"},
  {id:"ecommerce",re:/e-commerce|ecommerce|e.?shop|online merchandis/i,it:"le attività e-commerce",en:"e-commerce work"},
@@ -109,11 +109,11 @@ export function generateEditorialLetter(args={}){
  const first=clean(highlights[0]?.[it?1:0]),second=clean(highlights[1]?.[it?1:0]);
  const area=second?first+"; "+second:first;
  const intro=it
-  ?"La posizione di "+role+" presso "+company+" mi interessa per le attività legate a "+area+". Ho affrontato temi collegati attraverso "+(exp&&project?"esperienze pratiche e progetti formativi":exp?"un'esperienza professionale":"progetti formativi")+"."
-  :"I am interested in the "+role+" position at "+company+" for its focus on "+area+". I have explored related work through "+(exp&&project?"practical experience and academic projects":exp?"professional experience":"academic projects")+".";
+  ?"La posizione di "+role+" presso "+company+" mi interessa per le attività di "+area+". Ho affrontato temi collegati attraverso "+(exp&&project?"esperienze pratiche e progetti formativi":exp?"un'esperienza professionale":"progetti formativi")+"."
+  :"I am interested in the "+role+" position at "+company+" for its responsibilities in "+area+". I have explored related work through "+(exp&&project?"practical experience and academic projects":exp?"professional experience":"academic projects")+".";
  const work=exp&&expName&&expActivities.length
-  ?it?"Durante l'esperienza presso "+expName+" ho lavorato su "+join(expActivities.slice(0,2),true)+"."
-     :"At "+expName+", I worked on "+join(expActivities.slice(0,2),false)+"."
+  ?it?"Durante l'esperienza presso "+expName+" ho svolto attività che comprendevano "+join(expActivities.slice(0,2),true)+"."
+     :"At "+expName+", my responsibilities included "+join(expActivities.slice(0,2),false)+"."
   :"";
  const academic=project&&projectName&&projectActivities.length
   ?it?"Nel progetto "+projectName.replace(/\s+academic project$/i,"")+" ho approfondito "+join(projectActivities.slice(0,2),true)+"."
