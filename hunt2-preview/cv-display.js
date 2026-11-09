@@ -7,8 +7,21 @@ const known=new Map([
  ["order entry and client minimum-budget support","Inserimento degli ordini e supporto alla verifica dei budget minimi dei clienti"],
  ["autonomy with clients during peak traffic","Gestione autonoma dei clienti nei momenti di maggiore affluenza"],
  ["client welcome and garment presentation during sales campaigns","Accoglienza clienti e presentazione dei capi durante le campagne vendite"],
- ["order entry with client minimum budget","Inserimento ordini e controllo dei budget minimi dei clienti"]
+ ["order entry with client minimum budget","Inserimento ordini e controllo dei budget minimi dei clienti"] ,
+ ["merchandising mix and capsule planning","Analisi del merchandising mix e pianificazione di una capsule collection"],
+ ["costing and product coding","Analisi dei costi di prodotto (costing) e codifica dei prodotti"],
+ ["planning from collection development through orders and distribution","Pianificazione delle fasi dalla creazione della collezione agli ordini e alla distribuzione"],
+ ["retail strategy and positioning analysis","Analisi della strategia retail e del posizionamento"],
+ ["assortment and buying logic","Studio delle logiche di assortimento e buying"],
+ ["budget, kpi and excel-based comparative analysis","Analisi comparativa di budget e KPI tramite Excel"],
+ ["merchandising mix and assortment","Analisi del merchandising mix e degli assortimenti"],
+ ["capsule collection planning and product costing","Pianificazione di capsule collection e analisi dei costi di prodotto"]
+
 ]);
+export function projectNameForDisplay(value,locale="it"){
+ const name=string(value).replace(/\\s+(?:academic project|progetto accademico)$/i,"").trim();
+ return locale==="it"&&/\\bacademic project\\b/i.test(string(value))?"Progetto accademico "+name:name;
+}
 export function evidenceForDisplay(value,locale="it"){
  const original=string(value),key=original.toLowerCase().replace(/[.!;]+$/,"");
  if(locale!=="it")return {text:original,translated:false};
@@ -21,7 +34,7 @@ export function evidenceForDisplay(value,locale="it"){
  [/^autonomy with clients during peak (?:traffic|hours)$/i,"Gestione autonoma dei clienti nei momenti di maggiore affluenza"]
  ];
  for(const [re,text] of phrases)if(re.test(original))return {text,translated:true};
- return {text:original,translated:false,needsTranslation:/\b(?:the|during|with|using|client|customer|sales campaign|order entry)\b/i.test(original)};
+ return {text:original,translated:false,needsTranslation:/\b(?:the|during|with|using|client|customer|sales campaign|order entry|planning|costing|product coding|retail strategy|assortment|buying logic|kpi)\b/i.test(original)};
 }
 export function cvRoleSignals(profile){
  const p=profile||{},draft=p.draft_profile||{};
