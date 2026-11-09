@@ -56,7 +56,10 @@ function apiURL(source:any){
  if(source.source_family==="ats_lever")return "https://api.lever.co/v0/postings/"+board+"?mode=json&limit=250";
  if(source.source_family==="ats_greenhouse")return "https://boards-api.greenhouse.io/v1/boards/"+board+"/jobs?content=true";
  if(source.source_family==="ats_ashby")return "https://api.ashbyhq.com/posting-api/job-board/"+board;
- if(source.source_family==="ats_smartrecruiters")return "https://api.smartrecruiters.com/v1/companies/"+board+"/postings?limit=100&offset=0";
+ if(source.source_family==="ats_smartrecruiters"){
+   const offset=Math.max(0,Math.min(50000,Number(source.config?.catalog_page_offset)||0));
+   return "https://api.smartrecruiters.com/v1/companies/"+board+"/postings?limit=100&offset="+offset;
+ }
  if(source.source_family==="ats_workable")return "https://www.workable.com/api/accounts/"+board+"?details=true";
  throw Error("Unsupported ATS family");
 }
@@ -142,7 +145,12 @@ Deno.serve(async(req)=>{
     const previousCursor=Math.max(0,Number(source.config?.catalog_cursor)||0);
     const pageSize=source.source_family==="ats_smartrecruiters"?12:35;
     const selected=entries.length?Array.from({length:Math.min(entries.length,pageSize)},(_,i)=>entries[(previousCursor+i)%entries.length]):[];
-    const nextCursor=entries.length?(previousCursor+selected.length)%entries.length:0;
+    const wrapped=entries.length>0&&previousCursor+selected.length>=entries.length;
+    const nextCursor=wrapped?0:previousCursor+selected.length;
+    const previousOffset=Math.max(0,Number(source.config?.catalog_page_offset)||0);
+    const nextOffset=source.source_family==="ats_smartrecruiters"&&wrapped
+      ?(Number(parsed.totalFound||0)>previousOffset+entries.length?previousOffset+entries.length:0)
+      :previousOffset;
     for(const item of selected){
       if(!item.title||!eligible(item.title)){rejected++;ignored++;continue}
       if(source.source_family==="ats_smartrecruiters"&&item.id){
@@ -225,9 +233,9 @@ Deno.serve(async(req)=>{
     }
     await db.from("sources").update({
       last_scan_at:at,last_success_at:at,health_status:"healthy",consecutive_failures:0,
-      config:{...(source.config||{}),catalog_cursor:nextCursor}
+      config:{...(source.config||{}),catalog_cursor:nextCursor,catalog_page_offset:nextOffset}
     }).eq("id",source.id);
-    details.push({family:source.source_family,board:source.config?.board,status:"healthy",fetched:entries.length,created,checked:scanned,ignored,stale,catalog_cursor:nextCursor});
+    details.push({family:source.source_family,board:source.config?.board,status:"healthy",fetched:entries.length,created,checked:scanned,ignored,stale,catalog_cursor:nextCursor,catalog_page_offset:nextOffset});
    }catch(e){
     await db.from("sources").update({
       last_scan_at:at,health_status:"degraded",consecutive_failures:(source.consecutive_failures||0)+1
