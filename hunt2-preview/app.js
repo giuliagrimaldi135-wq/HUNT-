@@ -1,6 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-61";
-import { interpretCvText } from "./cv-interpreter.js?v=20261109-61";
+import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-62";
+import { interpretCvText } from "./cv-interpreter.js?v=20261109-62";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -803,7 +803,7 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v9");
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v10");
  const languageStale=Boolean(row.dossier?.generated_from?.language!==preferredLocale&&!row.dossier?.generated_from?.user_edited);
  const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale||languageStale);
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
@@ -845,7 +845,7 @@ async function renderOpportunityFolder(jobId){
  const assessmentIt=assessDossier(job,evidencedProfile,factLists.it.duties,cvChecklistIt,summaryOnly,"it");
  const assessmentEn=assessDossier(job,evidencedProfile,factLists.en.duties,cvChecklistEn,summaryOnly,"en");
  const cvAssessment=dossierLang==="it"?assessmentIt:assessmentEn;
- const fit=row.dossier?.model_version==="evidence_dossier_v9"&&row.dossier?.recommended_cv_id===selectedCv?.id&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
+ const fit=row.dossier?.model_version==="evidence_dossier_v10"&&row.dossier?.recommended_cv_id===selectedCv?.id&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
  const smartQuestion=row.dossier?.generated_from?.interview_question||"";
@@ -1118,7 +1118,7 @@ async function renderOpportunityFolder(jobId){
      return `<article class="brandNewsItem">
        <div class="brandNewsMeta"><span>${esc(sourceText)}</span><span>${esc(when)}</span></div>
        <h3>${esc(item.title)}</h3>
-       <p class="brandNewsTeaser">${esc(teaser)}</p>
+       <p class="brandNewsTeaser"><span class="brandNewsBriefLabel">In breve</span>${esc(teaser)}</p>
        <div class="brandNewsActions"><a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${item.aggregator?"Apri articolo tramite Google News":"Leggi la fonte"} ↗</a>
          <button type="button" class="worldReadAction" data-brand-news-id="${esc(item.id)}" data-brand-news-kind="${esc(item.kind)}" data-brand-news-action="${brandArchive?"unread":"read"}" ${brandReadError?"disabled":""}>${brandArchive?"Ripristina":"✓ Letto"}</button>
        </div>
@@ -1414,7 +1414,7 @@ async function renderProfile(){
  bindNav();
  document.getElementById("logoutBtn").onclick=logout;
  try{
-   const {mountCvManager}=await import("./cv-profile.js?v=20261109-40");
+   const {mountCvManager}=await import("./cv-profile.js?v=20261109-62");
    const root=document.getElementById("cvManagerRoot");
    if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:renderProfile,roleFamilies:macroAreas});
  }catch(e){
