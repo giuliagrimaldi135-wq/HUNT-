@@ -28,20 +28,21 @@ test("Paused letter creation does not run when opening a dossier",()=>{
  assert.match(cv,/data-cv-action="delete-cv"/);
 });
 
-test("One Italian requirement list and one source-grounded synthesis are displayed",()=>{
+test("Single Italian employer view shows only key professional requirements, not personality scores",()=>{
  assert.match(folder,/it:normalizeVacancyFacts\(haveVerifiedSections\?bilingualFacts\.it:italianEvidenceFromJob\(job\.description,evidence\)\)/);
  assert.match(folder,/const dossierLang="it"/);
  assert.match(folder,/applicationInsight\(assessmentIt,cvChecklistIt,factLists\.it\.duties\)/);
- assert.match(folder,/Perché candidarti/);
- assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
+ assert.match(folder,/prioritizeRequirements\(factLists\.it\.requirements,4\)/);
+ assert.match(folder,/compareKeyRequirement\(x,cvChecklistIt\[x\.sourceIndex\],evidencedProfile\)/);
+ assert.match(folder,/Non valutiamo qualità personali da un CV/);
  assert.match(folder,/id="dossierCv"/);
  assert.match(folder,/dossierCvChoices\.set\(jobId,next\)/);
- assert.match(folder,/expandedDuties\(factLists\.it\.duties\)/);
- assert.doesNotMatch(folder,/factLists\.it\.requirements\.slice\(0,/);
- assert.match(folder,/luxSourceFooter/);
+ assert.match(folder,/class="huntEditorialMore"/);
+ assert.match(folder,/huntEditorialFooter/);
  assert.match(folder,/Cover letter/);
+ assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
+ assert.doesNotMatch(folder,/relevant_years_experience/);
 });
-
 test("Gucci's English posting is summarized as Italian duties and requirements without fabricated claims",async()=>{
  const start=app.indexOf("function evidenceItSummary("),end=app.indexOf("function documentedRequirement(",start);
  assert.ok(start>0&&end>start);
