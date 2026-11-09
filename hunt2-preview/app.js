@@ -868,6 +868,48 @@ async function renderOpportunityFolder(jobId){
  </div>`:""}`);
 
  bindNav();bindOpportunityActions();
+ let brandArchive=false;
+ const renderBrandFeed=()=>{
+   const area=document.getElementById("brandNewsList");
+   const counter=document.getElementById("brandNewsCounter");
+   const toggle=document.getElementById("brandReadToggle");
+   if(!area)return;
+   const rows=companyNews.filter(n=>brandReadIds.has(n.kind+":"+n.id)===brandArchive);
+   const unreadCount=companyNews.filter(n=>!brandReadIds.has(n.kind+":"+n.id)).length;
+   if(counter)counter.textContent=unreadCount+" da leggere · "+rows.length+(brandArchive?" nell'archivio":" mostrate");
+   if(toggle)toggle.textContent=brandArchive?"← Torna alle notizie":"Archivio lette";
+   area.innerHTML=rows.length?rows.map(item=>{
+     const date=item.date?new Date(item.date):null;
+     const when=date&&!Number.isNaN(date.getTime())?date.toLocaleDateString("it-IT"):"Data da verificare";
+     return `<article class="brandNewsItem">
+       <div class="brandNewsMeta"><span>${esc(item.source)}</span><span>${esc(when)}</span></div>
+       <h3>${esc(item.title)}</h3>
+       ${item.summary?`<p>${esc(item.summary)}</p>`:""}
+       <div class="brandNewsActions"><a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>
+         <button type="button" class="worldReadAction" data-brand-news-id="${esc(item.id)}" data-brand-news-kind="${esc(item.kind)}" data-brand-news-action="${brandArchive?"unread":"read"}" ${brandReadError?"disabled":""}>${brandArchive?"Ripristina":"✓ Letto"}</button>
+       </div>
+     </article>`;
+   }).join(""):`<div class="emptyState"><h3>${brandArchive?"Nessuna notizia nell'archivio":"Nessuna nuova notizia da leggere"}</h3><p>${brandArchive?"Puoi tornare alle notizie attive.":"HUNT continuerà a cercare notizie sulle fonti aziendali e internazionali collegate."}</p></div>`;
+   area.querySelectorAll("[data-brand-news-action]").forEach(button=>button.onclick=async()=>{
+     if(brandReadError)return;
+     const kind=button.dataset.brandNewsKind,id=button.dataset.brandNewsId,action=button.dataset.brandNewsAction;
+     if(!["industry","company"].includes(kind)||!/^[0-9a-f-]{36}$/i.test(id))return;
+     button.disabled=true;
+     const result=action==="read"
+       ?await supabase.from("user_news_reads").upsert({user_id:currentUser.id,source_kind:kind,item_id:id},{onConflict:"user_id,source_kind,item_id",ignoreDuplicates:true})
+       :await supabase.from("user_news_reads").delete().eq("user_id",currentUser.id).eq("source_kind",kind).eq("item_id",id);
+     if(result.error){
+       const err=document.getElementById("brandNewsError");if(err){err.hidden=false;err.textContent=result.error.message}
+       button.disabled=false;return;
+     }
+     if(action==="read")brandReadIds.add(kind+":"+id);else brandReadIds.delete(kind+":"+id);
+     renderBrandFeed();
+   });
+ };
+ const toggleBrandArchive=document.getElementById("brandReadToggle");
+ if(toggleBrandArchive)toggleBrandArchive.onclick=()=>{brandArchive=!brandArchive;renderBrandFeed()};
+ if(brandReadError){const el=document.getElementById("brandNewsError");if(el){el.hidden=false;el.textContent="Stato di lettura non disponibile: "+brandReadError.message}}
+ renderBrandFeed();
  document.getElementById("backToFeed").onclick=()=>{
    if(location.hash.startsWith("#job="))history.back();
    else renderOpportunities();
