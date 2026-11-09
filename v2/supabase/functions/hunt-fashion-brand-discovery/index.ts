@@ -6,8 +6,12 @@ function admin(){const url=Deno.env.get("SUPABASE_URL")||"";let key=Deno.env.get
 function unescape(v:string){return v.replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&#(?:39|x27);/gi,"'").replace(/&nbsp;/gi," ").replace(/&[a-z]+;/gi," ").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim()}
 function safeUrl(url:string){try{const u=new URL(url);const host=u.hostname.toLowerCase();if(u.protocol!=="https:"||u.username||u.password||host==="localhost"||host.endsWith(".local")||host.endsWith(".internal")||/^(\d+\.){3}\d+$/.test(host)||host.includes(":")||!host.includes(".")||["fashionunited.com","www.fashionunited.com"].includes(host))return null;return u.origin+"/"}catch{return null}}
 function profiles(html:string){const out=new Map<string,string>();
- const rx=/<a\b[^>]*href=["']([^"']+\/companies\/([a-z0-9_-]{2,90})(?:[?#/"']|$)[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
- for(const m of html.matchAll(rx)){const slug=m[2].toLowerCase();if(["companies","jobs","all-brands"].includes(slug))continue;out.set(slug,"https://fashionunited.com/companies/"+slug)}
+ const rx=/<a\b[^>]*href=["'](?:https:\/\/fashionunited\.com)?\/companies\/([a-z0-9_-]{2,90})(?:[?#][^"']*)?["'][^>]*>/gi;
+ for(const m of html.matchAll(rx)){
+   const slug=m[1].toLowerCase();
+   if(["companies","jobs","all-brands"].includes(slug))continue;
+   out.set(slug,"https://fashionunited.com/companies/"+slug);
+ }
  return [...out.entries()];
 }
 function siteFromProfile(html:string,name:string){
