@@ -228,3 +228,8 @@
 .profileAccountStrip small{color:#8d998e;font-size:10.5px}
 .profileAccountStrip>span+span{margin-left:auto}
 @media(max-width:610px){.profileWorkspaceHeading{align-items:flex-start}.profileAccountStrip>span+span{margin-left:0}.profileWorkspaceHeading p{max-width:380px}}
+
+.profileHeaderActions{display:flex;align-items:center;gap:9px}
+.profileBackToJob{font:inherit;font-size:11px;font-weight:750;cursor:pointer;border:1px solid #d0dfd1;border-radius:7px;background:#e8f1e8;color:#326245;padding:10px 12px}
+.profileBackToJob:hover{background:#d8e9da}
+@media(max-width:700px){.profileHeaderActions{flex-wrap:wrap;justify-content:flex-end}.profileBackToJob{font-size:10px}.profileSignout{font-size:10px}}
