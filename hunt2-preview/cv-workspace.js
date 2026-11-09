@@ -63,19 +63,19 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
  const exp=info.experience||[],projects=info.projects||[],edu=info.education||[],tools=info.tools||[],languages=info.languages||[];
  const related=areas.filter(x=>x.related);
  const overview=
-  '<div class="cvWPanelHeader"><h3>Il tuo percorso</h3><p>Una lettura rapida delle informazioni presenti in questo curriculum.</p></div>'+
-  '<div class="cvWSnapshot">'+
+  '<div class="cvWPanelHeader"><h3>Il tuo percorso</h3><p>Esperienze e competenze presenti in questo curriculum.</p></div>'+
+  '<div class="cvWSnapshot cvWSnapshotEditorial">'+
     '<section class="cvWSnapshotMain"><div class="cvWSnapshotTitle"><h4>Esperienza professionale</h4>'+
-      '<button type="button" data-cv-panel-target="experience">Vedi tutte <span aria-hidden="true">↗</span></button></div>'+
+      '<button type="button" data-cv-panel-target="experience">Tutte le esperienze ↗</button></div>'+
       (exp.length?'<strong>'+esc(exp[0].company||exp[0].role||"Esperienza")+'</strong>'+
         '<p class="cvWSnapshotRole">'+esc(exp[0].role||"")+'</p>'+activities(exp[0].evidence,2):
         '<p class="cvWEmpty">Non risultano esperienze dettagliate.</p>')+'</section>'+
     '<div class="cvWSnapshotSide">'+
-     '<section><div class="cvWSnapshotTitle"><h4>Progetti</h4><button type="button" data-cv-panel-target="projects">Apri ↗</button></div>'+
-       (projects.length?projects.slice(0,2).map(x=>'<p class="cvWSnapshotItem">'+esc(projectNameForDisplay(x.name,"it"))+'</p>').join(""):'<p class="cvWEmpty">Nessun progetto rilevato.</p>')+'</section>'+
-     '<section><div class="cvWSnapshotTitle"><h4>Strumenti</h4><button type="button" data-cv-panel-target="skills">Apri ↗</button></div>'+
-       '<div class="cvWChips">'+(pills(tools)||'<span class="cvWEmpty">Nessuno strumento rilevato</span>')+'</div></section>'+
-     '<section><div class="cvWSnapshotTitle"><h4>Ambiti collegati</h4><button type="button" data-cv-panel-target="areas">Apri ↗</button></div>'+
+     '<section><div class="cvWSnapshotTitle"><h4>Progetti</h4><button type="button" data-cv-panel-target="projects">Esplora ↗</button></div>'+
+       (projects.length?projects.slice(0,3).map(x=>'<p class="cvWSnapshotItem">'+esc(projectNameForDisplay(x.name,"it"))+'</p>').join(""):'<p class="cvWEmpty">Nessun progetto rilevato.</p>')+'</section>'+
+     '<section><div class="cvWSnapshotTitle"><h4>Strumenti</h4><button type="button" data-cv-panel-target="skills">Tutti ↗</button></div>'+
+       '<p class="cvWInlineTools">'+(tools.length?tools.slice(0,5).map(esc).join('<span aria-hidden="true"> · </span>'):'Nessuno strumento rilevato')+'</p></section>'+
+     '<section><div class="cvWSnapshotTitle"><h4>Ambiti collegati</h4><button type="button" data-cv-panel-target="areas">Esplora ↗</button></div>'+
        '<p class="cvWSnapshotItem">'+(related.length?esc(related.slice(0,3).map(x=>x.name).join(" · ")):"Nessun ambito riconosciuto")+'</p></section>'+
     '</div>'+
    '</div>';
@@ -97,17 +97,14 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
    return {kind,detail:detail||"Attività rilevante"};
  };
  const categories='<div class="cvWAreaHeader"><div class="cvWPanelHeader"><h3>Ambiti professionali</h3>'+
-    '<p>Le aree riconosciute sulla base delle informazioni di questo CV.</p></div>'+
+    '<p>Le aree collegate alle esperienze e ai progetti presenti in questo CV.</p></div>'+
     '<div class="cvWAreaCount"><strong>'+related.length+'</strong><span>aree collegate</span></div></div>'+
-   '<div class="cvWAreaCards">'+(related.length?related.map((x,i)=>{
+   '<div class="cvWAreaEntries">'+(related.length?related.map(x=>{
      const src=sources(x.basis);
-     return '<article class="cvWAreaCard"><div class="cvWAreaCardTop">'+
-       '<span class="cvWAreaGlyph" aria-hidden="true">'+String(i+1).padStart(2,"0")+'</span>'+
-       '<h4>'+esc(x.name)+'</h4></div>'+
-       '<div class="cvWAreaCardEvidence"><span>'+esc(src.kind)+'</span><p>'+esc(src.detail)+'</p></div>'+
-       '</article>';
+     return '<div class="cvWAreaEntry"><div><strong>'+esc(x.name)+'</strong></div>'+
+       '<p><span>'+esc(src.kind)+'</span> · '+esc(src.detail)+'</p></div>';
    }).join(""):'<p class="cvWEmpty">Non sono state riconosciute aree professionali specifiche in questo CV.</p>')+'</div>'+
-   (related.length?'<div class="cvWAreaBottom"><span>Consulta le attività da cui derivano questi collegamenti.</span><div>'+
+   (related.length?'<div class="cvWAreaBottom"><span>Esplora le attività collegate a queste aree.</span><div>'+
    (related.some(x=>/^Esperienza/i.test(x.basis||""))?'<button type="button" data-cv-panel-target="experience">Esperienze ↗</button>':"")+
    (related.some(x=>/^Progetto/i.test(x.basis||""))?'<button type="button" data-cv-panel-target="projects">Progetti ↗</button>':"")+
    '</div></div>':"")+
@@ -118,9 +115,9 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
    '<div id="cvCorrectionDetails" class="cvWEditFields">'+corrections+'</div>';
  return '<section class="cvWWorkspace" aria-label="Curriculum selezionato">'+
   '<header class="cvWWorkspaceHead"><div><div class="cvWEyebrow">CURRICULUM SELEZIONATO</div>'+
-   '<div class="cvWTitle"><h2>'+esc(cv.name||"Curriculum")+'</h2>'+(cv.is_default?'<span>Principale</span>':"")+'</div>'+
+   '<div class="cvWTitle"><h2>'+esc(cv.name||"Curriculum")+'</h2>'+(cv.is_default?'<span class="cvWPrimaryText">CV principale</span>':"")+'</div>'+
    '<p>'+esc(confirmed?"Informazioni confermate e utilizzabili nei confronti con gli annunci.":"Informazioni estratte: controlla il contenuto e conferma ciò che è corretto.")+'</p></div>'+
-   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton">✎ <span>Modifica dati</span></button></header>'+
+   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton">Modifica dati <span aria-hidden="true">↗</span></button></header>'+
   '<nav class="cvWTabs" role="tablist" aria-label="Esplora il CV">'+
    tab("overview","Riepilogo",a)+tab("experience","Esperienze",a)+tab("projects","Progetti",a)+
    tab("skills","Competenze",a)+tab("areas","Ambiti",a)+'</nav>'+
