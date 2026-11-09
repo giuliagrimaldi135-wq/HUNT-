@@ -817,5 +817,28 @@
     "source_name": "Kering Careers / Bottega Veneta",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "chatgpt-balenciaga-retail-intern-milano-20261109",
+    "brand": "Balenciaga",
+    "title": "Retail Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-09",
+    "detected_at": "2026-11-09T16:49:06+01:00",
+    "priority": "ALTA",
+    "score": 91,
+    "role_family": "Retail Performance / Retail Operations",
+    "why_fit": "Stage presso il team Retail Italia, a supporto del Retail Manager: analisi KPI e performance negozi, reportistica, raccolta ordini mensili e coordinamento con HQ. Coerente con Fashion Management e interesse per attività retail centrali, senza vendita diretta.",
+    "reasons": [
+      "Supporto a KPI e performance della rete retail",
+      "Reportistica dei punti vendita",
+      "Consolidamento ordini mensili dei negozi",
+      "Coordinamento tra boutique e HQ",
+      "Stage 6 mesi a Milano; Excel e inglese richiesti"
+    ],
+    "url": "https://www.kering.com/en/talent/job-offers/europe/balenciaga-retail-intern/",
+    "source_name": "Kering Careers / Balenciaga",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
