@@ -11,7 +11,7 @@ Il parser italiano `italianEvidenceFromJob` ritornava `{tasks,requirements}`, me
 
 ## Qualità delle cover letter: motore editoriale v9
 - Nuovo modulo puro `v2/supabase/functions/hunt-application-dossier/letter-editorial.js`, con test `hunt2-preview/tests/letter-editorial.test.mjs`.
-- Backend `hunt-application-dossier` versione Supabase 15, con import del generatore v9.
+- Backend `hunt-application-dossier` versione Supabase 16, con import del generatore v9.
 - Le bozze sono consentite soltanto per CV con profilo confermato dall'utente o confermato da cronologia autorizzata; il sistema non tratta un PDF appena caricato come prova definitiva.
 - Nessun testo generico se non sono state acquisite mansioni concrete o se mancano attività CV direttamente pertinenti.
 - Selezione della più pertinente esperienza e del più pertinente progetto: una vacancy wholesale deve valorizzare ordini/showroom; una vacancy merchandising deve valorizzare assortimento/prodotto, se presenti.
@@ -31,3 +31,8 @@ Workflow `HUNT Preview Syntax`: syntax check e test Node per dossier, intelligen
 
 ## Regola di rilascio
 Non dichiarare HUNT pronto alla vendita solamente perché i test automatici sono verdi. Prima di commercializzare servono test reali, QA editoriale, sicurezza/privacy e collaudo delle notifiche.
+
+## Chiusura tecnica dell'iterazione
+- 20 test automatici Node completati con successo, incluse regressioni su planning, budget non documentati, presa ordini vs inserimento ordini e analisi clienti vs contatto diretto.
+- La funzione Supabase `hunt-application-dossier` è stata distribuita in versione 16; il motore editoriale resta `evidence_editorial_v9`.
+- Il deploy dell'anteprima GitHub Pages deve essere verificato separatamente: CI verde non certifica la versione nel browser.
