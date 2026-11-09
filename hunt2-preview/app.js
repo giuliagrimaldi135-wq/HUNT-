@@ -947,15 +947,17 @@ async function renderOpportunityFolder(jobId){
 
  <div data-folder-panel="application">
    <section class="section huntDecision huntDecisionV3">
-     <div class="huntDecisionIntro"><div class="eyebrow">Valutazione professionale</div><h2>Coerenza con il tuo percorso</h2></div>
+     <div class="huntDecisionIntro"><div class="eyebrow">Lettura HUNT</div><h2>Cosa conta per questa candidatura</h2><p>Attività del ruolo, prove presenti nel CV e aspetti da chiarire.</p></div>
      <div class="huntDecisionBody">
        ${["it","en"].map(locale=>{
          const analysis=locale==="it"?assessmentIt:assessmentEn;
          return `<div data-decision-lang="${locale}" class="${dossierLang===locale?"":"hide"}">
-           <p class="huntDecisionVerdict"><strong>${esc(analysis.judgement)}</strong></p>
-           <p class="huntDecisionText">${esc(analysis.work)}</p>
-           <p class="huntDecisionEvidence">${esc(analysis.why)}</p>
-           <p class="huntDecisionCaution">${esc(analysis.watch)}</p>
+           <h3 class="huntDecisionVerdict">${esc(analysis.judgement)}</h3>
+           <div class="huntDecisionRows">
+             <div class="huntDecisionRow"><span>${locale==="it"?"Il lavoro":"The responsibilities"}</span><p>${esc(analysis.work)}</p></div>
+             <div class="huntDecisionRow"><span>${locale==="it"?"Il tuo punto di partenza":"Your evidence"}</span><p>${esc(analysis.why)}</p></div>
+             <div class="huntDecisionRow"><span>${locale==="it"?"Prima di candidarti":"Before applying"}</span><p>${esc(analysis.watch)}</p></div>
+           </div>
            <p class="huntAnalysisMeta">${summaryOnly||analysis.missingCount?(locale==="it"?"Compatibilità da verificare":"Match needs verification"):(locale==="it"?"Compatibilità indicativa ":"Indicative match ")+(Number(row.match_score)||0)+"%"} · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
          </div>`;
        }).join("")}
