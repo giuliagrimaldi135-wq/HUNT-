@@ -38,8 +38,9 @@ jobs:
           node --check hunt2-preview/cv-display.js
           node --check hunt2-preview/cv-ranking.js
           node --check hunt2-preview/opportunity-similarity.js
+          node --check hunt2-preview/requirement-priority.js
           node --check hunt2-preview/dossier-intelligence.js
-          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs
+          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/requirement-priority.test.mjs
       - uses: actions/configure-pages@v5
         with:
           enablement: true
