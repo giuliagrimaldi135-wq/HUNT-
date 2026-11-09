@@ -1,5 +1,6 @@
 
-import {extractCvText} from "./cv-reader.js?v=20261109-38";
+import {extractCvText} from "./cv-reader.js?v=20261109-60";
+import {interpretCvText} from "./cv-interpreter.js?v=20261109-60";
 const esc=(s="")=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,50);
 const mime={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
@@ -19,21 +20,26 @@ function cvStatus(x){
  const p=x.parsed_profile||{};
  if(p.profile_confirmed_by_user)return "Profilo confermato";
  if(p.profile_verified_from_user_history)return "Profilo noto e verificato";
- if(p.cv_text_extraction_status==="ocr_text_extracted")return "Testo OCR letto, da controllare";
- if(p.cv_text_extraction_status==="text_extracted")return "Testo letto, da controllare";
+ if(p.cv_text_extraction_status==="ocr_text_extracted")return p.draft_profile?.extracted_chars?"OCR analizzato · dati da confermare":"Testo OCR letto · da interpretare";
+ if(p.cv_text_extraction_status==="text_extracted")return p.draft_profile?.extracted_chars?"Testo analizzato · dati da confermare":"Testo letto · da interpretare";
  if(p.cv_text_extraction_status==="ocr_partial")return "Testo parziale, da controllare";
  if(p.cv_text_extraction_status==="image_pdf_no_text_layer")return "PDF grafico: leggi con OCR";
  return "Da leggere e verificare";
 }
 function editor(cv){
  const p={...(cv.parsed_profile||{}),...(appliedDrafts.get(cv.id)||{})};
- const ex=Array.isArray(p.experience)?p.experience:[];
- const pr=Array.isArray(p.projects)?p.projects:[];
- const ed=Array.isArray(p.education)?p.education:[];
- const tools=Array.isArray(p.tools)?p.tools:[];
- const languages=Array.isArray(p.languages)?p.languages:[];
- return '<section class="cvEditor"><div class="cvEditorHeading"><div class="eyebrow">Profilo da CV</div><h2>Conferma le tue competenze</h2><p>I dati che confermi qui diventano la base delle valutazioni delle offerte e delle cover letter. Non vengono inventate esperienze.</p></div>'+
-  '<div class="cvEditorMeta">CV: <b>'+esc(cv.name)+'</b> · '+esc(cvStatus(cv))+'</div>'+
+ const draft=p.draft_profile||{};
+ // OCR interpretation fills editable fields, but DOES NOT assert user confirmation.
+ const pick=key=>Array.isArray(p[key])&&p[key].length?p[key]:Array.isArray(draft[key])?draft[key]:[];
+ const ex=pick("experience");
+ const pr=pick("projects");
+ const ed=pick("education");
+ const tools=pick("tools");
+ const languages=pick("languages");
+ const isDraft=Boolean(!p.profile_confirmed_by_user&&!p.profile_verified_from_user_history&&draft.extracted_chars);
+ return '<section class="cvEditor"><div class="cvEditorHeading"><div class="eyebrow">Profilo da CV</div><h2>Conferma le tue competenze</h2><p>I dati individuati nel documento sono proposte da verificare, non requisiti già confermati. Controllali e salva solo ciò che è realmente scritto nel CV.</p></div>'+
+  '<div class="cvEditorMeta">CV: <b>'+esc(cv.name)+'</b> · '+esc(cvStatus(cv))+(draft.source_language?' · Testo originale: '+(draft.source_language==="it"?"italiano":"inglese"):"")+'</div>'+
+  (isDraft?'<p class="cvDraftNotice">HUNT ha precompilato i campi dal testo del CV. Puoi correggerli; diventeranno dati confermati solo quando premi «Conferma e salva il profilo».</p>':"")+
   '<form id="cvFactsForm">'+
   '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
@@ -60,7 +66,9 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  const {data,error}=await supabase.from("user_cvs").select("id,name,storage_path,parsed_profile,is_default,target_role_families,created_at").eq("user_id",user.id).eq("active",true).order("created_at",{ascending:false});
  if(error){root.textContent="Errore di lettura dei CV: "+error.message;return}
  const rows=data||[];
- if(!rows.some(x=>x.id===selectedId))selectedId=rows.find(x=>x.is_default)?.id||rows[0]?.id||null;
+ // Respect the explicitly opened CV; otherwise prioritise one that needs review,
+ // rather than silently selecting the only legacy structured record.
+ if(!rows.some(x=>x.id===selectedId))selectedId=rows.find(x=>x.parsed_profile?.draft_profile&&!x.parsed_profile?.profile_confirmed_by_user)?.id||rows.find(x=>x.is_default)?.id||rows[0]?.id||null;
  const current=rows.find(x=>x.id===selectedId);
  const currentTargets=Array.isArray(current?.target_role_families)?current.target_role_families:[];
  const textPreview=current?.parsed_profile?.raw_text
@@ -76,18 +84,36 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  for(const cv of rows){
   fileHtml+='<article class="cvFileLine"><div><strong>'+esc(cv.name)+(cv.is_default?' · Principale':'')+'</strong><small>'+esc(cvStatus(cv))+'</small></div><div class="cvFileActions">'+
    '<button class="btn" data-cv-action="select" data-cv-id="'+cv.id+'">'+(cv.id===selectedId?"Aperto":"Apri")+'</button>'+
-   '<button class="btn" data-cv-action="read" data-cv-id="'+cv.id+'">Leggi CV</button>'+
+   '<button class="btn" data-cv-action="read" data-cv-id="'+cv.id+'">'+(cv.parsed_profile?.raw_text?'Rileggi e analizza':'Leggi e analizza')+'</button>'+
    (cv.is_default?"":'<button class="btn" data-cv-action="default" data-cv-id="'+cv.id+'">Imposta principale</button>')+
    '</div></article>';
  }
  root.innerHTML='<section class="cvManager"><div class="cvManagerHeading"><div class="eyebrow">CV privati</div><h2>Il tuo archivio professionale</h2><p>Più versioni, lettura visuale e informazioni confermate per candidature personalizzate.</p></div>'+
+  '<div class="cvBatchToolbar"><span>'+rows.filter(x=>!x.parsed_profile?.raw_text).length+' CV senza testo · '+rows.filter(x=>x.parsed_profile?.raw_text&&!x.parsed_profile?.profile_confirmed_by_user).length+' da confermare</span><button class="btn" type="button" data-cv-action="read-all">Analizza tutti i CV non letti</button></div>'+
   '<div class="cvFileList">'+(fileHtml||'<p>Nessun CV caricato.</p>')+'</div>'+
   '<div class="cvUpload"><div class="cvMiniHead"><h3>Carica una nuova versione</h3><span>PDF, DOCX, TXT, PNG o JPG</span></div><div class="cvUploadFields"><input id="cvUploadName" placeholder="Es. Retail Merchandising"><input id="cvUploadFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"><button class="btn primary" data-cv-action="upload" type="button">Carica e leggi</button></div></div>'+
   '<div id="cvReaderStatus" role="status" class="cvReaderStatus"></div>'+
-  '<div class="cvReaderOptions"><label>Lingua OCR <select id="cvOcrLang"><option value="eng+ita">English + Italiano</option><option value="eng">English</option><option value="ita">Italiano</option><option value="fra">Français</option><option value="deu">Deutsch</option><option value="spa">Español</option></select></label><p>Lettura visuale effettuata nel browser. Il testo viene salvato nel tuo profilo privato e va verificato prima di usarlo.</p></div>'+
+  '<div class="cvReaderOptions"><label>Lingua OCR <select id="cvOcrLang"><option value="ita+eng">Italiano + English</option><option value="eng">English</option><option value="ita">Italiano</option><option value="fra">Français</option><option value="deu">Deutsch</option><option value="spa">Español</option></select></label><p>Ogni CV viene letto e interpretato separatamente, nella lingua originale. L’analisi propone esperienze, progetti e software da confermare; nulla viene attribuito automaticamente come certificato.</p></div>'+
   targetEditor+textPreview+
   (current?editor(current):"")+'</section>';
  const show=(text,bad=false)=>{const el=root.querySelector("#cvReaderStatus");if(el){el.textContent=text;el.classList.toggle("cvReaderError",bad)}};
+ const readSingleCv=async (cv,language)=>{
+   const {data:blob,error:dl}=await supabase.storage.from("cvs").download(cv.storage_path);
+   if(dl||!blob)throw dl||new Error("File privato non trovato o accesso negato.");
+   const parsed=await extractCvText(blob,cv.storage_path,language,message=>show(cv.name+" · "+message));
+   if(parsed.text.length<80)throw new Error("Testo OCR insufficiente per "+cv.name+". Prova un'altra lingua OCR o una scansione più nitida.");
+   const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(parsed.text)))).map(v=>v.toString(16).padStart(2,"0")).join("");
+   const prior=cv.parsed_profile||{};
+   const draft=interpretCvText(parsed.text);
+   const next={...prior,raw_text:parsed.text.slice(0,40000),raw_text_hash:hash,draft_profile:draft,
+    extractor_version:"browser-pdfjs-tesseract-v2",extracted_at:new Date().toISOString(),
+    cv_text_extraction_status:parsed.partial?"ocr_partial":parsed.method==="ocr"?"ocr_text_extracted":"text_extracted",
+    page_count:parsed.pages,read_pages:parsed.pages_processed,ocr_language:language,source_language:draft.source_language};
+   // Do not erase previously confirmed work on this CV when re-reading a document.
+   const {error:up}=await supabase.from("user_cvs").update({parsed_profile:next,updated_at:new Date().toISOString()}).eq("id",cv.id).eq("user_id",user.id);
+   if(up)throw up;
+   return draft;
+ };
  root.onclick=async event=>{
   const b=event.target.closest("[data-cv-action]");if(!b)return;
   const action=b.dataset.cvAction,id=b.dataset.cvId;
@@ -132,22 +158,25 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
    }catch(e){show("Upload non riuscito: "+(e.message||String(e)),true);b.disabled=false}
    return;
   }
-  if(action==="read"){
-   const cv=rows.find(x=>x.id===id);if(!cv)return;
-   b.disabled=true;show("Apertura del CV privato…");
-   try{
-    const {data:blob,error:dl}=await supabase.storage.from("cvs").download(cv.storage_path);
-    if(dl||!blob)throw dl||new Error("File non trovato");
-    const language=root.querySelector("#cvOcrLang").value;
-    const parsed=await extractCvText(blob,cv.storage_path,language,message=>show(message));
-    if(parsed.text.length<80)throw new Error("Testo riconosciuto insufficiente. Prova una lingua OCR differente o una scansione più nitida.");
-    const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(parsed.text)))).map(v=>v.toString(16).padStart(2,"0")).join("");
-    const prior=cv.parsed_profile||{};
-    const next={...prior,raw_text:parsed.text.slice(0,40000),raw_text_hash:hash,extractor_version:"browser-pdfjs-tesseract-v1",extracted_at:new Date().toISOString(),cv_text_extraction_status:parsed.partial?"ocr_partial":parsed.method==="ocr"?"ocr_text_extracted":"text_extracted",page_count:parsed.pages,read_pages:parsed.pages_processed,ocr_language:language};
-    const {error:up}=await supabase.from("user_cvs").update({parsed_profile:next,updated_at:new Date().toISOString()}).eq("id",cv.id).eq("user_id",user.id);
-    if(up)throw up;
-    selectedId=id;await refresh();
-   }catch(e){show("Lettura non completata: "+(e.message||String(e)),true);b.disabled=false}
+  if(action==="read"||action==="read-all"){
+   const language=root.querySelector("#cvOcrLang")?.value||"ita+eng";
+   const queue=action==="read-all"?rows.filter(cv=>!cv.parsed_profile?.raw_text):rows.filter(cv=>cv.id===id);
+   if(!queue.length){show("Tutti i CV hanno già un testo riconosciuto. Puoi aprirli e confermare i dati.");return}
+   b.disabled=true;
+   const title=b.textContent;
+   const failed=[];
+   let read=0;
+   for(const [index,cv] of queue.entries()){
+    b.textContent="Lettura "+(index+1)+"/"+queue.length+"…";
+    show("Lettura di "+cv.name+" ("+(index+1)+"/"+queue.length+")…");
+    try{await readSingleCv(cv,language);read++;selectedId=cv.id}
+    catch(e){failed.push(cv.name+": "+(e?.message||String(e)))}
+   }
+   if(read)await refresh();
+   const outcome=read+" CV analizzati. "+(failed.length?"Non completati: "+failed.join(" | "):"Apri ogni CV e conferma le informazioni proposte.");
+   show(outcome,failed.length>0);
+   if(b.isConnected){b.disabled=false;b.textContent=title}
+   return;
   }
  };
  const form=root.querySelector("#cvFactsForm");
