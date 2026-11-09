@@ -958,36 +958,43 @@ async function renderOpportunityFolder(jobId){
    </section>
 
    <section class="section dossierWorkspace dossierWorkspaceV3">
-     <div class="workspaceHeader">
-       <div><div class="eyebrow">Dossier personalizzato</div><h2>L'offerta confrontata con il tuo CV</h2></div>
-       <span class="workspaceSub">Requisiti dell'azienda confrontati con il CV selezionato. Puoi consultare tutte le versioni, mantenendo distinte le informazioni confermate da quelle riconosciute automaticamente.</span>
+     <header class="luxDossierHeader">
+       <div class="luxDossierTitle"><div class="eyebrow">Dentro la posizione</div><h2>Il ruolo e le tue possibilità</h2>
+       <p>Le attività da svolgere e le competenze richieste, confrontate direttamente con il tuo curriculum.</p></div>
+       <div class="luxDossierCounts"><span><strong>${factLists.it.duties.length}</strong> attività</span><span><strong>${factLists.it.requirements.length}</strong> requisiti</span></div>
+     </header>
+     <div class="luxCvPicker">
+       <div class="luxCvPickerHeading"><span class="eyebrow">Curriculum per questa posizione</span>
+         <p>${selectedDossierCvId?"Hai scelto questa versione per il confronto.":"HUNT propone il CV più pertinente: puoi confrontarne anche un altro."}</p></div>
+       <label class="luxCvSelectLabel" for="dossierCv">Confronta con il CV
+         <select id="dossierCv" aria-label="Seleziona il curriculum da confrontare">${dossierCvOptions}</select>
+       </label>
+       <button type="button" class="cvProofAction" id="reviewRequirementsProfile">Gestisci i CV</button>
      </div>
-     <div class="workspaceCvSummary"><span>Curriculum selezionato automaticamente da HUNT</span><strong>${esc(selectedCv?.name||"Nessun CV disponibile")}</strong><button type="button" class="cvProofAction" id="reviewRequirementsProfile">Controlla il mio profilo</button></div>
-     <div class="jobSourceContext">
-       ${haveVerifiedSections
-         ?`<span class="jobSourcePass">${reviewedOfficial?"Verificato sulla fonte ufficiale":"Analisi AI delle prove testuali: controlla sempre l'annuncio originale"}</span>`
-         :summaryOnly
-           ?`<span class="jobSourceNeed">Scheda parziale: HUNT non ha ancora acquisito l'annuncio integrale. Il match è preliminare.</span>`
-           :`<span class="jobSourcePass">Testo acquisito dall'annuncio · possibili informazioni mancanti</span>`}
-       ${safeRadarUrl(job.primary_apply_url)?`<a href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Apri la fonte ufficiale</a>`:""}
-     </div>
-     <p class="sourceVerifiedNote">${haveVerifiedSections?"Mansioni e requisiti confrontati con la fonte dell'annuncio.":"Analisi orientativa dei temi esplicitamente rilevati nell'annuncio. Per il testo completo, consulta la fonte ufficiale: non attribuiamo al datore di lavoro requisiti non acquisiti."}</p>
-     <div class="vacancyEvidenceGrid">
+     <div class="vacancyEvidenceGrid luxEvidenceGrid">
        <div class="vacancyEvidenceColumn">
-         <div class="eyebrow">Cosa prevede il ruolo</div>
+         <div class="luxColumnHead"><div class="eyebrow">01 / Responsabilità</div><h3>Di cosa ti occuperesti</h3><p>Le attività tratte dalla descrizione aziendale.</p></div>
          <div data-fact-display="it" class="">
-           ${factLists.it.duties.length?`<ul>${factLists.it.duties.slice(0,7).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Mansioni non disponibili nel testo acquisito.</p>"}
+           ${factLists.it.duties.length?`<ul class="luxDutyList">${factLists.it.duties.slice(0,5).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>${expandedDuties(factLists.it.duties)}`:"<p>Non sono state acquisite mansioni dettagliate. Consulta l’annuncio originale in fondo alla scheda.</p>"}
          </div>
        </div>
        <div class="vacancyEvidenceColumn">
-         <div class="eyebrow">Requisiti e confronto con il CV</div>
+         <div class="luxColumnHead"><div class="eyebrow">02 / Corrispondenze</div><h3>Che cosa cerca l’azienda</h3><p>Tutti i requisiti pubblicati, con le prove riconosciute nel curriculum.</p></div>
          <div data-fact-display="it" class="">
-           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.label||"Non documentato nel CV acquisito")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
+           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.type==="found"?"Nel CV":cvChecklistIt[i]?.type==="detected"?"Rilevato nel CV":cvChecklistIt[i]?.type==="alternate"?"In un altro CV":cvChecklistIt[i]?.type==="partial"?"Da approfondire":"Non emerge dal CV")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
          </div>
        </div>
      </div>
 
-     ${!verifiedCv(selectedCv)?`<p class="workspaceEmpty">Conferma le informazioni del CV nel Profilo per rendere definitiva la valutazione.</p>`:""}
+     ${!verifiedCv(selectedCv)?`<p class="luxCvNote">Il CV selezionato non è ancora stato confermato. Puoi completarlo dalla pagina Profilo.</p>`:""}
+     <footer class="luxSourceFooter"><span>${haveVerifiedSections?"Annuncio completo controllato sulla fonte ufficiale":summaryOnly?"Descrizione sintetica disponibile":"Contenuti ricavati dal testo acquisito"}</span>
+       <span>${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</span>
+       ${safeRadarUrl(job.primary_apply_url)?`<a href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Fonte originale ↗</a>`:""}</footer>
+   </section>
+
+   <section class="section luxLetterReminder" aria-label="Funzionalità futura">
+     <div><div class="eyebrow">Presto su HUNT</div><h3>Cover letter</h3><p>La preparazione personalizzata delle lettere verrà introdotta in una prossima versione.</p></div>
+     <span class="luxLetterWordmark" aria-hidden="true">LETTERS / HUNT</span>
    </section>
 
    <section class="section compactJobStatus">
