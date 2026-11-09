@@ -795,7 +795,7 @@ async function renderOpportunityFolder(jobId){
 
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
- const selectedCv=row.cvs?.find(x=>x.id===row.dossier?.recommended_cv_id)||cv;
+ const selectedCv=cv;
  const evidencedProfile=verifiedCv(selectedCv)?selectedCv?.parsed_profile:null;
  const fit=row.dossier?.model_version==="evidence_dossier_v6"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
@@ -805,7 +805,7 @@ async function renderOpportunityFolder(jobId){
  const cvReady=hasParsedCv(row);
  const dossierEvidence=Array.isArray(row.dossier?.what_to_emphasize)?row.dossier.what_to_emphasize:[];
  const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
- const dossierCvId=row.dossier?.recommended_cv_id||cv?.id||"";
+ const dossierCvId=cv?.id||row.dossier?.recommended_cv_id||"";
  const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""} ${verifiedCv(c)?"":"disabled"}>${index+1}. ${esc(c.name||"Curriculum")}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · completa lettura e conferma nel Profilo"}</option>`).join("");
  const dossierLang=row.dossier?.generated_from?.language==="it"?"it":"en";
  const repostCount=(row.reposts||[]).length;
