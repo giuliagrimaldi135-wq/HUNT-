@@ -806,6 +806,12 @@ function normalizeVacancyFacts(facts){
  };
 }
 
+function expandedDuties(duties){
+ if(!Array.isArray(duties)||duties.length<=5)return "";
+ return '<details class="luxMoreDuties"><summary>Mostra tutte le '+duties.length+' responsabilità <span>+'+(duties.length-5)+' altre</span></summary>'+
+   '<ol class="luxDutyList" start="6">'+duties.slice(5).map((t,i)=>'<li><span class="luxDutyOrdinal">'+String(i+6).padStart(2,"0")+'</span>'+esc(t)+'</li>').join("")+'</ol></details>';
+}
+
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  const preferredLocale="it";
@@ -951,9 +957,9 @@ async function renderOpportunityFolder(jobId){
    <section class="section huntDecision huntDecisionV3">
      <div class="huntDecisionIntro"><div class="eyebrow">Perché candidarti</div><h2>Il valore di questa opportunità</h2></div>
      <div class="huntDecisionBody">
-       <h3 class="huntDecisionVerdict">${esc(assessmentIt.judgement)}</h3>
+       <h3 class="huntDecisionVerdict">${esc(assessmentIt.why?.includes("non emerge")?"Un ruolo da valutare con attenzione":"Un collegamento concreto con il tuo percorso")}</h3>
        <p class="huntWhyNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt))}</p>
-       <p class="huntAnalysisMeta">${summaryOnly||assessmentIt.missingCount?"Analisi preliminare · requisiti da verificare":"Confronto basato sui requisiti acquisiti"} · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
+       
      </div>
    </section>
 
@@ -1138,6 +1144,15 @@ async function renderOpportunityFolder(jobId){
  });
  const openBrand=document.getElementById("openCompanyTab");
  if(openBrand)openBrand.onclick=()=>document.querySelector('[data-folder-tab="company"]')?.click();
+ const dossierCvSelector=document.getElementById("dossierCv");
+ if(dossierCvSelector)dossierCvSelector.onchange=async()=>{
+   const next=dossierCvSelector.value;
+   selectedDossierCvId=next;
+   dossierCvChoices.set(jobId,next);
+   dossierCvSelector.disabled=true;
+   try{await renderOpportunityFolder(jobId)}
+   catch(error){dossierCvSelector.disabled=false;console.error("CV comparison failed",error)}
+ };
  const profileButton=document.getElementById("reviewRequirementsProfile");
  if(profileButton)profileButton.onclick=()=>renderProfile();
 
