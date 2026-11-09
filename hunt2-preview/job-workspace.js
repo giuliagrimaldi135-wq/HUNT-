@@ -2,8 +2,8 @@
  * Source facts and candidate evidence arrive separately. No personality scoring. */
 const esc=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
 const qualityLabel={
- found:"Presente nel CV",detected:"Individuato nel testo",partial:"Da approfondire",
- alternate:"In un altro CV",missing:"Non documentato"
+ found:"Presente nel CV",detected:"Indicato nel CV",partial:"Presente in parte",
+ alternate:"Solo in un altro CV",missing:"Non indicato nel CV"
 };
 const stateIcon={found:"✓",detected:"✓",partial:"·",alternate:"↗",missing:"—"};
 function safeSource(u){
@@ -12,11 +12,17 @@ function safeSource(u){
 }
 function req(item,compact=false){
  const match=item.match||{},state=match.state||"missing";
- const label=qualityLabel[state]||match.label||"Non documentato";
+ const label=qualityLabel[state]||match.label||"Non indicato nel CV";
+ const rawTitle=String(item.text||"").trim();
+ const title=/^competenze excel richieste$/i.test(rawTitle)?"Conoscenza di Excel":rawTitle;
+ // The short preview should show the specific skill actually written in the CV,
+ // not just a vague status such as "detected" or "in a different document".
+ const evidence=String(match.evidence||"").trim();
+ const shortEvidence=compact&&["found","detected"].includes(state)&&evidence.length<=95;
  return '<div class="hwRequirement '+(compact?"is-compact":"")+'">'+
    '<span class="hwRequirementIcon hwRequirementIcon-'+esc(state)+'" aria-hidden="true">'+(stateIcon[state]||"·")+'</span>'+
-   '<div class="hwRequirementCopy"><strong>'+esc(item.text||"")+'</strong>'+
-   (!compact&&match.evidence?'<p>'+esc(match.evidence)+'</p>':"")+'</div>'+
+   '<div class="hwRequirementCopy"><strong>'+esc(title)+'</strong>'+
+   ((!compact||shortEvidence)&&evidence?'<p class="'+(compact?"hwCompactEvidence":"")+'">'+esc(evidence)+'</p>':"")+'</div>'+
    '<span class="hwRequirementStatus">'+esc(label)+'</span></div>';
 }
 function responsibilities(duties,limit){
