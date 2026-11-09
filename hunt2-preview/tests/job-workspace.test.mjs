@@ -20,7 +20,12 @@ test("Product page uses clear navigation rather than one continuous AI report",(
   assert.match(html,new RegExp('data-job-workspace-tab="'+tab+'"'));
   assert.match(html,new RegExp('data-job-workspace-pane="'+tab+'"'));
  }
- assert.match(html,/hwSummaryGrid/);
+ assert.match(html,/hwOverviewHeading/);
+ assert.match(html,/hwOverviewTasks/);
+ assert.match(html,/hwOverviewRequirements/);
+ assert.match(html,/data-switch-job-tab="tasks"/);
+ assert.match(html,/data-switch-job-tab="criteria"/);
+ assert.doesNotMatch(html,/hwSummaryGrid|hwSummaryCard|hwCardIcon/);
  assert.match(html,/hwAsideCard/);
  assert.match(html,/id="dossierCv"/);
  assert.match(html,/CV principale|CV selezionato/);
@@ -44,4 +49,17 @@ test("Escape hostile source content and reject unsafe original URLs",()=>{
  assert.doesNotMatch(html,/<img src=x/);
  assert.match(html,/&lt;img/);
  assert.doesNotMatch(html,/href="javascript:/);
+});
+
+test("Approved application sidebar stays unchanged while overview becomes one coherent panel",()=>{
+ const html=renderJobWorkspace(facts);
+ assert.match(html,/class="hwAside"/);
+ assert.match(html,/class="hwAsideCard"/);
+ assert.match(html,/Come procedere/);
+ assert.match(html,/Vai all’annuncio ufficiale/);
+ assert.match(html,/Informazioni confermate/);
+ assert.match(html,/hwOverviewDivider/);
+ const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
+ assert.ok(overview.includes("hwOverviewTasks")&&overview.includes("hwOverviewRequirements"));
+ assert.equal((overview.match(/<article/g)||[]).length,0,"No extra nested cards in the overview");
 });
