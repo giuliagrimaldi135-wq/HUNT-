@@ -1,7 +1,7 @@
 
 import {extractCvText} from "./cv-reader.js?v=20261109-60";
 import {interpretCvText} from "./cv-interpreter.js?v=20261109-60";
-import {evidenceForDisplay,projectNameForDisplay,cvRoleSignals,cvReviewSummary} from "./cv-display.js?v=20261109-83";
+import {evidenceForDisplay,projectNameForDisplay,cvProfessionalCategories,cvReviewSummary} from "./cv-display.js?v=20261109-87";
 const esc=(s="")=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,50);
 const mime={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
@@ -29,7 +29,7 @@ function cvStatus(x){
  if(p.cv_text_extraction_status==="image_pdf_no_text_layer")return "PDF grafico: leggi con OCR";
  return "Da leggere e verificare";
 }
-function editor(cv){
+function editor(cv,roleFamilies=[]){
  const p=cv.parsed_profile||{},d=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
  const combined={...p,draft_profile:d},s=cvReviewSummary(combined),ex=s.experience,pr=s.projects,ed=s.education,tools=s.tools,languages=s.languages;
  const verified=s.confirmed;
@@ -41,12 +41,15 @@ function editor(cv){
    (x.role&&key==="company"?'<p>'+esc(x.role)+'</p>':"")+
    (x.evidence?.length?'<ul>'+details(x.evidence)+'</ul>':"")+'</article>').join("");
  const pills=xs=>xs.map(x=>'<span class="cvPill">'+esc(typeof x==="string"?x:[x.program,x.school].filter(Boolean).join(" · "))+'</span>').join("");
- const roles=cvRoleSignals(combined);
+ const professionalAreas=cvProfessionalCategories(combined,roleFamilies);
+ const detectedAreas=professionalAreas.filter(x=>x.related);
  return '<section class="cvEditor cvInsightWorkspace">'+
   '<div class="cvInsightHeader"><div><div class="eyebrow">Analisi del CV · '+esc(cv.name)+'</div><h2>Il tuo profilo, letto da HUNT</h2><p>Queste sono le informazioni che HUNT ha individuato. Puoi confermarle, correggerle o aggiungere ciò che manca: saranno usate per valutare le offerte.</p></div>'+
   '<span class="cvInsightState '+(verified?'is-verified':'')+'">'+(verified?"Profilo confermato":"Da verificare")+'</span></div>'+
   '<div class="cvInsightMetrics"><div><strong>'+ex.length+'</strong><span>Esperienze</span></div><div><strong>'+pr.length+'</strong><span>Progetti</span></div><div><strong>'+tools.length+'</strong><span>Software</span></div></div>'+
-  (roles.length?'<div class="cvRoleReadout"><span class="eyebrow">Ambiti emersi</span><p>'+roles.map(esc).join(" · ")+'</p><small>La selezione del CV per ogni annuncio avviene in automatico.</small></div>':"")+
+  '<section class="cvCareerAreas"><div class="cvCareerAreasTitle"><div><div class="eyebrow">I tuoi ambiti professionali</div><h3>Le aree collegate a questo CV</h3><p>Emergono dalle esperienze o dai progetti presenti nel documento, non sono qualifiche aggiunte automaticamente.</p></div><span>'+detectedAreas.length+' aree collegate</span></div>'+
+  '<div class="cvCareerHighlights">'+(detectedAreas.length?detectedAreas.map(x=>'<article class="cvCareerArea"><strong>'+esc(x.name)+'</strong><small>'+esc(x.basis.replace(/\\s+academic project$/i,""))+'</small></article>').join(""):'<p>Non sono stati individuati collegamenti specifici alle categorie professionali.</p>')+'</div>'+
+  '<details class="cvAllAreas"><summary>Vedi tutte le '+professionalAreas.length+' categorie HUNT <span>Esplora le altre aree</span></summary><div class="cvAllAreaGrid">'+professionalAreas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details></section>'+
   '<form id="cvFactsForm"><div class="cvInsightColumns"><div><h3>Esperienze professionali</h3>'+ (ex.length?showRecord(ex,"company"):'<p class="cvInsightEmpty">Nessuna esperienza riconosciuta.</p>')+'</div>'+
   '<div><h3>Progetti e formazione</h3>'+(pr.length?showRecord(pr,"name"):'<p class="cvInsightEmpty">Nessun progetto rilevato.</p>')+
   (ed.length?'<div class="cvPillRow">'+pills(ed)+'</div>':"")+'</div></div>'+
@@ -114,7 +117,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   (unread.length?'<p class="cvAutoNotice">HUNT sta preparando la lettura automatica di '+unread.length+' CV. Se la scansione non riesce, troverai qui un comando per riprovare.</p>':"")+
   '<div class="cvReaderOptions"><label>Lingua del documento <select id="cvOcrLang"><option value="ita+eng">Riconoscimento italiano e inglese</option><option value="eng">Inglese</option><option value="ita">Italiano</option></select></label>'+
    '<p>Il riconoscimento avviene nel browser. Esperienze e competenze non vengono inventate o assegnate ad altri CV.</p></div>'+
-  (current?editor(current):"")+'</section>';
+  (current?editor(current,roleFamilies):"")+'</section>';
  const show=(text,bad=false)=>{const el=root.querySelector("#cvReaderStatus");if(el){el.textContent=text;el.classList.toggle("cvReaderError",bad)}};
  const readSingleCv=async (cv,language)=>{
    const {data:blob,error:dl}=await supabase.storage.from("cvs").download(cv.storage_path);
