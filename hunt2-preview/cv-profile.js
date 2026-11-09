@@ -82,31 +82,36 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  // rather than silently selecting the only legacy structured record.
  if(!rows.some(x=>x.id===selectedId))selectedId=rows.find(x=>x.parsed_profile?.draft_profile&&!x.parsed_profile?.profile_confirmed_by_user)?.id||rows.find(x=>x.is_default)?.id||rows[0]?.id||null;
  const current=rows.find(x=>x.id===selectedId);
- const currentTargets=Array.isArray(current?.target_role_families)?current.target_role_families:[];
- const textPreview=current?.parsed_profile?.raw_text
-   ?`<details class="cvRawPreview"><summary>Controlla il testo estratto dal CV · ${current.parsed_profile.raw_text.length} caratteri</summary><p>Il testo riconosciuto automaticamente può contenere errori di OCR. Verificalo prima di confermare esperienze e competenze.</p><pre>${esc(current.parsed_profile.raw_text.slice(0,9000))}</pre></details>`
-   :current?`<p class="cvReadReminder">Questa versione non ha ancora un testo leggibile. Premi <strong>Leggi CV</strong> nella lista: l'OCR viene effettuato localmente nel tuo browser senza costi API.</p>`:"";
- const targetEditor=current?`<details class="cvTargetEditor">
-   <summary>Per quali ruoli utilizzare questa versione del CV?</summary>
-   <p>HUNT potrà scegliere automaticamente questo documento nelle vacancy pertinenti. Puoi selezionare più aree.</p>
-   <div class="cvTargetOptions">${roleFamilies.map(role=>`<label><input type="checkbox" data-cv-target="${esc(role)}" ${currentTargets.includes(role)?"checked":""}> ${esc(role)}</label>`).join("")}</div>
-   <button type="button" class="btn" data-cv-action="save-targets" data-cv-id="${current.id}">Salva destinazioni CV</button>
- </details>`:"";
+ const main=rows.find(x=>x.is_default),unread=rows.filter(x=>!x.parsed_profile?.raw_text);
  let fileHtml="";
  for(const cv of rows){
-  fileHtml+='<article class="cvFileLine"><div><strong>'+esc(cv.name)+(cv.is_default?' · Principale':'')+'</strong><small>'+esc(cvStatus(cv))+'</small></div><div class="cvFileActions">'+
-   '<button class="btn" data-cv-action="select" data-cv-id="'+cv.id+'">'+(cv.id===selectedId?"Aperto":"Apri")+'</button>'+
-   '<button class="btn" data-cv-action="read" data-cv-id="'+cv.id+'">'+(cv.parsed_profile?.raw_text?'Rileggi e analizza':'Leggi e analizza')+'</button>'+
-   (cv.is_default?"":'<button class="btn" data-cv-action="default" data-cv-id="'+cv.id+'">Imposta principale</button>')+
+  const name=esc(cv.name||"Curriculum"),mainCv=!!cv.is_default,open=cv.id===selectedId;
+  const status=esc(cvStatus(cv));
+  fileHtml+='<article class="cvArchiveCard '+(open?'is-open ':'')+(mainCv?'is-main':'')+'">'+
+   '<div class="cvArchiveIcon">CV</div><div class="cvArchiveInfo"><div class="cvArchiveTitle"><strong>'+name+'</strong>'+
+   '<span class="cvArchiveType">'+(mainCv?'Principale':'Secondario')+'</span></div>'+
+   '<p>'+status+'</p><small>HUNT valuta in automatico la pertinenza di questa versione per ciascuna opportunità.</small></div>'+
+   '<div class="cvArchiveActions">'+
+    '<button type="button" class="cvArchiveAction" data-cv-action="select" data-cv-id="'+cv.id+'">'+(open?'In visualizzazione':'Visualizza')+'</button>'+
+    (!mainCv?'<button type="button" class="cvArchiveAction" data-cv-action="default" data-cv-id="'+cv.id+'">Rendi principale</button>':rows.length>1?
+     '<button type="button" class="cvArchiveAction" data-cv-action="secondary" data-cv-id="'+cv.id+'">Rendi secondario</button>':"")+
+    '<button type="button" class="cvArchiveAction is-danger" data-cv-action="delete-cv" data-cv-id="'+cv.id+'">Elimina</button>'+
    '</div></article>';
  }
- root.innerHTML='<section class="cvManager"><div class="cvManagerHeading"><div class="eyebrow">CV privati</div><h2>Il tuo archivio professionale</h2><p>Più versioni, lettura visuale e informazioni confermate per candidature personalizzate.</p></div>'+
-  '<div class="cvBatchToolbar"><span>'+rows.filter(x=>!x.parsed_profile?.raw_text).length+' CV senza testo · '+rows.filter(x=>x.parsed_profile?.raw_text&&!x.parsed_profile?.profile_confirmed_by_user).length+' da confermare</span><button class="btn" type="button" data-cv-action="read-all">Analizza tutti i CV non letti</button></div>'+
-  '<div class="cvFileList">'+(fileHtml||'<p>Nessun CV caricato.</p>')+'</div>'+
-  '<div class="cvUpload"><div class="cvMiniHead"><h3>Carica una nuova versione</h3><span>PDF, DOCX, TXT, PNG o JPG</span></div><div class="cvUploadFields"><input id="cvUploadName" placeholder="Es. Retail Merchandising"><input id="cvUploadFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"><button class="btn primary" data-cv-action="upload" type="button">Carica e leggi</button></div></div>'+
-  '<div id="cvReaderStatus" role="status" class="cvReaderStatus"></div>'+
-  '<div class="cvReaderOptions"><label>Lingua OCR <select id="cvOcrLang"><option value="ita+eng">Italiano + English</option><option value="eng">English</option><option value="ita">Italiano</option><option value="fra">Français</option><option value="deu">Deutsch</option><option value="spa">Español</option></select></label><p>Ogni CV viene letto e interpretato separatamente, nella lingua originale. L’analisi propone esperienze, progetti e software da confermare; nulla viene attribuito automaticamente come certificato.</p></div>'+
-  targetEditor+textPreview+
+ root.innerHTML='<section class="cvManager cvArchiveV2">'+
+  '<header class="cvManagerHeading"><div class="eyebrow">Profilo professionale</div><h2>I tuoi curriculum</h2>'+
+   '<p>Un solo CV principale, tutte le altre versioni secondarie. HUNT legge i documenti e sceglie automaticamente quella più pertinente per ogni posizione.</p></header>'+
+  '<div class="cvArchiveStats"><span><strong>'+rows.length+'</strong> CV caricati</span><span><strong>'+rows.filter(x=>x.parsed_profile?.raw_text).length+'</strong> letti</span>'+
+   '<span><strong>'+rows.filter(x=>x.parsed_profile?.profile_confirmed_by_user||x.parsed_profile?.profile_verified_from_user_history).length+'</strong> verificati</span></div>'+
+  '<div class="cvFileList">'+(fileHtml||'<p class="cvArchiveEmpty">Carica il tuo primo CV: HUNT ne leggerà automaticamente il contenuto.</p>')+'</div>'+
+  '<div class="cvUpload"><div class="cvMiniHead"><h3>Aggiungi un CV</h3><span>La lettura parte automaticamente</span></div>'+
+   '<div class="cvUploadFields"><input id="cvUploadName" placeholder="Nome del CV, per esempio Merchandising">'+
+    '<input id="cvUploadFile" type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg">'+
+    '<button class="btn primary" data-cv-action="upload" type="button">Aggiungi CV</button></div></div>'+
+  '<div id="cvReaderStatus" role="status" aria-live="polite" class="cvReaderStatus"></div>'+
+  (unread.length?'<p class="cvAutoNotice">HUNT sta preparando la lettura automatica di '+unread.length+' CV. Se la scansione non riesce, troverai qui un comando per riprovare.</p>':"")+
+  '<div class="cvReaderOptions"><label>Lingua del documento <select id="cvOcrLang"><option value="ita+eng">Riconoscimento italiano e inglese</option><option value="eng">Inglese</option><option value="ita">Italiano</option></select></label>'+
+   '<p>Il riconoscimento avviene nel browser. Esperienze e competenze non vengono inventate o assegnate ad altri CV.</p></div>'+
   (current?editor(current):"")+'</section>';
  const show=(text,bad=false)=>{const el=root.querySelector("#cvReaderStatus");if(el){el.textContent=text;el.classList.toggle("cvReaderError",bad)}};
  const readSingleCv=async (cv,language)=>{
