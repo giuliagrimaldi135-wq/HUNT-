@@ -3,6 +3,7 @@ import { checkRequirements, assessDossier, applicationInsight, newsTeaser } from
 import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
+import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-101";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -850,6 +851,7 @@ async function renderOpportunityFolder(jobId){
  const alternatives=(row.cvs||[]).filter(x=>x.id!==selectedCv?.id);
  const cvChecklistIt=checkRequirements(factLists.it.requirements,evidencedProfile,{alternatives});
  const cvChecklistEn=checkRequirements(factLists.en.requirements,evidencedProfile,{alternatives});
+ const keyRequirements=prioritizeRequirements(factLists.it.requirements,4).map(x=>({...x,match:compareKeyRequirement(x,cvChecklistIt[x.sourceIndex],evidencedProfile)}));
  const assessmentIt=assessDossier(job,evidencedProfile,factLists.it.duties,cvChecklistIt,summaryOnly,"it");
  const assessmentEn=assessDossier(job,evidencedProfile,factLists.en.duties,cvChecklistEn,summaryOnly,"en");
  const cvAssessment=dossierLang==="it"?assessmentIt:assessmentEn;
@@ -953,53 +955,44 @@ async function renderOpportunityFolder(jobId){
  </div>
 
  <div data-folder-panel="application">
-   <section class="section huntDecision huntDecisionV3">
-     <div class="huntDecisionIntro"><div class="eyebrow">Perché candidarti</div><h2>Il valore di questa opportunità</h2></div>
-     <div class="huntDecisionBody">
-       <h3 class="huntDecisionVerdict">Come si collega al tuo profilo</h3>
-       <p class="huntWhyNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt,factLists.it.duties))}</p>
-       
-     </div>
-   </section>
-
-   <section class="section dossierWorkspace dossierWorkspaceV3">
-     <header class="luxDossierHeader">
-       <div class="luxDossierTitle"><div class="eyebrow">Dentro la posizione</div><h2>Il ruolo e le tue possibilità</h2>
-       <p>Le attività da svolgere e le competenze richieste, confrontate direttamente con il tuo curriculum.</p></div>
-       <div class="luxDossierCounts"><span><strong>${factLists.it.duties.length}</strong> attività</span><span><strong>${factLists.it.requirements.length}</strong> requisiti</span></div>
+   <section class="section huntEditorial">
+     <header class="huntEditorialIntro">
+       <div class="eyebrow">HUNT / Analisi della posizione</div>
+       <h2>Questa opportunità, nel concreto.</h2>
+       <p class="huntEditorialNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt,factLists.it.duties))}</p>
      </header>
-     <div class="luxCvPicker">
-       <div class="luxCvPickerHeading"><span class="eyebrow">Curriculum per questa posizione</span>
-         <p>${selectedDossierCvId?"Hai scelto questa versione per il confronto.":"HUNT propone il CV più pertinente: puoi confrontarne anche un altro."}</p></div>
-       <label class="luxCvSelectLabel" for="dossierCv">Confronta con il CV
-         <select id="dossierCv" aria-label="Seleziona il curriculum da confrontare">${dossierCvOptions}</select>
+     <div class="huntEditorialCvRow">
+       <div><span class="eyebrow">Confronto con il tuo curriculum</span><p>HUNT ti propone una versione, ma puoi scegliere quella che preferisci.</p></div>
+       <label for="dossierCv">CV utilizzato
+         <select id="dossierCv" aria-label="Curriculum da usare per il confronto">${dossierCvOptions}</select>
        </label>
-       <button type="button" class="cvProofAction" id="reviewRequirementsProfile">Gestisci i CV</button>
+       <button class="huntInlineLink" type="button" id="reviewRequirementsProfile">Gestisci CV</button>
      </div>
-     <div class="vacancyEvidenceGrid luxEvidenceGrid">
-       <div class="vacancyEvidenceColumn">
-         <div class="luxColumnHead"><div class="eyebrow">01 / Responsabilità</div><h3>Di cosa ti occuperesti</h3><p>Le attività tratte dalla descrizione aziendale.</p></div>
-         <div data-fact-display="it" class="">
-           ${factLists.it.duties.length?`<ul class="luxDutyList">${factLists.it.duties.slice(0,5).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>${expandedDuties(factLists.it.duties)}`:"<p>Non sono state acquisite mansioni dettagliate. Consulta l’annuncio originale in fondo alla scheda.</p>"}
-         </div>
+     <section class="huntEditorialSection">
+       <div class="huntEditorialSectionHead"><div class="huntEditorialIndex">01</div><div><h3>Il lavoro, in pratica</h3>
+         <p>Le principali attività ricavate dall’annuncio aziendale.</p></div></div>
+       <div class="huntEditorialMain">
+         ${factLists.it.duties.length?`<ul class="huntEditorialDuties">${factLists.it.duties.slice(0,4).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>${factLists.it.duties.length>4?`<details class="huntEditorialMore"><summary>Leggi le altre attività (${factLists.it.duties.length-4})</summary><ul>${factLists.it.duties.slice(4).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></details>`:""}`:"<p class='huntEditorialEmpty'>Le mansioni non sono sufficientemente dettagliate nel testo acquisito.</p>"}
        </div>
-       <div class="vacancyEvidenceColumn">
-         <div class="luxColumnHead"><div class="eyebrow">02 / Corrispondenze</div><h3>Che cosa cerca l’azienda</h3><p>Tutti i requisiti pubblicati, con le prove riconosciute nel curriculum.</p></div>
-         <div data-fact-display="it" class="">
-           ${factLists.it.requirements.length?`<ul class="requirementsWithCv luxRequirementList">${factLists.it.requirements.map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.type==="found"?"Nel CV":cvChecklistIt[i]?.type==="detected"?"Rilevato nel CV":cvChecklistIt[i]?.type==="alternate"?"In un altro CV":cvChecklistIt[i]?.type==="partial"?"Da approfondire":"Non emerge dal CV")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
-         </div>
+     </section>
+     <section class="huntEditorialSection huntEditorialLast">
+       <div class="huntEditorialSectionHead"><div class="huntEditorialIndex">02</div><div><h3>Le competenze che contano</h3>
+         <p>Solo requisiti professionali concreti: software, esperienza, formazione e attività tecniche. Non valutiamo qualità personali da un CV.</p></div></div>
+       <div class="huntEditorialMain">
+         ${keyRequirements.length?`<div class="huntKeyRequirements">${keyRequirements.map(item=>`<article class="huntKeyRequirement">
+           <div class="huntKeyRequirementContent"><h4>${esc(item.text)}</h4>${item.match.evidence?`<p>${esc(item.match.evidence)}</p>`:""}</div>
+           <span class="huntKeyStatus huntKeyStatus-${esc(item.match.state)}">${esc(item.match.label)}</span>
+         </article>`).join("")}</div>`:"<p class='huntEditorialEmpty'>L’annuncio non riporta requisiti tecnici sufficientemente specifici da confrontare in modo attendibile.</p>"}
+         ${factLists.it.requirements.length>keyRequirements.length?`<p class="huntCriteriaNote">Gli altri criteri indicati dall’azienda, come attitudini e caratteristiche personali, non vengono trasformati in punteggi o giudizi sul CV.</p>`:""}
        </div>
-     </div>
-
-     ${!verifiedCv(selectedCv)?`<p class="luxCvNote">Il CV selezionato non è ancora stato confermato. Puoi completarlo dalla pagina Profilo.</p>`:""}
-     <footer class="luxSourceFooter"><span>${haveVerifiedSections?"Annuncio completo controllato sulla fonte ufficiale":summaryOnly?"Descrizione sintetica disponibile":"Contenuti ricavati dal testo acquisito"}</span>
+     </section>
+     ${!verifiedCv(selectedCv)?`<p class="huntCvReviewNote">Questa versione del curriculum non è ancora stata confermata. Puoi controllarla e completarla nel Profilo.</p>`:""}
+     <footer class="huntEditorialFooter">
+       <span>${haveVerifiedSections?"Attività e requisiti verificati sul sito aziendale":summaryOnly?"Dati ricavati da una descrizione sintetica":"Dati ricavati dal testo dell’annuncio"}</span>
        <span>${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</span>
-       ${safeRadarUrl(job.primary_apply_url)?`<a href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Fonte originale ↗</a>`:""}</footer>
-   </section>
-
-   <section class="section luxLetterReminder" aria-label="Funzionalità futura">
-     <div><div class="eyebrow">Presto su HUNT</div><h3>Cover letter</h3><p>La preparazione personalizzata delle lettere verrà introdotta in una prossima versione.</p></div>
-     <span class="luxLetterWordmark" aria-hidden="true">LETTERS / HUNT</span>
+       ${safeRadarUrl(job.primary_apply_url)?`<a href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Annuncio originale ↗</a>`:""}
+     </footer>
+     <div class="huntLettersLater"><span>IN ARRIVO</span><strong>Cover letter</strong><p>La scrittura personalizzata delle lettere sarà introdotta più avanti.</p></div>
    </section>
 
    <section class="section compactJobStatus">
