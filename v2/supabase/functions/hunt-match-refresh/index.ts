@@ -263,7 +263,8 @@ Deno.serve(async(req)=>{
       const evidence=[...(p.experience||[]).flatMap((x:any)=>x.evidence||[]),...(p.projects||[]).flatMap((x:any)=>x.evidence||[]),...(p.tools||[])].join(" ").toLowerCase();
       const words=new Set(evidence.match(/[a-z]{5,}/g)||[]);
       let overlap=0;for(const t of common){if(words.has(t))overlap++}
-      const score=(target.includes(family)?70:0)+Math.min(25,overlap*3)+(v.is_default?4:0)+((p.profile_confirmed_by_user||p.profile_verified_from_user_history)?12:0)+((p.experience?.length||p.projects?.length)?8:0);
+      const related=family==="Merchandising"?/merchandis|assort|capsule/.test(evidence):family==="Buying"?/buying|assort|order|budget/.test(evidence):family==="Planning & Allocation"?/planning|forecast|kpi|stock|allocat/.test(evidence):family==="E-commerce & Digital"?/ecommerce|e-commerce|digital/.test(evidence):/showroom|order|retail|client/.test(evidence);
+      const score=(related?32:0)+Math.min(25,overlap*3)+(v.is_default?8:0)+((p.profile_confirmed_by_user||p.profile_verified_from_user_history)?40:0)+((p.experience?.length||p.projects?.length)?6:0);
       return {score,p};
     }).sort((a:any,b:any)=>b.score-a.score);
     return rated[0]?.p||{};
