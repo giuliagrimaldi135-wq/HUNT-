@@ -51,3 +51,31 @@ test("No unrelated generic placement becomes proof of a specialist role",()=>{
  const result=generateEditorialLetter({...candidate,experiences:[{company:"Generic Office",evidence:["Answered phone calls"]}],projects:[],highlights:merch,language:"en"});
  assert.equal(result,null);
 });
+
+test("Evidence wording never expands order-taking into order entry",()=>{
+ const result=generateEditorialLetter({
+  ...candidate,language:"it",role:"Wholesale Intern",highlights:wholesale,
+  experiences:[{company:"Campaign House",evidence:["Took customer orders during a sales campaign"]}],projects:[]
+ });
+ assert.ok(result?.text);
+ assert.match(result.text,/raccolta degli ordini/);
+ assert.doesNotMatch(result.text,/inserimento degli ordini/);
+});
+test("Planning evidence alone does not fabricate budget management",()=>{
+ const result=generateEditorialLetter({
+  ...candidate,language:"it",role:"Planning Assistant",
+  highlights:[["planning and forecasting","pianificazione e forecasting"]],
+  experiences:[{company:"Planning Example",evidence:["Planning and forecasting support"]}],projects:[]
+ });
+ assert.ok(result?.text);
+ assert.match(result.text,/pianificazione/i);
+ assert.doesNotMatch(result.text,/budget minimi|gestione budget|pianificazione di prodotto e budget/i);
+});
+test("Client analysis is not misrepresented as face-to-face retail experience",()=>{
+ const result=generateEditorialLetter({
+  ...candidate,language:"en",role:"Retail Operations",
+  highlights:[["store network coordination","coordinamento operativo della rete retail"]],
+  experiences:[{company:"Research Lab",evidence:["Client segmentation analysis"]}],projects:[]
+ });
+ assert.equal(result,null);
+});
