@@ -478,6 +478,10 @@ function sourceLabel(job){
  if(source==="ats_smartrecruiters")return "Fonte diretta · SmartRecruiters";
  return "Fonte · Annuncio aziendale";
 }
+function partialJobSource(job){
+ const meta=job?.metadata||{};
+ return !meta.source_facts&&(meta.verification==="official_search_result"||meta.verification==="aggregator_search_result"||String(job?.description||"").length<340);
+}
 function opportunityCard(row){
  const job=row.job;
  const brand=job.companies?.name||"Brand";
@@ -487,7 +491,7 @@ function opportunityCard(row){
    <h3>${esc(job.canonical_title)}</h3>
    <div class="jobMeta">${esc(job.city||"Località da verificare")} · ${esc(job.role_family||"Altro")}</div>
    <div class="humanBadges editorialMeta">
-    <span class="matchPill">${row.match_score}% compatibile</span>
+    <span class="matchPill">${partialJobSource(job)?"Match preliminare":row.match_score+"% compatibilità stimata"}</span>
     ${row.applicationStatus==="preparing"?'<span class="jobPreparing">In preparazione</span>':""}
     <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
     <span>${esc(verifiedLabel(job))}</span>
