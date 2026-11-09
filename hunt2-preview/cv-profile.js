@@ -28,7 +28,7 @@ function cvStatus(x){
 }
 function editor(cv){
  const p={...(cv.parsed_profile||{}),...(appliedDrafts.get(cv.id)||{})};
- const draft=p.draft_profile||{};
+ const draft=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
  // OCR interpretation fills editable fields, but DOES NOT assert user confirmation.
  const pick=key=>Array.isArray(p[key])&&p[key].length?p[key]:Array.isArray(draft[key])?draft[key]:[];
  const ex=pick("experience");
