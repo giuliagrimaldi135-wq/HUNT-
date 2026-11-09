@@ -24,7 +24,9 @@ test("Explicit CV evidence stays provisional until user confirmation",()=>{
  assert.equal(results[0].type,"detected");
  assert.match(results[0].label,/da confermare/);
  const confirmed={...cv,profile_confirmed_by_user:true};
- assert.match(checkRequirements(["Excel proficiency"],confirmed)[0].label,/confermato/);
+ const verified=checkRequirements(["Excel proficiency"],confirmed)[0];
+ assert.equal(verified.type,"found");
+ assert.match(verified.label,/Presente nel CV/);
 });
 test("Merchandising matches the Gucci project across Italian and English facts",()=>{
  const requirements=checkRequirements(["English C1"],cv);
