@@ -316,3 +316,12 @@
  .cvWWorkspace .cvWAreaBottom{align-items:flex-start;flex-direction:column}
  .cvWWorkspace .cvWPane{padding:20px 15px}
 }
+
+/* CV facts: communicate evidence rather than a vague or misleading match status. */
+.huntWorkspace .hwRequirement.is-compact .hwRequirementCopy .hwCompactEvidence{
+ display:block;font-size:10.5px;color:#647b69;line-height:1.45;margin:5px 0 0;font-weight:500
+}
+.huntWorkspace .hwRequirement.is-compact .hwRequirementStatus{
+ color:#738779;line-height:1.4;font-weight:650
+}
+.huntWorkspace .hwRequirementIcon-detected{color:#27694d;background:#eaf3ec}
