@@ -25,7 +25,7 @@ test("Product page uses clear navigation rather than one continuous AI report",(
  assert.match(html,/id="dossierCv"/);
  assert.match(html,/CV principale|CV selezionato/);
  assert.match(html,/Cover letter/);
- assert.match(html,/Non sono aggiunti compiti ipotizzati da HUNT/);
+ assert.match(html,/Attività riportate nell’annuncio della posizione/);
  assert.doesNotMatch(html,/attenzione al dettaglio|autonomia professionale|precisione dei candidati/i);
 });
 test("A CV can be changed without hiding other available resumes",()=>{
