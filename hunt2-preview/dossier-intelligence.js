@@ -63,7 +63,7 @@ export function assessDossier(job,profile,duties,checks,incomplete){
  const missing=arr(checks).filter(x=>x.type!=="found");
  const judgement=incomplete?"Annuncio incompleto: valutazione preliminare.":missing.length?"Interessante, ma ci sono requisiti ancora da chiarire.":"Da approfondire: le attività sono coerenti con parte del profilo disponibile.";
  const work=tasks.length?"Le attività previste includono "+brief(tasks[0].replace(/[.;]$/,""),170)+(tasks[1]?" e "+brief(tasks[1].replace(/[.;]$/,""),115):"")+".":"La fonte acquisita non permette di descrivere con precisione le attività.";
- const why=matched?"Collegamento con il CV: "+matched.kind+" "+matched.origin+" — «"+brief(matched.text,140)+"».":
+ const why=matched?"Nel CV caricato risulta: "+matched.kind+" "+matched.origin+" — «"+brief(matched.text,140)+"»."+(p.profile_confirmed_by_user===true?"":" Il profilo va ancora confermato dall’utente."):
    "Non ho trovato nel CV acquisito una prova diretta per queste mansioni: il punteggio non va considerato una garanzia.";
  const watch=missing.length?"Prima di candidarti, verifica: "+missing.slice(0,2).map(x=>brief(x.text,95)).join(" · ")+".":"Controlla il testo completo dell'annuncio prima dell'invio.";
  return {judgement,work,why,watch,missingCount:missing.length};
@@ -74,7 +74,7 @@ export function newsTeaser(title,summary){
  const synopsis=fold(s.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
  if(s.length>=38&&synopsis!==headline&&!headline.includes(synopsis)&&!synopsis.includes(headline))return brief(s,165);
  const h=fold(t);
- if(/revenue|growth|profit|sales|earnings|results|ricavi|fatturato/.test(h))return "Risultati economici: notizia sui ricavi, sulle vendite o sulle performance del gruppo.";
+ if(/revenue|growth|profit|sales|earnings|results|ricavi|fatturato|investor|financial|highlights|bilancio/.test(h))return "Risultati economici: notizia sui ricavi, sulle vendite o sulle performance del gruppo.";
  if(/ceo|director|management|leadership|appointment|nomina/.test(h))return "Strategia e persone: aggiornamento sui vertici e sulle decisioni aziendali.";
  if(/store|boutique|opening|expansion|flagship|retail|apertura/.test(h))return "Retail ed espansione: sviluppo della rete di negozi o presenza nei mercati.";
  if(/collection|capsule|runway|collezion|product|fashion week/.test(h))return "Collezioni e prodotto: novità sulle proposte e sulla loro presentazione.";
