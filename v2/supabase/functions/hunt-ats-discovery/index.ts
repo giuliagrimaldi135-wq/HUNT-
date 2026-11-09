@@ -88,7 +88,7 @@ Deno.serve(async(req)=>{
       // Probe at most 2 same-origin careers pages found on the verified directory website.
       const rootURL=new URL(source.base_url);
       const targetURLs=new Set<string>();
-      for(const m of html.matchAll(/<a\\b[^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]{0,180}?)<\\/a>/gi)){
+      for(const m of html.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]{0,180}?)<\/a>/gi)){
         const txt=(m[1]+" "+m[2].replace(/<[^>]+>/g," ")).toLowerCase();
         if(!/careers?|jobs|join[- ]?(?:us|our team)|lavora con noi|offerte di lavoro|work with us/i.test(txt))continue;
         try{const u=new URL(m[1],response.url);if(u.origin===rootURL.origin&&u.protocol==="https:"&&u.pathname!=="/")targetURLs.add(u.toString())}catch{}
