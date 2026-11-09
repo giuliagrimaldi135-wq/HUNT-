@@ -1,7 +1,7 @@
 
 import {extractCvText} from "./cv-reader.js?v=20261109-60";
 import {interpretCvText} from "./cv-interpreter.js?v=20261109-60";
-import {evidenceForDisplay,cvRoleSignals,cvReviewSummary} from "./cv-display.js?v=20261109-77";
+import {evidenceForDisplay,projectNameForDisplay,cvRoleSignals,cvReviewSummary} from "./cv-display.js?v=20261109-80";
 const esc=(s="")=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,50);
 const mime={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
@@ -37,13 +37,13 @@ function editor(cv){
    const a=evidenceForDisplay(x,"it");
    return '<li>'+esc(a.text)+(a.needsTranslation?'<small class="cvOriginalNote">Testo originale</small>':"")+'</li>';
  }).join("");
- const showRecord=(items,key)=>items.map(x=>'<article class="cvStoryItem"><h4>'+esc(x[key]||x.role||"Attività")+'</h4>'+
+ const showRecord=(items,key)=>items.map(x=>'<article class="cvStoryItem"><h4>'+esc(key==="name"?projectNameForDisplay(x.name,"it"):(x[key]||x.role||"Attività"))+'</h4>'+
    (x.role&&key==="company"?'<p>'+esc(x.role)+'</p>':"")+
    (x.evidence?.length?'<ul>'+details(x.evidence)+'</ul>':"")+'</article>').join("");
  const pills=xs=>xs.map(x=>'<span class="cvPill">'+esc(typeof x==="string"?x:[x.program,x.school].filter(Boolean).join(" · "))+'</span>').join("");
  const roles=cvRoleSignals(combined);
  return '<section class="cvEditor cvInsightWorkspace">'+
-  '<div class="cvInsightHeader"><div><div class="eyebrow">Analisi del curriculum</div><h2>Il tuo profilo, letto da HUNT</h2><p>Esperienze e competenze riconosciute in questa versione. HUNT le usa per scegliere il CV più adatto a ogni posizione.</p></div>'+
+  '<div class="cvInsightHeader"><div><div class="eyebrow">Analisi del CV · '+esc(cv.name)+'</div><h2>Il tuo profilo, letto da HUNT</h2><p>Queste sono le informazioni che HUNT ha individuato. Puoi confermarle, correggerle o aggiungere ciò che manca: saranno usate per valutare le offerte.</p></div>'+
   '<span class="cvInsightState '+(verified?'is-verified':'')+'">'+(verified?"Profilo confermato":"Da verificare")+'</span></div>'+
   '<div class="cvInsightMetrics"><div><strong>'+ex.length+'</strong><span>Esperienze</span></div><div><strong>'+pr.length+'</strong><span>Progetti</span></div><div><strong>'+tools.length+'</strong><span>Software</span></div></div>'+
   (roles.length?'<div class="cvRoleReadout"><span class="eyebrow">Ambiti emersi</span><p>'+roles.map(esc).join(" · ")+'</p><small>La selezione del CV per ogni annuncio avviene in automatico.</small></div>':"")+
@@ -52,14 +52,15 @@ function editor(cv){
   (ed.length?'<div class="cvPillRow">'+pills(ed)+'</div>':"")+'</div></div>'+
   '<div class="cvDetectedSkills"><h3>Strumenti e competenze</h3><div class="cvPillRow">'+(tools.length?pills(tools):'<span class="cvInsightEmpty">Software non ancora riconosciuti</span>')+'</div>'+
   (languages.length?'<h4>Lingue nel CV</h4><div class="cvPillRow">'+pills(languages)+'</div>':"")+'</div>'+
-  '<details class="cvCorrectionDetails"><summary>Correggi informazioni inesatte <span>Facoltativo</span></summary>'+
+  '<div class="cvEditPrompt"><span>Vuoi correggere una voce o aggiungere un’esperienza?</span><button type="button" class="cvEditLaunch" data-cv-action="edit-profile">Modifica o aggiungi informazioni</button></div>'+
+  '<details class="cvCorrectionDetails" id="cvCorrectionDetails"><summary>Modifica esperienze, progetti, formazione e competenze <span>Apri per modificare</span></summary>'+
   '<p>Se la lettura automatica ha commesso errori, puoi correggere i dati qui. Non serve ricompilare il CV.</p>'+
   '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Formazione</h3><button type="button" class="cvTextButton" data-cv-action="add-education">+ Aggiungi</button></div><div id="cvEducation">'+(ed.length?ed:[{}]).map(x=>entry("education",x)).join("")+'</div>'+
   '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div></details>'+
-  '<div class="cvInsightFooter"><div><strong>'+(verified?"Profilo pronto per i dossier":"Ultimo controllo")+'</strong><p>'+(verified?"Le informazioni sono già state confermate.":"Conferma che le informazioni rilevate dal CV siano corrette. Non vengono inventate esperienze o titoli.")+'</p></div>'+
-  '<button class="btn primary" type="submit">'+(verified?"Salva eventuali modifiche":"Conferma l'analisi")+'</button></div></form>'+
+  '<div class="cvInsightFooter"><div><strong>'+(verified?"Controllo del profilo":"Conferma finale")+'</strong><p>'+(verified?"Le tue informazioni sono già confermate. Se le hai corrette, salvale qui; altrimenti non devi fare altro.":"Controlla che quanto mostrato sia fedele al CV. Se serve, modifica o aggiungi dettagli prima di confermare.")+'</p></div>'+
+  '<button class="btn primary" type="submit">'+(verified?"Salva informazioni":"Conferma le informazioni")+'</button></div></form>'+
   (p.raw_text?'<details class="cvRawText"><summary>Testo originale acquisito</summary><textarea readonly rows="10">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
   '</section>';
 }
@@ -88,11 +89,11 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   const name=esc(cv.name||"Curriculum"),mainCv=!!cv.is_default,open=cv.id===selectedId;
   const status=esc(cvStatus(cv));
   fileHtml+='<article class="cvArchiveCard '+(open?'is-open ':'')+(mainCv?'is-main':'')+'">'+
-   '<div class="cvArchiveIcon">CV</div><div class="cvArchiveInfo"><div class="cvArchiveTitle"><strong>'+name+'</strong>'+
+   '<div class="cvArchiveIcon">CV</div><div class="cvArchiveInfo"><div class="cvArchiveTitle"><button type="button" class="cvArchiveName" data-cv-action="select" data-cv-id="'+cv.id+'">'+name+'</button>'+
    '<span class="cvArchiveType">'+(mainCv?'Principale':'Secondario')+'</span></div>'+
    '<p>'+status+'</p><small>HUNT valuta in automatico la pertinenza di questa versione per ciascuna opportunità.</small></div>'+
    '<div class="cvArchiveActions">'+
-    '<button type="button" class="cvArchiveAction" data-cv-action="select" data-cv-id="'+cv.id+'">'+(open?'In visualizzazione':'Visualizza')+'</button>'+
+    
     (!mainCv?'<button type="button" class="cvArchiveAction" data-cv-action="default" data-cv-id="'+cv.id+'">Rendi principale</button>':rows.length>1?
      '<button type="button" class="cvArchiveAction" data-cv-action="secondary" data-cv-id="'+cv.id+'">Rendi secondario</button>':"")+
     '<button type="button" class="cvArchiveAction is-danger" data-cv-action="delete-cv" data-cv-id="'+cv.id+'">Elimina</button>'+
@@ -100,7 +101,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  }
  root.innerHTML='<section class="cvManager cvArchiveV2">'+
   '<header class="cvManagerHeading"><div class="eyebrow">Profilo professionale</div><h2>I tuoi curriculum</h2>'+
-   '<p>Un solo CV principale, tutte le altre versioni secondarie. HUNT legge i documenti e sceglie automaticamente quella più pertinente per ogni posizione.</p></header>'+
+   '<p>HUNT confronta automaticamente le diverse versioni con le offerte. Seleziona il nome di un CV per controllarne le informazioni; qui puoi anche renderlo principale, secondario o eliminarlo.</p></header>'+
   '<div class="cvArchiveStats"><span><strong>'+rows.length+'</strong> CV caricati</span><span><strong>'+rows.filter(x=>x.parsed_profile?.raw_text).length+'</strong> letti</span>'+
    '<span><strong>'+rows.filter(x=>x.parsed_profile?.profile_confirmed_by_user||x.parsed_profile?.profile_verified_from_user_history).length+'</strong> verificati</span></div>'+
   '<div class="cvFileList">'+(fileHtml||'<p class="cvArchiveEmpty">Carica il tuo primo CV: HUNT ne leggerà automaticamente il contenuto.</p>')+'</div>'+
@@ -135,6 +136,11 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   const b=event.target.closest("[data-cv-action]");if(!b)return;
   const action=b.dataset.cvAction,id=b.dataset.cvId;
   if(action==="select"){selectedId=id;await refresh();return}
+  if(action==="edit-profile"){
+   const details=root.querySelector("#cvCorrectionDetails");
+   if(details){details.open=true;details.scrollIntoView?.({behavior:"smooth",block:"start"})}
+   return;
+  }
   if(action==="remove"){b.closest("[data-cv-entry]")?.remove();return}
   if(action==="add-experience"){root.querySelector("#cvExperiences").insertAdjacentHTML("beforeend",entry("experience"));return}
   if(action==="add-project"){root.querySelector("#cvProjects").insertAdjacentHTML("beforeend",entry("project"));return}
