@@ -305,7 +305,7 @@ Deno.serve(async(req)=>{
 
       const avoid=pers?.avoid_role_traits||[];
       const lower=job.canonical_title.toLowerCase();
-      if(avoid.includes("store_sales")&&/(sales assistant|style advisor|client advisor|sales associate)/.test(lower))hardReasons.push("excluded_store_sales");
+      if(avoid.includes("store_sales")&&/(sales assistant|sales specialist|sales consultant|style advisor|client advisor|sales associate|sales advisor)/.test(lower))hardReasons.push("excluded_store_sales");
       if(avoid.includes("technical_it")&&family==="Technology")hardReasons.push("excluded_technology");
       if(avoid.includes("constant_customer_contact")&&/(customer service|customer care|customer support|client advisor|sales advisor)/.test(lower))hardReasons.push("excluded_constant_customer_contact");
       if(avoid.includes("backoffice_admin")&&/(back.office|administrative assistant|data entry|invoice entry|invoice processing)/.test(lower))hardReasons.push("excluded_backoffice_admin");
