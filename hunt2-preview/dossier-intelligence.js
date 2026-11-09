@@ -125,7 +125,7 @@ export function assessDossier(job,profile,duties,checks,incomplete,language="it"
  ];
  const categories=[
   {re:/assort|selezione|prodotto|product|merchandis/,it:"selezione e assortimento dei prodotti",en:"product selection and assortment",proof:/assort|merchandis|product mix|capsule|collezion/},
-  {re:/budget|planning|pianific|forecast/,it:"pianificazione commerciale",en:"commercial planning",proof:/budget|planning|forecast|otb|costing/},
+  {re:/budget|planning|pianific|forecast/,it:"pianificazione commerciale",en:"commercial planning",proof:/\bplanning\b|forecast|pianificazion|\botb\b|open.to.buy|budget di vendita|sales budgeting/},
   {re:/vendit|sales|performance|kpi|sell.through/,it:"analisi delle vendite e della performance",en:"sales and performance analysis",proof:/analisi vendit|sales (?:analysis|report|data|performance)|\bkpi\b|sell.through|performance analysis/},
   {re:/stock|allocation|allocazion|inventar/,it:"stock e allocazioni",en:"stock and allocation",proof:/stock|allocation|allocazion|inventar/},
   {re:/visual|presentazion|collezion|collection/,it:"presentazione delle collezioni",en:"collection presentation",proof:/collezion|collection|capsule|present|garment|capi/},
@@ -147,8 +147,8 @@ export function assessDossier(job,profile,duties,checks,incomplete,language="it"
   const origin=clean(chosen.origin).replace(/\s+academic project$/i,"").replace(/\s+progetto accademico$/i,"");
   const matchedArea=join(chosen.relevant.slice(0,2).map(x=>it?x.it:x.en));
   why=it
-   ?(chosen.kind==="project"?"Il progetto «"+origin+"»":"L'esperienza presso "+origin)+" fornisce elementi pertinenti su "+matchedArea+"."
-   :(chosen.kind==="project"?"The "+origin+" project":"Experience at "+origin)+" offers relevant evidence for "+matchedArea+".";
+   ?(chosen.kind==="project"?"Il progetto «"+origin+"»":"L'esperienza presso "+origin)+" documenta attività collegate a "+matchedArea+"."
+   :(chosen.kind==="project"?"The "+origin+" project":"Experience at "+origin)+" documents work related to "+matchedArea+".";
   if(!verified)why+=" "+(it?"Il testo del CV deve ancora essere confermato.":"The CV evidence still needs confirmation.");
  }else why=it?"Nel CV selezionato non emerge ancora un collegamento documentato con queste responsabilità.":"The selected CV does not yet provide direct evidence for these duties.";
  const unresolved=arr(checks).filter(x=>x.type==="missing"||x.type==="partial");
