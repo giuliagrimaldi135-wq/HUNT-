@@ -109,9 +109,9 @@ export function assessDossier(job,profile,duties,checks,incomplete,language="it"
  const categories=[
   {re:/assort|selezione|prodotto|product|merchandis/,it:"selezione e assortimento dei prodotti",en:"product selection and assortment",proof:/assort|merchandis|product mix|capsule|collezion/},
   {re:/budget|planning|pianific|forecast/,it:"pianificazione commerciale",en:"commercial planning",proof:/budget|planning|forecast|otb|costing/},
-  {re:/vendit|sales|performance|kpi|sell.through/,it:"analisi delle vendite e della performance",en:"sales and performance analysis",proof:/vendit|sales|kpi|sell.through|performance/},
+  {re:/vendit|sales|performance|kpi|sell.through/,it:"analisi delle vendite e della performance",en:"sales and performance analysis",proof:/analisi vendit|sales (?:analysis|report|data|performance)|\bkpi\b|sell.through|performance analysis/},
   {re:/stock|allocation|allocazion|inventar/,it:"stock e allocazioni",en:"stock and allocation",proof:/stock|allocation|allocazion|inventar/},
-  {re:/visual|presentazion|collezion|collection/,it:"presentazione delle collezioni",en:"collection presentation",proof:/collezion|collection|present|garment|capi/},
+  {re:/visual|presentazion|collezion|collection/,it:"presentazione delle collezioni",en:"collection presentation",proof:/collezion|collection|capsule|present|garment|capi/},
   {re:/ordini|orders?|wholesale|showroom/,it:"processi wholesale e ordini",en:"wholesale and order processes",proof:/ordini|orders?|wholesale|showroom/}
  ];
  const mentioned=categories.filter(x=>x.re.test(text)).slice(0,3);
