@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs";
 import {test} from "node:test";
 import assert from "node:assert/strict";
 const source=readFileSync(new URL("../dossier-intelligence.js",import.meta.url),"utf8");
-const {checkRequirements,assessDossier,newsTeaser}=await import("data:text/javascript;base64,"+Buffer.from(source).toString("base64"));
+const {checkRequirements,assessDossier,applicationInsight,newsTeaser}=await import("data:text/javascript;base64,"+Buffer.from(source).toString("base64"));
 const cv={
  profile_confirmed_by_user:false,
  tools:["Excel"],languages:["English B2"],
@@ -83,4 +83,12 @@ test("Italian CV proof does not expose raw English CV bullet in the Italian doss
  assert.equal(req[0].type,"partial");
  assert.match(req[0].proof,/accoglienza clienti/);
  assert.doesNotMatch(req[0].proof,/Client welcome and garment presentation/);
+});
+
+test("Why apply is one coherent CV-backed explanation and does not overclaim academic work",()=>{
+ const assessment=assessDossier({},cv,["Support commercial planning and stock allocation"],[],false,"it");
+ const paragraph=applicationInsight(assessment,[]);
+ assert.match(paragraph,/Gucci|pianificazione commerciale/i);
+ assert.doesNotMatch(paragraph,/Il lavoro|Il tuo punto di partenza|Prima di candidarti/);
+ assert.ok(paragraph.length>120);
 });
