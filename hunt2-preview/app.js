@@ -1262,15 +1262,15 @@ async function renderProfile(){
   supabase.from("career_preferences").select("primary_role_families").eq("user_id",currentUser.id).maybeSingle()
  ]);
  const roles=pref.data?.primary_role_families||[];
- app.innerHTML=shell(`<div class="profilePage">
-  <div class="eyebrow">Il tuo HUNT</div><h1>Profilo</h1>
-  <p class="lead">Le tue informazioni confermate guidano il matching, la scelta del CV e la preparazione delle candidature.</p>
-  <div class="profileIdentity section">
-    <span><strong>${esc(p?.display_name||"—")}</strong><small>${esc(currentUser.email||"")}</small></span>
-    <span><small>Target</small><strong>${esc(Array.isArray(roles)?roles.join(", "):"—")}</strong></span>
-    <button class="btn" id="logoutBtn">Esci</button>
-  </div>
-  <div id="cvManagerRoot"><p class="lead">Caricamento archivio CV privato…</p></div>
+ app.innerHTML=shell(`<div class="profilePage profileWorkspacePage">
+  <header class="profileWorkspaceHeading">
+    <div><div class="eyebrow">Il tuo spazio</div><h1>Profilo e curriculum</h1>
+      <p>Gestisci le tue versioni del CV e controlla le informazioni utilizzate da HUNT per le candidature.</p></div>
+    <button class="profileSignout" id="logoutBtn">Esci</button>
+  </header>
+  <div class="profileAccountStrip"><span><strong>${esc(p?.display_name||"Profilo personale")}</strong><small>${esc(currentUser.email||"")}</small></span>
+   <span><small>Aree di interesse</small><strong>${esc(Array.isArray(roles)&&roles.length?roles.slice(0,3).join(" · "):"Da definire")}</strong></span></div>
+  <div id="cvManagerRoot"><p class="lead">Apertura del tuo archivio CV…</p></div>
  </div>`);
  bindNav();
  document.getElementById("logoutBtn").onclick=logout;
