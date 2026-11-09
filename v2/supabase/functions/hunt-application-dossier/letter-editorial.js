@@ -86,16 +86,18 @@ export function generateEditorialLetter(args={}){
  if(!hasRelevant||!hasConcrete)return null;
  const expName=clean(exp?.record?.company||exp?.record?.role);
  const projectName=clean(project?.record?.name);
+ const backgroundIt=exp&&project?"esperienza pratica e progetti formativi":exp?"esperienza professionale":"progetti formativi";
+ const backgroundEn=exp&&project?"practical experience and academic projects":exp?"professional experience":"academic projects";
  const intro=it
-   ?"Mi candido per la posizione di "+role+" presso "+company+". Dell'annuncio mi interessa soprattutto il lavoro su "+focus+", un ambito in cui vorrei approfondire il collegamento tra formazione ed esperienza concreta."
-   :"I am applying for the "+role+" position at "+company+". What interests me most is the focus on "+focus+", an area where I would like to build on what I have learned through both study and practical work.";
+   ?"Mi candido per la posizione di "+role+" presso "+company+". Nell'annuncio mi interessa soprattutto il lavoro su "+focus+": è un'area che vorrei approfondire partendo da "+backgroundIt+"."
+   :"I am applying for the "+role+" position at "+company+". I am particularly interested in its focus on "+focus+", an area where I hope to build on my "+backgroundEn+".";
  const work=exp&&expName&&expActivities.length
-   ?it?"Durante la mia esperienza presso "+expName+" ho lavorato su "+join(expActivities,true)+"."
+   ?it?"Durante la mia esperienza presso "+expName+" ho lavorato su aspetti concreti come "+join(expActivities,true)+"."
       :"At "+expName+", I gained practical experience with "+join(expActivities,false)+"."
    :"";
  const academic=project&&projectName&&projectActivities.length
-   ?it?"Nel progetto "+projectName+" ho inoltre affrontato "+join(projectActivities,true)+". Questo lavoro mi ha aiutato a osservare le decisioni di prodotto anche dal lato della pianificazione."
-      :"In the "+projectName+" project, I also worked on "+join(projectActivities,false)+". It helped me consider how product choices translate into planning decisions."
+   ?it?"Nel progetto "+projectName+" ho approfondito aspetti come "+join(projectActivities,true)+"."
+      :"In the "+projectName+" project, I also explored "+join(projectActivities,false)+"."
    :"";
  // Do not claim the same CV proof twice: a role-specific paragraph earns its space.
  const proof=[work,academic].filter(Boolean).join("\n\n");
