@@ -41,7 +41,7 @@ Deno.serve(async(req)=>{
   const html=(await response.text()).slice(0,1400000);
   if(/captcha|verify you are human|access denied/i.test(html.slice(0,2500)))return Response.json({ok:false,reason:"Directory robots/protection challenge"},{status:503});
   const items=profiles(html);
-  if(!items.length)return Response.json({ok:true,discovered:0,scanned:0,route:listing,note:"No machine-readable directory profiles at this URL"});
+  if(!items.length){const hint=html.indexOf("/companies/");return Response.json({ok:true,discovered:0,scanned:0,route:listing,note:"No anchor profiles",html_chars:html.length,has_profile_url:hint>=0,html_excerpt:hint>=0?html.slice(Math.max(0,hint-130),hint+320):html.slice(0,340)});}
   const {data:existing,error:lookupErr}=await db.from("companies").select("slug").limit(10000);
   if(lookupErr)throw Error(lookupErr.message);
   const known=new Set((existing||[]).map(x=>String(x.slug).toLowerCase()));
