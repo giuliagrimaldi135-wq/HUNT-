@@ -40,3 +40,25 @@ test("Editing shows only the edit pane; no source file changes are implied",()=>
  assert.match(html,/Conferma informazioni/);
  assert.match(html,/CV.*Riepilogo/s);
 });
+
+test("Right-side CV summary and categories have clear grouping, not full-width source labels",()=>{
+ const areas=[
+  {name:"Merchandising",related:true,basis:"Progetto · Gucci academic project"},
+  {name:"Buying",related:true,basis:"Progetto · Alaïa academic project"},
+  {name:"Wholesale & Commercial",related:true,basis:"Esperienza · Marina Rinaldi"},
+  {name:"Technology",related:false,basis:""}
+ ];
+ const html=renderCvWorkspace({cv:rows[0],info,areas,confirmed:true,activePanel:"areas",corrections:""});
+ assert.match(html,/cvWAreaCards/);
+ assert.match(html,/cvWAreaCardEvidence/);
+ assert.match(html,/cvWAreaCount/);
+ assert.match(html,/3<\/strong><span>aree collegate/);
+ assert.match(html,/Gucci/);
+ assert.match(html,/Marina Rinaldi/);
+ assert.match(html,/data-cv-panel-target="projects"/);
+ assert.match(html,/data-cv-panel-target="experience"/);
+ assert.doesNotMatch(html,/cvWAreaRow|cvWOverviewGrid/);
+ assert.match(html,/cvWSnapshot/);
+ assert.match(html,/Visualizza tutte|Esplora tutte le 4 categorie/);
+ assert.match(html,/Conferma informazioni|Salva modifiche/);
+});
