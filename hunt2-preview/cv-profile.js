@@ -30,43 +30,64 @@ function cvStatus(x){
  return "Da leggere e verificare";
 }
 function editor(cv,roleFamilies=[]){
- const p=cv.parsed_profile||{},d=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
- const combined={...p,draft_profile:d},s=cvReviewSummary(combined),ex=s.experience,pr=s.projects,ed=s.education,tools=s.tools,languages=s.languages;
- const verified=s.confirmed;
- const details=xs=>(Array.isArray(xs)?xs:[]).slice(0,4).map(x=>{
-   const a=evidenceForDisplay(x,"it");
-   return '<li>'+esc(a.text)+(a.needsTranslation?'<small class="cvOriginalNote">Testo originale</small>':"")+'</li>';
+ const p=cv.parsed_profile||{};
+ const d=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
+ const info=cvReviewSummary({...p,draft_profile:d}), verified=info.confirmed;
+ const {experience:ex,projects:pr,education:ed,tools,languages}=info;
+ const categories=cvProfessionalCategories({...p,draft_profile:d},roleFamilies);
+ const related=categories.filter(x=>x.related);
+ const evidenceList=evidence=>(Array.isArray(evidence)?evidence:[]).slice(0,8).map(t=>{
+   const viewed=evidenceForDisplay(t,"it");
+   return '<li>'+esc(viewed.text)+(viewed.needsTranslation?'<small>Trascrizione originale dal CV</small>':"")+'</li>';
  }).join("");
- const showRecord=(items,key)=>items.map(x=>'<article class="cvStoryItem"><h4>'+esc(key==="name"?projectNameForDisplay(x.name,"it"):(x[key]||x.role||"Attività"))+'</h4>'+
-   (x.role&&key==="company"?'<p>'+esc(x.role)+'</p>':"")+
-   (x.evidence?.length?'<ul>'+details(x.evidence)+'</ul>':"")+'</article>').join("");
- const pills=xs=>xs.map(x=>'<span class="cvPill">'+esc(typeof x==="string"?x:[x.program,x.school].filter(Boolean).join(" · "))+'</span>').join("");
- const professionalAreas=cvProfessionalCategories(combined,roleFamilies);
- const detectedAreas=professionalAreas.filter(x=>x.related);
- return '<section class="cvEditor cvInsightWorkspace">'+
-  '<div class="cvInsightHeader"><div><div class="eyebrow">Analisi del CV · '+esc(cv.name)+'</div><h2>Il tuo profilo, letto da HUNT</h2><p>Queste sono le informazioni che HUNT ha individuato. Puoi confermarle, correggerle o aggiungere ciò che manca: saranno usate per valutare le offerte.</p></div>'+
-  '<span class="cvInsightState '+(verified?'is-verified':'')+'">'+(verified?"Profilo confermato":"Da verificare")+'</span></div>'+
-  '<div class="cvInsightMetrics"><div><strong>'+ex.length+'</strong><span>Esperienze</span></div><div><strong>'+pr.length+'</strong><span>Progetti</span></div><div><strong>'+tools.length+'</strong><span>Software</span></div></div>'+
-  '<section class="cvCareerAreas"><div class="cvCareerAreasTitle"><div><div class="eyebrow">I tuoi ambiti professionali</div><h3>Le aree collegate a questo CV</h3><p>Emergono dalle esperienze o dai progetti presenti nel documento, non sono qualifiche aggiunte automaticamente.</p></div><span>'+detectedAreas.length+' aree collegate</span></div>'+
-  '<div class="cvCareerHighlights">'+(detectedAreas.length?detectedAreas.map(x=>'<article class="cvCareerArea"><strong>'+esc(x.name)+'</strong><small>'+esc(x.basis.replace(/academic project$/i,"").trim())+'</small></article>').join(""):'<p>Non sono stati individuati collegamenti specifici alle categorie professionali.</p>')+'</div>'+
-  '<details class="cvAllAreas"><summary>Vedi tutte le '+professionalAreas.length+' categorie HUNT <span>Esplora le altre aree</span></summary><div class="cvAllAreaGrid">'+professionalAreas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details></section>'+
-  '<form id="cvFactsForm"><div class="cvInsightColumns"><div><h3>Esperienze professionali</h3>'+ (ex.length?showRecord(ex,"company"):'<p class="cvInsightEmpty">Nessuna esperienza riconosciuta.</p>')+'</div>'+
-  '<div><h3>Progetti e formazione</h3>'+(pr.length?showRecord(pr,"name"):'<p class="cvInsightEmpty">Nessun progetto rilevato.</p>')+
-  (ed.length?'<div class="cvPillRow">'+pills(ed)+'</div>':"")+'</div></div>'+
-  '<div class="cvDetectedSkills"><h3>Strumenti e competenze</h3><div class="cvPillRow">'+(tools.length?pills(tools):'<span class="cvInsightEmpty">Software non ancora riconosciuti</span>')+'</div>'+
-  (languages.length?'<h4>Lingue nel CV</h4><div class="cvPillRow">'+pills(languages)+'</div>':"")+'</div>'+
-  '<div class="cvEditPrompt"><span>Vuoi correggere una voce o aggiungere un’esperienza?</span><button type="button" class="cvEditLaunch" data-cv-action="edit-profile">Modifica o aggiungi informazioni</button></div>'+
-  '<details class="cvCorrectionDetails" id="cvCorrectionDetails"><summary>Modifica o completa il tuo profilo <span>Esperienze, progetti, formazione e strumenti</span></summary>'+
-  '<p>Puoi modificare ogni voce, aggiungere esperienze o progetti e completare le competenze. Poi premi «Salva informazioni» in fondo alla pagina.</p>'+
-  '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
-  '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
-  '<div class="cvGroupHeading"><h3>Formazione</h3><button type="button" class="cvTextButton" data-cv-action="add-education">+ Aggiungi</button></div><div id="cvEducation">'+(ed.length?ed:[{}]).map(x=>entry("education",x)).join("")+'</div>'+
-  '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div>'+
-  (p.raw_text?'<details class="cvRawText"><summary>Verifica il testo originale estratto</summary><textarea readonly rows="10">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
-  '</details>'+
-  '<div class="cvInsightFooter"><div><strong>'+(verified?"Salva il tuo profilo":"Conferma finale del profilo")+'</strong><p>'+(verified?"Le tue informazioni sono già confermate. Se le hai corrette, salvale qui; altrimenti non devi fare altro.":"Controlla che quanto mostrato sia fedele al CV. Se serve, modifica o aggiungi dettagli prima di confermare.")+'</p></div>'+
-  '<button class="btn primary" type="submit">'+(verified?"Salva informazioni":"Conferma le informazioni")+'</button></div></form>'+
-  '</section>';
+ const record=(item,type,index)=>{
+   const isExperience=type==="experience",title=isExperience?(item.company||item.role||"Esperienza"):projectNameForDisplay(item.name||"Progetto","it");
+   const role=isExperience?item.role||"":"";
+   const count=Array.isArray(item.evidence)?item.evidence.length:0;
+   return '<details class="cvProfileEntry" '+(isExperience&&index===0?"open":"")+'>'+
+     '<summary><span><strong>'+esc(title)+'</strong>'+(role?'<small>'+esc(role)+'</small>':"")+'</span><span class="cvProfileEntryMeta">'+count+' attività <span aria-hidden="true">＋</span></span></summary>'+
+     (count?'<ul>'+evidenceList(item.evidence)+'</ul>':'<p>Non sono ancora presenti attività dettagliate in questa versione.</p>')+
+     '</details>';
+ };
+ const pills=(items,variant="")=>items.map(t=>'<span class="cvProfilePill '+variant+'">'+esc(typeof t==="string"?t:[t.program,t.school].filter(Boolean).join(" · "))+'</span>').join("");
+ const categoryList=related.length?related.map(x=>'<span class="cvProfilePill cvProfilePillActive">'+esc(x.name)+'</span>').join(""):'<p class="cvProfileQuiet">Non emergono ancora aree specifiche da questa versione.</p>';
+ const section=(number,title,description,body,id)=>'<section class="cvProfileSegment" id="'+id+'">'+
+   '<div class="cvProfileSegmentLabel"><span>'+number+'</span><h3>'+title+'</h3><p>'+description+'</p></div>'+
+   '<div class="cvProfileSegmentBody">'+body+'</div></section>';
+ const experience=section("01","Esperienza","Attività professionali documentate.",
+   ex.length?ex.map((x,i)=>record(x,"experience",i)).join(""):'<p class="cvProfileQuiet">Nessuna esperienza riconosciuta.</p>',"cv-work");
+ const projects=section("02","Progetti","Lavori accademici e competenze applicate.",
+   pr.length?pr.map((x,i)=>record(x,"project",i)).join(""):'<p class="cvProfileQuiet">Nessun progetto presente.</p>',"cv-projects");
+ const capabilities=section("03","Formazione e strumenti","Titoli, software e lingue presenti nel CV.",
+   '<div class="cvProfileSkillGroup"><h4>Formazione</h4><div class="cvProfilePills">'+(ed.length?pills(ed):'<span class="cvProfileQuiet">Non indicata</span>')+'</div></div>'+
+   '<div class="cvProfileSkillGroup"><h4>Software</h4><div class="cvProfilePills">'+(tools.length?pills(tools):'<span class="cvProfileQuiet">Nessuno rilevato</span>')+'</div></div>'+
+   '<div class="cvProfileSkillGroup"><h4>Lingue</h4><div class="cvProfilePills">'+(languages.length?pills(languages):'<span class="cvProfileQuiet">Non indicate</span>')+'</div></div>',"cv-skills");
+ const areas=section("04","Ambiti professionali","Collegamenti ricavati dalle attività, non qualifiche attribuite.",
+   '<div class="cvProfilePills">'+categoryList+'</div>'+
+   '<details class="cvProfileAllAreas"><summary>Consulta tutte le '+categories.length+' aree di HUNT</summary><div class="cvProfileAreaCatalog">'+categories.map(x=>
+     '<span class="'+(x.related?"active":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details>',"cv-areas");
+ const corrections='<details class="cvCorrectionDetails cvProfileCorrections" id="cvCorrectionDetails">'+
+   '<summary>Modifica esperienze, progetti o competenze <span>Apri i campi di modifica</span></summary>'+
+   '<p>Qui puoi correggere le informazioni che HUNT ha estratto, aggiungere ciò che manca e poi salvare.</p>'+
+   '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
+   '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
+   '<div class="cvGroupHeading"><h3>Formazione</h3><button type="button" class="cvTextButton" data-cv-action="add-education">+ Aggiungi</button></div><div id="cvEducation">'+(ed.length?ed:[{}]).map(x=>entry("education",x)).join("")+'</div>'+
+   '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div>'+
+   (p.raw_text?'<details class="cvRawText"><summary>Consulta il testo estratto dal documento</summary><textarea readonly rows="9">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
+   '</details>';
+ return '<section class="cvEditor cvProfileDetail">'+
+   '<header class="cvProfileDetailHead"><div class="eyebrow">Profilo ricavato dal curriculum</div><div class="cvProfileTitleLine"><h2>'+esc(cv.name||"Il tuo CV")+'</h2><span class="cvInsightState '+(verified?"is-verified":"")+'">'+(verified?"Confermato":"Da confermare")+'</span></div>'+
+   '<p>Esamina il percorso che HUNT ha riconosciuto. Apri le singole attività per leggerle; puoi correggere o integrare tutto prima di salvare.</p></header>'+
+   '<nav class="cvProfileQuickNav" aria-label="Sezioni del curriculum">'+
+     '<a href="#cv-work">Esperienza <span>'+ex.length+'</span></a><a href="#cv-projects">Progetti <span>'+pr.length+'</span></a>'+
+     '<a href="#cv-skills">Competenze</a><a href="#cv-areas">Ambiti</a></nav>'+
+   '<form id="cvFactsForm">'+experience+projects+capabilities+areas+
+   '<div class="cvProfileEditIntro"><div><strong>Devi correggere o aggiungere qualcosa?</strong><p>Le informazioni possono essere modificate senza dover ricaricare il documento.</p></div>'+
+     '<button type="button" class="cvEditLaunch" data-cv-action="edit-profile">Modifica dati</button></div>'+
+   corrections+
+   '<footer class="cvProfileConfirm"><div><div class="eyebrow">Ultimo passaggio</div><h3>'+(verified?"Le tue informazioni sono salvate":"Conferma le informazioni")+'</h3><p>'+(verified?"Se modifichi un dato, salva la versione aggiornata.":"Controlla il riepilogo e conferma per utilizzare queste informazioni nei confronti con le offerte.")+'</p></div>'+
+   '<button class="btn primary" type="submit">'+(verified?"Salva le modifiche":"Conferma e salva")+'</button></footer>'+
+   '</form></section>';
 }
 function collect(root,original){
  const v=(el,key)=>String(el.querySelector('[data-field="'+key+'"]')?.value||"").trim();
