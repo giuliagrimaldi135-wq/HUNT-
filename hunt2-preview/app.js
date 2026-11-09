@@ -655,6 +655,19 @@ function likelyInterviewQuestions(row){
  return out;
 }
 
+function jobTextEvidence(description){
+ const normalized=String(description||"").replace(/<[^>]+>/g," ").replace(/[•·▪]/g,"\n").replace(/\r/g,"\n");
+ const sentences=normalized.split(/\n+|(?<=[.!?])\s+(?=[A-ZÀ-Ü])/)
+   .map(x=>x.replace(/\s+/g," ").trim())
+   .filter(x=>x.length>=30&&x.length<=650&& !/^(about us|about the company|equal opportunity|who we are|privacy|cookie policy)/i.test(x));
+ const tasks=sentences.filter(x=>/support|coordinate|responsibilit|manage|monitor|analys|plan|merchandis|buying|purchase|assort|stock|allocation|report|collection|product|vendit|acquist|gestione|pianific|analisi|assortimento|negozi|retail/i.test(x)).slice(0,3);
+ const requirements=sentences.filter(x=>/\b(required|requirement|must|minimum|at least|years? of experience|proficient|fluent|excel|degree|preferred|conoscenza|requisiti|esperienza|laurea|lingua|padronanza|necessari|essenziale)\b/i.test(x)).slice(0,3);
+ return {
+   tasks:tasks.map(x=>x.slice(0,280)),
+   requirements:requirements.map(x=>x.slice(0,260)),
+   hasDetails:normalized.length>=150
+ };
+}
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  const row=await getOpportunityDetail(jobId);
@@ -676,6 +689,12 @@ async function renderOpportunityFolder(jobId){
  if(selectedJobId!==jobId)return;
  const job=row.job;
  const brand=job.companies?.name||"Brand";
+ const evidence=jobTextEvidence(job.description);
+ const targetIsRelevant=Boolean((row.cvs||[]).some(cv=>(cv.target_role_families||[]).includes(job.role_family)));
+ const shortlistVerdict=!evidence.tasks.length
+   ?"HUNT ha verificato l'esistenza dell'offerta, ma i contenuti disponibili non bastano per valutare con precisione il lavoro."
+   :`Il ruolo riguarda ${job.role_family||"un'area da approfondire"}${job.city?" a "+job.city:""}. Nell'annuncio sono descritte attività concrete: «${evidence.tasks[0]}». ${targetIsRelevant?"Hai indicato questa area tra le destinazioni di almeno uno dei tuoi CV.":"Controlla che queste responsabilità siano in linea con ciò che vuoi imparare."}`;
+
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
  const fit=row.dossier?.model_version==="evidence_dossier_v4"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
