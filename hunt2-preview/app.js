@@ -437,7 +437,7 @@ async function getOpportunityDetail(jobId){
      .order("priority_score",{ascending:false})
      .limit(5),
    searchBrand.length>=3
-     ?supabase.from("world_news_items").select("id,title,summary,url,published_at,world_news_sources(publisher)").or("title.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%,summary.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(35)
+     ?supabase.from("world_news_items").select("id,title,summary,url,published_at,evidence,world_news_sources(publisher)").or("title.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%,summary.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(35)
      :Promise.resolve({data:[]}),
    supabase.from("jobs").select("id,canonical_title,city,role_family,published_at,first_seen_at,primary_apply_url,state,confidence_label")
      .eq("company_id",job.company_id).in("state",["active_verified","active_likely"])
@@ -773,7 +773,12 @@ async function renderOpportunityFolder(jobId){
  }
  for(const x of media){
    if(x.title&&safeRadarUrl(x.url)&&!companyNewsDedup.has(x.url)){
-     companyNewsDedup.set(x.url,{id:x.id,kind:"industry",title:x.title,summary:x.summary,source:x.world_news_sources?.publisher||"Testata internazionale",url:x.url,date:x.published_at});
+     companyNewsDedup.set(x.url,{
+       id:x.id,kind:"industry",title:x.title,summary:x.summary,
+       source:x.evidence?.original_publisher||x.world_news_sources?.publisher||"Testata internazionale",
+       aggregator:x.evidence?.aggregator||null,
+       url:x.url,date:x.published_at
+     });
    }
  }
  const companyNews=[...companyNewsDedup.values()].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
@@ -942,11 +947,13 @@ async function renderOpportunityFolder(jobId){
    area.innerHTML=rows.length?rows.map(item=>{
      const date=item.date?new Date(item.date):null;
      const when=date&&!Number.isNaN(date.getTime())?date.toLocaleDateString("it-IT"):"Data da verificare";
+     const sameSummary=String(item.summary||"").trim().toLowerCase()===String(item.title||"").trim().toLowerCase();
+     const sourceText=item.aggregator?item.source+" · via "+item.aggregator:item.source;
      return `<article class="brandNewsItem">
-       <div class="brandNewsMeta"><span>${esc(item.source)}</span><span>${esc(when)}</span></div>
+       <div class="brandNewsMeta"><span>${esc(sourceText)}</span><span>${esc(when)}</span></div>
        <h3>${esc(item.title)}</h3>
-       ${item.summary?`<p>${esc(item.summary)}</p>`:""}
-       <div class="brandNewsActions"><a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a>
+       ${item.summary&&!sameSummary?`<p>${esc(item.summary)}</p>`:""}
+       <div class="brandNewsActions"><a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${item.aggregator?"Apri articolo tramite Google News":"Leggi la fonte"} ↗</a>
          <button type="button" class="worldReadAction" data-brand-news-id="${esc(item.id)}" data-brand-news-kind="${esc(item.kind)}" data-brand-news-action="${brandArchive?"unread":"read"}" ${brandReadError?"disabled":""}>${brandArchive?"Ripristina":"✓ Letto"}</button>
        </div>
      </article>`;
