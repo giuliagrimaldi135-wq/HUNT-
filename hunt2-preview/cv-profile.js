@@ -116,7 +116,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   fileHtml+='<article class="cvArchiveCard '+(open?'is-open ':'')+(mainCv?'is-main':'')+'">'+
    '<div class="cvArchiveIcon">CV</div><div class="cvArchiveInfo"><div class="cvArchiveTitle"><button type="button" class="cvArchiveName" data-cv-action="select" data-cv-id="'+cv.id+'">'+name+'</button>'+
    '<span class="cvArchiveType">'+(mainCv?'Principale':'Secondario')+'</span></div>'+
-   '<p>'+status+'</p><small>HUNT valuta in automatico la pertinenza di questa versione per ciascuna opportunità.</small></div>'+
+   '<p>'+status+'</p></div>'+
    '<div class="cvArchiveActions">'+
     
     (!mainCv?'<button type="button" class="cvArchiveAction" data-cv-action="default" data-cv-id="'+cv.id+'">Rendi principale</button>':rows.length>1?
@@ -126,14 +126,13 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  }
  root.innerHTML='<section class="cvManager cvArchiveV2">'+
   '<header class="cvManagerHeading"><div class="eyebrow">Profilo professionale</div><h2>I tuoi curriculum</h2>'+
-   '<p>HUNT confronta automaticamente le diverse versioni con le offerte. Seleziona il nome di un CV per controllarne le informazioni; qui puoi anche renderlo principale, secondario o eliminarlo.</p></header>'+
-  '<div class="cvArchiveStats"><span><strong>'+rows.length+'</strong> CV caricati</span><span><strong>'+rows.filter(x=>x.parsed_profile?.raw_text).length+'</strong> letti</span>'+
-   '<span><strong>'+rows.filter(x=>x.parsed_profile?.profile_confirmed_by_user||x.parsed_profile?.profile_verified_from_user_history).length+'</strong> verificati</span></div>'+
+   '<p>Apri un curriculum per esaminare le informazioni riconosciute. Puoi impostarlo come principale, scegliere un’altra versione o eliminarlo.</p></header>'+
   '<div class="cvFileList">'+(fileHtml||'<p class="cvArchiveEmpty">Carica il tuo primo CV: HUNT ne leggerà automaticamente il contenuto.</p>')+'</div>'+
-  '<div class="cvUpload"><div class="cvMiniHead"><h3>Aggiungi un CV</h3><span>La lettura parte automaticamente</span></div>'+
-   '<div class="cvUploadFields"><input id="cvUploadName" placeholder="Nome del CV, per esempio Merchandising">'+
+  '<div class="cvUpload"><details class="cvUploadDetails"><summary>+ Aggiungi un altro CV</summary><div class="cvUploadContent">'+
+   '<p>Puoi conservare diverse versioni e scegliere quella giusta per ogni candidatura.</p>'+
+   '<div class="cvUploadFields"><input id="cvUploadName" placeholder="Nome del CV, per esempio Planning">'+
     '<input id="cvUploadFile" type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg">'+
-    '<button class="btn primary" data-cv-action="upload" type="button">Aggiungi CV</button></div></div>'+
+    '<button class="btn primary" data-cv-action="upload" type="button">Carica il documento</button></div></div></details></div>'+
   '<div id="cvReaderStatus" role="status" aria-live="polite" class="cvReaderStatus"></div>'+
   (unread.length?'<p class="cvAutoNotice">HUNT sta preparando la lettura automatica di '+unread.length+' CV. Se la scansione non riesce, troverai qui un comando per riprovare.</p>':"")+
   (unread.length||failedReadIds.size?'<details class="cvReaderOptions cvReaderOptionsFold"><summary>Opzioni di lettura dei documenti</summary><div><label>Lingua OCR <select id="cvOcrLang"><option value="ita+eng">Italiano e inglese</option><option value="eng">Inglese</option><option value="ita">Italiano</option></select></label><p>Serve solo quando un PDF non può essere letto normalmente.</p></div></details>':"")+
