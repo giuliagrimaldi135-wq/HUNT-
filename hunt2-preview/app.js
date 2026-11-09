@@ -804,7 +804,7 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v10");
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v11");
  const languageStale=Boolean(row.dossier?.generated_from?.language!==preferredLocale&&!row.dossier?.generated_from?.user_edited);
  const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale||languageStale);
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
@@ -846,7 +846,7 @@ async function renderOpportunityFolder(jobId){
  const assessmentIt=assessDossier(job,evidencedProfile,factLists.it.duties,cvChecklistIt,summaryOnly,"it");
  const assessmentEn=assessDossier(job,evidencedProfile,factLists.en.duties,cvChecklistEn,summaryOnly,"en");
  const cvAssessment=dossierLang==="it"?assessmentIt:assessmentEn;
- const fit=row.dossier?.model_version==="evidence_dossier_v10"&&row.dossier?.recommended_cv_id===selectedCv?.id&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
+ const fit=row.dossier?.model_version==="evidence_dossier_v11"&&row.dossier?.recommended_cv_id===selectedCv?.id&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
  const smartQuestion=row.dossier?.generated_from?.interview_question||"";
