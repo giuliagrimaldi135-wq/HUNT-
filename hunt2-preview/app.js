@@ -739,7 +739,7 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v5");
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v6");
  const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale);
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
    pendingDossiers.add(jobId);
@@ -773,7 +773,7 @@ async function renderOpportunityFolder(jobId){
  const cv=chooseCv(row);
  const selectedCv=row.cvs?.find(x=>x.id===row.dossier?.recommended_cv_id)||cv;
  const evidencedProfile=verifiedCv(selectedCv)?selectedCv?.parsed_profile:null;
- const fit=row.dossier?.model_version==="evidence_dossier_v5"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
+ const fit=row.dossier?.model_version==="evidence_dossier_v6"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
  const smartQuestion=row.dossier?.generated_from?.interview_question||"";
