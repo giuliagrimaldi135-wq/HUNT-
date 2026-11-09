@@ -697,6 +697,24 @@ async function renderOpportunityFolder(jobId){
  const signals=row.signals||[];
  const media=row.brandMedia||[];
  const sameJobs=row.sameJobs||[];
+ const knownMatches=new Map(sameJobs.map(j=>[j.id,j.match_score]));
+ const companyOpenings=(row.companyJobs||[]).filter(j=>["active_verified","active_likely"].includes(j.state));
+ const companyNewsDedup=new Map();
+ for(const x of signals){
+   if(x.title&&safeRadarUrl(x.source_url)){
+     companyNewsDedup.set(x.source_url,{id:x.id,kind:"company",title:x.title,summary:x.summary,source:x.source_name||"Fonte ufficiale",url:x.source_url,date:x.published_at});
+   }
+ }
+ for(const x of media){
+   if(x.title&&safeRadarUrl(x.url)&&!companyNewsDedup.has(x.url)){
+     companyNewsDedup.set(x.url,{id:x.id,kind:"industry",title:x.title,summary:x.summary,source:x.world_news_sources?.publisher||"Testata internazionale",url:x.url,date:x.published_at});
+   }
+ }
+ const companyNews=[...companyNewsDedup.values()].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+ const {data:readRows,error:brandReadError}=companyNews.length
+   ?await supabase.from("user_news_reads").select("item_id,source_kind").eq("user_id",currentUser.id).in("item_id",companyNews.map(x=>x.id))
+   :{data:[],error:null};
+ const brandReadIds=new Set((readRows||[]).map(x=>x.source_kind+":"+x.item_id));
  const showInterview=appStatus==="interview";
 
  app.innerHTML=shell(`<div class="folderTopbar">
