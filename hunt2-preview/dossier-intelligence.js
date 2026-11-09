@@ -178,12 +178,17 @@ export function applicationInsight(assessment,checks=[]){
  const hasEvidence=proof&& !/non emerge|does not yet provide|deve ancora essere confermato/i.test(proof);
  const gaps=arr(checks).filter(x=>["missing","partial"].includes(x.type));
  const serious=gaps.filter(x=>/laurea magistrale|c1|\banni\b|years|advanced|avanzat/i.test(x.text));
- const intro=hasEvidence
-   ?"Questa posizione merita di essere approfondita perché alcune attività richieste trovano un collegamento concreto con il percorso documentato nel tuo CV."
-   :"Il ruolo è interessante per l'area professionale, ma per ora il CV selezionato non fornisce prove sufficienti per considerarlo un'opportunità particolarmente coerente.";
- const paragraphs=[intro];
- if(work&&!/descrizione disponibile non permette|non sono disponibili/i.test(work))paragraphs.push(work);
- if(hasEvidence)paragraphs.push(proof);
+ const paragraphs=[];
+ const meaningfulWork=work&&!/descrizione disponibile non permette|non sono disponibili/i.test(work);
+ if(meaningfulWork)paragraphs.push(work);
+ if(hasEvidence){
+   paragraphs.push(proof);
+   if(/\bprogetto\b|\bformativ/i.test(proof))
+     paragraphs.push("Il collegamento è soprattutto formativo: puoi usarlo per spiegare il tuo interesse per il ruolo, senza presentarlo come esperienza professionale già acquisita.");
+   else paragraphs.push("È un'esperienza concreta da valorizzare nella candidatura, spiegando quali attività hai svolto personalmente.");
+ }else{
+   paragraphs.push("Nel CV selezionato, però, non emergono ancora attività documentate abbastanza vicine a quelle richieste: sarebbe prematuro considerarla una candidatura prioritaria.");
+ }
  if(serious.length)paragraphs.push("Prima di candidarti, verifica soprattutto "+serious.slice(0,2).map(x=>clean(x.text).replace(/[.;]+$/,"")).join(" e ")+": sono requisiti che possono influire sulla selezione.");
  else if(gaps.length)paragraphs.push("Restano alcuni requisiti da verificare nell'annuncio completo; non considerarli automaticamente soddisfatti.");
  else if(watch&&/Alcuni requisiti risultano/i.test(watch))paragraphs.push(watch);
