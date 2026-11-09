@@ -53,12 +53,15 @@ function parse(xml:string,source:any){
  const now=Date.now(),out:any[]=[];
  for(const fragment of entries.slice(0,65)){
   const title=get(fragment,"title").slice(0,360);
+  const publisherInFeed=get(fragment,"source").slice(0,110);
   const summary=(get(fragment,"description")||get(fragment,"summary")||get(fragment,"content:encoded")).slice(0,300);
   const target=href(fragment);
   let url:URL;try{url=new URL(target)}catch{continue}
   if(!["https:","http:"].includes(url.protocol)||url.username||url.password)continue;
   url.hash="";
-  if(!title||title.length<14||!ACCEPTED.test(title+" "+summary))continue;
+  const brand=source.category==="brand_watch"?String(source.publisher).replace(/^Google News · /,"").replace(/ Group$/i,"").toLowerCase():"";
+  const mentionsBrand=Boolean(brand&&(title+" "+summary).toLowerCase().includes(brand));
+  if(!title||title.length<14||(!ACCEPTED.test(title+" "+summary)&&!mentionsBrand))continue;
   const dateString=get(fragment,"pubDate")||get(fragment,"dc:date")||get(fragment,"published")||get(fragment,"updated");
   const date=new Date(dateString);
   if(!dateString||!Number.isFinite(date.getTime()))continue;
@@ -69,7 +72,7 @@ function parse(xml:string,source:any){
    source_id:source.id,title,url:url.href,summary:summary||null,
    theme:theme(body),relevance_score:score(body,source.trust_level||80),
    published_at:date.toISOString(),
-   evidence:{publisher:source.publisher,region:source.region,language:source.language,source_type:"rss_atom",scanner:"hunt-global-news-v1"}
+   evidence:{publisher:source.publisher,original_publisher:publisherInFeed||null,aggregator:source.category==="brand_watch"?"Google News":null,region:source.region,language:source.language,source_type:"rss_atom",scanner:"hunt-global-news-v2"}
   });
  }
  return out;
@@ -80,7 +83,7 @@ Deno.serve(async(req)=>{
   const token=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error:secretError}=await client.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(secretError||!secret||!token||!equal(await digest(token),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
-  const {data:sources,error}=await client.from("world_news_sources").select("id,publisher,feed_url,region,language,trust_level,last_scan_at,consecutive_failures").eq("active",true).order("last_scan_at",{ascending:true,nullsFirst:true}).limit(8);
+  const {data:sources,error}=await client.from("world_news_sources").select("id,publisher,feed_url,region,language,category,trust_level,last_scan_at,consecutive_failures").eq("active",true).order("last_scan_at",{ascending:true,nullsFirst:true}).limit(20);
   if(error)throw Error(error.message);
   const scan=async(source:any)=>{
    let inserted=0,status="healthy",problem="";
