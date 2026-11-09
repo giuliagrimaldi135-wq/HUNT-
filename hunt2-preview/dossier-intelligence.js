@@ -2,43 +2,94 @@ const clean=v=>String(v??"").replace(/<[^>]*>/g," ").replace(/&nbsp;|&#160;/gi,"
 const fold=v=>clean(v).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const brief=(v,n=135)=>{const t=clean(v);return t.length>n?t.slice(0,n-1).replace(/\s+\S*$/,"")+"…":t};
 const arr=v=>Array.isArray(v)?v:[];
-export function checkRequirements(requirements,profile){
- const p=profile||{},confirmed=p.profile_confirmed_by_user===true;
- const tools=arr(p.tools).map(x=>clean(typeof x==="string"?x:x?.name));
- const languages=arr(p.languages).map(x=>clean(typeof x==="string"?x:(x?.language||"")+" "+(x?.level||"")));
- const education=arr(p.education).map(x=>clean((x?.program||"")+" "+(x?.school||"")));
- const experience=arr(p.experience).flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"Esperienza",text:clean(t)})));
- const hasTool=term=>tools.find(x=>fold(x).includes(term));
- const hasLanguage=term=>languages.find(x=>fold(x).includes(term));
+// A software claim can be confirmed by the user, or detected from an OCR source
+// quote. An OCR hit is NEVER silently promoted to a confirmed qualification.
+const toolRegex={
+ excel:/\b(?:microsoft\s+|ms\s+)?excel\b/i,
+ powerpoint:/\b(?:microsoft\s+|ms\s+)?power\s*point\b/i,
+ word:/\b(?:microsoft\s+|ms\s+)?word\b/i
+};
+function sourceTools(profile){
+ const p=profile||{};
+ const confirmed=Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
+ const reported=arr(p.tools).map(x=>clean(typeof x==="string"?x:x?.name+" "+(x?.level||""))).filter(Boolean);
+ const draft=arr(p.draft_profile?.tools).map(clean);
+ const softwareLines=String(p.raw_text||"").split(/\r?\n/).map(clean).filter(line=>/^(software|technical skills|digital skills|competenze informatiche|strumenti|tools)\s*:/i.test(line));
+ const inferred=[];
+ for(const line of softwareLines){
+  const body=line.replace(/^[^:]*:/,"");
+  for(const [key,re] of Object.entries(toolRegex)){
+   const m=re.exec(body);if(!m)continue;
+   const lvl=body.slice(m.index+m[0].length).match(/^\s*\((avanzat[oa]|advanced|intermedi[oa]|intermediate|base|basic|expert)\)/i)?.[1];
+   const name=key==="powerpoint"?"PowerPoint":key==="excel"?"Excel":"Word";
+   inferred.push(name+(lvl?" ("+lvl+")":""));
+  }
+ }
+ const get=key=>{
+  const re=toolRegex[key];
+  const structured=reported.find(x=>re.test(x));
+  const extracted=[...draft,...inferred].find(x=>re.test(x));
+  return structured?{value:structured,confirmed}:extracted?{value:extracted,confirmed:false}:null;
+ };
+ return {get};
+}
+const cvTitle=x=>clean(x?.name||"un'altra versione").replace(/\.pdf$/i,"");
+export function checkRequirements(requirements,profile,options={}){
+ const p=profile||{},confirmed=Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
+ const proofTools=sourceTools(p);
+ const rawDraft=p.draft_profile||{};
+ const languages=[...arr(p.languages),...(!arr(p.languages).length?arr(rawDraft.languages):[])].map(x=>clean(typeof x==="string"?x:(x?.language||"")+" "+(x?.level||"")));
+ const education=[...arr(p.education),...(!arr(p.education).length?arr(rawDraft.education):[])].map(x=>clean((x?.program||"")+" "+(x?.school||"")));
+ const experience=[...arr(p.experience),...(!arr(p.experience).length?arr(rawDraft.experience):[])].flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"Esperienza",text:clean(t)})));
+ const altCvs=arr(options.alternatives).filter(x=>x?.parsed_profile);
  return arr(requirements).map(requirement=>{
    const txt=clean(requirement),t=fold(txt);
-   let type="missing",proof="";
+   let type="missing",proof="",suggested_cv_id=null;
    const result=(state,evidence)=>{type=state;proof=evidence||""};
-   if(/excel/.test(t)&&/powerpoint|power point/.test(t)){
-     const a=hasTool("excel"),b=hasTool("powerpoint")||hasTool("power point");
-     result(a&&b?"found":a||b?"partial":"missing",a&&b?"Excel e PowerPoint citati":a?"Excel presente; PowerPoint non trovato":b?"PowerPoint presente; Excel non trovato":"");
-   }else if(/\bexcel\b/.test(t)){const a=hasTool("excel");result(a?"found":"missing",a)}
-   else if(/powerpoint|power point/.test(t)){const a=hasTool("powerpoint")||hasTool("power point");result(a?"found":"missing",a)}
-   else if(/english|inglese/.test(t)){
-     const a=hasLanguage("english")||hasLanguage("inglese");
-     result(/\bc1\b|cefr|qcer/.test(t)?a&&/\bc1\b/.test(fold(a))?"found":a?"partial":"missing":a?"found":"missing",a?(a+(type==="partial"?" — C1 non indicato":"")):"");
-     if(a&&/\bc1\b|cefr|qcer/.test(t)&&!/\bc1\b/.test(fold(a)))result("partial",a+" — livello C1 non documentato");
+   const hasTool=key=>proofTools.get(key);
+   const requiredTools=["excel","powerpoint"].filter(key=>key==="excel"?/\bexcel\b/.test(t):/power\s*point/.test(t));
+   if(requiredTools.length){
+     const present=requiredTools.map(hasTool);
+     const found=present.filter(Boolean);
+     const missing=requiredTools.filter((_,i)=>!present[i]);
+     if(!missing.length)result(present.every(x=>x.confirmed)?"found":"detected",present.map(x=>x.value).join(" · "));
+     else if(found.length)result("partial",found.map(x=>x.value).join(" · ")+" presente; "+missing.map(x=>x==="powerpoint"?"PowerPoint":"Excel").join(" e ")+" non trovato nel CV selezionato");
+   }else if(/english|inglese/.test(t)){
+     const a=languages.find(x=>/english|inglese/i.test(x));
+     const needsC1=/\bc1\b|cefr c1|qcer c1/.test(t);
+     if(a){
+       const levelC1=/\bc1\b/i.test(a);
+       result(needsC1&&!levelC1?"partial":confirmed?"found":"detected",a+(needsC1&&!levelC1?" — il livello C1 non è esplicitato":""));
+     }
    }else if(/laurea|master|bachelor|degree/.test(t)){
-     const d=education.find(x=>/master|magistrale|laurea|bachelor|degree|diploma/i.test(x));
-     if(d)result(/econom|finance|business/.test(t)&&!/econom|finance|business/.test(fold(d))?"partial":"found",d);
+     const needsMaster=/magistrale|master.s degree|\bmsc\b|master of science/.test(t);
+     const d=education.find(x=>needsMaster?/laurea magistrale|master.s degree|\bmsc\b|master of science/i.test(x):/diploma|laurea|bachelor|degree|master/i.test(x));
+     if(d)result(/econom|finance|business/.test(t)&&!/econom|finance|business/i.test(d)?"partial":confirmed?"found":"detected",d);
    }else if(/communication|comunicazion|teamwork|lavorare in team|interpersonal/.test(t)){
      const x=experience.find(v=>/client|customer|team|collabor|relazion|accoglienz/.test(fold(v.text)));
-     if(x)result("partial",brief(x.origin+" — "+x.text,130));
+     if(x)result("partial",brief(x.origin+" — "+x.text,120));
    }else if(/fashion|luxury|moda|lusso/.test(t)){
      const d=education.find(v=>/fashion|moda|luxury|lusso/.test(fold(v)));
      if(d)result("partial",d);
    }else {
-     const y=t.match(/(\d{1,2})\s*\+?\s*(?:years|anni)/);
-     const n=Number(p.relevant_years_experience);
-     if(y&&Number.isFinite(n))result(n>=Number(y[1])?"found":"partial",n+" anni indicati; il requisito ne chiede "+y[1]);
+     const y=t.match(/(\d{1,2})\s*\+?\s*(?:years|anni)/),n=Number(p.relevant_years_experience);
+     if(y&&p.relevant_years_experience!==undefined&&Number.isFinite(n))result(n>=Number(y[1])&&confirmed?"found":"partial",n+" anni dichiarati; richiesti "+y[1]);
    }
-   const label=type==="found"?confirmed?"Documentato nel CV confermato":"Citato nel profilo (da confermare)":type==="partial"?"Parzialmente documentato":"Non documentato nel CV acquisito";
-   return {text:txt,type,label,proof};
+   // Explicitly say when the evidence belongs to ANOTHER uploaded CV.
+   if(requiredTools.length&&type!=="found"){
+     const other=altCvs.find(cv=>requiredTools.every(key=>sourceTools(cv.parsed_profile).get(key)));
+     if(other){
+       const matches=requiredTools.map(key=>sourceTools(other.parsed_profile).get(key));
+       type="alternate";
+       proof="Nel CV «"+cvTitle(other)+"»: "+matches.map(x=>x.value).join(" · ");
+       suggested_cv_id=other.id||null;
+     }
+   }
+   const label=type==="found"?"Documentato nel CV confermato":
+     type==="detected"?"Rilevato dal CV · da confermare":
+     type==="alternate"?"Presente in un'altra versione":
+     type==="partial"?"Parzialmente documentato":"Non documentato nel CV selezionato";
+   return {text:txt,type,label,proof,suggested_cv_id};
  });
 }
 // Natural-language decision, grounded in the exact responsibilities and candidate's own evidence.
