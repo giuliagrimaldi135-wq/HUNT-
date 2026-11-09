@@ -670,6 +670,50 @@ function jobTextEvidence(description){
  const clip=x=>x.length>290?x.slice(0,287).trim()+"…":x;
  return {tasks:tasks.map(clip),requirements:requirements.map(clip),hasDetails:original.length>=150};
 }
+
+function evidenceItSummary(text,type="task"){
+ const t=String(text||"").toLowerCase();
+ const hits=[];
+ const add=(test,label)=>{if(test.test(t)&&!hits.includes(label))hits.push(label)};
+ if(type==="requirement"){
+   add(/\b(english|inglese)\b.{0,80}\b(required|proficien|fluent|advanced|ottimo|necessari|requisit)/i,"Conoscenza dell'inglese richiesta");
+   add(/\b(excel|spreadsheet|fogli di calcolo)\b/i,"Competenze Excel richieste");
+   add(/\b(powerpoint|power point|presentation software)\b/i,"Conoscenza di PowerPoint richiesta");
+   add(/\b(interpersonal|communication skills|capacità comunicative)\b/i,"Capacità comunicative e relazionali");
+   add(/\b(curricular|university activit|universitar|volunteer)\b/i,"Partecipazione ad attività universitarie o di volontariato");
+   add(/\b(fashion and luxury|luxury trends|passion for fashion)\b/i,"Interesse per moda e lusso");
+   add(/\b(\d+)\s*(?:years?|anni)\s+(?:of\s+)?experience\b/i,"Esperienza professionale richiesta, con durata specificata nella fonte");
+   add(/\b(french|français|francese)\b/i,"Conoscenza della lingua francese");
+   add(/\b(degree|bachelor|master|laurea)\b/i,"Percorso di studi o titolo di studio richiesto");
+   return hits.slice(0,6);
+ }
+ if(/(collection|collezion)/i.test(t)&&/(creat|structur|present|ciclo|lifecycle|life of the product)/i.test(t))
+   hits.push("Seguire le fasi di sviluppo e presentazione della collezione");
+ add(/\b(sales data|sales report|sell-through|monitoring of sales|analisi vendite|vendite e performance|sales performance)\b/i,"Analizzare dati di vendita e andamento del prodotto");
+ add(/\b(assortment|assortimento|product mix|gamma prodotti|merchandising mix)\b/i,"Contribuire alle attività di assortimento e mix di prodotto");
+ add(/\b(budget|forecasting|planning|pianificazion)\b/i,"Supportare pianificazione e monitoraggio dei budget");
+ add(/\b(stock|allocation|inventory|giacenz)\b/i,"Monitorare stock e allocazione dei prodotti");
+ add(/\b(wholesale|order processing|order management|sales campaign|inserimento ordini)\b/i,"Supportare gestione ordini e attività commerciali");
+ add(/\b(retail performance|retail network|store operations|rete di negozi)\b/i,"Supportare attività della rete retail");
+ add(/\b(competitor|market analysis|benchmark)\b/i,"Analizzare mercato e concorrenti");
+ if(!hits.length&&/\b(merchandis|ready to wear|men ready to wear)\b/i.test(t))
+   hits.push("Conoscere i metodi di lavoro del merchandising"+(/men ready to wear/i.test(t)?" con focus sull'abbigliamento uomo":""));
+ if(!hits.length&&/\b(product development|product lifecycle|fine vita|end of life)\b/i.test(t))
+   hits.push("Seguire le attività di prodotto durante il suo ciclo di vita");
+ return hits.slice(0,4);
+}
+function italianEvidenceFromJob(description,evidence){
+ const tasks=new Set();
+ const requirements=new Set();
+ // Only derive Italian descriptions from explicit words found in the original vacancy.
+ for(const item of evidence.tasks){for(const hit of evidenceItSummary(item,"task"))tasks.add(hit)}
+ for(const item of evidence.requirements){for(const hit of evidenceItSummary(item,"requirement"))requirements.add(hit)}
+ // Some requirements run together in the original source and are not split into sentences.
+ const full=String(description||"");
+ for(const hit of evidenceItSummary(full,"requirement"))requirements.add(hit);
+ return {tasks:[...tasks].slice(0,5),requirements:[...requirements].slice(0,6)};
+}
+
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  const row=await getOpportunityDetail(jobId);
@@ -692,6 +736,7 @@ async function renderOpportunityFolder(jobId){
  const job=row.job;
  const brand=job.companies?.name||"Brand";
  const evidence=jobTextEvidence(job.description);
+ const italianEvidence=italianEvidenceFromJob(job.description,evidence);
  const targetIsRelevant=Boolean((row.cvs||[]).some(cv=>(cv.target_role_families||[]).includes(job.role_family)));
  const shortlistVerdict=!evidence.tasks.length
    ?"HUNT ha verificato l'esistenza dell'offerta, ma i contenuti disponibili non bastano per valutare con precisione il lavoro."
@@ -785,21 +830,35 @@ async function renderOpportunityFolder(jobId){
      <div class="workspaceBar">
        <label>CV da utilizzare <select id="dossierCv">${dossierCvOptions}</select></label>
        <label>Lingua <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
-       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna analisi":"Analizza CV e offerta"}</button>
-       ${cv?`<button class="btn workspaceDownload" id="downloadDossierCv">Scarica CV</button>`:""}
+       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna candidatura":"Analizza CV e offerta"}</button>
      </div>
      <div id="dossierMessage" class="workspaceMessage"></div>
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
      <div class="vacancyEvidenceGrid">
        <div class="vacancyEvidenceColumn">
-         <div class="eyebrow">Mansioni riportate nell'annuncio</div>
-         ${evidence.tasks.length?`<ul>${evidence.tasks.slice(0,2).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>L'annuncio non descrive mansioni abbastanza specifiche. Apri la posizione ufficiale per verificarle.</p>"}
+         <div class="eyebrow">Cosa farai realmente</div>
+         <div data-evidence-language="it" class="${dossierLang==="it"?"":"hide"}">
+           ${italianEvidence.tasks.length?`<ul>${italianEvidence.tasks.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Non è disponibile una sintesi italiana affidabile. Consulta il testo originale.</p>"}
+         </div>
+         <div data-evidence-language="en" class="${dossierLang==="en"?"":"hide"}">
+           ${evidence.tasks.length?`<ul>${evidence.tasks.slice(0,3).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>No detailed duties could be extracted from the original posting.</p>"}
+         </div>
        </div>
        <div class="vacancyEvidenceColumn">
-         <div class="eyebrow">Requisiti dichiarati dal datore di lavoro</div>
-         ${evidence.requirements.length?`<ul>${evidence.requirements.slice(0,2).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Non sono disponibili requisiti verificabili nel testo acquisito. Non li inventiamo.</p>"}
+         <div class="eyebrow">Cosa cerca l'azienda</div>
+         <div data-evidence-language="it" class="${dossierLang==="it"?"":"hide"}">
+           ${italianEvidence.requirements.length?`<ul>${italianEvidence.requirements.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Non abbiamo identificato requisiti sufficientemente chiari nella descrizione.</p>"}
+         </div>
+         <div data-evidence-language="en" class="${dossierLang==="en"?"":"hide"}">
+           ${evidence.requirements.length?`<ul>${evidence.requirements.slice(0,3).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>No explicit requirements were detected in the source posting.</p>"}
+         </div>
        </div>
      </div>
+     <details class="sourceVerification"><summary>Confronta con le frasi originali dell'annuncio</summary>
+       <div class="sourceVerificationGrid"><div><strong>Mansioni nella lingua originale</strong><ul>${evidence.tasks.slice(0,3).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+       <div><strong>Requisiti originali</strong><ul>${evidence.requirements.slice(0,3).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div>
+       <p>La sintesi italiana è una classificazione orientativa delle attività: i requisiti ufficiali sono soltanto quelli riportati nell'annuncio originale.</p>
+     </details>
      ${dossierGaps.length?`<div class="workspaceGap"><strong>Possibili ostacoli da controllare</strong><p>${esc(dossierGaps.slice(0,3).join(" · "))}</p></div>`:""}
      ${dossierEvidence.length?`<details class="workspaceEvidence"><summary>Come HUNT ha collegato il CV a questa offerta</summary><ul>${dossierEvidence.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><p>Queste sono evidenze disponibili nel profilo, non garanzie di compatibilità o di selezione.</p></details>`:""}
      ${!row.dossier?`<p class="workspaceEmpty">Conferma almeno un CV nel Profilo per ottenere una selezione realmente personalizzata.</p>`:""}
@@ -929,7 +988,11 @@ async function renderOpportunityFolder(jobId){
  const languageSelect=document.getElementById("dossierLang");
  const selectionNote=()=>{const notice=document.getElementById("dossierMessage");if(notice)notice.textContent="Selezione aggiornata. Premi Aggiorna dossier per applicarla alla lettera e al confronto con i requisiti.";};
  if(cvSelect)cvSelect.onchange=selectionNote;
- if(languageSelect)languageSelect.onchange=selectionNote;
+ if(languageSelect)languageSelect.onchange=()=>{
+   document.querySelectorAll("[data-evidence-language]").forEach(el=>el.classList.toggle("hide",el.dataset.evidenceLanguage!==languageSelect.value));
+   const notice=document.getElementById("dossierMessage");
+   if(notice)notice.textContent="Analisi mostrata in "+(languageSelect.value==="it"?"italiano":"inglese")+". Per aggiornare anche la cover letter nella nuova lingua, premi Aggiorna candidatura.";
+ };
  const generate=document.getElementById("generateDossier");
  if(generate)generate.onclick=async()=>{
    const lang=document.getElementById("dossierLang").value;
@@ -942,11 +1005,7 @@ async function renderOpportunityFolder(jobId){
    try{await requestDossier(jobId,lang,cvId,true);await renderOpportunityFolder(jobId)}
    catch(e){info.textContent=e instanceof Error?e.message:String(e);info.className="dossierError";generate.disabled=false}
  };
- const download=document.getElementById("downloadDossierCv");
- if(download)download.onclick=async()=>{
-   try{await downloadPrivateCv(document.getElementById("dossierCv").value)}
-   catch(e){document.getElementById("dossierMessage").textContent=e.message||String(e)}
- };
+
  let lastAiProposal=null;
  const save=document.getElementById("saveCoverLetter");
  if(save)save.onclick=async()=>{
