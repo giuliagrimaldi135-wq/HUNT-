@@ -105,7 +105,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
    root.querySelectorAll("[data-cv-panel]").forEach(item=>{item.hidden=item.dataset.cvPanel!==panel});
    root.querySelectorAll("[data-cv-panel-target]").forEach(item=>{
      item.classList.toggle("is-current",item.dataset.cvPanelTarget===panel);
-     item.setAttribute("aria-selected",String(item.dataset.cvPanelTarget===panel));
+     if(item.getAttribute("role")==="tab")item.setAttribute("aria-selected",String(item.dataset.cvPanelTarget===panel));
    });
    root.querySelector(".cvWEditButton")?.classList.toggle("is-active",panel==="edit");
  };
@@ -120,11 +120,13 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   const action=b.dataset.cvAction,id=b.dataset.cvId;
   if(action==="select"){if(id===selectedId)return;if(editingDirty&&!window.confirm("Hai modifiche non salvate. Vuoi cambiare curriculum senza salvarle?"))return;editingDirty=false;selectedId=id;await refresh();return}
   if(action==="edit-profile"){setPanel("edit");root.querySelector(".cvWWorkspace")?.scrollIntoView?.({behavior:"smooth",block:"start"});return}
-  if(action==="remove"){b.closest("[data-cv-entry]")?.remove();return}
-  if(action==="add-experience"){root.querySelector("#cvExperiences").insertAdjacentHTML("beforeend",entry("experience"));return}
-  if(action==="add-project"){root.querySelector("#cvProjects").insertAdjacentHTML("beforeend",entry("project"));return}
-  if(action==="add-education"){root.querySelector("#cvEducation").insertAdjacentHTML("beforeend",entry("education"));return}
+  if(action==="remove"){editingDirty=true;b.closest("[data-cv-entry]")?.remove();return}
+  if(action==="add-experience"){editingDirty=true;root.querySelector("#cvExperiences").insertAdjacentHTML("beforeend",entry("experience"));return}
+  if(action==="add-project"){editingDirty=true;root.querySelector("#cvProjects").insertAdjacentHTML("beforeend",entry("project"));return}
+  if(action==="add-education"){editingDirty=true;root.querySelector("#cvEducation").insertAdjacentHTML("beforeend",entry("education"));return}
   if(action==="default"||action==="secondary"){
+   if(editingDirty&&!window.confirm("Ci sono modifiche non salvate. Vuoi cambiare il CV principale senza salvarle?"))return;
+   editingDirty=false;
    const target=action==="secondary"?rows.find(x=>x.id!==id&&(x.parsed_profile?.profile_confirmed_by_user||x.parsed_profile?.profile_verified_from_user_history))||rows.find(x=>x.id!==id):rows.find(x=>x.id===id);
    if(!target){show("Serve almeno un CV principale. Carica un'altra versione prima di rendere secondaria questa.",true);return}
    b.disabled=true;
@@ -135,6 +137,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
    return;
   }
   if(action==="delete-cv"){
+   if(editingDirty&&!window.confirm("Hai modifiche non salvate. Vuoi proseguire con l’eliminazione?"))return;
    const cv=rows.find(x=>x.id===id);
    if(!cv)return;
    if(!window.confirm('Eliminare il CV «'+cv.name+'» dal tuo archivio? Il documento verrà cancellato e non sarà più utilizzato nei confronti con gli annunci.'))return;
