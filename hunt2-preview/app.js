@@ -937,8 +937,7 @@ async function renderOpportunityFolder(jobId){
   <div class="heroMeta editorialMeta darkMeta">
    <span class="heroMatch">${haveVerifiedSections?"Analisi su "+factLists.it.requirements.length+" requisiti aziendali":"Analisi basata sul testo acquisito"}</span>
    <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
-   <span>${esc(verifiedLabel(job))}</span>
-   <span>${esc(sourceLabel(job))}</span>
+   
   </div>
   <div class="actions">
    ${job.primary_apply_url?`<a class="btn green" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ufficiale ↗</a>`:""}
@@ -957,7 +956,7 @@ async function renderOpportunityFolder(jobId){
    <section class="section huntDecision huntDecisionV3">
      <div class="huntDecisionIntro"><div class="eyebrow">Perché candidarti</div><h2>Il valore di questa opportunità</h2></div>
      <div class="huntDecisionBody">
-       <h3 class="huntDecisionVerdict">${esc(assessmentIt.why?.includes("non emerge")?"Un ruolo da valutare con attenzione":"Un collegamento concreto con il tuo percorso")}</h3>
+       <h3 class="huntDecisionVerdict">Come si collega al tuo profilo</h3>
        <p class="huntWhyNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt))}</p>
        
      </div>
@@ -987,7 +986,7 @@ async function renderOpportunityFolder(jobId){
        <div class="vacancyEvidenceColumn">
          <div class="luxColumnHead"><div class="eyebrow">02 / Corrispondenze</div><h3>Che cosa cerca l’azienda</h3><p>Tutti i requisiti pubblicati, con le prove riconosciute nel curriculum.</p></div>
          <div data-fact-display="it" class="">
-           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.type==="found"?"Nel CV":cvChecklistIt[i]?.type==="detected"?"Rilevato nel CV":cvChecklistIt[i]?.type==="alternate"?"In un altro CV":cvChecklistIt[i]?.type==="partial"?"Da approfondire":"Non emerge dal CV")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
+           ${factLists.it.requirements.length?`<ul class="requirementsWithCv luxRequirementList">${factLists.it.requirements.map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.type==="found"?"Nel CV":cvChecklistIt[i]?.type==="detected"?"Rilevato nel CV":cvChecklistIt[i]?.type==="alternate"?"In un altro CV":cvChecklistIt[i]?.type==="partial"?"Da approfondire":"Non emerge dal CV")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
          </div>
        </div>
      </div>
