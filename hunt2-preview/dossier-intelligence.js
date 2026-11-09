@@ -173,7 +173,7 @@ export function newsTeaser(title,summary){
  const t=clean(title),s=clean(summary);
  const headline=fold(t.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
  const synopsis=fold(s.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
- if(s.length>=38&&synopsis!==headline&&!headline.includes(synopsis)&&!synopsis.includes(headline))return brief(s,165);
+ if(s.length>=38&&synopsis!==headline&&!headline.includes(synopsis)&&!synopsis.includes(headline))return brief(s,135);
  const h=fold(t);
  if(/revenue|growth|profit|sales|earnings|results|ricavi|fatturato|investor|financial|highlights|bilancio/.test(h))return "Risultati economici: notizia sui ricavi, sulle vendite o sulle performance del gruppo.";
  if(/ceo|director|management|leadership|appointment|nomina/.test(h))return "Strategia e persone: aggiornamento sui vertici e sulle decisioni aziendali.";
