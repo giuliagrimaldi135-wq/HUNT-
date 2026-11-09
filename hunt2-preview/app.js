@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, applicationInsight, newsTeaser } from "./dossier-intelligence.js?v=20261109-83";
+import { checkRequirements, assessDossier, applicationInsight, newsTeaser } from "./dossier-intelligence.js?v=20261109-84";
 import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
