@@ -50,3 +50,25 @@ test("All 20 career categories are available, but only CV-evidenced areas are hi
  assert.ok(!categories.find(x=>x.name==="HR & Talent")?.related);
  assert.ok(categories.some(x=>x.basis.includes("Progetto · Gucci")));
 });
+
+test("A CV summary merges structured and OCR software from the same document",()=>{
+ const parsed={
+  profile_verified_from_user_history:true,
+  tools:["Excel","Max Mara order application"],
+  draft_profile:{tools:["Excel (avanzato)","PowerPoint (avanzato)","Word (avanzato)"]},
+  raw_text:"Software: Excel (avanzato) - PowerPoint (avanzato) - Word (avanzato) - Canva"
+ };
+ const summary=cvReviewSummary(parsed);
+ assert.ok(summary.tools.some(x=>/Excel \(avanzato\)/i.test(x)));
+ assert.ok(summary.tools.some(x=>/PowerPoint \(avanzato\)/i.test(x)));
+ assert.ok(summary.tools.some(x=>/Max Mara order application/i.test(x)));
+ assert.ok(!summary.tools.includes("Excel"),"Do not show both the generic and the precise level");
+ assert.equal(summary.tools.filter(x=>/^Excel\b/i.test(x)).length,1);
+});
+test("An OCR-only CV reads explicitly written software without borrowing another version",()=>{
+ const summary=cvReviewSummary({raw_text:"Software: Excel (avanzato) - PowerPoint (avanzato) - Canva"});
+ assert.ok(summary.tools.includes("Excel (avanzato)"));
+ assert.ok(summary.tools.includes("PowerPoint (avanzato)"));
+ assert.ok(summary.tools.includes("Canva"));
+ assert.equal(summary.confirmed,false);
+});
