@@ -53,15 +53,16 @@ function editor(cv){
   '<div class="cvDetectedSkills"><h3>Strumenti e competenze</h3><div class="cvPillRow">'+(tools.length?pills(tools):'<span class="cvInsightEmpty">Software non ancora riconosciuti</span>')+'</div>'+
   (languages.length?'<h4>Lingue nel CV</h4><div class="cvPillRow">'+pills(languages)+'</div>':"")+'</div>'+
   '<div class="cvEditPrompt"><span>Vuoi correggere una voce o aggiungere un’esperienza?</span><button type="button" class="cvEditLaunch" data-cv-action="edit-profile">Modifica o aggiungi informazioni</button></div>'+
-  '<details class="cvCorrectionDetails" id="cvCorrectionDetails"><summary>Modifica esperienze, progetti, formazione e competenze <span>Apri per modificare</span></summary>'+
-  '<p>Se la lettura automatica ha commesso errori, puoi correggere i dati qui. Non serve ricompilare il CV.</p>'+
+  '<details class="cvCorrectionDetails" id="cvCorrectionDetails"><summary>Modifica o completa il tuo profilo <span>Esperienze, progetti, formazione e strumenti</span></summary>'+
+  '<p>Puoi modificare ogni voce, aggiungere esperienze o progetti e completare le competenze. Poi premi «Salva informazioni» in fondo alla pagina.</p>'+
   '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Formazione</h3><button type="button" class="cvTextButton" data-cv-action="add-education">+ Aggiungi</button></div><div id="cvEducation">'+(ed.length?ed:[{}]).map(x=>entry("education",x)).join("")+'</div>'+
-  '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div></details>'+
-  '<div class="cvInsightFooter"><div><strong>'+(verified?"Controllo del profilo":"Conferma finale")+'</strong><p>'+(verified?"Le tue informazioni sono già confermate. Se le hai corrette, salvale qui; altrimenti non devi fare altro.":"Controlla che quanto mostrato sia fedele al CV. Se serve, modifica o aggiungi dettagli prima di confermare.")+'</p></div>'+
+  '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div>'+
+  (p.raw_text?'<details class="cvRawText"><summary>Verifica il testo originale estratto</summary><textarea readonly rows="10">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
+  '</details>'+
+  '<div class="cvInsightFooter"><div><strong>'+(verified?"Salva il tuo profilo":"Conferma finale del profilo")+'</strong><p>'+(verified?"Le tue informazioni sono già confermate. Se le hai corrette, salvale qui; altrimenti non devi fare altro.":"Controlla che quanto mostrato sia fedele al CV. Se serve, modifica o aggiungi dettagli prima di confermare.")+'</p></div>'+
   '<button class="btn primary" type="submit">'+(verified?"Salva informazioni":"Conferma le informazioni")+'</button></div></form>'+
-  (p.raw_text?'<details class="cvRawText"><summary>Testo originale acquisito</summary><textarea readonly rows="10">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
   '</section>';
 }
 function collect(root,original){
