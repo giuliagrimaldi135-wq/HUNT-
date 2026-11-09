@@ -33,7 +33,13 @@ test("One Italian requirement list and one source-grounded synthesis are display
  assert.match(folder,/const dossierLang="it"/);
  assert.match(folder,/applicationInsight\(assessmentIt,cvChecklistIt\)/);
  assert.match(folder,/Perché candidarti/);
- assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=|id="dossierCv"/);
+ assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
+ assert.match(folder,/id="dossierCv"/);
+ assert.match(folder,/dossierCvChoices\.set\(jobId,next\)/);
+ assert.match(folder,/expandedDuties\(factLists\.it\.duties\)/);
+ assert.doesNotMatch(folder,/factLists\.it\.requirements\.slice\(0,/);
+ assert.match(folder,/luxSourceFooter/);
+ assert.match(folder,/Cover letter/);
 });
 
 test("Gucci's English posting is summarized as Italian duties and requirements without fabricated claims",async()=>{
