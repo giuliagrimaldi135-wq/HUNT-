@@ -418,7 +418,7 @@ async function getOpportunityFeed(limit=100){
 
 async function getOpportunityDetail(jobId){
  const [{data:job,error:jobError},{data:match},{data:application},{data:personalization},{data:cvs},{data:reposts},{data:dossier}]=await Promise.all([
-   supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,last_verified_at,primary_apply_url,state,description,metadata,companies(name)").eq("id",jobId).maybeSingle(),
+   supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,last_verified_at,primary_apply_url,state,description,metadata,companies(name,careers_url)").eq("id",jobId).maybeSingle(),
    supabase.from("user_job_matches").select("match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("applications").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("user_personalization").select("interest_areas,next_experience_drivers,company_preference,avoid_role_traits").eq("user_id",currentUser.id).maybeSingle(),
@@ -810,7 +810,23 @@ async function renderOpportunityFolder(jobId){
      });
    }
  }
- const companyNews=[...companyNewsDedup.values()].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+ const interestWords=[...(row.personalization?.interest_areas||[]),job.role_family||"","retail","merchandising","product","buying","assortment","collection","planning","allocation","sales","performance"]
+   .join(" ").toLowerCase().match(/[a-zà-ÿ]{5,}/g)||[];
+ const focusWords=[...new Set(interestWords)].filter(w=>!["fashion","brand","luxury","retail"].includes(w));
+ const newsQuality=item=>{
+   const title=String(item.title||"").toLowerCase();
+   const txt=(String(item.title||"")+" "+String(item.summary||"")).toLowerCase();
+   let score=item.kind==="company"?2:0;
+   if(/merchandis|buying|product|assort|collection|retail|store|business|commercial|performance|executive|strategy|expansion|results|sales|growth|revenue|distribution|launch|investment/i.test(txt))score+=3;
+   if(/red carpet|celebrity|viral|gossip|best dressed|horoscope|outfit|review|unboxing/i.test(txt))score-=3;
+   score+=Math.min(4,focusWords.filter(w=>txt.includes(w)).length);
+   if(item.date&&new Date(item.date).getTime()>Date.now()-7*86400000)score+=2;
+   if(title.includes(companyName.toLowerCase()))score+=1;
+   return score;
+ };
+ const companyNews=[...companyNewsDedup.values()]
+   .map(x=>({...x,curation_score:newsQuality(x)}))
+   .sort((a,b)=>b.curation_score-a.curation_score||new Date(b.date||0)-new Date(a.date||0));
  const {data:readRows,error:brandReadError}=companyNews.length
    ?await supabase.from("user_news_reads").select("item_id,source_kind").eq("user_id",currentUser.id).in("item_id",companyNews.map(x=>x.id))
    :{data:[],error:null};
@@ -947,12 +963,14 @@ async function renderOpportunityFolder(jobId){
        <button type="button" data-brand-news-filter="industry">Stampa internazionale</button>
      </div>
      <p id="brandNewsCounter" class="brandNewsCounter"></p>
+     <button type="button" class="brandNewsMore" id="brandNewsMore" hidden>Mostra altre notizie rilevanti</button>
      <p id="brandNewsError" class="dossierError" role="alert" hidden></p>
      <div id="brandNewsList" class="brandGlobalNewsList"></div>
    </section>
    <section class="section companyOpenRoles">
      <div class="companyOpenRolesHead"><div class="eyebrow">Opportunità nel brand</div><h2>Altre posizioni aperte di ${esc(brand)}</h2>
-       <p>Annunci attivi verificati dalle fonti disponibili. Il loro numero dipende dalla copertura dei portali aziendali, non rappresenta necessariamente tutte le assunzioni del brand.</p>
+       <p>Qui trovi le offerte già verificate e acquisite da HUNT. Per tutte le altre posizioni disponibili, consulta anche il portale ufficiale del brand: non presentiamo il database HUNT come completo.</p>
+       ${safeRadarUrl(job.companies?.careers_url)?`<a class="brandCareersLink" href="${esc(job.companies.careers_url)}" target="_blank" rel="noopener noreferrer">Vedi tutte le offerte sul sito aziendale</a>`:""}
      </div>
      ${companyOpenings.length?`<div class="companyOpenRolesList">
        ${[...companyOpenings].sort((a,b)=>(knownMatches.has(b.id)?1:0)-(knownMatches.has(a.id)?1:0)).map(j=>`<article class="brandJobItem">
@@ -975,15 +993,19 @@ async function renderOpportunityFolder(jobId){
  bindNav();bindOpportunityActions();
  let brandArchive=false;
  let brandFeedFilter="all";
+ let brandShowAll=false;
  const renderBrandFeed=()=>{
    const area=document.getElementById("brandNewsList");
    const counter=document.getElementById("brandNewsCounter");
    const toggle=document.getElementById("brandReadToggle");
    if(!area)return;
-   const rows=companyNews.filter(n=>brandReadIds.has(n.kind+":"+n.id)===brandArchive&&(brandFeedFilter==="all"||n.kind===brandFeedFilter));
+   const eligible=companyNews.filter(n=>brandReadIds.has(n.kind+":"+n.id)===brandArchive&&(brandFeedFilter==="all"||n.kind===brandFeedFilter));
+   const rows=brandShowAll?eligible.slice(0,30):eligible.slice(0,8);
+   const more=document.getElementById("brandNewsMore");
+   if(more){more.hidden=eligible.length<=8;more.textContent=brandShowAll?"Mostra solo le 8 notizie principali":"Mostra altre notizie ("+(eligible.length-8)+")"}
    const unreadCount=companyNews.filter(n=>!brandReadIds.has(n.kind+":"+n.id)).length;
    document.querySelectorAll("[data-brand-news-filter]").forEach(el=>el.classList.toggle("active",el.dataset.brandNewsFilter===brandFeedFilter));
-   if(counter)counter.textContent=unreadCount+" da leggere · "+rows.length+(brandArchive?" nell'archivio":" mostrate");
+   if(counter)counter.textContent=unreadCount+" da leggere · "+rows.length+" mostrate in ordine di pertinenza"+(brandArchive?" (archivio)":"");
    if(toggle)toggle.textContent=brandArchive?"← Torna alle notizie":"Archivio lette";
    area.innerHTML=rows.length?rows.map(item=>{
      const date=item.date?new Date(item.date):null;
@@ -1015,6 +1037,8 @@ async function renderOpportunityFolder(jobId){
      renderBrandFeed();
    });
  };
+ const brandMore=document.getElementById("brandNewsMore");
+ if(brandMore)brandMore.onclick=()=>{brandShowAll=!brandShowAll;renderBrandFeed()};
  document.querySelectorAll("[data-brand-news-filter]").forEach(btn=>btn.onclick=()=>{
    brandFeedFilter=btn.dataset.brandNewsFilter||"all";
    renderBrandFeed();
