@@ -52,10 +52,50 @@ export function cvRoleSignals(profile){
  if(/stock|inventory|allocazion|allocation/.test(values))out.push("Operations");
  return out.slice(0,4);
 }
+const softwareKeys=[
+ ["Excel",/\b(?:microsoft\s+|ms\s+)?excel\b/i],
+ ["PowerPoint",/\b(?:microsoft\s+|ms\s+)?power\s*point\b/i],
+ ["Word",/\b(?:microsoft\s+|ms\s+)?word\b/i],
+ ["Adobe Photoshop",/\b(?:adobe\s+)?photoshop\b/i],
+ ["Canva",/\bcanva\b/i],
+ ["Power BI",/\bpower\s*bi\b/i],
+ ["Tableau",/\btableau\b/i],
+ ["SAP",/\bsap\b/i],
+ ["InDesign",/\bindesign\b/i],
+ ["Illustrator",/\billustrator\b/i]
+];
+const toolText=v=>string(typeof v==="string"?v:((v?.name||"")+" "+(v?.level?"("+v.level+")":"")));
+const toolLevel=/avanzat|advanced|expert|intermedi|intermediate|basic|base/i;
+function mergeCvSoftware(profile,draft){
+ const entries=[...(Array.isArray(profile?.tools)?profile.tools:[]),
+   ...(Array.isArray(draft?.tools)?draft.tools:[])].map(toolText).filter(Boolean);
+ // Only explicitly labelled software rows in the SAME document are admissible.
+ const source=String(profile?.raw_text||"").split(/\r?\n/).filter(x=>
+   /^\s*(?:software|technical skills|digital skills|competenze informatiche|strumenti|tools)\s*:/i.test(x));
+ for(const line of source){
+   const body=line.replace(/^[^:]*:/,"");
+   for(const [name,re] of softwareKeys){
+     const match=re.exec(body);if(!match)continue;
+     const level=body.slice(match.index+match[0].length).match(/^\s*\((avanzat[oa]|advanced|intermedi[oa]|intermediate|basic|base|expert)\)/i);
+     entries.push(name+(level?" ("+level[1]+")":""));
+   }
+ }
+ const merged=new Map();
+ for(const entry of entries){
+   const normalized=entry.toLowerCase().trim();
+   const key=softwareKeys.find(([name,re])=>re.test(entry))?.[0].toLowerCase()||normalized;
+   const previous=merged.get(key);
+   if(!previous||(!toolLevel.test(previous)&&toolLevel.test(entry)))merged.set(key,entry);
+ }
+ return [...merged.values()];
+}
 export function cvReviewSummary(profile){
  const p=profile||{},d=p.draft_profile||{};
  const get=key=>Array.isArray(p[key])&&p[key].length?p[key]:Array.isArray(d[key])?d[key]:[];
- return {experience:get("experience"),projects:get("projects"),education:get("education"),tools:get("tools"),languages:get("languages"),confirmed:!!(p.profile_confirmed_by_user||p.profile_verified_from_user_history),language:p.source_language||d.source_language||"it"};
+ return {experience:get("experience"),projects:get("projects"),education:get("education"),
+   tools:mergeCvSoftware(p,d),languages:get("languages"),
+   confirmed:!!(p.profile_confirmed_by_user||p.profile_verified_from_user_history),
+   language:p.source_language||d.source_language||"it"};
 }
 
 const professionalCatalog=[
