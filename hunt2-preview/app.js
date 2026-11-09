@@ -388,7 +388,7 @@ async function getOpportunityFeed(limit=100){
  if(!ids.length)return {data:[],error:null};
  const {data:jobs,error:jobError}=await supabase
    .from("jobs")
-   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,last_verified_at,primary_apply_url,state,description,metadata,companies(name)")
+   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
    .in("id",ids);
  if(jobError)return {data:[],error:jobError};
 
@@ -418,7 +418,7 @@ async function getOpportunityFeed(limit=100){
 
 async function getOpportunityDetail(jobId){
  const [{data:job,error:jobError},{data:match},{data:application},{data:personalization},{data:cvs},{data:reposts},{data:dossier}]=await Promise.all([
-   supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,last_verified_at,primary_apply_url,state,description,metadata,companies(name,careers_url)").eq("id",jobId).maybeSingle(),
+   supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name,careers_url)").eq("id",jobId).maybeSingle(),
    supabase.from("user_job_matches").select("match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("applications").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("user_personalization").select("interest_areas,next_experience_drivers,company_preference,avoid_role_traits").eq("user_id",currentUser.id).maybeSingle(),
@@ -426,7 +426,8 @@ async function getOpportunityDetail(jobId){
    supabase.from("repost_events").select("id,detected_at,reason,evidence").eq("job_id",jobId).order("detected_at",{ascending:false}),
    supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle()
  ]);
- if(jobError||!job)return null;
+ if(jobError)throw new Error("La posizione non può essere caricata: "+jobError.message);
+ if(!job)throw new Error("Questa posizione non è più disponibile nel database di HUNT.");
  const companyName=String(job.companies?.name||"").trim();
  const searchBrand=companyName.replace(/\s+(Fashion Group|Group|Holdings|S\.p\.A\.|Ltd\.)$/i,"").trim();
  const [{data:signals},{data:relatedMatches},{data:brandMedia},{data:companyJobs}]=await Promise.all([
@@ -499,7 +500,7 @@ function opportunityCard(row){
    </div>
    <div class="actions editorialActions">
     ${job.primary_apply_url?`<a class="btn primary" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ↗</a>`:""}
-    <button class="btn" data-prepare="${job.id}" data-resume="${row.applicationStatus==="preparing"?"true":"false"}">${row.applicationStatus==="preparing"?"Riprendi dossier":"Prepara candidatura"}</button>
+    <button class="btn" type="button" data-open-dossier="${job.id}">Apri dossier</button>
     <button class="btn" data-applied="${job.id}">Già candidata</button>
     <button class="btn ghostDanger" data-ignore="${job.id}">Ignora</button>
    </div>
@@ -541,18 +542,35 @@ async function ignoreJob(jobId){
  await renderOpportunities();
 }
 
-function openOpportunityFolder(jobId,push=true){
+async function openOpportunityFolder(jobId,push=true){
+ if(!/^[0-9a-f-]{36}$/i.test(String(jobId||"")))return;
+ const previousJob=selectedJobId;
  selectedJobId=jobId;
- if(push)history.pushState({huntFolder:jobId},"","#job="+jobId);
- return renderOpportunityFolder(jobId);
+ app.innerHTML=shell('<div class="folderLoading" role="status"><div class="eyebrow">HUNT · Dossier candidatura</div><h2>Caricamento della posizione…</h2><p>Recupero annuncio, CV, informazioni aziendali e notizie senza modificare lo stato della candidatura.</p></div>');
+ try{
+   await renderOpportunityFolder(jobId);
+   if(push&&selectedJobId===jobId)history.pushState({huntFolder:jobId},"","#job="+jobId);
+ }catch(error){
+   console.error("HUNT dossier load failed",error);
+   selectedJobId=previousJob;
+   app.innerHTML=shell(`<section class="folderLoading folderError" role="alert"><div class="eyebrow">Dossier non disponibile</div><h2>Non siamo riusciti ad aprire questa posizione</h2><p>${esc(error instanceof Error?error.message:String(error))}</p><button type="button" class="btn primary" id="retryDossier">Riprova</button><button type="button" class="btn" id="returnToOpportunities">Torna alle opportunità</button></section>`);
+   bindNav();
+   const retry=document.getElementById("retryDossier");if(retry)retry.onclick=()=>openOpportunityFolder(jobId,false);
+   const back=document.getElementById("returnToOpportunities");if(back)back.onclick=()=>renderOpportunities();
+ }
 }
 
 function bindOpportunityActions(){
- document.querySelectorAll("[data-prepare]").forEach(b=>b.onclick=()=>openOpportunityFolder(b.dataset.prepare));
  document.querySelectorAll("[data-applied]").forEach(b=>b.onclick=()=>saveApplication(b.dataset.applied,"applied"));
  document.querySelectorAll("[data-ignore]").forEach(b=>b.onclick=()=>ignoreJob(b.dataset.ignore));
- document.querySelectorAll("[data-related-job]").forEach(b=>b.onclick=()=>openOpportunityFolder(b.dataset.relatedJob));
 }
+app.addEventListener("click",event=>{
+ const target=event.target.closest?.("[data-open-dossier]");
+ if(!target||!app.contains(target))return;
+ event.preventDefault();
+ if(target.disabled)return;
+ openOpportunityFolder(target.dataset.openDossier);
+});
 function bindNav(){
  document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{currentView=b.dataset.view;renderShell()});
 }
@@ -739,7 +757,7 @@ function documentedRequirement(item,profile){
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  const row=await getOpportunityDetail(jobId);
- if(!row)return renderOpportunities();
+ if(!row)throw new Error("Dossier non disponibile per questa posizione.");
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
@@ -984,7 +1002,7 @@ async function renderOpportunityFolder(jobId){
            <h3>${esc(j.canonical_title)}</h3><p>${esc(j.city||"Località da verificare")} · ${esc(ageLabel(j.published_at,j.first_seen_at))} · ${esc(j.confidence_label==="VERIFIED ACTIVE"?"Annuncio verificato":"Disponibilità da ricontrollare")}</p>
          </div>
          <div class="brandJobActions">
-           <button class="btn" type="button" data-related-job="${esc(j.id)}">Apri dossier</button>
+           <button class="btn" type="button" data-open-dossier="${esc(j.id)}">Apri dossier</button>
            ${safeRadarUrl(j.primary_apply_url)?`<a href="${esc(j.primary_apply_url)}" class="btn primary" target="_blank" rel="noopener noreferrer">Annuncio originale</a>`:""}
          </div>
        </article>`).join("")}
