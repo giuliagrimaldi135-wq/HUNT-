@@ -19,8 +19,8 @@ const known=new Map([
 
 ]);
 export function projectNameForDisplay(value,locale="it"){
- const name=string(value).replace(/\\s+(?:academic project|progetto accademico)$/i,"").trim();
- return locale==="it"&&/\\bacademic project\\b/i.test(string(value))?"Progetto accademico "+name:name;
+ const name=string(value).replace(/\s+(?:academic project|progetto accademico)$/i,"").trim();
+ return locale==="it"&&/\bacademic project\b/i.test(string(value))?"Progetto accademico "+name:name;
 }
 export function evidenceForDisplay(value,locale="it"){
  const original=string(value),key=original.toLowerCase().replace(/[.!;]+$/,"");
