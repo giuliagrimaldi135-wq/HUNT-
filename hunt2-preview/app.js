@@ -755,7 +755,9 @@ async function renderOpportunityFolder(jobId){
  const brand=job.companies?.name||"Brand";
  const evidence=jobTextEvidence(job.description);
  const actualFacts=job.metadata?.source_facts;
- const haveVerifiedSections=actualFacts?.verification==="official_page_reviewed_2026_11_09"
+ const reviewedOfficial=actualFacts?.verification==="official_page_reviewed_2026_11_09";
+ const aiQuoteChecked=actualFacts?.verification==="ai_source_quote_checked";
+ const haveVerifiedSections=(reviewedOfficial||aiQuoteChecked)
    &&Array.isArray(actualFacts?.sections?.en?.duties)
    &&Array.isArray(actualFacts?.sections?.it?.duties);
  const bilingualFacts=haveVerifiedSections?actualFacts.sections:null;
@@ -886,7 +888,7 @@ async function renderOpportunityFolder(jobId){
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
      <div class="jobSourceContext">
        ${haveVerifiedSections
-         ?`<span class="jobSourcePass">Fonte aziendale verificata · mansioni e requisiti ricontrollati</span>`
+         ?`<span class="jobSourcePass">${reviewedOfficial?"Verificato sulla fonte ufficiale":"Analisi AI delle prove testuali: controlla sempre l'annuncio originale"}</span>`
          :summaryOnly
            ?`<span class="jobSourceNeed">Scheda parziale: HUNT non ha ancora acquisito l'annuncio integrale. Il match è preliminare.</span>`
            :`<span class="jobSourcePass">Testo acquisito dall'annuncio · possibili informazioni mancanti</span>`}
