@@ -57,8 +57,9 @@ function pageInfo(html:string,url:string){
  const doc=tidy(html);
  const ht=tidy(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1]||"");
  const titleTag=tidy(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]||"").replace(/\s+Job Details(?:\s*\|.*)?$/i,"");
- const title=(ht.length>=6&&ht.length<160?ht:titleTag).replace(/\s+Job Details.*$/i,"").trim();
- if(title.length<6||title.length>180||/^(work with us|careers|job opportunities)/i.test(title))return null;
+ const usableHeading=ht.length>=6&&ht.length<160&&!/\$\{|testo\d|placeholder|job details|^careers$/i.test(ht);
+ const title=(usableHeading?ht:titleTag).replace(/\s+Job Details.*$/i,"").trim();
+ if(title.length<6||title.length>180||/\$\{|testo\d|placeholder|^(work with us|careers|job opportunities)/i.test(title))return null;
  const start=doc.search(/\bJOB PURPOSE\b|\bROLE PURPOSE\b|\bRESPONSIBILITIES\b|\bJOB DESCRIPTION\b|\bKEY RESPONSIBILITIES\b/i);
  const end=doc.search(/\bJoining our Company means\b|\bPrada Group promotes an inclusive\b|\bEqual Opportunity Employer\b/i);
  const desc=start>=0?doc.slice(start,(end>start?end:Math.min(doc.length,start+11000))).slice(0,11000):"";
