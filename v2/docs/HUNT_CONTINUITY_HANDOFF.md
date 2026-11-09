@@ -138,3 +138,7 @@ infrastructure that is visibly configured can act between turns.
 
 When changing the project, update this handoff with the date and actual verified
 status (keeping it free of personal information), so context survives new chats.
+
+
+## Aggiornamento 9 novembre 2026 — dossier e cover letter
+Il bug delle schede `factLists.it.duties.length` è stato corretto nell'anteprima con la normalizzazione dei fatti. Installato sul backend Supabase `hunt-application-dossier` v15 il generatore editoriale v9, che usa solo mansioni e prove CV confermate e preserva modifiche manuali. I test automatici per schede, lettere italiane/inglesi e assenza prove sono stati aggiunti al workflow CI. La validazione end-to-end autenticata e le 30 revisioni editoriali reali restano aperte. Leggere `v2/docs/DOSSIER_AND_EDITORIAL_FIX_2026-11-09.md` prima di lavorare nuovamente a questi componenti.
