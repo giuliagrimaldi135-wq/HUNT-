@@ -33,7 +33,7 @@ function family(title:string){
 }
 function eligible(title:string){
  const t=title.toLowerCase();
- if(/senior|sr\.|director|head of|vice president|chief|lead |manager|architect|facilities|maintenance|store design|construction|sales assistant|sales associate|store associate|client advisor/.test(t))return false;
+ if(/senior|sr\.|director|head of|vice president|chief|lead |manager|architect|facilities|maintenance|store design|construction|sales (assistant|associate|specialist|advisor|consultant)|store associate|client advisor|sales consultant/.test(t))return false;
  if(!/intern|internship|stage|stagiaire|apprentice|graduate|trainee|junior|assistant|coordinator|analyst|specialist|associate/.test(t))return false;
  return Boolean(family(title));
 }
