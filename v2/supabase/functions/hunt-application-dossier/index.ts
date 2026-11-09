@@ -127,7 +127,7 @@ function letter(args:any){
   const academia=projectName&&projectEvidence.length
     ?"Con il progetto "+projectName+" ho poi potuto esplorare il lavoro dietro le decisioni di prodotto, passando dalla teoria a scelte concrete su cui confrontarmi."
     :study?"La formazione in "+study+" mi ha dato un punto di partenza che desidero mettere alla prova sul campo.":"";
-  const closing="Non cerco di presentarmi come una persona con anni di esperienza: posso però portare cura per il lavoro, curiosità autentica e voglia di contribuire dove servono metodo e attenzione ai dettagli. Mi piacerebbe parlarne con voi e capire come potrei essere utile al team.";
+  const closing="Vorrei portare nel vostro team curiosità autentica, cura per il lavoro e attenzione ai dettagli, contribuendo con serietà ai processi che fanno funzionare il prodotto e il business. Sarei felice di approfondire queste motivazioni in un colloquio.";
   return ["Gentile team di "+company+",",opening+" "+bridge,[experience,academia].filter(Boolean).join(" "),closing,"Cordiali saluti,\n"+name].filter(Boolean).join("\n\n");
  }
  const opening=isAssort
@@ -144,7 +144,7 @@ function letter(args:any){
  const academic=projectName&&projectEvidence.length
    ?"Through my "+projectName+" project, I had the chance to explore the decisions behind product and collection planning, and to question how those choices translate into practice."
    :study?"My studies in "+study+" gave me a foundation I am eager to build on through hands-on work.":"";
- const closing="I would not claim to bring years of experience. What I can offer is real curiosity, care with the work and a willingness to learn quickly while contributing wherever accuracy and attention to detail make a difference. I would welcome the opportunity to discuss that with your team.";
+ const closing="I would bring genuine curiosity, care with the work and a willingness to learn quickly, helping the team with the attention to detail that keeps product and commercial processes running well. I would value the opportunity to discuss how I could contribute.";
  return ["Dear "+company+" Hiring Team,",opening+" "+bridge,[experience,academic].filter(Boolean).join(" "),closing,"Kind regards,\n"+name].filter(Boolean).join("\n\n");
 }
 
