@@ -768,17 +768,20 @@ function documentedRequirement(item,profile){
 }
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
+ let preferredLocale="it";
+ try{preferredLocale=localStorage.getItem("hunt_dossier_language")==="en"?"en":"it"}catch{}
  const row=await getOpportunityDetail(jobId);
  if(!row)throw new Error("Dossier non disponibile per questa posizione.");
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
  const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v7");
- const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale);
+ const languageStale=Boolean(row.dossier?.generated_from?.language!==preferredLocale&&!row.dossier?.generated_from?.user_edited);
+ const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale||languageStale);
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
    pendingDossiers.add(jobId);
    try{
-     await requestDossier(jobId);
+     await requestDossier(jobId,preferredLocale);
      const {data}=await supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle();
      row.dossier=data||null;
    }catch(error){row.dossierError=error instanceof Error?error.message:String(error)}
@@ -798,17 +801,21 @@ async function renderOpportunityFolder(jobId){
  const bilingualFacts=haveVerifiedSections?actualFacts.sections:null;
  const summaryOnly=!haveVerifiedSections&&(String(job.description||"").length<340||job.metadata?.verification==="official_search_result");
  const factLists={
-   it:haveVerifiedSections?bilingualFacts.it:{duties:evidence.tasks,requirements:evidence.requirements},
+   it:haveVerifiedSections?bilingualFacts.it:italianEvidenceFromJob(job.description,evidence),
    en:haveVerifiedSections?bilingualFacts.en:{duties:evidence.tasks,requirements:evidence.requirements}
  };
- const shortlistVerdict=""; // Dossier assessment is now based on actual tasks and CV evidence, below.
+ // A source excerpt is not a translation; do not show English tasks in the Italian view.
+ const dossierLang=preferredLocale;
 
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
  const selectedCv=cv;
  const evidencedProfile=verifiedCv(selectedCv)?selectedCv?.parsed_profile:null;
- const cvChecklist=checkRequirements(factLists.it.requirements,evidencedProfile);
- const cvAssessment=assessDossier(job,evidencedProfile,factLists.it.duties,cvChecklist,summaryOnly);
+ const cvChecklistIt=checkRequirements(factLists.it.requirements,evidencedProfile);
+ const cvChecklistEn=checkRequirements(factLists.en.requirements,evidencedProfile);
+ const assessmentIt=assessDossier(job,evidencedProfile,factLists.it.duties,cvChecklistIt,summaryOnly,"it");
+ const assessmentEn=assessDossier(job,evidencedProfile,factLists.en.duties,cvChecklistEn,summaryOnly,"en");
+ const cvAssessment=dossierLang==="it"?assessmentIt:assessmentEn;
  const fit=row.dossier?.model_version==="evidence_dossier_v7"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
@@ -819,7 +826,6 @@ async function renderOpportunityFolder(jobId){
  const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
  const dossierCvId=cv?.id||row.dossier?.recommended_cv_id||"";
  const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""} ${verifiedCv(c)?"":"disabled"}>${index+1}. ${esc(c.name||"Curriculum")}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · completa lettura e conferma nel Profilo"}</option>`).join("");
- const dossierLang=row.dossier?.generated_from?.language==="it"?"it":"en";
  const repostCount=(row.reposts||[]).length;
  const firstSeen=job.published_at?new Date(job.published_at):null;
  const repostSummary=repostCount
@@ -892,7 +898,7 @@ async function renderOpportunityFolder(jobId){
   <h1>${esc(job.canonical_title)}</h1>
   <p class="lead">${esc(job.city||"—")} · ${esc(job.role_family||"—")}</p>
   <div class="heroMeta editorialMeta darkMeta">
-   <span class="heroMatch">${summaryOnly||cvAssessment.missingCount?"Requisiti da controllare":row.match_score+"% compatibilità indicativa"}</span>
+   <span class="heroMatch">${summaryOnly||cvAssessment.missingCount?"Verifica i requisiti del CV":row.match_score+"% compatibilità indicativa"}</span>
    <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
    <span>${esc(verifiedLabel(job))}</span>
    <span>${esc(sourceLabel(job))}</span>
@@ -914,11 +920,16 @@ async function renderOpportunityFolder(jobId){
    <section class="section huntDecision huntDecisionV3">
      <div class="huntDecisionIntro"><div class="eyebrow">Analisi della posizione</div><h2>Vale la pena approfondirla?</h2></div>
      <div class="huntDecisionBody">
-       <p class="huntDecisionVerdict"><strong>${esc(cvAssessment.judgement)}</strong></p>
-       <p class="huntDecisionText">${esc(cvAssessment.work)}</p>
-       <p class="huntDecisionEvidence">${esc(cvAssessment.why)}</p>
-       <p class="huntDecisionCaution"><strong>Prima di decidere:</strong> ${esc(cvAssessment.watch)}</p>
-       <p class="huntAnalysisMeta">${summaryOnly||cvAssessment.missingCount?"Compatibilità da confermare":"Compatibilità indicativa "+(Number(row.match_score)||0)+"%"} · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
+       ${["it","en"].map(locale=>{
+         const analysis=locale==="it"?assessmentIt:assessmentEn;
+         return `<div data-decision-lang="${locale}" class="${dossierLang===locale?"":"hide"}">
+           <p class="huntDecisionVerdict"><strong>${esc(analysis.judgement)}</strong></p>
+           <p class="huntDecisionText">${esc(analysis.work)}</p>
+           <p class="huntDecisionEvidence">${esc(analysis.why)}</p>
+           <p class="huntDecisionCaution">${esc(analysis.watch)}</p>
+           <p class="huntAnalysisMeta">${summaryOnly||analysis.missingCount?(locale==="it"?"Compatibilità da verificare":"Match needs verification"):(locale==="it"?"Compatibilità indicativa ":"Indicative match ")+(Number(row.match_score)||0)+"%"} · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
+         </div>`;
+       }).join("")}
      </div>
    </section>
 
@@ -929,7 +940,7 @@ async function renderOpportunityFolder(jobId){
      </div>
      <div class="workspaceBar">
        <label>CV da utilizzare <select id="dossierCv">${dossierCvOptions}</select></label>
-       <label>Lingua <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
+       <label>Lingua dell'analisi e della lettera <select id="dossierLang"><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option><option value="en" ${dossierLang==="en"?"selected":""}>English</option></select></label>
        <button class="btn primary" id="generateDossier">${row.dossier?"Ricalcola dossier":"Analizza CV e offerta"}</button>
      </div>
      <div id="dossierMessage" class="workspaceMessage"></div>
@@ -942,7 +953,7 @@ async function renderOpportunityFolder(jobId){
            :`<span class="jobSourcePass">Testo acquisito dall'annuncio · possibili informazioni mancanti</span>`}
        ${safeRadarUrl(job.primary_apply_url)?`<a href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Apri la fonte ufficiale</a>`:""}
      </div>
-     <p class="sourceVerifiedNote">${haveVerifiedSections?"Italiano e inglese descrivono le stesse attività e gli stessi requisiti verificati.":"La fonte disponibile non contiene una traduzione verificata. HUNT mostra il testo acquisito senza inventare altre mansioni: la lingua scelta determina anche quella della lettera."}</p>
+     <p class="sourceVerifiedNote">${haveVerifiedSections?"Mansioni e requisiti confrontati con la fonte dell'annuncio.":"Analisi orientativa dei temi esplicitamente rilevati nell'annuncio. Per il testo completo, consulta la fonte ufficiale: non attribuiamo al datore di lavoro requisiti non acquisiti."}</p>
      <div class="vacancyEvidenceGrid">
        <div class="vacancyEvidenceColumn">
          <div class="eyebrow">Cosa prevede il ruolo</div>
@@ -956,17 +967,14 @@ async function renderOpportunityFolder(jobId){
        <div class="vacancyEvidenceColumn">
          <div class="eyebrow">Requisiti e confronto con il CV</div>
          <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
-           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklist[i]?.proof?`<p>${esc(cvChecklist[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklist[i]?.type||"missing")}">${esc(cvChecklist[i]?.label||"Non documentato nel CV acquisito")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
+           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.label||"Non documentato nel CV acquisito")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
          </div>
          <div data-fact-display="en" class="${dossierLang==="en"?"":"hide"}">
-           ${factLists.en.requirements.length?`<ul class="requirementsWithCv">${factLists.en.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklist[i]?.proof?`<p>${esc(cvChecklist[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklist[i]?.type||"missing")}">${cvChecklist[i]?.type==="found"?"Mentioned in CV":cvChecklist[i]?.type==="partial"?"Partially documented":"Not documented in uploaded CV"}</small></li>`).join("")}</ul>`:"<p>The complete source requirements are not available.</p>"}
+           ${factLists.en.requirements.length?`<ul class="requirementsWithCv">${factLists.en.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistEn[i]?.proof?`<p>${esc(cvChecklistEn[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistEn[i]?.type||"missing")}">${cvChecklistEn[i]?.type==="found"?"Mentioned in CV":cvChecklistEn[i]?.type==="partial"?"Partially documented":"Not documented in uploaded CV"}</small></li>`).join("")}</ul>`:"<p>The complete source requirements are not available.</p>"}
          </div>
        </div>
      </div>
      <button type="button" class="cvProofAction" id="reviewRequirementsProfile">Controlla e completa il CV nel Profilo</button>
-     ${!haveVerifiedSections&&evidence.tasks.length?`<details class="sourceVerification"><summary>Mostra il testo acquisito dalla fonte</summary><p>Estratto disponibile, non necessariamente completo.</p><ul>${evidence.tasks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`:""}
-     ${dossierGaps.length?`<div class="workspaceGap"><strong>Possibili ostacoli da controllare</strong><p>${esc(dossierGaps.slice(0,3).join(" · "))}</p></div>`:""}
-     ${dossierEvidence.length?`<details class="workspaceEvidence"><summary>Come HUNT ha collegato il CV a questa offerta</summary><ul>${dossierEvidence.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><p>Queste sono evidenze disponibili nel profilo, non garanzie di compatibilità o di selezione.</p></details>`:""}
      ${!row.dossier?`<p class="workspaceEmpty">Conferma almeno un CV nel Profilo per ottenere una selezione realmente personalizzata.</p>`:""}
    </section>
 
