@@ -775,6 +775,7 @@ async function renderOpportunityFolder(jobId){
  if(selectedJobId!==jobId)return;
  const job=row.job;
  const brand=job.companies?.name||"Brand";
+ const companyName=String(brand).trim();
  const evidence=jobTextEvidence(job.description);
  const actualFacts=job.metadata?.source_facts;
  const reviewedOfficial=actualFacts?.verification==="official_page_reviewed_2026_11_09";
