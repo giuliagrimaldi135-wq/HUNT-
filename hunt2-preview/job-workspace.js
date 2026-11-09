@@ -53,11 +53,11 @@ export function renderJobWorkspace(data={}){
  );
  const tasks=panel("tasks",active,
   '<div class="hwPanelHeading"><h3>Attività e responsabilità</h3><span>La descrizione del lavoro</span></div>'+
-  '<p class="hwPanelSubhead">Le attività indicate dall’azienda. Qui non sono aggiunti compiti ipotizzati da HUNT.</p>'+
+  '<p class="hwPanelSubhead">Attività riportate nell’annuncio della posizione.</p>'+
   responsibilities(duties));
  const criteria=panel("criteria",active,
   '<div class="hwPanelHeading"><h3>Requisiti professionali</h3><span>Confronto con il CV selezionato</span></div>'+
-  '<p class="hwPanelSubhead">Ci concentriamo su esperienza, strumenti e competenze tecniche documentabili. Le qualità personali non vengono valutate automaticamente.</p>'+
+  '<p class="hwPanelSubhead">Il confronto mette in evidenza le competenze professionali più importanti per questo ruolo.</p>'+
   (relevant.length?'<div class="hwRequirementList is-full">'+relevant.map(r=>req(r,false)).join("")+'</div>':
   '<p class="hwEmpty">Non sono disponibili requisiti tecnici sufficienti per un confronto documentato.</p>'));
  return '<section class="section huntWorkspace" aria-label="Analisi della candidatura">'+
