@@ -38,7 +38,7 @@ Deno.serve(async(req)=>{
   supa.from("profiles").select("display_name").eq("user_id",user.id).maybeSingle(),
   supa.from("user_personalization").select("communication_style,career_goal,interest_areas,next_experience_drivers,avoid_role_traits").eq("user_id",user.id).maybeSingle(),
   supa.from("user_job_dossiers").select("ready_to_send_message,generated_from").eq("user_id",user.id)
-    .contains("generated_from",{user_edited:true}).order("updated_at",{ascending:false}).limit(3)
+    .contains("generated_from",{user_modified_for_style:true}).order("updated_at",{ascending:false}).limit(3)
  ]);
  if(jobR.error||!jobR.data)return send({error:"Vacancy not found"},404);
  const cv= (cvR.data||[]).find(x=>x.id===(body.cv_id||dossierR.data?.recommended_cv_id));
