@@ -25,7 +25,8 @@ async function fetchHTML(url:string,origin:string){
 function jobsOnPage(html:string,url:string,origin:string){
  const out=new Set<string>();
  for(const m of html.matchAll(/\bhref=["']([^"']*\/job\/[^"'?#]+(?:\/[^"'?#]*)?)["']/gi)){
-  const link=validURL(m[1],url);
+  const cleanHref=m[1].replace(/&amp;apos;|&apos;/gi,"%27").replace(/&amp;/gi,"%26").replace(/&/g,"%26");
+  const link=validURL(cleanHref,url);
   if(link&&link.startsWith(origin+"/job/")&&link.length<430)out.add(link);
  }
  return [...out];
