@@ -89,3 +89,19 @@ test("Editorial output never includes common generated grammar mistakes",()=>{
  assert.ok(it.text.split(" ").length<180);
  assert.ok(en.text.split(" ").length<180);
 });
+
+test("A verified application creates a substantial professional draft, not two generic lines",()=>{
+ const candidateWithEducation={...candidate,education:[{program:"Fashion Management",school:"Istituto Marangoni Milano"}]};
+ for(const language of ["it","en"]){
+  const letter=generateEditorialLetter({...candidateWithEducation,language,highlights:merch});
+  assert.ok(letter?.text);
+  const words=letter.text.trim().split(/\s+/).length;
+  assert.ok(words>=135,"The letter should have substantive paragraphs; got "+words+" words in "+language);
+  assert.ok(words<=240,"Keep it to a professional one-page letter");
+  assert.ok(letter.text.split(/\n\n/).length>=6,"Include opening, motivation, academic and professional evidence, closing");
+  assert.match(letter.text,/Marangoni/);
+  assert.match(letter.text,/Gucci/);
+  assert.match(letter.text,/Showroom Example/);
+  assert.doesNotMatch(letter.text,/\b(100%|50% growth|managed a team|led a department)\b/i);
+ }
+});
