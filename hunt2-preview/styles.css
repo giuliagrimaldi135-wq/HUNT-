@@ -210,3 +210,56 @@
 .cvInterpretDraft .btn{font-size:12px}
 @media(max-width:860px){.cvTargetOptions{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:580px){.cvTargetOptions{grid-template-columns:1fr}}
+
+
+/* HUNT 2.0 — substantive vacancy analysis and global brand news */
+.huntDecisionV3{padding-block:32px;border-bottom:1px solid var(--line)}
+.huntDecisionV3 .huntDecisionBody{min-width:0}
+.huntAnalysisMeta{font-size:11px;line-height:1.65;color:#827d76;margin:12px 0 0}
+.huntDecisionV3 .huntDecisionText{font-size:14px;line-height:1.8;max-width:800px}
+.huntDecisionV3 .huntDecisionCaution{grid-column:auto;margin:12px 0 0;border-top:1px solid var(--line);padding-top:12px}
+.dossierWorkspaceV3 .workspaceHeader{align-items:flex-start}
+.dossierWorkspaceV3 .workspaceSub{max-width:360px;font-size:12px}
+.vacancyEvidenceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;margin-top:26px;padding:2px 0 15px}
+.vacancyEvidenceColumn{min-width:0}
+.vacancyEvidenceColumn+.vacancyEvidenceColumn{border-left:1px solid var(--line);padding-left:28px}
+.vacancyEvidenceColumn ul{margin:12px 0 0;padding:0 0 0 18px;color:#393833}
+.vacancyEvidenceColumn li{padding-left:3px;font-size:13px;line-height:1.65;margin-bottom:11px}
+.vacancyEvidenceColumn p{font-size:13px;line-height:1.75;color:#77736c;margin:12px 0}
+.dossierWorkspaceV3 .workspaceEvidence{margin-top:14px}
+.dossierWorkspaceV3 .workspaceEvidence p{font-size:11px;color:#77736c;line-height:1.6}
+.brandGlobalNews{padding:35px 0;border-bottom:1px solid var(--line)}
+.brandGlobalNewsHead{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+.brandGlobalNewsHead h2{font-size:27px;letter-spacing:-.038em;margin:6px 0 8px}
+.brandGlobalNewsHead p{font-size:13px;color:#6e6a63;line-height:1.7;max-width:700px;margin:0}
+.brandNewsCounter{font-size:12px;color:#72716a;font-weight:700;margin:18px 0 8px}
+.brandGlobalNewsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 30px;margin-top:12px}
+.brandNewsItem{padding:21px 0 19px;border-top:1px solid var(--line);min-width:0}
+.brandNewsMeta{display:flex;flex-wrap:wrap;gap:7px 15px;font-size:11px;color:#817a71}
+.brandNewsItem h3{font-size:17px;font-weight:740;line-height:1.42;letter-spacing:-.018em;margin:11px 0}
+.brandNewsItem p{color:#69635c;font-size:12px;line-height:1.7;margin:7px 0 15px}
+.brandNewsActions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;flex-wrap:wrap}
+.brandNewsActions>a{font-size:12px;font-weight:750;color:#3c6047;text-decoration:underline;text-underline-offset:3px}
+.brandNewsActions .worldReadAction{font-size:11px;padding:8px 12px}
+.companyOpenRoles{padding:36px 0}
+.companyOpenRolesHead h2{font-size:26px;letter-spacing:-.036em;margin:7px 0}
+.companyOpenRolesHead p{font-size:12px;max-width:760px;line-height:1.6;color:#75716b;margin:8px 0 20px}
+.companyOpenRolesList{border-top:1px solid var(--line)}
+.brandJobItem{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:19px 0;border-bottom:1px solid var(--line)}
+.brandJobContent{min-width:0}
+.brandJobItem h3{font-size:16px;line-height:1.4;letter-spacing:-.01em;margin:7px 0 5px}
+.brandJobItem p{font-size:12px;color:#78736e;margin:0;line-height:1.65}
+.brandJobActions{display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0}
+.brandJobActions .btn{font-size:12px;min-height:37px}
+.letterToolbar{align-items:center}
+.aiWriteButton{background:#294d38!important;color:#fff!important;border-color:#294d38!important;font-weight:740!important}
+.aiWriteButton:hover:not(:disabled){background:#3b664a!important}
+.aiWriteButton:disabled{background:#dedfd9!important;border-color:#dedfd9!important;color:#656961!important;cursor:not-allowed}
+@media(max-width:880px){
+ .brandGlobalNewsHead{flex-direction:column;gap:12px}
+ .brandGlobalNewsList{grid-template-columns:1fr}
+ .vacancyEvidenceGrid{grid-template-columns:1fr;gap:14px}
+ .vacancyEvidenceColumn+.vacancyEvidenceColumn{border-left:0;border-top:1px solid var(--line);padding:18px 0 0}
+ .brandJobItem{align-items:flex-start;flex-direction:column;gap:13px}
+ .brandJobActions{width:100%}
+}
