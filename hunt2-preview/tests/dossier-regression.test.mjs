@@ -41,7 +41,7 @@ test("Job dossier is a navigable product workspace, not a wall of personality ra
  assert.match(jobWorkspace,/role="tablist"/);
  assert.match(jobWorkspace,/hwAsideCard/);
  assert.match(jobWorkspace,/id="dossierCv"/);
- assert.match(jobWorkspace,/Non sono aggiunti compiti ipotizzati da HUNT/);
+ assert.match(jobWorkspace,/Attività riportate nell’annuncio della posizione/);
  assert.match(folder,/dossierCvChoices\.set\(jobId,next\)/);
  assert.match(folder,/jobWorkspaceTabs\.set\(jobId,tab\)/);
  assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
