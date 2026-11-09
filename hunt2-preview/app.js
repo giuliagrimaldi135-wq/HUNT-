@@ -957,7 +957,7 @@ async function renderOpportunityFolder(jobId){
      <div class="huntDecisionIntro"><div class="eyebrow">Perché candidarti</div><h2>Il valore di questa opportunità</h2></div>
      <div class="huntDecisionBody">
        <h3 class="huntDecisionVerdict">Come si collega al tuo profilo</h3>
-       <p class="huntWhyNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt))}</p>
+       <p class="huntWhyNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt,factLists.it.duties))}</p>
        
      </div>
    </section>
