@@ -10,7 +10,7 @@ let autoReading=false;
 const failedReadIds=new Set();
 const appliedDrafts=new Map();
 const input=(label,key,value)=>'<label class="cvField">'+esc(label)+'<input data-field="'+key+'" value="'+esc(value||"")+'"></label>';
-const area=(label,key,value)=>'<label class="cvField">'+esc(label)+'<textarea data-field="'+key+'" rows="3">'+esc((value||[]).map(x=>evidenceForDisplay(x,"it").text).join("\\n"))+'</textarea></label>';
+const area=(label,key,value)=>'<label class="cvField">'+esc(label)+'<textarea data-field="'+key+'" rows="3">'+esc((value||[]).map(x=>evidenceForDisplay(x,"it").text).join("\n"))+'</textarea></label>';
 function entry(type,p={}){
  const remove='<button class="cvTextButton" type="button" data-cv-action="remove">Rimuovi</button>';
  let inner="";
@@ -57,7 +57,7 @@ function editor(cv){
   '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Formazione</h3><button type="button" class="cvTextButton" data-cv-action="add-education">+ Aggiungi</button></div><div id="cvEducation">'+(ed.length?ed:[{}]).map(x=>entry("education",x)).join("")+'</div>'+
-  '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\\n"))+'</textarea></label></div></details>'+
+  '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div></details>'+
   '<div class="cvInsightFooter"><div><strong>'+(verified?"Profilo pronto per i dossier":"Ultimo controllo")+'</strong><p>'+(verified?"Le informazioni sono già state confermate.":"Conferma che le informazioni rilevate dal CV siano corrette. Non vengono inventate esperienze o titoli.")+'</p></div>'+
   '<button class="btn primary" type="submit">'+(verified?"Salva eventuali modifiche":"Conferma l'analisi")+'</button></div></form>'+
   (p.raw_text?'<details class="cvRawText"><summary>Testo originale acquisito</summary><textarea readonly rows="10">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
