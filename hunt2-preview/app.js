@@ -425,8 +425,9 @@ async function getOpportunityDetail(jobId){
  ]);
  if(jobError||!job)return null;
  const companyName=String(job.companies?.name||"").trim();
- const [{data:signals},{data:relatedMatches},{data:brandMedia}]=await Promise.all([
-   supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("published_at",{ascending:false,nullsFirst:false}).limit(8),
+ const searchBrand=companyName.replace(/\s+(Group|Fashion Group|Holdings|S\.p\.A\.|Ltd\.)$/i,"").trim();
+ const [{data:signals},{data:relatedMatches},{data:brandMedia},{data:companyJobs}]=await Promise.all([
+   supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("published_at",{ascending:false,nullsFirst:false}).limit(35),
    supabase.from("user_job_matches")
      .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,first_seen_at,state)")
      .eq("user_id",currentUser.id)
@@ -435,15 +436,18 @@ async function getOpportunityDetail(jobId){
      .gte("match_score",70)
      .order("priority_score",{ascending:false})
      .limit(5),
-   companyName.length>=3
-     ?supabase.from("world_news_items").select("id,title,summary,url,published_at,world_news_sources(publisher)").ilike("title","%"+companyName.replace(/[%_,]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(5)
-     :Promise.resolve({data:[]})
+   searchBrand.length>=3
+     ?supabase.from("world_news_items").select("id,title,summary,url,published_at,world_news_sources(publisher)").ilike("title","%"+searchBrand.replace(/[%_,]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(35)
+     :Promise.resolve({data:[]}),
+   supabase.from("jobs").select("id,canonical_title,city,role_family,published_at,first_seen_at,primary_apply_url,state,confidence_label")
+     .eq("company_id",job.company_id).in("state",["active_verified","active_likely"])
+     .neq("id",jobId).order("first_seen_at",{ascending:false}).limit(24)
  ]);
  const cutoff=new Date(Date.now()-20*86400000);
  const sameJobs=(relatedMatches||[])
    .map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
    .filter(x=>{const date=x?.published_at||x?.first_seen_at;return date&&new Date(date)>=cutoff});
- return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],sameJobs,dossier:dossier||null};
+ return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:companyJobs||[],sameJobs,dossier:dossier||null};
 }
 
 function ageLabel(value,firstSeen=null){
