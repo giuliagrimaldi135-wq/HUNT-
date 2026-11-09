@@ -111,8 +111,9 @@ export function checkRequirements(requirements,profile,options={}){
      const d=education.find(v=>/fashion|moda|luxury|lusso/.test(fold(v)));
      if(d)result("partial",d);
    }else {
-     const y=t.match(/(\d{1,2})\s*\+?\s*(?:years|anni)/),n=Number(p.relevant_years_experience);
-     if(y&&p.relevant_years_experience!==undefined&&Number.isFinite(n))result(n>=Number(y[1])&&confirmed?"found":"partial",n+" anni dichiarati; richiesti "+y[1]);
+     // Never turn an informal estimated "relevant years" profile field into
+     // evidence of dated work experience. Duration needs specific jobs and dates.
+     // A missing explicit duration remains undocumented.
    }
    // Explicitly say when the evidence belongs to ANOTHER uploaded CV.
    if(requiredTools.length&&type!=="found"){
