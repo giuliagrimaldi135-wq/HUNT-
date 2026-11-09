@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-77";
+import { checkRequirements, assessDossier, applicationInsight, newsTeaser } from "./dossier-intelligence.js?v=20261109-82";
 import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
@@ -805,16 +805,7 @@ async function renderOpportunityFolder(jobId){
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
  const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v11");
  const languageStale=Boolean(row.dossier?.generated_from?.language!==preferredLocale&&!row.dossier?.generated_from?.user_edited);
- const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale||languageStale);
- if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
-   pendingDossiers.add(jobId);
-   try{
-     await requestDossier(jobId,preferredLocale);
-     const {data}=await supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle();
-     row.dossier=data||null;
-   }catch(error){row.dossierError=error instanceof Error?error.message:String(error)}
-   finally{pendingDossiers.delete(jobId)}
- }
+ // The cover-letter feature is paused: viewing a job never regenerates or overwrites a letter.
  if(selectedJobId!==jobId)return;
  const job=row.job;
  const brand=job.companies?.name||"Brand";
@@ -947,20 +938,11 @@ async function renderOpportunityFolder(jobId){
 
  <div data-folder-panel="application">
    <section class="section huntDecision huntDecisionV3">
-     <div class="huntDecisionIntro"><div class="eyebrow">Lettura HUNT</div><h2>Cosa conta per questa candidatura</h2><p>Attività del ruolo, prove presenti nel CV e aspetti da chiarire.</p></div>
+     <div class="huntDecisionIntro"><div class="eyebrow">Perché candidarti</div><h2>Il valore di questa opportunità</h2></div>
      <div class="huntDecisionBody">
-       ${["it","en"].map(locale=>{
-         const analysis=locale==="it"?assessmentIt:assessmentEn;
-         return `<div data-decision-lang="${locale}" class="${dossierLang===locale?"":"hide"}">
-           <h3 class="huntDecisionVerdict">${esc(analysis.judgement)}</h3>
-           <div class="huntDecisionRows">
-             <div class="huntDecisionRow"><span>${locale==="it"?"Il lavoro":"The responsibilities"}</span><p>${esc(analysis.work)}</p></div>
-             <div class="huntDecisionRow"><span>${locale==="it"?"Il tuo punto di partenza":"Your evidence"}</span><p>${esc(analysis.why)}</p></div>
-             <div class="huntDecisionRow"><span>${locale==="it"?"Prima di candidarti":"Before applying"}</span><p>${esc(analysis.watch)}</p></div>
-           </div>
-           <p class="huntAnalysisMeta">${summaryOnly||analysis.missingCount?(locale==="it"?"Compatibilità da verificare":"Match needs verification"):(locale==="it"?"Compatibilità indicativa ":"Indicative match ")+(Number(row.match_score)||0)+"%"} · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
-         </div>`;
-       }).join("")}
+       <h3 class="huntDecisionVerdict">${esc(assessmentIt.judgement)}</h3>
+       <p class="huntWhyNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt))}</p>
+       <p class="huntAnalysisMeta">${summaryOnly||assessmentIt.missingCount?"Analisi preliminare · requisiti da verificare":"Confronto basato sui requisiti acquisiti"} · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
      </div>
    </section>
 
@@ -969,13 +951,7 @@ async function renderOpportunityFolder(jobId){
        <div><div class="eyebrow">Dossier personalizzato</div><h2>L'offerta confrontata con il tuo CV</h2></div>
        <span class="workspaceSub">Requisiti dell'azienda confrontati con il CV selezionato. Puoi consultare tutte le versioni, mantenendo distinte le informazioni confermate da quelle riconosciute automaticamente.</span>
      </div>
-     <div class="workspaceBar">
-       <label>CV da utilizzare <select id="dossierCv">${dossierCvOptions}</select></label>
-       <label>Lingua dell'analisi e della lettera <select id="dossierLang"><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option><option value="en" ${dossierLang==="en"?"selected":""}>English</option></select></label>
-       <button class="btn primary" id="generateDossier" ${verifiedCv(selectedCv)?"":"disabled title='Conferma il CV nel Profilo'"}>${verifiedCv(selectedCv)?row.dossier?"Aggiorna il dossier":"Prepara il dossier":"Conferma il CV per la lettera"}</button>
-     </div>
-     <div id="dossierMessage" class="workspaceMessage"></div>
-     ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
+     <div class="workspaceCvSummary"><span>Curriculum selezionato automaticamente da HUNT</span><strong>${esc(selectedCv?.name||"Nessun CV disponibile")}</strong><button type="button" class="cvProofAction" id="reviewRequirementsProfile">Controlla il mio profilo</button></div>
      <div class="jobSourceContext">
        ${haveVerifiedSections
          ?`<span class="jobSourcePass">${reviewedOfficial?"Verificato sulla fonte ufficiale":"Analisi AI delle prove testuali: controlla sempre l'annuncio originale"}</span>`
@@ -991,38 +967,17 @@ async function renderOpportunityFolder(jobId){
          <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
            ${factLists.it.duties.length?`<ul>${factLists.it.duties.slice(0,7).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Mansioni non disponibili nel testo acquisito.</p>"}
          </div>
-         <div data-fact-display="en" class="${dossierLang==="en"?"":"hide"}">
-           ${factLists.en.duties.length?`<ul>${factLists.en.duties.slice(0,7).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Job duties have not been captured from the employer's posting.</p>"}
-         </div>
        </div>
        <div class="vacancyEvidenceColumn">
          <div class="eyebrow">Requisiti e confronto con il CV</div>
          <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
            ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}${cvChecklistIt[i]?.suggested_cv_id?`<button type="button" class="cvAlternateSwitch" data-switch-cv="${esc(cvChecklistIt[i].suggested_cv_id)}">Confronta quel CV</button>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.label||"Non documentato nel CV acquisito")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
          </div>
-         <div data-fact-display="en" class="${dossierLang==="en"?"":"hide"}">
-           ${factLists.en.requirements.length?`<ul class="requirementsWithCv">${factLists.en.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistEn[i]?.proof?`<p>${esc(cvChecklistEn[i].proof)}</p>`:""}${cvChecklistEn[i]?.suggested_cv_id?`<button type="button" class="cvAlternateSwitch" data-switch-cv="${esc(cvChecklistEn[i].suggested_cv_id)}">Compare this CV</button>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistEn[i]?.type||"missing")}">${cvChecklistEn[i]?.type==="found"?"Documented in confirmed CV":cvChecklistEn[i]?.type==="detected"?"Detected · confirm CV":cvChecklistEn[i]?.type==="alternate"?"Found in another CV":cvChecklistEn[i]?.type==="partial"?"Partially documented":"Not documented in selected CV"}</small></li>`).join("")}</ul>`:"<p>The complete source requirements are not available.</p>"}
-         </div>
        </div>
      </div>
-     <button type="button" class="cvProofAction" id="reviewRequirementsProfile">Controlla e completa il CV nel Profilo</button>
+
      ${!row.dossier?`<p class="workspaceEmpty">Conferma almeno un CV nel Profilo per ottenere una selezione realmente personalizzata.</p>`:""}
    </section>
-
-   ${row.dossier?.ready_to_send_message&&row.dossier.recommended_cv_id===selectedCv?.id&&verifiedCv(selectedCv)?`<section class="section letterWorkbench letterManualOnly">
-     <div class="letterHeading"><div><div class="eyebrow">Candidatura · bozza personalizzabile</div><h2>La lettera per ${esc(brand)}</h2><p>Una bozza completa costruita sulle responsabilità dell'annuncio e sulle esperienze documentate. Puoi modificarla, salvarla o crearne una nuova senza perdere il controllo sul testo.</p></div>
-       <div class="letterToolbar"><button class="btn" id="regenerateCoverLetter">Crea nuova bozza</button><button class="btn" id="saveCoverLetter">Salva</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
-     </div>
-     <label class="dossierSubject">Oggetto: <span>${esc(row.dossier.ready_to_send_subject||"")}</span></label>
-     <textarea class="coverLetterEditor" id="coverLetterText" rows="15" spellcheck="true" aria-label="Modifica la cover letter">${esc(row.dossier.ready_to_send_message)}</textarea>
-     <div class="manualLetterGuide">
-       <strong>Controllo qualità HUNT · prima dell'invio</strong>
-       <p>${(dossierLang==="it"?cvChecklistIt:cvChecklistEn).filter(x=>x.type!=="found").length
-         ?(dossierLang==="it"?"Verifica prima di dichiarare il possesso di: ":"Do not claim these undocumented requirements: ")+
-            esc((dossierLang==="it"?cvChecklistIt:cvChecklistEn).filter(x=>x.type!=="found").slice(0,2).map(x=>x.text).join(" · "))
-         :(dossierLang==="it"?"Non risultano scostamenti evidenti tra i requisiti acquisiti e il profilo; controlla comunque l'annuncio completo.":"No obvious gap was detected in the captured requirements; check the full posting.")}</p>
-     </div>
-   </section>`:(row.dossier?`<section class="section letterUnavailable"><div class="eyebrow">Lettera · non pronta</div><h2>Una bozza generica non ti aiuterebbe.</h2><p>HUNT non ha ancora elementi sufficienti o ha rilevato requisiti incompatibili. Controlla le prove nel CV e i requisiti dell'annuncio prima di generare una lettera.</p></section>`:"")}
 
    <section class="section compactJobStatus">
      <div class="eyebrow">Stato annuncio</div>
@@ -1167,106 +1122,7 @@ async function renderOpportunityFolder(jobId){
  if(openBrand)openBrand.onclick=()=>document.querySelector('[data-folder-tab="company"]')?.click();
  const profileButton=document.getElementById("reviewRequirementsProfile");
  if(profileButton)profileButton.onclick=()=>renderProfile();
- const cvSelect=document.getElementById("dossierCv");
- const languageSelect=document.getElementById("dossierLang");
- const showDossierLanguage=lang=>{
-   document.querySelectorAll("[data-fact-display],[data-decision-lang]").forEach(el=>{
-     const target=el.dataset.factDisplay||el.dataset.decisionLang;
-     el.classList.toggle("hide",target!==lang);
-   });
- };
- const syncDossier=async(kind)=>{
-   const lang=languageSelect?.value||"it";
-   const cvId=cvSelect?.value||null;
-   if(kind==="cv"&&cvId)selectedDossierCvId=cvId;
-   const chosen=(row.cvs||[]).find(x=>x.id===cvId);
-   if(chosen&&!verifiedCv(chosen)){
-     if(kind==="cv"){
-       await renderOpportunityFolder(jobId);
-       const message=document.getElementById("dossierMessage");
-       if(message)message.textContent=readableCv(chosen)?"Questo CV è stato letto: verifica i dati proposti nel Profilo per creare una lettera.":"Questo CV deve ancora essere letto e interpretato nel Profilo.";
-     }else{
-       try{localStorage.setItem("hunt_dossier_language",lang)}catch{}
-       showDossierLanguage(lang);
-     }
-     return;
-   }
-   const notice=document.getElementById("dossierMessage");
-   const editor=document.getElementById("coverLetterText");
-   if(kind==="language"){
-     try{localStorage.setItem("hunt_dossier_language",lang)}catch{}
-     // The visible job analysis NEVER depends on an API request to change language.
-     showDossierLanguage(lang);
-   }
-   if(cvId&&!row.cvs?.some(cv=>cv.id===cvId&&readableCv(cv))){
-     if(notice)notice.textContent="Per usare questo CV, controlla prima le informazioni nel Profilo. La lingua dell'analisi è stata aggiornata comunque.";
-     if(cvSelect)cvSelect.value=dossierCvId;
-     return;
-   }
-   const changedText=Boolean(editor&&editor.value!==row.dossier?.ready_to_send_message);
-   if(changedText||row.dossier?.generated_from?.user_edited){
-     const ok=window.confirm("La lettera contiene modifiche personali. Vuoi rigenerarla nella lingua scelta? Le modifiche saranno sostituite. Premi Annulla per conservare la lettera: l'analisi resterà nella nuova lingua.");
-     if(!ok){
-       if(notice)notice.textContent="Analisi aggiornata. La tua lettera personalizzata è stata conservata senza modifiche.";
-       return;
-     }
-   }
-   if(notice)notice.textContent="Aggiorno la lettera usando questo CV e la lingua selezionata…";
-   if(cvSelect)cvSelect.disabled=true;
-   if(languageSelect)languageSelect.disabled=true;
-   try{
-     await requestDossier(jobId,lang,cvId,true);
-     await renderOpportunityFolder(jobId);
-   }catch(error){
-     if(notice)notice.textContent="Analisi in "+(lang==="it"?"italiano":"inglese")+" aggiornata; non è stato possibile rigenerare la lettera: "+(error?.message||String(error));
-     if(cvSelect)cvSelect.disabled=false;
-     if(languageSelect)languageSelect.disabled=false;
-   }
- };
- document.querySelectorAll("[data-switch-cv]").forEach(btn=>btn.onclick=()=>{
-   if(cvSelect){cvSelect.value=btn.dataset.switchCv;syncDossier("cv")}
- });
- if(cvSelect)cvSelect.onchange=()=>syncDossier("cv");
- if(languageSelect)languageSelect.onchange=()=>syncDossier("language");
- const generate=document.getElementById("generateDossier");
- if(generate)generate.onclick=async()=>{
-   const lang=document.getElementById("dossierLang").value;
-   const cvId=document.getElementById("dossierCv").value;
-   const info=document.getElementById("dossierMessage");
-   const editor=document.getElementById("coverLetterText");
-   if(editor&&editor.value!==row.dossier?.ready_to_send_message&&!window.confirm("Hai modifiche non salvate nella lettera. Rigenerando il dossier saranno sostituite. Continuare?"))return;
-   if(row.dossier?.generated_from?.user_edited&&!window.confirm("La lettera attuale è stata salvata manualmente. Rigenerarla sostituirà quella versione. Continuare?"))return;
-   generate.disabled=true;info.textContent="Preparazione del dossier…";
-   try{await requestDossier(jobId,lang,cvId,true);await renderOpportunityFolder(jobId)}
-   catch(e){info.textContent=e instanceof Error?e.message:String(e);info.className="dossierError";generate.disabled=false}
- };
 
- const regenerateDraft=document.getElementById("regenerateCoverLetter");
- if(regenerateDraft)regenerateDraft.onclick=()=>syncDossier("draft");
- const save=document.getElementById("saveCoverLetter");
- if(save)save.onclick=async()=>{
-   const editor=document.getElementById("coverLetterText");
-   const body=editor?.value||"";
-   if(body.trim().length<60){save.textContent="Controlla il testo";return}
-   save.disabled=true;
-   const editedMeta={...(row.dossier?.generated_from||{}),user_edited:true,user_modified_for_style:true,user_edited_at:new Date().toISOString()};
-   const {error}=await supabase.from("user_job_dossiers").update({
-     ready_to_send_message:body,generated_from:editedMeta,updated_at:new Date().toISOString()
-   }).eq("user_id",currentUser.id).eq("job_id",jobId);
-   save.disabled=false;
-   if(error){save.textContent="Errore nel salvataggio";console.error(error);return}
-   row.dossier.ready_to_send_message=body;
-   row.dossier.generated_from=editedMeta;
-   save.textContent="Salvata";
-   setTimeout(()=>{if(save.isConnected)save.textContent="Salva modifiche"},1600);
- };
- const copy=document.getElementById("copyCoverLetter");
- if(copy)copy.onclick=async()=>{
-   const body=document.getElementById("coverLetterText")?.value||"";
-   await navigator.clipboard.writeText(body);
-   copy.textContent="Copiata";
-   setTimeout(()=>copy.textContent="Copia",1200);
- };
 }
 
 function statusLabel(status){
