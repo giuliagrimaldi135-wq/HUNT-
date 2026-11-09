@@ -664,12 +664,15 @@ function jobTextEvidence(description){
  // Prefer the genuine job section over employer-history and marketing paragraphs.
  const marker=original.search(/\b(descrizione del ruolo|responsabilit[aà]|your responsibilities|key responsibilities|your mission|what you will do|about the role|the opportunity|job description|mansioni principali)\b/i);
  const relevant=marker>=0?original.slice(marker):original;
- const sentences=relevant.split(/\n+|(?<=[.!?])\s+(?=[A-ZÀ-Ü])/)
+ const separated=relevant
+   .replace(/(Good interpersonal and communication skills|Passion for fashion and luxury trends|Excellent Excel and PowerPoint proficiency|What benefits do we offer|Proficiency in English is required|Involvement in curricular university activities)/gi,"\n$1")
+   .replace(/(Key Accountabilities|What are the basics|What will you learn with us|Qualifications|Attività e responsabilità|Requisiti richiesti)/gi,"\n$1\n");
+ const sentences=separated.split(/\n+|(?<=[.!?])\s+(?=[A-ZÀ-Ü])/)
    .map(x=>x.replace(/\s+/g," ").trim())
    .filter(x=>x.length>=30&&x.length<=750&&
      !/^(about us|about the company|equal opportunity|who we are|privacy|cookie policy)/i.test(x));
  const isBrandHistory=x=>/(founded in|founded by|pioneer of|headquartered in|in 20\d\d.*(created|became|changed)|\bemployees\b|operat(?:es|ing) in \d+ countries|billion (?:euros|dollars)|azienda fondata nel|fatturato del gruppo)/i.test(x);
- const tasks=sentences.filter(x=>!isBrandHistory(x)&&/support|coordinate|responsibilit|manage|monitor|analys|plan|merchandis|buying|purchase|assort|stock|allocation|report|collection|product|vendit|acquist|gestione|pianific|analisi|assortimento|negozi|retail/i.test(x)).slice(0,3);
+ const tasks=sentences.filter(x=>!isBrandHistory(x)&&!/^(the opportunity to learn|what will you learn|what are the basics|qualifications|key accountabilities|what benefits)/i.test(x)&&/support|coordinate|responsibilit|manage|monitor|analys|plan|merchandis|buying|purchase|assort|stock|allocation|report|collection|product|vendit|acquist|gestione|pianific|analisi|assortimento|negozi|retail/i.test(x)).slice(0,3);
  const requirements=sentences.filter(x=>!isBrandHistory(x)&&/\b(required|requirement|must|minimum|at least|years? of experience|proficient|fluent|excel|degree|preferred|conoscenza|requisiti|esperienza|laurea|lingua|padronanza|necessari|essenziale)\b/i.test(x)).slice(0,3);
  const clip=x=>x.length>290?x.slice(0,287).trim()+"…":x;
  return {tasks:tasks.map(clip),requirements:requirements.map(clip),hasDetails:original.length>=150};
