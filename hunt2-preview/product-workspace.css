@@ -1,0 +1,215 @@
+/* HUNT Product Workspace v1 — app navigation, coherent panels, discrete action states. */
+.huntWorkspace,.cvHub{--hw-accent:#1f6b4f;--hw-ink:#202a25;--hw-muted:#747b76;--hw-border:#e3e7e3;--hw-paper:#fff;--hw-canvas:#f7f8f6}
+.huntWorkspace [hidden],.cvHub [hidden]{display:none!important}
+.huntWorkspace{margin:28px 0 25px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.hwLead{padding:29px 0 29px;max-width:900px}
+.hwEyebrow,.cvWEyebrow{font-size:10px;letter-spacing:.135em;color:#748479;font-weight:800;text-transform:uppercase}
+.hwLead h2{font-size:clamp(27px,2.85vw,36px);line-height:1.17;letter-spacing:-.049em;font-weight:760;margin:13px 0 14px;color:#1b211e}
+.hwLead>p{font-size:14px;line-height:1.85;color:#4d5650;max-width:830px;margin:0}
+.hwLayout{display:grid;grid-template-columns:minmax(0,1fr) 258px;gap:18px;align-items:start}
+.hwMain{background:var(--hw-paper);border:1px solid var(--hw-border);border-radius:12px;overflow:hidden;min-width:0;box-shadow:0 7px 24px rgba(19,35,26,.018)}
+.hwTabs,.cvWTabs{display:flex;align-items:center;gap:3px;border-bottom:1px solid var(--hw-border);background:#fff;padding:8px 20px 0}
+.hwTab,.cvWTab{font:inherit;border:0;border-bottom:2px solid transparent;background:transparent;color:#758079;font-size:12px;font-weight:670;cursor:pointer;padding:14px 18px 13px;white-space:nowrap}
+.hwTab:hover,.cvWTab:hover{color:#1d3b2b;background:#f7f9f7}
+.hwTab.is-active,.cvWTab.is-current{border-bottom-color:#236c4f;color:#183e2b;font-weight:800}
+.hwContent{min-height:330px}
+.hwPane{padding:27px 27px 33px}
+.hwPanelHeading{display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.hwPanelHeading h3{font-size:19px;font-weight:760;letter-spacing:-.035em;color:#1f2822;margin:0}
+.hwPanelHeading>span{font-size:11px;color:#929c95}
+.hwPanelSubhead{font-size:12px;color:#768078;line-height:1.7;margin:-8px 0 23px}
+.hwSummaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hwSummaryCard{display:flex;flex-direction:column;min-width:0;background:#fafbf9;border:1px solid #e8ebe6;border-radius:9px;padding:19px 18px;min-height:274px}
+.hwCardHead{display:flex;gap:11px;align-items:center;border-bottom:1px solid #e9ebe6;padding-bottom:14px;margin-bottom:10px}
+.hwCardIcon{width:29px;height:29px;flex-shrink:0;border-radius:8px;background:#edf2ec;color:#37674b;display:grid;place-items:center;font-size:10px;font-weight:800}
+.hwCardHead h4{font-size:13px;font-weight:800;letter-spacing:-.012em;margin:0;color:#28372c}
+.hwTaskList{padding:0;margin:0;list-style:none;counter-reset:none}
+.hwTaskList li{display:grid;grid-template-columns:25px minmax(0,1fr);gap:9px;padding:13px 0;margin:0;border-bottom:1px solid #eef0ed}
+.hwTaskList li:last-child{border-bottom:0}
+.hwTaskList li>span{font-size:10px;line-height:1.6;color:#95a197;font-weight:800;padding-top:1px}
+.hwTaskList li p{font-size:12px;line-height:1.66;color:#424a43;margin:0}
+.hwCardLink{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;border:0;border-top:1px solid #e9ebe6;background:transparent;text-align:left;padding:14px 0 0;font:inherit;font-weight:780;color:#24684c;font-size:11px;cursor:pointer}
+.hwCardLink span{font-size:16px}
+.hwCardLink:hover{text-decoration:underline;text-underline-offset:3px}
+.hwRequirementList{display:flex;flex-direction:column;gap:0}
+.hwRequirement{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:start;gap:10px;padding:15px 0;border-bottom:1px solid #edf0ec}
+.hwRequirement:last-child{border-bottom:0}
+.hwRequirementIcon{height:18px;width:18px;border-radius:6px;background:#f0f2ee;color:#78847b;font-size:12px;font-weight:800;display:grid;place-items:center;line-height:1}
+.hwRequirementIcon-found,.hwRequirementIcon-detected{color:#206746;background:#eaf4ed}
+.hwRequirementCopy strong{font-size:12px;line-height:1.5;display:block;color:#303a32;font-weight:750}
+.hwRequirementCopy p{font-size:11px;color:#7c857d;line-height:1.64;margin:7px 0 0}
+.hwRequirementStatus{font-size:10px;color:#777f75;max-width:95px;line-height:1.45;text-align:right;padding-top:2px}
+.hwRequirement.is-compact{grid-template-columns:18px minmax(0,1fr)}
+.hwRequirement.is-compact .hwRequirementStatus{grid-column:2;text-align:left;padding-top:0;color:#8c978d}
+.hwRequirement.is-compact .hwRequirementCopy strong{font-size:11px;line-height:1.5}
+.hwRequirementList.is-full .hwRequirement{grid-template-columns:24px minmax(0,1fr) 115px;padding:18px 0}
+.hwEmpty{font-size:12px;line-height:1.65;color:#8c968e;margin:5px 0}
+.hwSource{display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;padding:15px 27px;border-top:1px solid var(--hw-border);font-size:11px;color:#909a92;background:#fdfefd}
+.hwSource a{text-decoration:none;font-size:11px;font-weight:750;color:#3f7054}
+.hwSource a:hover{text-decoration:underline}
+.hwAside{position:sticky;top:17px;display:flex;flex-direction:column;gap:12px}
+.hwAsideCard,.hwNextSteps{background:#fff;border:1px solid var(--hw-border);border-radius:12px;padding:21px 19px;box-shadow:0 6px 24px rgba(19,35,26,.012)}
+.hwAsideCard h3,.hwNextSteps h3{font-size:15px;letter-spacing:-.025em;color:#233227;margin:10px 0 8px}
+.hwAsideCard p{font-size:11.5px;line-height:1.62;color:#7b867e;margin:0 0 19px}
+.hwCvLabel{display:block;font-weight:750;font-size:10px;color:#56685a;margin:0 0 7px}
+.hwAsideCard select{font:inherit;font-size:12px;font-weight:690;line-height:1.4;color:#26362d;background:#fff;width:100%;border:1px solid #d4dfd5;border-radius:7px;padding:11px 10px;min-width:0}
+.hwAsideCard select:focus{outline:2px solid #8bbba2;outline-offset:1px}
+.hwCvState{display:flex;gap:7px;align-items:center;margin:12px 0 17px;font-size:10px;color:#849187}
+.hwCvStateDot{width:6px;height:6px;border-radius:50%;background:#74a783;flex-shrink:0}
+.hwAsideTextAction{font:inherit;font-size:11px;font-weight:760;cursor:pointer;text-align:left;border:0;border-top:1px solid #e9ece8;padding:13px 0 0;width:100%;display:flex;justify-content:space-between;color:#2b6c4e;background:transparent}
+.hwAsideTextAction:hover{color:#18482f}
+.hwNextSteps h3{margin:0 0 12px}
+.hwNextSteps>div{display:grid;grid-template-columns:19px minmax(0,1fr);gap:8px;align-items:start;padding:8px 0}
+.hwNextSteps>div span{width:18px;height:18px;border-radius:50%;background:#eef2ed;display:grid;place-items:center;color:#6f8874;font-size:10px;font-weight:760}
+.hwNextSteps>div p{font-size:11px;color:#636e65;line-height:1.5;margin:0}
+.hwOpenSource{display:flex;justify-content:space-between;background:#1c5f46;border-radius:7px;padding:12px 13px;color:#fff;font-size:11px;font-weight:750;text-decoration:none;margin-top:13px;align-items:center}
+.hwOpenSource:hover{background:#104a32}
+.hwUpcoming{display:grid;gap:5px;padding:12px 7px 2px}
+.hwUpcoming span{font-size:9px;letter-spacing:.13em;color:#969f96;font-weight:800}
+.hwUpcoming strong{font-size:11px;color:#58635a}
+.hwUpcoming small{font-size:10px;color:#929b94;line-height:1.5}
+
+/* Resumes: familiar file library on the left and a real tabbed workspace on the right. */
+.cvHub{display:grid;grid-template-columns:244px minmax(0,1fr);gap:18px;align-items:start;margin:23px 0 40px}
+.cvWLibrary{background:#fff;border:1px solid var(--hw-border);border-radius:12px;padding:0;overflow:visible}
+.cvWLibraryHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #e7ebe6;padding:20px 17px 15px}
+.cvWLibraryHeader span{font-size:9px;color:#849088;letter-spacing:.12em;font-weight:800}
+.cvWLibraryHeader h2{font-size:18px;letter-spacing:-.04em;color:#243129;margin:5px 0 0}
+.cvWLibraryHeader small{font-size:10px;white-space:nowrap;color:#96a198}
+.cvWLibraryList{padding:9px}
+.cvWFile{display:grid;grid-template-columns:minmax(0,1fr) 32px;align-items:center;border:1px solid transparent;border-radius:9px;position:relative}
+.cvWFile:hover{background:#f8faf7}
+.cvWFile.is-selected{border-color:#dde9de;background:#eef5ee}
+.cvWFileSelect{display:flex;align-items:center;gap:9px;min-width:0;width:100%;padding:12px 7px;border:0;background:transparent;cursor:pointer;text-align:left;font:inherit}
+.cvWFileIcon{width:29px;height:34px;border-radius:7px;flex-shrink:0;background:#eff2ef;border:1px solid #e3ebe4;color:#6a8876;display:grid;place-items:center}
+.cvWFile.is-selected .cvWFileIcon{color:#246748;background:#ddece0;border-color:#c7dccb}
+.cvWFileIcon svg{width:16px;height:19px}
+.cvWFileText{display:flex;flex-direction:column;gap:4px;min-width:0}
+.cvWFileText strong{font-size:12px;color:#2a352d;font-weight:750;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
+.cvWFileText small{font-size:10px;color:#829087;line-height:1.32}
+.cvWFileMenu{position:relative;align-self:center}
+.cvWFileMenu summary{list-style:none;cursor:pointer;font-size:17px;font-weight:740;color:#839187;text-align:center;width:30px;line-height:29px;border-radius:6px}
+.cvWFileMenu summary::-webkit-details-marker{display:none}
+.cvWFileMenu summary:hover,.cvWFileMenu[open] summary{background:#e9efe9;color:#3b6348}
+.cvWFileMenuItems{position:absolute;right:0;top:33px;min-width:190px;background:#fff;border:1px solid #e1e7e1;border-radius:9px;box-shadow:0 13px 32px rgba(21,40,26,.13);z-index:5;padding:5px;display:flex;flex-direction:column}
+.cvWFileMenuItems button{font:inherit;text-align:left;font-size:11px;line-height:1.4;border:0;border-radius:6px;background:transparent;color:#36433b;padding:10px;cursor:pointer}
+.cvWFileMenuItems button:hover{background:#f2f5f1}
+.cvWFileMenuItems button.is-danger{color:#ae564f}
+.cvWFileMenuItems button.is-danger:hover{background:#fff2f0}
+.cvWUpload{border-top:1px solid var(--hw-border);margin:0 9px}
+.cvWUpload>summary{list-style:none;padding:15px 10px;cursor:pointer;color:#276e4e;font-size:11px;font-weight:780;display:flex;align-items:center;gap:8px}
+.cvWUpload>summary::-webkit-details-marker{display:none}
+.cvWUpload>summary span{font-size:19px;font-weight:500;line-height:1}
+.cvWUploadFields{padding:0 8px 15px;display:grid;gap:10px}
+.cvWUploadFields label{font-size:10px;color:#737f74;font-weight:700;display:grid;gap:5px}
+.cvWUploadFields input{width:100%;min-width:0;padding:9px;border-radius:6px;border:1px solid #dbe3dc;font-size:11px;color:#313b33;background:#fff}
+.cvWUploadFields .btn{font-size:11px;padding:10px 12px}
+.cvWLibraryFoot{padding:11px 18px 17px;margin:0;color:#99a39c;font-size:10px;line-height:1.6;border-top:1px solid #eef0ed}
+.cvHubMain{min-width:0}
+.cvWWorkspace{background:#fff;border:1px solid var(--hw-border);border-radius:12px;overflow:hidden;box-shadow:0 7px 24px rgba(19,35,26,.016)}
+.cvWWorkspaceHead{display:flex;justify-content:space-between;align-items:start;gap:20px;padding:26px 27px 21px}
+.cvWTitle{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:9px 0}
+.cvWTitle h2{font-size:clamp(21px,2.2vw,26px);letter-spacing:-.045em;color:#25332a;font-weight:790;margin:0}
+.cvWTitle>span{border-radius:5px;padding:5px 8px;background:#eef4ed;color:#487451;font-size:9px;letter-spacing:.03em;font-weight:800}
+.cvWWorkspaceHead p{font-size:11.5px;line-height:1.65;color:#87918a;margin:7px 0 0}
+.cvWEditButton{border:1px solid #d5e3d6;background:#f8fbf8;color:#2e6547;border-radius:7px;padding:10px 12px;font:inherit;font-size:11px;font-weight:730;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.cvWEditButton:hover,.cvWEditButton.is-active{background:#eaf5ea}
+.cvWTabs{padding:0 17px;gap:0}
+.cvWTab{padding:14px 12px;font-size:11px}
+.cvWPane{padding:25px 27px 30px;min-height:320px}
+.cvWPanelHeader{margin-bottom:19px}
+.cvWPanelHeader h3{font-size:19px;font-weight:770;letter-spacing:-.035em;color:#25332a;margin:0 0 7px}
+.cvWPanelHeader p{font-size:11.5px;color:#8b968e;line-height:1.6;margin:0;max-width:580px}
+.cvWOverviewGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cvWOverviewCard{min-width:0;border:1px solid #e8ece7;border-radius:9px;background:#fdfefd;padding:17px}
+.cvWCardTitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 13px;padding-bottom:11px;border-bottom:1px solid #edf0ec}
+.cvWCardTitle h4{font-size:12px;font-weight:800;color:#3b5543;margin:0}
+.cvWCardTitle button{border:0;background:transparent;font:inherit;font-size:10px;font-weight:760;color:#397252;cursor:pointer;white-space:nowrap}
+.cvWOverviewCard>strong{font-size:12px;color:#2b3730}
+.cvWOverviewCard>p{font-size:11px;color:#8a958c;margin:5px 0 12px}
+.cvWEvidence{list-style:none;margin:0;padding:0}
+.cvWEvidence li{font-size:11px;line-height:1.62;color:#5d6960;padding:6px 0;border-bottom:1px solid #eff2ee}
+.cvWEvidence li:last-child{border:0}
+.cvWEvidence li::before{content:"•";display:inline-block;margin-right:7px;color:#80a68b}
+.cvWEvidence li small{display:block;color:#9da89e;font-size:9px}
+.cvWProjectPreview{padding:8px 0;border-bottom:1px solid #edf0ed}
+.cvWProjectPreview:last-child{border:0}
+.cvWProjectPreview strong{font-size:11.5px;color:#344538}
+.cvWProjectPreview p{font-size:11px;line-height:1.5;color:#79847c;margin:4px 0 0}
+.cvWChips{display:flex;flex-wrap:wrap;gap:7px}
+.cvWChip{border-radius:6px;border:1px solid #dde6dd;background:#f4f8f3;color:#3c5944;font-size:10.5px;line-height:1.3;padding:6px 9px}
+.cvWRecords{display:grid;gap:12px}
+.cvWRecord{background:#fcfdfc;border:1px solid #e9ede8;border-radius:9px;padding:17px 18px}
+.cvWRecordHeading{display:flex;justify-content:space-between;align-items:start;gap:16px;padding-bottom:10px;border-bottom:1px solid #ebefea;margin-bottom:10px}
+.cvWRecordHeading h4{font-size:13px;color:#304335;font-weight:760;margin:0 0 5px}
+.cvWRecordHeading p{font-size:11px;color:#8a968d;line-height:1.6;margin:0}
+.cvWRecordHeading>span{font-size:10px;color:#98a39a;white-space:nowrap}
+.cvWSkillSections{display:grid;gap:19px}
+.cvWSkillSections>div{border-bottom:1px solid #e9ece8;padding-bottom:17px}
+.cvWSkillSections>div:last-child{border:0}
+.cvWSkillSections h4{font-size:11px;color:#7d8e80;margin:0 0 12px;font-weight:780}
+.cvWAreaRelated{display:grid;gap:9px}
+.cvWAreaRow{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #e7ece6;border-radius:8px;background:#fdfefd;padding:13px}
+.cvWAreaRow strong{font-size:12px;color:#314738}
+.cvWAreaRow span{font-size:10px;color:#98a39a;text-align:right}
+.cvWAllAreas{border-top:1px solid var(--hw-border);padding-top:17px;margin-top:19px}
+.cvWAllAreas summary{font-size:11px;color:#3e7353;font-weight:780;cursor:pointer}
+.cvWAllAreasGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:15px}
+.cvWAllAreasGrid span{font-size:10.5px;color:#929e94;padding:9px;border:1px solid #e7ece8;border-radius:6px}
+.cvWAllAreasGrid span.is-related{color:#38694a;background:#f1f7ef;border-color:#d7e5d6}
+.cvWEditFields .cvWEditGroup{border:1px solid #e6ece5;background:#fbfcfb;border-radius:9px;margin-bottom:12px;padding:16px}
+.cvWEditFields .cvGroupHeading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.cvWEditFields .cvGroupHeading h4{font-size:12px;color:#344639;margin:0}
+.cvWEditFields .cvGroupHeading button{font-size:11px;font-weight:760;color:#316849}
+.cvWEditFields .cvEvidenceCard{background:#fff;border:1px solid #e6ece6;border-radius:8px;padding:13px;margin:10px 0}
+.cvWEditFields .cvFieldsTwo{gap:10px}
+.cvWEditFields .cvField{font-size:11px;color:#5f7564}
+.cvWEditFields .cvField input,.cvWEditFields .cvField textarea{width:100%;font:inherit;font-size:12px;line-height:1.5;border:1px solid #d6e1d7;border-radius:6px;padding:10px;color:#29372b;background:#fff}
+.cvWEditFields .cvRawText{font-size:11px;margin-top:14px}
+.cvWConfirm{background:#f7faf6;border-top:1px solid #e1ece0;padding:18px 25px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.cvWConfirm strong{font-size:12px;color:#36553b}
+.cvWConfirm p{font-size:10.5px;line-height:1.55;color:#859488;margin:5px 0 0}
+.cvWConfirm .btn{font-size:11px;padding:11px 13px;border-radius:7px;white-space:nowrap}
+.cvWBlank{background:#fff;border:1px dashed #dce4da;border-radius:12px;padding:40px;color:#58715d}
+.cvWBlank h2{font-size:19px;margin:0 0 8px}
+.cvWBlank p{font-size:12px;color:#8d998f}
+.cvWAdvanced{font-size:11px;color:#7b877e;margin:14px 5px}
+.cvWAdvanced summary{font-weight:720;cursor:pointer}
+.cvWAdvanced label{display:block;margin-top:12px}
+.cvWAdvanced select{margin-left:10px}
+.cvHub .cvReaderStatus:not(:empty){border:1px solid #d8e3d7;background:#f3f8f2;color:#47644a;border-radius:8px;padding:13px;font-size:11px;line-height:1.5;margin-bottom:12px}
+.cvHub .cvReaderStatus.cvReaderError{border-color:#f1d9d4;color:#98564b;background:#fff6f4}
+@media(max-width:1100px){
+ .hwLayout{grid-template-columns:minmax(0,1fr) 230px}
+ .hwSummaryGrid{grid-template-columns:1fr}
+ .hwSummaryCard{min-height:0}
+ .cvHub{grid-template-columns:215px minmax(0,1fr)}
+}
+@media(max-width:810px){
+ .hwLayout{grid-template-columns:1fr}
+ .hwAside{position:static;display:grid;grid-template-columns:1fr 1fr}
+ .hwUpcoming{grid-column:1/-1}
+ .cvHub{grid-template-columns:1fr}
+ .cvWLibraryList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .cvWLibraryFoot{display:none}
+ .cvWTabs{overflow-x:auto}
+ .cvWTab{white-space:nowrap}
+}
+@media(max-width:540px){
+ .hwPane{padding:20px 16px}
+ .hwTabs{padding:5px 12px 0}
+ .hwTab{font-size:11px;padding:13px}
+ .hwAside{display:flex;flex-direction:column}
+ .hwRequirementList.is-full .hwRequirement{grid-template-columns:20px minmax(0,1fr);gap:8px}
+ .hwRequirementStatus{grid-column:2;text-align:left}
+ .hwSource{padding:13px 16px}
+ .cvWLibraryList{display:block}
+ .cvWWorkspaceHead{padding:19px 16px;flex-direction:column;gap:12px}
+ .cvWTabs{padding:0 8px}
+ .cvWTab{padding:12px 9px}
+ .cvWPane{padding:20px 14px}
+ .cvWOverviewGrid{grid-template-columns:1fr}
+ .cvWConfirm{align-items:stretch;flex-direction:column;padding:17px}
+ .cvWConfirm .btn{width:100%}
+ .cvWAllAreasGrid{grid-template-columns:1fr}
+}
