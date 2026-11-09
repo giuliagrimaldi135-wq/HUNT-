@@ -388,7 +388,7 @@ async function getOpportunityFeed(limit=100){
  if(!ids.length)return {data:[],error:null};
  const {data:jobs,error:jobError}=await supabase
    .from("jobs")
-   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
+   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,last_verified_at,primary_apply_url,state,description,metadata,companies(name)")
    .in("id",ids);
  if(jobError)return {data:[],error:jobError};
 
@@ -406,7 +406,10 @@ async function getOpportunityFeed(limit=100){
    const city=normalize(job.city);
    return cities.some(x=>{const area=normalize(x);return area.length>2&&(city.includes(area)||area.includes(city))});
  };
- const fresh=(jobs||[]).filter(job=>{const date=job.published_at||job.first_seen_at;return date&&new Date(date)>=cutoff&&cityAllowed(job)&&["active_verified","active_likely"].includes(job.state)});
+ const fresh=(jobs||[]).filter(job=>{
+   const live=[job.published_at,job.first_seen_at,job.last_verified_at].filter(Boolean).some(date=>new Date(date)>=cutoff);
+   return live&&cityAllowed(job)&&["active_verified","active_likely"].includes(job.state);
+ });
  const byId=new Map(fresh.map(job=>[job.id,job]));
  const applicationByJob=new Map((applications||[]).map(x=>[x.job_id,x.status]));
  return {data:matches.map(match=>({...match,job:byId.get(match.job_id),applicationStatus:applicationByJob.get(match.job_id)||null}))
@@ -415,7 +418,7 @@ async function getOpportunityFeed(limit=100){
 
 async function getOpportunityDetail(jobId){
  const [{data:job,error:jobError},{data:match},{data:application},{data:personalization},{data:cvs},{data:reposts},{data:dossier}]=await Promise.all([
-   supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)").eq("id",jobId).maybeSingle(),
+   supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,last_verified_at,primary_apply_url,state,description,metadata,companies(name)").eq("id",jobId).maybeSingle(),
    supabase.from("user_job_matches").select("match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("applications").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("user_personalization").select("interest_areas,next_experience_drivers,company_preference,avoid_role_traits").eq("user_id",currentUser.id).maybeSingle(),
@@ -472,6 +475,7 @@ function sourceLabel(job){
  if(source==="ats_lever")return "Fonte diretta · Lever";
  if(source==="ats_greenhouse")return "Fonte diretta · Greenhouse";
  if(source==="ats_ashby")return "Fonte diretta · Ashby";
+ if(source==="ats_smartrecruiters")return "Fonte diretta · SmartRecruiters";
  return "Fonte · Annuncio aziendale";
 }
 function opportunityCard(row){
