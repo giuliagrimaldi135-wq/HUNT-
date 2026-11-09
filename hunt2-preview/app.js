@@ -943,11 +943,12 @@ async function renderOpportunityFolder(jobId){
    try{await downloadPrivateCv(document.getElementById("dossierCv").value)}
    catch(e){document.getElementById("dossierMessage").textContent=e.message||String(e)}
  };
+ let lastAiProposal=null;
  const save=document.getElementById("saveCoverLetter");
  if(save)save.onclick=async()=>{
    save.disabled=true;
    const body=document.getElementById("coverLetterText")?.value||"";
-   const editedMeta={...(row.dossier?.generated_from||{}),user_edited:true,user_edited_at:new Date().toISOString()};
+   const editedMeta={...(row.dossier?.generated_from||{}),user_edited:true,user_modified_for_style:lastAiProposal===null||body!==lastAiProposal,ai_generated_last_saved:lastAiProposal!==null,user_edited_at:new Date().toISOString()};
    const {error}=await supabase.from("user_job_dossiers").update({ready_to_send_message:body,generated_from:editedMeta,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("job_id",jobId);
    save.disabled=false;save.textContent=error?"Errore nel salvataggio":"Salvata";
    setTimeout(()=>save.textContent="Salva modifiche",1800);
@@ -957,44 +958,61 @@ async function renderOpportunityFolder(jobId){
    if(instruction){instruction.value=x.dataset.aiFeedback||"";instruction.focus()}
  });
  const improve=document.getElementById("polishLetter");
+ const writeWithAI=document.getElementById("writeLetterAI");
  const undo=document.getElementById("undoLetter");
  const aiStatus=document.getElementById("letterAiStatus");
  let earlierLetter="";
- // Only advertise a working AI editor when a provider key is actually configured.
- if(improve){
-   supabase.functions.invoke("hunt-cv-interpret",{body:{action:"status"}}).then(({data,error})=>{
-     if(!error&&data?.configured===false){
-       improve.disabled=true;improve.textContent="AI da attivare";
-       if(aiStatus)aiStatus.textContent="L'editor AI è predisposto ma non ancora attivo: serve il collegamento sicuro al provider AI. Puoi comunque modificare, salvare e copiare la lettera.";
+ let aiEnabled=false;
+ if(improve||writeWithAI){
+   supabase.functions.invoke("hunt-ai-status",{body:{}}).then(({data,error})=>{
+     if(error||!data?.enabled){
+       aiEnabled=false;
+       if(improve){improve.disabled=true;improve.textContent="AI da attivare"}
+       if(writeWithAI){writeWithAI.disabled=true;writeWithAI.textContent="✦ AI da attivare"}
+       if(aiStatus)aiStatus.textContent="L'AI non è attiva in questa versione: manca la chiave privata del provider, che va configurata sul server. Puoi comunque modificare e salvare la bozza.";
+     }else{
+       aiEnabled=true;
+       if(aiStatus)aiStatus.textContent="AI attiva: puoi far scrivere una lettera originale o rivedere un testo già modificato. Nessuna modifica viene salvata senza il tuo comando.";
      }
-   }).catch(()=>{});
+   }).catch(()=>{if(aiStatus)aiStatus.textContent="Impossibile verificare il servizio AI. La scrittura manuale rimane disponibile."});
  }
- if(improve)improve.onclick=async()=>{
+ const runWriter=async(mode)=>{
    const editor=document.getElementById("coverLetterText");
-   if(!editor||!instruction)return;
-   const requested=instruction.value.trim();
-   if(requested.length<3){aiStatus.textContent="Scrivi o scegli una modifica da chiedere all'AI.";return}
-   const original=editor.value;
-   const chosenCv=document.getElementById("dossierCv")?.value||row.dossier?.recommended_cv_id;
-   improve.disabled=true;improve.textContent="Rielaborazione…";aiStatus.textContent="Analisi della richiesta e del CV verificato…";
+   if(!editor||!aiEnabled)return;
+   const requested=instruction?.value?.trim()||"";
+   if(mode==="revise"&&requested.length<3){aiStatus.textContent="Scegli un suggerimento o scrivi cosa cambiare nella lettera.";return}
+   if(mode==="generate"&&editor.value!==row.dossier?.ready_to_send_message&&!window.confirm("La nuova lettera sostituirà temporaneamente le modifiche presenti nell'editor. Puoi annullare il cambiamento, ma le modifiche non salvate potrebbero andare perse. Continuare?"))return;
+   const trigger=mode==="generate"?writeWithAI:improve;
+   const before=editor.value;
+   trigger.disabled=true;
+   const label=trigger.textContent;
+   trigger.textContent=mode==="generate"?"Sto scrivendo…":"Sto migliorando…";
+   aiStatus.textContent=mode==="generate"?"HUNT sta collegando le mansioni alla tua esperienza documentata e alle tue preferenze…":"HUNT sta rielaborando la lettera seguendo il tuo feedback…";
    try{
-     const {data,error}=await supabase.functions.invoke("hunt-letter-polish",{body:{job_id:jobId,cv_id:chosenCv,language:document.getElementById("dossierLang")?.value||"en",draft:original,instructions:requested}});
+     const cvId=document.getElementById("dossierCv")?.value||row.dossier?.recommended_cv_id;
+     const {data,error}=await supabase.functions.invoke("hunt-letter-polish",{
+       body:{mode,job_id:jobId,cv_id:cvId,language:document.getElementById("dossierLang")?.value||"en",draft:before,instructions:requested}
+     });
      if(error){
-       let msg=error.message||"Il servizio AI non è disponibile.";
-       try{const details=await error.context?.json?.();if(details?.error)msg=details.error}catch{}
-       throw new Error(msg);
+       let message=error.message||"Il modello non ha completato la richiesta.";
+       try{const details=await error.context?.json?.();if(details?.error)message=details.error}catch{}
+       throw new Error(message);
      }
-     if(!data?.ok||typeof data.text!=="string")throw new Error(data?.error||"La proposta AI non è utilizzabile.");
-     earlierLetter=original;
+     if(!data?.ok||typeof data.text!=="string")throw new Error(data?.error||"La proposta non è utilizzabile.");
+     earlierLetter=before;
      editor.value=data.text;
+     lastAiProposal=data.text;
      if(undo)undo.hidden=false;
-     aiStatus.textContent="Nuova proposta pronta. Rileggila: puoi annullarla o premere Salva per conservarla.";
-   }catch(e){aiStatus.textContent=e.message||String(e)}
-   finally{improve.disabled=false;improve.textContent="Migliora"}
+     aiStatus.textContent="Nuova lettera pronta. Leggila: per conservarla devi premere Salva. Puoi modificarla o ripristinare la versione precedente.";
+     editor.focus();
+   }catch(e){aiStatus.textContent=e?.message||String(e)}
+   finally{trigger.disabled=!aiEnabled;trigger.textContent=label}
  };
+ if(improve)improve.onclick=()=>runWriter("revise");
+ if(writeWithAI)writeWithAI.onclick=()=>runWriter("generate");
  if(undo)undo.onclick=()=>{
    const editor=document.getElementById("coverLetterText");
-   if(editor&&earlierLetter){editor.value=earlierLetter;undo.hidden=true;aiStatus.textContent="Testo precedente ripristinato (non ancora salvato)."}
+   if(editor&&earlierLetter){editor.value=earlierLetter;lastAiProposal=null;undo.hidden=true;aiStatus.textContent="Versione precedente ripristinata; non è stata salvata automaticamente."}
  };
  const copy=document.getElementById("copyCoverLetter");
  if(copy)copy.onclick=async()=>{
