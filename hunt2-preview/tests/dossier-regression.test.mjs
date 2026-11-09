@@ -97,3 +97,11 @@ test("Generic vacancy parsing retains a full list of explicitly stated qualifica
  assert.ok(facts.requirements.some(x=>/Excel/.test(x)));
  assert.ok(facts.tasks.some(x=>/stock|allocazion/.test(x)));
 });
+
+test("Candidate can return to the same vacancy after reviewing or editing a CV",()=>{
+ assert.match(app,/profileButton\.onclick=\(\)=>renderProfile\(jobId\)/);
+ assert.match(app,/async function renderProfile\(fromJobId=null\)/);
+ assert.match(app,/id="profileBackToJob"/);
+ assert.match(app,/backToJob\.onclick=\(\)=>openOpportunityFolder\(fromJobId,false\)/);
+ assert.match(app,/refresh:\(\)=>renderProfile\(fromJobId\)/);
+});
