@@ -53,6 +53,7 @@ function apiURL(source:any){
  if(source.source_family==="ats_lever")return "https://api.lever.co/v0/postings/"+board+"?mode=json&limit=250";
  if(source.source_family==="ats_greenhouse")return "https://boards-api.greenhouse.io/v1/boards/"+board+"/jobs?content=true";
  if(source.source_family==="ats_ashby")return "https://api.ashbyhq.com/posting-api/job-board/"+board;
+ if(source.source_family==="ats_smartrecruiters")return "https://api.smartrecruiters.com/v1/companies/"+board+"/postings?limit=100&offset=0";
  throw Error("Unsupported ATS family");
 }
 function mapped(source:any,data:any){
@@ -78,6 +79,14 @@ function mapped(source:any,data:any){
     description:cleanHTML(x.descriptionPlain||x.descriptionHtml||""),
     url:safeURL(x.jobUrl),apply:safeURL(x.applyUrl)||safeURL(x.jobUrl),
     id:trim(x.id,100),remote:Boolean(x.isRemote)
+  }));
+ }
+ if(source.source_family==="ats_smartrecruiters"&&Array.isArray(data.content)){
+  return data.content.map((x:any)=>({
+    title:trim(x.name,200),location:trim([x.location?.city,x.location?.region].filter(Boolean).join(", "),140),
+    description:"",url:safeURL(x.postingUrl),apply:safeURL(x.applyUrl)||safeURL(x.postingUrl),
+    id:trim(x.id,110),remote:Boolean(x.location?.remote),
+    posted:x.releasedDate||null
   }));
  }
  throw Error("Malformed public ATS response");
@@ -106,12 +115,36 @@ Deno.serve(async(req)=>{
     if(!response.ok)throw Error("ATS HTTP "+response.status);
     const raw=await response.text();
     if(raw.length>4500000)throw Error("ATS board response too large");
-    const entries=mapped(source,JSON.parse(raw));
+    const parsed=JSON.parse(raw);
+    const entries=mapped(source,parsed);
+    const isCompleteBoard=source.source_family==="ats_smartrecruiters"
+      ?Number(parsed.totalFound||0)<=entries.length
+      :entries.length<250;
     const liveURLs=new Set(entries.map((x:any)=>x.url).filter(Boolean));
     available+=entries.length;
     const recentLinks=new Set<string>();
     for(const item of entries.slice(0,250)){
-      if(!item.url||!item.title||!eligible(item.title)||item.description.length<75){rejected++;ignored++;continue}
+      if(!item.title||!eligible(item.title)){rejected++;ignored++;continue}
+      if(source.source_family==="ats_smartrecruiters"&&item.id){
+        const board=trim(source.config?.board,90),id=encodeURIComponent(item.id);
+        const detailURL="https://api.smartrecruiters.com/v1/companies/"+board+"/postings/"+id;
+        try{
+          const res=await fetch(detailURL,{signal:AbortSignal.timeout(8500),headers:{"accept":"application/json"}});
+          if(!res.ok)throw Error("Posting details HTTP "+res.status);
+          const details=await res.json();
+          const sections=details.jobAd?.sections||{};
+          const jobText=[sections.jobDescription?.text||"",sections.qualifications?.text||""].filter(Boolean).join("\n\n");
+          item.description=cleanHTML(jobText);
+          item.url=safeURL(details.postingUrl)||safeURL(details.applyUrl)||item.url;
+          item.apply=safeURL(details.applyUrl)||safeURL(details.postingUrl)||item.apply;
+          item.posted=details.releasedDate||item.posted||null;
+          item.remote=Boolean(details.location?.remote||item.remote);
+          if(details.location?.city)item.location=trim([details.location.city,details.location.region].filter(Boolean).join(", "),140);
+        }catch{
+          rejected++;ignored++;continue;
+        }
+      }
+      if(!item.url||!item.description||item.description.length<75){rejected++;ignored++;continue}
       if(recentLinks.has(item.url))continue;recentLinks.add(item.url);scanned++;
       // This is a live public ATS listing. Do not invent a publication date: first_seen_at is distinct.
       const {data:existingLink}=await db.from("job_sources")
@@ -136,8 +169,10 @@ Deno.serve(async(req)=>{
         description:item.description,requisition_id:item.id||null,
         primary_apply_url:item.apply,
         state:"active_verified",vacancy_confidence:96,confidence_label:"VERIFIED ACTIVE",
-        published_at:null,first_seen_at:stamp,last_seen_at:stamp,last_verified_at:stamp,
-        metadata:{discovered_by:"hunt-ats-board-v1",public_ats:source.source_family,posted_date:"not_exposed",source_verified_at:stamp}
+        published_at:item.posted&&Number.isFinite(new Date(item.posted).getTime())&&new Date(item.posted).getTime()<=Date.now()
+          ?new Date(item.posted).toISOString():null,
+        first_seen_at:stamp,last_seen_at:stamp,last_verified_at:stamp,
+        metadata:{discovered_by:"hunt-ats-board-v2",public_ats:source.source_family,posted_date:item.posted?"provider_released_date":"not_exposed",source_verified_at:stamp}
       }).select("id").single();
       if(insertError||!job)throw Error(insertError?.message||"Job insert failed");
       const {error:linkError}=await db.from("job_sources").insert({
@@ -150,7 +185,7 @@ Deno.serve(async(req)=>{
     // After three or more missed rotations, a posting absent from the full official
     // board list becomes stale. This is safer than treating web search snippets as current.
     let stale=0;
-    if(entries.length>0&&entries.length<=250){
+    if(entries.length>0&&isCompleteBoard){
       const {data:linked}=await db.from("job_sources")
         .select("job_id,listing_url,last_seen_at").eq("source_id",source.id).eq("active",true).limit(700);
       const staleCutoff=Date.now()-15*60*1000;
