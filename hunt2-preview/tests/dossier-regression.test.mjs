@@ -31,7 +31,7 @@ test("Paused letter creation does not run when opening a dossier",()=>{
 test("One Italian requirement list and one source-grounded synthesis are displayed",()=>{
  assert.match(folder,/it:normalizeVacancyFacts\(haveVerifiedSections\?bilingualFacts\.it:italianEvidenceFromJob\(job\.description,evidence\)\)/);
  assert.match(folder,/const dossierLang="it"/);
- assert.match(folder,/applicationInsight\(assessmentIt,cvChecklistIt\)/);
+ assert.match(folder,/applicationInsight\(assessmentIt,cvChecklistIt,factLists\.it\.duties\)/);
  assert.match(folder,/Perché candidarti/);
  assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
  assert.match(folder,/id="dossierCv"/);
