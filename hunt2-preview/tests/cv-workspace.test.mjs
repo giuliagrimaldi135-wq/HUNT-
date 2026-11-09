@@ -49,16 +49,35 @@ test("Right-side CV summary and categories have clear grouping, not full-width s
   {name:"Technology",related:false,basis:""}
  ];
  const html=renderCvWorkspace({cv:rows[0],info,areas,confirmed:true,activePanel:"areas",corrections:""});
- assert.match(html,/cvWAreaCards/);
- assert.match(html,/cvWAreaCardEvidence/);
+ assert.match(html,/cvWAreaEntries/);
+ assert.match(html,/cvWAreaEntry/);
  assert.match(html,/cvWAreaCount/);
  assert.match(html,/3<\/strong><span>aree collegate/);
  assert.match(html,/Gucci/);
  assert.match(html,/Marina Rinaldi/);
  assert.match(html,/data-cv-panel-target="projects"/);
  assert.match(html,/data-cv-panel-target="experience"/);
- assert.doesNotMatch(html,/cvWAreaRow|cvWOverviewGrid/);
- assert.match(html,/cvWSnapshot/);
+ assert.doesNotMatch(html,/cvWAreaRow|cvWAreaCard|cvWOverviewGrid/);
+ assert.match(html,/cvWSnapshotEditorial/);
+ assert.match(html,/cvWInlineTools/);
+ assert.doesNotMatch(html,/cvWOverviewCard|cvWSnapshotSide.*cvWChips/s);
  assert.match(html,/Visualizza tutte|Esplora tutte le 4 categorie/);
  assert.match(html,/Conferma informazioni|Salva modifiche/);
+});
+
+test("CV Riepilogo keeps the accepted two-column structure but avoids internal cards and software badges",()=>{
+ const html=renderCvWorkspace({cv:rows[0],info,areas:[{name:"Merchandising",related:true,basis:"Progetto · Gucci"}],
+  confirmed:true,activePanel:"overview",corrections:""});
+ const summary=html.slice(html.indexOf('data-cv-panel="overview"'),html.indexOf('data-cv-panel="experience"'));
+ assert.match(summary,/cvWSnapshotEditorial/);
+ assert.match(summary,/cvWSnapshotMain/);
+ assert.match(summary,/cvWSnapshotSide/);
+ assert.match(summary,/cvWInlineTools/);
+ assert.match(summary,/Excel \(avanzato\)/);
+ assert.match(summary,/PowerPoint \(avanzato\)/);
+ assert.doesNotMatch(summary,/cvWChip|cvWOverviewCard|cvWSnapshotCard/);
+ assert.match(summary,/data-cv-panel-target="experience"/);
+ assert.match(summary,/data-cv-panel-target="projects"/);
+ assert.match(summary,/data-cv-panel-target="skills"/);
+ assert.match(summary,/data-cv-panel-target="areas"/);
 });
