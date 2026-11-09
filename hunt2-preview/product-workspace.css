@@ -233,3 +233,85 @@
 .profileBackToJob{font:inherit;font-size:11px;font-weight:750;cursor:pointer;border:1px solid #d0dfd1;border-radius:7px;background:#e8f1e8;color:#326245;padding:10px 12px}
 .profileBackToJob:hover{background:#d8e9da}
 @media(max-width:700px){.profileHeaderActions{flex-wrap:wrap;justify-content:flex-end}.profileBackToJob{font-size:10px}.profileSignout{font-size:10px}}
+
+
+/* Product refinement — keep the approved right-hand application sidebar unchanged.
+   Panoramica is one integrated view, not two enormous duplicate cards. */
+.huntWorkspace .hwOverview{max-width:100%;padding:1px 0 0}
+.huntWorkspace .hwOverviewHeading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:13px}
+.huntWorkspace .hwOverviewHeading h3{font-size:19px;letter-spacing:-.035em;line-height:1.25;color:#28392e;font-weight:800;margin:7px 0 4px}
+.huntWorkspace .hwOverviewHeading p{font-size:11.5px;line-height:1.6;color:#8a968d;margin:0}
+.huntWorkspace .hwOverviewOpen{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;border:0;background:transparent;font:inherit;font-size:11px;font-weight:770;color:#286949;cursor:pointer;white-space:nowrap;padding:8px 0}
+.huntWorkspace .hwOverviewOpen:hover{text-decoration:underline;text-underline-offset:4px}
+.huntWorkspace .hwOverviewTasks .hwTaskList li{grid-template-columns:29px minmax(0,1fr);gap:11px;padding:12px 0}
+.huntWorkspace .hwOverviewTasks .hwTaskList li p{font-size:12.5px;line-height:1.66;color:#445147}
+.huntWorkspace .hwOverviewTasks .hwTaskList li>span{font-size:10.5px;color:#7b9582}
+.huntWorkspace .hwOverviewDivider{border-top:1px solid #e8ede7;margin:21px 0 24px}
+.huntWorkspace .hwOverviewHeadingSkills{margin-bottom:9px}
+.huntWorkspace .hwOverviewRequirements .hwRequirement{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:11px;align-items:center;padding:12px 0;border-bottom:1px solid #eef1ec}
+.huntWorkspace .hwOverviewRequirements .hwRequirement:last-child{border:0}
+.huntWorkspace .hwOverviewRequirements .hwRequirementCopy strong{font-size:12px;line-height:1.45;color:#3a493d}
+.huntWorkspace .hwOverviewRequirements .hwRequirementStatus{grid-column:auto;max-width:112px;text-align:right;font-size:10.5px;color:#7f8a80;padding:0}
+.huntWorkspace .hwOverviewRequirements .hwRequirementIcon{width:20px;height:20px}
+.huntWorkspace .hwPane:has(.hwOverview){padding:27px 30px 24px;min-height:0}
+.huntWorkspace .hwPane:has(.hwOverview) .hwOverviewHeading:not(.hwOverviewHeadingSkills) .hwEyebrow{font-size:9.5px}
+.huntWorkspace .hwOverviewRequirements .hwRequirement:hover{background:#fbfcfb}
+@media(max-width:660px){
+ .huntWorkspace .hwOverviewHeading{align-items:flex-start;flex-direction:column;gap:6px}
+ .huntWorkspace .hwOverviewOpen{padding:4px 0}
+ .huntWorkspace .hwOverviewRequirements .hwRequirement{grid-template-columns:21px minmax(0,1fr);gap:6px 11px}
+ .huntWorkspace .hwOverviewRequirements .hwRequirementStatus{grid-column:2;text-align:left}
+ .huntWorkspace .hwPane:has(.hwOverview){padding:21px 17px}
+}
+
+/* Right-hand CV workspace: organized evidence with no far-right orphan captions. */
+.cvWWorkspace .cvWAreaHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:20px}
+.cvWWorkspace .cvWAreaHeader .cvWPanelHeader{margin:0}
+.cvWWorkspace .cvWAreaCount{display:flex;align-items:center;gap:7px;white-space:nowrap;background:#f3f7f2;border:1px solid #e1ebe0;border-radius:8px;padding:8px 12px}
+.cvWWorkspace .cvWAreaCount strong{font-size:16px;color:#32714c;line-height:1}
+.cvWWorkspace .cvWAreaCount span{font-size:10px;font-weight:690;color:#708878}
+.cvWWorkspace .cvWAreaCards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.cvWWorkspace .cvWAreaCard{border:1px solid #e5ebe4;border-radius:9px;padding:18px 17px;min-width:0;background:#fdfefd}
+.cvWWorkspace .cvWAreaCardTop{display:flex;align-items:center;gap:10px;min-height:30px}
+.cvWWorkspace .cvWAreaGlyph{width:29px;height:29px;border-radius:7px;background:#eff5ee;color:#66816d;display:grid;place-items:center;font-size:10px;font-weight:800;flex-shrink:0}
+.cvWWorkspace .cvWAreaCardTop h4{font-size:13px;font-weight:790;color:#2c4032;margin:0;line-height:1.35;min-width:0}
+.cvWWorkspace .cvWAreaCardEvidence{border-top:1px solid #edf1eb;margin-top:12px;padding:11px 0 0}
+.cvWWorkspace .cvWAreaCardEvidence span{display:block;font-size:9.5px;color:#88998b;letter-spacing:.04em;font-weight:750;margin:0 0 5px}
+.cvWWorkspace .cvWAreaCardEvidence p{font-size:11px;line-height:1.55;color:#67796b;margin:0;overflow-wrap:anywhere}
+.cvWWorkspace .cvWAreaBottom{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 0 17px;border-bottom:1px solid #e7ece6}
+.cvWWorkspace .cvWAreaBottom>span{font-size:11px;line-height:1.65;color:#889389}
+.cvWWorkspace .cvWAreaBottom button{border:0;background:transparent;color:#29674a;font:inherit;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}
+.cvWWorkspace .cvWAreaBottom button:hover{text-decoration:underline;text-underline-offset:3px}
+.cvWWorkspace .cvWAllAreas{border-top:0;margin:0;padding:16px 0 2px}
+.cvWWorkspace .cvWAllAreas summary{display:flex;justify-content:space-between;gap:14px;font-size:11px}
+.cvWWorkspace .cvWAllAreas>p{margin:10px 0 5px;color:#8b988e;font-size:10.5px;line-height:1.55}
+.cvWWorkspace .cvWAllAreasGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cvWWorkspace .cvWSnapshot{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:12px;align-items:stretch}
+.cvWWorkspace .cvWSnapshotMain{border:1px solid #e7ece6;border-radius:9px;background:#fdfefd;padding:18px 18px 15px;min-width:0}
+.cvWWorkspace .cvWSnapshotTitle{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid #eef0ec;padding-bottom:11px;margin-bottom:12px}
+.cvWWorkspace .cvWSnapshotTitle h4{color:#526f5a;font-size:11px;font-weight:790;margin:0}
+.cvWWorkspace .cvWSnapshotTitle button{border:0;background:transparent;color:#2d6b4c;cursor:pointer;font:inherit;font-size:10px;font-weight:750;white-space:nowrap}
+.cvWWorkspace .cvWSnapshotMain>strong{font-size:13px;color:#2d4033}
+.cvWWorkspace .cvWSnapshotRole{font-size:11px;color:#859087;margin:6px 0 13px}
+.cvWWorkspace .cvWSnapshotSide{border:1px solid #e7ece6;border-radius:9px;background:#fff;overflow:hidden}
+.cvWWorkspace .cvWSnapshotSide>section{padding:15px 17px;border-bottom:1px solid #e9eee8}
+.cvWWorkspace .cvWSnapshotSide>section:last-child{border-bottom:0}
+.cvWWorkspace .cvWSnapshotSide .cvWSnapshotTitle{border:0;margin-bottom:8px;padding:0}
+.cvWWorkspace .cvWSnapshotItem{font-size:11px;color:#667b6c;line-height:1.6;margin:5px 0 0;overflow-wrap:anywhere}
+.cvWWorkspace .cvWSnapshotSide .cvWChips{gap:5px}
+.cvWWorkspace .cvWSnapshotSide .cvWChip{font-size:10px;padding:5px 8px}
+.cvWWorkspace .cvWPane{padding:25px 27px 27px}
+.cvWWorkspace .cvWConfirm{margin-top:0}
+@media(max-width:1050px){
+ .cvWWorkspace .cvWAreaCards{grid-template-columns:1fr}
+ .cvWWorkspace .cvWSnapshot{grid-template-columns:1fr}
+}
+@media(max-width:810px) and (min-width:541px){
+ .cvWWorkspace .cvWAreaCards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:540px){
+ .cvWWorkspace .cvWAreaHeader{flex-direction:column;gap:12px}
+ .cvWWorkspace .cvWAreaCards{grid-template-columns:1fr}
+ .cvWWorkspace .cvWAreaBottom{align-items:flex-start;flex-direction:column}
+ .cvWWorkspace .cvWPane{padding:20px 15px}
+}
