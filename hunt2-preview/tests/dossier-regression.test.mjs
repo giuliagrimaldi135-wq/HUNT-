@@ -26,3 +26,17 @@ test("Paused AI is not advertised as a working control",()=>{
  assert.match(app,/id="copyCoverLetter"/);
  assert.match(cv,/data-cv-action="read"/);
 });
+
+test("Italian dossier uses Italian evidence and switches without waiting for letter service",()=>{
+ assert.match(folder,/it:haveVerifiedSections\?bilingualFacts\.it:italianEvidenceFromJob\(job\.description,evidence\)/);
+ assert.match(folder,/const dossierLang=preferredLocale/);
+ assert.match(folder,/showDossierLanguage\(lang\)/);
+ assert.match(folder,/localStorage\.setItem\("hunt_dossier_language",lang\)/);
+ assert.doesNotMatch(folder,/<details class="sourceVerification"/);
+ assert.match(folder,/data-decision-lang=/);
+});
+test("Letter generator v8 is used and manual edits are preserved",()=>{
+ assert.match(folder,/evidence_dossier_v8/);
+ assert.match(folder,/user_edited/);
+ assert.match(folder,/Controllo qualità HUNT/);
+});
