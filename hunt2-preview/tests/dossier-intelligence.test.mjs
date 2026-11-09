@@ -58,13 +58,36 @@ test("Advanced PowerPoint explicitly printed in OCR is found as provisional, not
  assert.match(r[0].proof,/Excel \(avanzato\)/);
  assert.match(r[0].label,/da confermare/);
 });
-test("Qualifying PowerPoint in a separate CV is attributed to that CV, not falsely to the selected one",()=>{
+test("A partial local Office match is never replaced by a result from another CV",()=>{
  const selected={profile_verified_from_user_history:true,tools:["Excel"]};
  const another={id:"other-cv",name:"Italian Fashion Management",parsed_profile:{raw_text:"Software: Excel (avanzato) - PowerPoint (avanzato)"}};
  const r=checkRequirements(["Ottima conoscenza di Excel e PowerPoint"],selected,{alternatives:[another]});
+ assert.equal(r[0].type,"partial");
+ assert.match(r[0].proof,/Excel presente; PowerPoint non trovato/);
+ assert.equal(r[0].suggested_cv_id,null);
+});
+test("Another CV is suggested only when the selected CV has no relevant software evidence",()=>{
+ const selected={profile_confirmed_by_user:true,tools:["Canva"]};
+ const other={id:"other-cv",name:"Fashion Management",parsed_profile:{raw_text:"Software: Excel (avanzato) - PowerPoint (avanzato)"}};
+ const r=checkRequirements(["Excel avanzato"],selected,{alternatives:[other]});
  assert.equal(r[0].type,"alternate");
- assert.match(r[0].proof,/Italian Fashion Management/);
+ assert.match(r[0].proof,/Fashion Management/);
  assert.equal(r[0].suggested_cv_id,"other-cv");
+});
+test("Both uploaded CVs contain advanced Excel: never show 'other CV' for either",()=>{
+ const merchandising={profile_verified_from_user_history:true,tools:["Excel","Max Mara order application"],
+   draft_profile:{tools:["Excel (avanzato)","PowerPoint (avanzato)"]},
+   raw_text:"Esperienza lavorativa\nSoftware: Excel (avanzato) - PowerPoint (avanzato) - Word (avanzato)"};
+ const fashion={raw_text:"Software: Excel (avanzato) - PowerPoint (avanzato) - Word (avanzato)"};
+ for(const [selected,another] of [[merchandising,fashion],[fashion,merchandising]]){
+   const result=checkRequirements(["Competenze Excel richieste"],selected,{
+     alternatives:[{id:"other",name:"Altra versione",parsed_profile:another}]
+   })[0];
+   assert.notEqual(result.type,"alternate");
+   assert.equal(result.suggested_cv_id,null);
+   assert.match(result.proof,/Excel \(avanzato\)/i);
+   assert.ok(["found","detected"].includes(result.type));
+ }
 });
 test("Confirmed exact advanced Office levels are considered documented",()=>{
  const r=checkRequirements(["Ottima conoscenza di Excel e PowerPoint"],{profile_confirmed_by_user:true,tools:["Excel (avanzato)","PowerPoint (avanzato)"]});
