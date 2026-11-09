@@ -60,7 +60,8 @@ test("Right-side CV summary and categories have clear grouping, not full-width s
  assert.doesNotMatch(html,/cvWAreaRow|cvWAreaCard|cvWOverviewGrid/);
  assert.match(html,/cvWSnapshotEditorial/);
  assert.match(html,/cvWInlineTools/);
- assert.doesNotMatch(html,/cvWOverviewCard|cvWSnapshotSide.*cvWChips/s);
+ const overviewOnly=html.slice(html.indexOf('data-cv-panel="overview"'),html.indexOf('data-cv-panel="experience"'));
+ assert.doesNotMatch(overviewOnly,/cvWOverviewCard|cvWChips|cvWChip/);
  assert.match(html,/Visualizza tutte|Esplora tutte le 4 categorie/);
  assert.match(html,/Conferma informazioni|Salva modifiche/);
 });
