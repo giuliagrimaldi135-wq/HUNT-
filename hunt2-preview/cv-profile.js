@@ -5,6 +5,7 @@ const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).sli
 const mime={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
 let selectedId=null;
 const appliedDrafts=new Map();
+const autoInterpretConsent=new Set();
 const input=(label,key,value)=>'<label class="cvField">'+esc(label)+'<input data-field="'+key+'" value="'+esc(value||"")+'"></label>';
 const area=(label,key,value)=>'<label class="cvField">'+esc(label)+'<textarea data-field="'+key+'" rows="3">'+esc((value||[]).join("\n"))+'</textarea></label>';
 function entry(type,p={}){
@@ -64,6 +65,9 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  const current=rows.find(x=>x.id===selectedId);
  const draft=current?.parsed_profile?.interpretation_draft||null;
  const currentTargets=Array.isArray(current?.target_role_families)?current.target_role_families:[];
+ const textPreview=current?.parsed_profile?.raw_text
+   ?`<details class="cvRawPreview"><summary>Controlla il testo estratto dal CV · ${current.parsed_profile.raw_text.length} caratteri</summary><p>Il testo riconosciuto automaticamente può contenere errori di OCR. Verificalo prima di confermare esperienze e competenze.</p><pre>${esc(current.parsed_profile.raw_text.slice(0,9000))}</pre></details>`
+   :current?`<p class="cvReadReminder">Questa versione non ha ancora un testo leggibile. Premi <strong>Leggi CV</strong> nella lista: l'OCR viene effettuato localmente nel tuo browser senza costi API.</p>`:"";
  const targetEditor=current?`<details class="cvTargetEditor">
    <summary>Per quali ruoli utilizzare questa versione del CV?</summary>
    <p>HUNT potrà scegliere automaticamente questo documento nelle vacancy pertinenti. Puoi selezionare più aree.</p>
@@ -89,10 +93,10 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  }
  root.innerHTML='<section class="cvManager"><div class="cvManagerHeading"><div class="eyebrow">CV privati</div><h2>Il tuo archivio professionale</h2><p>Più versioni, lettura visuale e informazioni confermate per candidature personalizzate.</p></div>'+
   '<div class="cvFileList">'+(fileHtml||'<p>Nessun CV caricato.</p>')+'</div>'+
-  '<div class="cvUpload"><div class="cvMiniHead"><h3>Carica una nuova versione</h3><span>PDF, DOCX, TXT, PNG o JPG</span></div><div class="cvUploadFields"><input id="cvUploadName" placeholder="Es. Retail Merchandising"><input id="cvUploadFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"><button class="btn primary" data-cv-action="upload" type="button">Carica</button></div></div>'+
+  '<div class="cvUpload"><div class="cvMiniHead"><h3>Carica una nuova versione</h3><span>PDF, DOCX, TXT, PNG o JPG</span></div><div class="cvUploadFields"><input id="cvUploadName" placeholder="Es. Retail Merchandising"><input id="cvUploadFile" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"><button class="btn primary" data-cv-action="upload" type="button">Carica e leggi</button></div><label class="cvAiConsent"><input type="checkbox" id="cvAutoAI"> Dopo l'OCR, interpreta automaticamente esperienze, progetti e competenze con HUNT AI quando disponibile. Il testo sarà inviato al provider AI e rimarrà una bozza da confermare.</label></div>'+
   '<div id="cvReaderStatus" role="status" class="cvReaderStatus"></div>'+
   '<div class="cvReaderOptions"><label>Lingua OCR <select id="cvOcrLang"><option value="eng+ita">English + Italiano</option><option value="eng">English</option><option value="ita">Italiano</option><option value="fra">Français</option><option value="deu">Deutsch</option><option value="spa">Español</option></select></label><p>Lettura visuale effettuata nel browser. Il testo viene salvato nel tuo profilo privato e va verificato prima di usarlo.</p></div>'+
-  targetEditor+interpretation+
+  targetEditor+textPreview+interpretation+
   (current?editor(current):"")+'</section>';
  const show=(text,bad=false)=>{const el=root.querySelector("#cvReaderStatus");if(el){el.textContent=text;el.classList.toggle("cvReaderError",bad)}};
  const interpret=root.querySelector('[data-cv-action="interpret"]');
@@ -166,6 +170,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
     const name=root.querySelector("#cvUploadName").value.trim()||file.name;
     const {data:created,error:dbError}=await supabase.from("user_cvs").insert({user_id:user.id,name,storage_path:path,target_role_families:[],parsed_profile:{},is_default:rows.length===0,active:true}).select("id").single();
     if(dbError){await supabase.storage.from("cvs").remove([path]);throw dbError}
+    if(root.querySelector("#cvAutoAI")?.checked)autoInterpretConsent.add(created.id);
     selectedId=created.id;await refresh();
     // Start reading the newly uploaded CV without a second manual action.
     const readButton=document.querySelector('#cvManagerRoot [data-cv-action="read"][data-cv-id="'+created.id+'"]');
@@ -187,8 +192,21 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
     const next={...prior,raw_text:parsed.text.slice(0,40000),raw_text_hash:hash,extractor_version:"browser-pdfjs-tesseract-v1",extracted_at:new Date().toISOString(),cv_text_extraction_status:parsed.partial?"ocr_partial":parsed.method==="ocr"?"ocr_text_extracted":"text_extracted",page_count:parsed.pages,read_pages:parsed.pages_processed,ocr_language:language};
     const {error:up}=await supabase.from("user_cvs").update({parsed_profile:next,updated_at:new Date().toISOString()}).eq("id",cv.id).eq("user_id",user.id);
     if(up)throw up;
+    const automaticAI=autoInterpretConsent.has(id);
+    autoInterpretConsent.delete(id);
     selectedId=id;await refresh();
-   }catch(e){show("Lettura non completata: "+(e.message||String(e)),true);b.disabled=false}
+    if(automaticAI){
+      const box=document.querySelector("#cvManagerRoot #cvReaderStatus");
+      if(box)box.textContent="Testo del CV letto. Sto preparando una bozza AI da verificare…";
+      const {data:aiData,error:aiError}=await supabase.functions.invoke("hunt-cv-interpret",{body:{cv_id:id}});
+      if(aiError||!aiData?.ok){
+        const status=document.querySelector("#cvManagerRoot #cvReaderStatus");
+        if(status)status.textContent="OCR completato e salvato. L'interpretazione AI non è ancora disponibile: puoi verificare il testo e completare il profilo manualmente.";
+      }else{
+        selectedId=id;await refresh();
+      }
+    }
+   }catch(e){autoInterpretConsent.delete(id);show("Lettura non completata: "+(e.message||String(e)),true);b.disabled=false}
   }
  };
  const form=root.querySelector("#cvFactsForm");
