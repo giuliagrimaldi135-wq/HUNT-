@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-52";
+import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-53";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -568,7 +568,10 @@ async function openOpportunityFolder(jobId,push=true){
    app.innerHTML=shell(`<section class="folderLoading folderError" role="alert"><div class="eyebrow">Dossier non disponibile</div><h2>Non siamo riusciti ad aprire questa posizione</h2><p>${esc(error instanceof Error?error.message:String(error))}</p><button type="button" class="btn primary" id="retryDossier">Riprova</button><button type="button" class="btn" id="returnToOpportunities">Torna alle opportunità</button></section>`);
    bindNav();
    const retry=document.getElementById("retryDossier");if(retry)retry.onclick=()=>openOpportunityFolder(jobId,false);
-   const back=document.getElementById("returnToOpportunities");if(back)back.onclick=()=>renderOpportunities();
+   const back=document.getElementById("returnToOpportunities");if(back)back.onclick=()=>{
+      history.replaceState({},"",location.pathname+location.search);
+      renderOpportunities().catch(e=>{console.error("HUNT feed recovery failed",e);location.reload()});
+    };
  }
 }
 
@@ -773,6 +776,20 @@ function documentedRequirement(item,profile){
  if(/laurea magistrale in economia|master.s degree in economics/.test(t))return /(?:master|magistrale|msc).{0,35}(?:econom|business)/.test(education);
  return false;
 }
+
+// All vacancy parsers must expose the same shape. The Italian evidence parser
+// returns "tasks" whereas the official bilingual source uses "duties".
+// Never let a missing source section make the whole application folder crash.
+function normalizeVacancyFacts(facts){
+ const input=facts&&typeof facts==="object"?facts:{};
+ const duties=Array.isArray(input.duties)?input.duties:Array.isArray(input.tasks)?input.tasks:[];
+ const requirements=Array.isArray(input.requirements)?input.requirements:[];
+ return {
+   duties:duties.filter(v=>typeof v==="string"&&v.trim()).map(v=>v.trim()),
+   requirements:requirements.filter(v=>typeof v==="string"&&v.trim()).map(v=>v.trim())
+ };
+}
+
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  let preferredLocale="it";
@@ -808,8 +825,8 @@ async function renderOpportunityFolder(jobId){
  const bilingualFacts=haveVerifiedSections?actualFacts.sections:null;
  const summaryOnly=!haveVerifiedSections&&(String(job.description||"").length<340||job.metadata?.verification==="official_search_result");
  const factLists={
-   it:haveVerifiedSections?bilingualFacts.it:italianEvidenceFromJob(job.description,evidence),
-   en:haveVerifiedSections?bilingualFacts.en:{duties:evidence.tasks,requirements:evidence.requirements}
+   it:normalizeVacancyFacts(haveVerifiedSections?bilingualFacts.it:italianEvidenceFromJob(job.description,evidence)),
+   en:normalizeVacancyFacts(haveVerifiedSections?bilingualFacts.en:{duties:evidence.tasks,requirements:evidence.requirements})
  };
  // A source excerpt is not a translation; do not show English tasks in the Italian view.
  const dossierLang=preferredLocale;
