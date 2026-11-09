@@ -1,13 +1,16 @@
 
 import {extractCvText} from "./cv-reader.js?v=20261109-60";
 import {interpretCvText} from "./cv-interpreter.js?v=20261109-60";
+import {evidenceForDisplay,cvRoleSignals,cvReviewSummary} from "./cv-display.js?v=20261109-71";
 const esc=(s="")=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,50);
 const mime={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
 let selectedId=null;
+let autoReading=false;
+const failedReadIds=new Set();
 const appliedDrafts=new Map();
 const input=(label,key,value)=>'<label class="cvField">'+esc(label)+'<input data-field="'+key+'" value="'+esc(value||"")+'"></label>';
-const area=(label,key,value)=>'<label class="cvField">'+esc(label)+'<textarea data-field="'+key+'" rows="3">'+esc((value||[]).join("\n"))+'</textarea></label>';
+const area=(label,key,value)=>'<label class="cvField">'+esc(label)+'<textarea data-field="'+key+'" rows="3">'+esc((value||[]).map(x=>evidenceForDisplay(x,"it").text).join("\\n"))+'</textarea></label>';
 function entry(type,p={}){
  const remove='<button class="cvTextButton" type="button" data-cv-action="remove">Rimuovi</button>';
  let inner="";
@@ -27,27 +30,37 @@ function cvStatus(x){
  return "Da leggere e verificare";
 }
 function editor(cv){
- const p={...(cv.parsed_profile||{}),...(appliedDrafts.get(cv.id)||{})};
- const draft=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
- // OCR interpretation fills editable fields, but DOES NOT assert user confirmation.
- const pick=key=>Array.isArray(p[key])&&p[key].length?p[key]:Array.isArray(draft[key])?draft[key]:[];
- const ex=pick("experience");
- const pr=pick("projects");
- const ed=pick("education");
- const tools=pick("tools");
- const languages=pick("languages");
- const isDraft=Boolean(!p.profile_confirmed_by_user&&!p.profile_verified_from_user_history&&draft.extracted_chars);
- return '<section class="cvEditor"><div class="cvEditorHeading"><div class="eyebrow">Profilo da CV</div><h2>Conferma le tue competenze</h2><p>I dati individuati nel documento sono proposte da verificare, non requisiti già confermati. Controllali e salva solo ciò che è realmente scritto nel CV.</p></div>'+
-  '<div class="cvEditorMeta">CV: <b>'+esc(cv.name)+'</b> · '+esc(cvStatus(cv))+(draft.source_language?' · Testo originale: '+(draft.source_language==="it"?"italiano":"inglese"):"")+'</div>'+
-  (isDraft?'<p class="cvDraftNotice">HUNT ha precompilato i campi dal testo del CV. Puoi correggerli; diventeranno dati confermati solo quando premi «Conferma e salva il profilo».</p>':"")+
-  '<form id="cvFactsForm">'+
+ const p=cv.parsed_profile||{},d=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
+ const combined={...p,draft_profile:d},s=cvReviewSummary(combined),ex=s.experience,pr=s.projects,ed=s.education,tools=s.tools,languages=s.languages;
+ const verified=s.confirmed;
+ const details=xs=>(Array.isArray(xs)?xs:[]).slice(0,4).map(x=>{
+   const a=evidenceForDisplay(x,"it");
+   return '<li>'+esc(a.text)+(a.needsTranslation?'<small class="cvOriginalNote">Testo originale</small>':"")+'</li>';
+ }).join("");
+ const showRecord=(items,key)=>items.map(x=>'<article class="cvStoryItem"><h4>'+esc(x[key]||x.role||"Attività")+'</h4>'+
+   (x.role&&key==="company"?'<p>'+esc(x.role)+'</p>':"")+
+   (x.evidence?.length?'<ul>'+details(x.evidence)+'</ul>':"")+'</article>').join("");
+ const pills=xs=>xs.map(x=>'<span class="cvPill">'+esc(typeof x==="string"?x:[x.program,x.school].filter(Boolean).join(" · "))+'</span>').join("");
+ const roles=cvRoleSignals(combined);
+ return '<section class="cvEditor cvInsightWorkspace">'+
+  '<div class="cvInsightHeader"><div><div class="eyebrow">Analisi del curriculum</div><h2>Il tuo profilo, letto da HUNT</h2><p>Esperienze e competenze riconosciute in questa versione. HUNT le usa per scegliere il CV più adatto a ogni posizione.</p></div>'+
+  '<span class="cvInsightState '+(verified?'is-verified':'')+'">'+(verified?"Profilo confermato":"Da verificare")+'</span></div>'+
+  '<div class="cvInsightMetrics"><div><strong>'+ex.length+'</strong><span>Esperienze</span></div><div><strong>'+pr.length+'</strong><span>Progetti</span></div><div><strong>'+tools.length+'</strong><span>Software</span></div></div>'+
+  (roles.length?'<div class="cvRoleReadout"><span class="eyebrow">Ambiti emersi</span><p>'+roles.map(esc).join(" · ")+'</p><small>La selezione del CV per ogni annuncio avviene in automatico.</small></div>':"")+
+  '<form id="cvFactsForm"><div class="cvInsightColumns"><div><h3>Esperienze professionali</h3>'+ (ex.length?showRecord(ex,"company"):'<p class="cvInsightEmpty">Nessuna esperienza riconosciuta.</p>')+'</div>'+
+  '<div><h3>Progetti e formazione</h3>'+(pr.length?showRecord(pr,"name"):'<p class="cvInsightEmpty">Nessun progetto rilevato.</p>')+
+  (ed.length?'<div class="cvPillRow">'+pills(ed)+'</div>':"")+'</div></div>'+
+  '<div class="cvDetectedSkills"><h3>Strumenti e competenze</h3><div class="cvPillRow">'+(tools.length?pills(tools):'<span class="cvInsightEmpty">Software non ancora riconosciuti</span>')+'</div>'+
+  (languages.length?'<h4>Lingue nel CV</h4><div class="cvPillRow">'+pills(languages)+'</div>':"")+'</div>'+
+  '<details class="cvCorrectionDetails"><summary>Correggi informazioni inesatte <span>Facoltativo</span></summary>'+
+  '<p>Se la lettura automatica ha commesso errori, puoi correggere i dati qui. Non serve ricompilare il CV.</p>'+
   '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
   '<div class="cvGroupHeading"><h3>Formazione</h3><button type="button" class="cvTextButton" data-cv-action="add-education">+ Aggiungi</button></div><div id="cvEducation">'+(ed.length?ed:[{}]).map(x=>entry("education",x)).join("")+'</div>'+
-  '<div class="cvFieldsTwo"><label class="cvField">Strumenti e competenze, uno per riga<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue confermate, una per riga<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div>'+
-  '<label class="cvField cvYears">Anni pertinenti (solo se verificabili)<input type="number" min="0" max="50" step=".01" id="cvYears" value="'+esc(p.relevant_years_experience??"")+'"></label>'+
-  '<button class="btn primary" type="submit">Conferma e salva il profilo</button><p class="cvHint">Il testo estratto può contenere errori. Le esperienze riportate nelle candidature saranno quelle confermate qui.</p></form>'+
-  (p.raw_text?'<details class="cvRawText"><summary>Confronta con il testo letto dal CV</summary><textarea readonly rows="14">'+esc(String(p.raw_text).slice(0,40000))+'</textarea></details>':'<p class="cvHint">Per leggere il contenuto del documento usa “Leggi CV” qui sopra.</p>')+
+  '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\\n"))+'</textarea></label></div></details>'+
+  '<div class="cvInsightFooter"><div><strong>'+(verified?"Profilo pronto per i dossier":"Ultimo controllo")+'</strong><p>'+(verified?"Le informazioni sono già state confermate.":"Conferma che le informazioni rilevate dal CV siano corrette. Non vengono inventate esperienze o titoli.")+'</p></div>'+
+  '<button class="btn primary" type="submit">'+(verified?"Salva eventuali modifiche":"Conferma l'analisi")+'</button></div></form>'+
+  (p.raw_text?'<details class="cvRawText"><summary>Testo originale acquisito</summary><textarea readonly rows="10">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
   '</section>';
 }
 function collect(root,original){
@@ -56,10 +69,9 @@ function collect(root,original){
  const experience=group("experience").map(el=>({company:v(el,"company"),role:v(el,"role"),start:v(el,"start"),end:v(el,"end"),evidence:lines(v(el,"evidence"))})).filter(x=>x.company||x.role||x.evidence.length);
  const projects=group("project").map(el=>({name:v(el,"name"),evidence:lines(v(el,"evidence"))})).filter(x=>x.name||x.evidence.length);
  const education=group("education").map(el=>({school:v(el,"school"),program:v(el,"program")})).filter(x=>x.school||x.program);
- const relevant=root.querySelector("#cvYears").value.trim();
+ const relevant="";
  const result={...original,experience,projects,education,tools:lines(root.querySelector("#cvTools").value),languages:lines(root.querySelector("#cvLanguages").value),source:"user_confirmed_profile",profile_confirmed_by_user:true,profile_updated_at:new Date().toISOString()};
- if(relevant!==""&&Number.isFinite(Number(relevant))&&Number(relevant)>=0&&Number(relevant)<=50)result.relevant_years_experience=Number(relevant);
- else delete result.relevant_years_experience;
+ // The user is not asked to estimate experience years; preserve only explicit CV dates.
  return result;
 }
 export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]}){
