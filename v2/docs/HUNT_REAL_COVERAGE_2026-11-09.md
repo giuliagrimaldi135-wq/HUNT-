@@ -190,3 +190,19 @@ Il dossier ora segnala esplicitamente descrizioni parziali e usa evidenze biling
 - Nuovi brand effettivamente inseriti: Colmar / Manifattura Mario Colombo, Wolf & Badger, Love, Bonito, Printfresh, CXG, Veliu, Dweet, Short Story.
 - Catalogo globale e matching per utente sono separati: ruoli senior e non pertinenti possono essere indicizzati, ma non devono diventare consigli per una persona senza requisiti.
 - **L'AI delle lettere è ancora non configurata**. Il provider API ha costi a consumo distinti dall'abbonamento ChatGPT; senza la chiave privata sul server il pulsante resta chiaramente disabilitato. Non è stato svolto un test autenticato end-to-end con un utente reale.
+
+## 9 novembre — Dossier ripristinato, AI sospesa e scoperta continuativa
+
+**Fix dell'interfaccia:** il dossier si bloccava con `Can't find variable: companyName` durante il ranking delle news; la variabile del brand è ora dichiarata nello scope corretto. L'interfaccia mostra soltanto editor manuale, Salva e Copia lettera. L'interpretazione AI è temporaneamente nascosta dall'archivio CV. È stato aggiunto un test automatico che intercetta la regressione sulla variabile e sui controlli UI.
+
+**Automazioni continuative realmente attive nel database:**
+- `hunt-fashion-brand-discovery-30m`: ogni 30 min controlla una coppia tra 20 mercati internazionali e 12 segmenti della directory pubblica FashionUnited. Ogni brand è verificato sulla propria pagina directory, con fonte e categoria; si registrano al massimo 3 nuovi brand per scansione, **senza dichiararli aziende con posizioni aperte**. Il sito esterno può non rispondere e la copertura non è universale.
+- `hunt-news-source-sync-5m`: quando entra un nuovo brand, registra automaticamente un feed di news mirato. Un feed creato non è ancora una notizia letta.
+- `hunt-intelligence-source-discovery-15m`: cerca sezioni stampa/IR/social e ora evita che il blocco di un sito impedisca la rotazione sui brand successivi.
+- `hunt-ats-discovery-15m`: cerca veri board Lever/Greenhouse/Ashby/SmartRecruiters/Workable nei siti aziendali già collegati; da oggi può controllare anche i siti candidati dalla directory, e seguire fino a due pagine careers sullo stesso dominio. La disponibilità e le vacancy vanno comunque verificate tramite API ufficiale ATS.
+- `hunt-ats-board-scan-5m`, `hunt-global-news-5m`, `hunt-match-refresh-5m`: scansione delle vacancy, delle news e aggiornamento personalizzato dei match.
+- `hunt-job-facts-10m`: **disattivato** in attesa di una futura decisione esplicita di riattivare l'AI.
+
+**Test effettuato:** il servizio di scoperta brand ha registrato da directory Alpha Industries, ARMEDANGELS e Willy BOGNER GmbH; due siti candidati sono stati collegati, e i tre feed news mirati sono stati creati automaticamente. Snapshot successivo: 126 brand monitorati, 100 fonti lavoro attive (incluse 2 candidate non ancora confermate), 620 posizioni su 27 aziende con offerte, 141 feed news, 17 abbinamenti per il profilo corrente. Le cifre rappresentano copertura del database e NON l'intero internet.
+
+**Limiti noti:** recensione manuale della UX in una sessione autenticata non effettuata, copertura del job market non completa, alcuni ATS non integrati, social non leggibili integralmente senza accesso autorizzato, OCR può richiedere correzioni. Non promettere 'tutto il web'.
