@@ -1,5 +1,5 @@
 import {test} from "node:test";import assert from "node:assert/strict";
-import {evidenceForDisplay,cvRoleSignals,cvReviewSummary} from "../cv-display.js";
+import {evidenceForDisplay,projectNameForDisplay,cvRoleSignals,cvReviewSummary} from "../cv-display.js";
 const examples=[
  ["Client welcome and garment presentation during sales campaign","Accoglienza clienti e presentazione dei capi durante la campagna vendite"],
  ["Order taking through Max Mara application using product codes","Raccolta degli ordini tramite l'applicazione Max Mara, usando i codici prodotto"],
@@ -26,4 +26,12 @@ test("Role hints derive from profile evidence and are not requirements manually 
  const summary=cvReviewSummary(p);
  assert.equal(summary.confirmed,false);
  assert.equal(summary.experience.length,1);
+});
+
+test("Gucci and Alaia academic projects are presented in Italian while preserving original evidence",()=>{
+ assert.equal(projectNameForDisplay("Gucci academic project","it"),"Progetto accademico Gucci");
+ assert.equal(projectNameForDisplay("Alaïa academic project","it"),"Progetto accademico Alaïa");
+ assert.equal(evidenceForDisplay("Costing and product coding","it").text,"Analisi dei costi di prodotto (costing) e codifica dei prodotti");
+ assert.equal(evidenceForDisplay("Planning from collection development through orders and distribution","it").translated,true);
+ assert.equal(evidenceForDisplay("Assortment and buying logic","it").text,"Studio delle logiche di assortimento e buying");
 });
