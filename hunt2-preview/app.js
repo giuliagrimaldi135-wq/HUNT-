@@ -418,14 +418,15 @@ async function getOpportunityFeed(limit=100){
 }
 
 async function getOpportunityDetail(jobId){
- const [{data:job,error:jobError},{data:match},{data:application},{data:personalization},{data:cvs},{data:reposts},{data:dossier}]=await Promise.all([
+ const [{data:job,error:jobError},{data:match},{data:application},{data:personalization},{data:cvs},{data:reposts},{data:dossier},{data:careerPrefs}]=await Promise.all([
    supabase.from("jobs").select("id,company_id,canonical_title,role_family,city,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name,careers_url)").eq("id",jobId).maybeSingle(),
    supabase.from("user_job_matches").select("match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("applications").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
    supabase.from("user_personalization").select("interest_areas,next_experience_drivers,company_preference,avoid_role_traits").eq("user_id",currentUser.id).maybeSingle(),
    supabase.from("user_cvs").select("id,name,target_role_families,parsed_profile,is_default,created_at,updated_at").eq("user_id",currentUser.id).eq("active",true).order("created_at",{ascending:false}),
    supabase.from("repost_events").select("id,detected_at,reason,evidence").eq("job_id",jobId).order("detected_at",{ascending:false}),
-   supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle()
+   supabase.from("user_job_dossiers").select("*").eq("user_id",currentUser.id).eq("job_id",jobId).maybeSingle(),
+   supabase.from("career_preferences").select("primary_role_families,secondary_role_families,preferred_locations,relocation_locations,employment_types,preferences").eq("user_id",currentUser.id).maybeSingle()
  ]);
  if(jobError)throw new Error("La posizione non può essere caricata: "+jobError.message);
  if(!job)throw new Error("Questa posizione non è più disponibile nel database di HUNT.");
@@ -444,7 +445,7 @@ async function getOpportunityDetail(jobId){
    searchBrand.length>=3
      ?supabase.from("world_news_items").select("id,title,summary,url,published_at,evidence,world_news_sources(publisher)").or("title.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%,summary.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(35)
      :Promise.resolve({data:[]}),
-   supabase.from("jobs").select("id,canonical_title,city,role_family,published_at,first_seen_at,primary_apply_url,state,confidence_label")
+   supabase.from("jobs").select("id,canonical_title,city,role_family,seniority,employment_type,published_at,first_seen_at,primary_apply_url,state,confidence_label")
      .eq("company_id",job.company_id).in("state",["active_verified","active_likely"])
      .neq("id",jobId).order("first_seen_at",{ascending:false}).limit(40),
    supabase.from("user_job_matches")
@@ -460,7 +461,7 @@ async function getOpportunityDetail(jobId){
  const alternatives=(nearbyJobs||[]).map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
    .filter(x=>x.id&&x.id!==jobId&&x.company_id!==job.company_id)
    .sort((a,b)=>b.priority_score-a.priority_score).slice(0,6);
- return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:companyJobs||[],sameJobs,alternatives,dossier:dossier||null};
+ return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:companyJobs||[],sameJobs,alternatives,careerPrefs:careerPrefs||{},dossier:dossier||null};
 }
 
 function ageLabel(value,firstSeen=null){
@@ -826,7 +827,19 @@ async function renderOpportunityFolder(jobId){
  const media=row.brandMedia||[];
  const sameJobs=row.sameJobs||[];
  const knownMatches=new Map(sameJobs.map(j=>[j.id,j.match_score]));
- const companyOpenings=(row.companyJobs||[]).filter(j=>["active_verified","active_likely"].includes(j.state));
+ const allCompanyOpenings=(row.companyJobs||[]).filter(j=>["active_verified","active_likely"].includes(j.state));
+ const selectedRoles=[...(row.careerPrefs?.primary_role_families||[]),...(row.careerPrefs?.secondary_role_families||[])];
+ const selectedCities=[...(row.careerPrefs?.preferred_locations||[]),...(row.careerPrefs?.relocation_locations||[])];
+ const scope=row.careerPrefs?.preferences?.radar_scope||"smart";
+ const withinCities=j=>!selectedCities.length||selectedCities.some(city=>{
+   const a=String(city).toLowerCase().replace("milano","milan").trim();
+   const b=String(j.city||"").toLowerCase().replace("milano","milan");
+   return a.length>=3&&b.includes(a);
+ });
+ const companyOpenings=allCompanyOpenings.filter(j=>knownMatches.has(j.id)||
+   (["internship","trainee","entry_level","junior","assistant"].includes(j.seniority)&&
+    (selectedRoles.includes(j.role_family)||(scope==="explore"&&j.role_family))&&withinCities(j)));
+ const otherCompanyOpenings=allCompanyOpenings.filter(j=>!companyOpenings.some(x=>x.id===j.id));
  const companyNewsDedup=new Map();
  for(const x of signals){
    if(x.title&&safeRadarUrl(x.source_url)){
@@ -995,7 +1008,7 @@ async function renderOpportunityFolder(jobId){
    </section>
    <section class="section companyOpenRoles">
      <div class="companyOpenRolesHead"><div class="eyebrow">Opportunità nel brand</div><h2>Altre posizioni aperte di ${esc(brand)}</h2>
-       <p>Qui trovi le offerte già verificate e acquisite da HUNT. Per tutte le altre posizioni disponibili, consulta anche il portale ufficiale del brand: non presentiamo il database HUNT come completo.</p>
+       <p>Prima le posizioni vicine ai tuoi obiettivi; separatamente, le altre offerte pubbliche che HUNT ha trovato nel gruppo. Non tutte sono adatte al tuo CV e il database non è completo.</p>
        ${safeRadarUrl(job.companies?.careers_url)?`<a class="brandCareersLink" href="${esc(job.companies.careers_url)}" target="_blank" rel="noopener noreferrer">Vedi tutte le offerte sul sito aziendale</a>`:""}
      </div>
      ${companyOpenings.length?`<div class="companyOpenRolesList">
@@ -1008,7 +1021,16 @@ async function renderOpportunityFolder(jobId){
            ${safeRadarUrl(j.primary_apply_url)?`<a href="${esc(j.primary_apply_url)}" class="btn primary" target="_blank" rel="noopener noreferrer">Annuncio originale</a>`:""}
          </div>
        </article>`).join("")}
-     </div>`:`<div class="companyNoJobs"><strong>Il radar HUNT non ha ancora acquisito altri annunci verificati di questo brand.</strong><p>Non significa che l'azienda non stia assumendo. Usa il collegamento al portale ufficiale qui sopra per vedere l'elenco completo; intanto qui sotto trovi alternative del tuo radar personale.</p></div>`}
+     </div>`:`<div class="companyNoJobs"><strong>Non ci sono altre offerte del brand coerenti con i target e le città che hai scelto.</strong><p>La ricerca continua. Qui sotto puoi aprire anche le posizioni rilevate fuori dai tuoi filtri, senza confonderle con i consigli per te.</p></div>`}
+     ${otherCompanyOpenings.length?`<details class="brandOtherPositions"><summary>${otherCompanyOpenings.length} altre posizioni del brand fuori dai tuoi target</summary>
+        <p>Rilevate nelle fonti dell'azienda, ma non raccomandate automaticamente. Verifica sede, seniority e requisiti.</p>
+        <div class="companyOpenRolesList">${otherCompanyOpenings.slice(0,12).map(j=>`<article class="brandJobItem">
+           <div class="brandJobContent"><div class="eyebrow">Fuori dal tuo feed · ${esc(j.seniority||"Livello da verificare")}</div>
+             <h3>${esc(j.canonical_title)}</h3><p>${esc(j.city||"Località da verificare")} · ${esc(j.role_family||"Altro settore")}</p></div>
+           <div class="brandJobActions"><button class="btn" type="button" data-open-dossier="${esc(j.id)}">Apri dossier</button>
+             ${safeRadarUrl(j.primary_apply_url)?`<a class="btn primary" href="${esc(j.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Annuncio ufficiale</a>`:""}</div>
+         </article>`).join("")}</div>
+       </details>`:""}
    </section>
    ${row.alternatives?.length?`<section class="section companyAlternatives">
      <div class="eyebrow">Opzioni vicine al tuo obiettivo</div><h2>Ruoli simili in altri brand</h2>
