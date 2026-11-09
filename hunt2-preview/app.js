@@ -656,17 +656,19 @@ function likelyInterviewQuestions(row){
 }
 
 function jobTextEvidence(description){
- const normalized=String(description||"").replace(/<[^>]+>/g," ").replace(/[•·▪]/g,"\n").replace(/\r/g,"\n");
- const sentences=normalized.split(/\n+|(?<=[.!?])\s+(?=[A-ZÀ-Ü])/)
+ const original=String(description||"").replace(/<[^>]+>/g," ").replace(/[•·▪]/g,"\n").replace(/\r/g,"\n");
+ // Prefer the genuine job section over employer-history and marketing paragraphs.
+ const marker=original.search(/\b(descrizione del ruolo|responsabilit[aà]|your responsibilities|key responsibilities|your mission|what you will do|about the role|the opportunity|job description|mansioni principali)\b/i);
+ const relevant=marker>=0?original.slice(marker):original;
+ const sentences=relevant.split(/\n+|(?<=[.!?])\s+(?=[A-ZÀ-Ü])/)
    .map(x=>x.replace(/\s+/g," ").trim())
-   .filter(x=>x.length>=30&&x.length<=650&& !/^(about us|about the company|equal opportunity|who we are|privacy|cookie policy)/i.test(x));
- const tasks=sentences.filter(x=>/support|coordinate|responsibilit|manage|monitor|analys|plan|merchandis|buying|purchase|assort|stock|allocation|report|collection|product|vendit|acquist|gestione|pianific|analisi|assortimento|negozi|retail/i.test(x)).slice(0,3);
- const requirements=sentences.filter(x=>/\b(required|requirement|must|minimum|at least|years? of experience|proficient|fluent|excel|degree|preferred|conoscenza|requisiti|esperienza|laurea|lingua|padronanza|necessari|essenziale)\b/i.test(x)).slice(0,3);
- return {
-   tasks:tasks.map(x=>x.slice(0,280)),
-   requirements:requirements.map(x=>x.slice(0,260)),
-   hasDetails:normalized.length>=150
- };
+   .filter(x=>x.length>=30&&x.length<=750&&
+     !/^(about us|about the company|equal opportunity|who we are|privacy|cookie policy)/i.test(x));
+ const isBrandHistory=x=>/(founded in|founded by|pioneer of|headquartered in|in 20\d\d.*(created|became|changed)|\bemployees\b|operat(?:es|ing) in \d+ countries|billion (?:euros|dollars)|azienda fondata nel|fatturato del gruppo)/i.test(x);
+ const tasks=sentences.filter(x=>!isBrandHistory(x)&&/support|coordinate|responsibilit|manage|monitor|analys|plan|merchandis|buying|purchase|assort|stock|allocation|report|collection|product|vendit|acquist|gestione|pianific|analisi|assortimento|negozi|retail/i.test(x)).slice(0,3);
+ const requirements=sentences.filter(x=>!isBrandHistory(x)&&/\b(required|requirement|must|minimum|at least|years? of experience|proficient|fluent|excel|degree|preferred|conoscenza|requisiti|esperienza|laurea|lingua|padronanza|necessari|essenziale)\b/i.test(x)).slice(0,3);
+ const clip=x=>x.length>290?x.slice(0,287).trim()+"…":x;
+ return {tasks:tasks.map(clip),requirements:requirements.map(clip),hasDetails:original.length>=150};
 }
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
@@ -693,7 +695,7 @@ async function renderOpportunityFolder(jobId){
  const targetIsRelevant=Boolean((row.cvs||[]).some(cv=>(cv.target_role_families||[]).includes(job.role_family)));
  const shortlistVerdict=!evidence.tasks.length
    ?"HUNT ha verificato l'esistenza dell'offerta, ma i contenuti disponibili non bastano per valutare con precisione il lavoro."
-   :`Il ruolo riguarda ${job.role_family||"un'area da approfondire"}${job.city?" a "+job.city:""}. Nell'annuncio sono descritte attività concrete: «${evidence.tasks[0]}». ${targetIsRelevant?"Hai indicato questa area tra le destinazioni di almeno uno dei tuoi CV.":"Controlla che queste responsabilità siano in linea con ciò che vuoi imparare."}`;
+   :`La posizione riguarda ${job.role_family||"un'area da approfondire"}${job.city?" a "+job.city:""}. L'annuncio descrive questo lavoro: «${evidence.tasks[0]}»${targetIsRelevant?". È un'area per cui hai già predisposto una versione del CV.":"."}`;
 
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
@@ -839,7 +841,7 @@ async function renderOpportunityFolder(jobId){
        <div><div class="eyebrow">News & mondo fashion</div><h2>${esc(brand)} nel mondo</h2>
          <p>Notizie aziendali e stampa internazionale raccolte dalle fonti monitorate da HUNT. Ogni articolo riporta la fonte. Non sono annunci di lavoro.</p>
        </div>
-       <button type="button" class="worldReadToggle" id="brandReadToggle">Archivio lette</button>
+       <div class="brandGlobalNewsNav"><button type="button" class="worldReadToggle" id="brandReadToggle">Archivio lette</button><button type="button" class="worldReadToggle" id="brandGoFashionNews">Tutte le Fashion News</button></div>
      </div>
      <p id="brandNewsCounter" class="brandNewsCounter"></p>
      <p id="brandNewsError" class="dossierError" role="alert" hidden></p>
@@ -908,6 +910,8 @@ async function renderOpportunityFolder(jobId){
  };
  const toggleBrandArchive=document.getElementById("brandReadToggle");
  if(toggleBrandArchive)toggleBrandArchive.onclick=()=>{brandArchive=!brandArchive;renderBrandFeed()};
+ const goAllNews=document.getElementById("brandGoFashionNews");
+ if(goAllNews)goAllNews.onclick=()=>{radarCompanyFilter="all";radarSignalFilter="all";renderWorldRadar()};
  if(brandReadError){const el=document.getElementById("brandNewsError");if(el){el.hidden=false;el.textContent="Stato di lettura non disponibile: "+brandReadError.message}}
  renderBrandFeed();
  document.getElementById("backToFeed").onclick=()=>{
