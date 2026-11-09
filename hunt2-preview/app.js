@@ -944,23 +944,13 @@ async function renderOpportunityFolder(jobId){
      ${!row.dossier?`<p class="workspaceEmpty">Conferma almeno un CV nel Profilo per ottenere una selezione realmente personalizzata.</p>`:""}
    </section>
 
-   ${row.dossier?.ready_to_send_message?`<section class="section letterWorkbench">
-     <div class="letterHeading"><div><div class="eyebrow">Candidatura personale</div><h2>La tua cover letter</h2><p>La bozza qui sotto è una base tecnica, non una lettera scritta dall'AI. HUNT AI potrà generarne una originale dal CV verificato e dal testo della posizione, seguendo il tuo stile.</p></div>
-       <div class="letterToolbar"><button class="btn aiWriteButton" id="writeLetterAI">✦ Scrivi con HUNT AI</button><button class="btn" id="saveCoverLetter">Salva</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
+   ${row.dossier?.ready_to_send_message?`<section class="section letterWorkbench letterManualOnly">
+     <div class="letterHeading"><div><div class="eyebrow">La tua candidatura</div><h2>Lettera di presentazione</h2><p>Una prima bozza basata sui dati confermati nel CV e sulle attività disponibili nell'annuncio. Modificala come preferisci, poi salvala o copiala per la candidatura.</p></div>
+       <div class="letterToolbar"><button class="btn" id="saveCoverLetter">Salva modifiche</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
      </div>
      <label class="dossierSubject">Oggetto: <span>${esc(row.dossier.ready_to_send_subject||"")}</span></label>
-     <textarea class="coverLetterEditor" id="coverLetterText" rows="12" spellcheck="true" aria-label="Modifica la cover letter">${esc(row.dossier.ready_to_send_message)}</textarea>
-     <div class="letterPolish">
-       <div class="letterPolishTitle"><span class="letterAiMark">✦</span><div><strong>La tua voce, non un modello prestampato</strong><p>Puoi chiedere cambiamenti sulla bozza, oppure far scrivere una nuova lettera da HUNT AI. Il sistema usa l’annuncio reale, i CV confermati e le preferenze professionali salvate.</p></div></div>
-       <div class="polishPresets">
-         <button type="button" data-ai-feedback="Rendila meno formale, più umana e naturale, senza perdere professionalità.">Più naturale</button>
-         <button type="button" data-ai-feedback="Rendi l'apertura più incisiva, mettendo subito in evidenza il contributo reale che posso portare, senza inventare risultati.">Apertura più forte</button>
-         <button type="button" data-ai-feedback="Evita di ripetere il CV: usa soltanto le esperienze più rilevanti e collegale al lavoro concreto richiesto.">Meno ripetizioni</button>
-         <button type="button" data-ai-feedback="Rafforza il valore che posso apportare al team usando una leva della perdita sobria e credibile, senza fare promesse non dimostrate.">Più persuasiva</button>
-       </div>
-       <div class="polishComposer"><textarea id="letterAiInstruction" rows="2" maxlength="500" placeholder="Es. Falla più personale, dai peso al progetto di buying e taglia l'introduzione."></textarea><button class="btn primary" id="polishLetter">Migliora</button></div>
-       <div class="letterPolishFooter"><span id="letterAiStatus" role="status">Le nuove versioni non si salvano da sole: puoi correggere, annullare e decidere tu quando salvare.</span><button class="btn letterUndo" id="undoLetter" hidden>Ripristina testo precedente</button></div>
-     </div>
+     <textarea class="coverLetterEditor" id="coverLetterText" rows="15" spellcheck="true" aria-label="Modifica la cover letter">${esc(row.dossier.ready_to_send_message)}</textarea>
+     <div class="manualLetterGuide"><strong>Prima di inviarla</strong><p>Inserisci una motivazione specifica per questa posizione, verifica che ogni esperienza citata sia nel CV e rileggi il tono ad alta voce. Nessuna lettera viene inviata automaticamente.</p></div>
    </section>`:""}
 
    <section class="section compactJobStatus">
@@ -1130,76 +1120,22 @@ async function renderOpportunityFolder(jobId){
    catch(e){info.textContent=e instanceof Error?e.message:String(e);info.className="dossierError";generate.disabled=false}
  };
 
- let lastAiProposal=null;
  const save=document.getElementById("saveCoverLetter");
  if(save)save.onclick=async()=>{
+   const editor=document.getElementById("coverLetterText");
+   const body=editor?.value||"";
+   if(body.trim().length<60){save.textContent="Controlla il testo";return}
    save.disabled=true;
-   const body=document.getElementById("coverLetterText")?.value||"";
-   const editedMeta={...(row.dossier?.generated_from||{}),user_edited:true,user_modified_for_style:lastAiProposal===null||body!==lastAiProposal,ai_generated_last_saved:lastAiProposal!==null,user_edited_at:new Date().toISOString()};
-   const {error}=await supabase.from("user_job_dossiers").update({ready_to_send_message:body,generated_from:editedMeta,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("job_id",jobId);
-   save.disabled=false;save.textContent=error?"Errore nel salvataggio":"Salvata";
-   setTimeout(()=>save.textContent="Salva modifiche",1800);
- };
- const instruction=document.getElementById("letterAiInstruction");
- document.querySelectorAll("[data-ai-feedback]").forEach(x=>x.onclick=()=>{
-   if(instruction){instruction.value=x.dataset.aiFeedback||"";instruction.focus()}
- });
- const improve=document.getElementById("polishLetter");
- const writeWithAI=document.getElementById("writeLetterAI");
- const undo=document.getElementById("undoLetter");
- const aiStatus=document.getElementById("letterAiStatus");
- let earlierLetter="";
- let aiEnabled=false;
- if(improve||writeWithAI){
-   supabase.functions.invoke("hunt-ai-status",{body:{}}).then(({data,error})=>{
-     if(error||!data?.enabled){
-       aiEnabled=false;
-       if(improve){improve.disabled=true;improve.textContent="AI da attivare"}
-       if(writeWithAI){writeWithAI.disabled=true;writeWithAI.textContent="✦ AI da attivare"}
-       if(aiStatus)aiStatus.textContent="HUNT AI non è ancora attiva. Puoi comunque personalizzare e salvare questa bozza; la generazione AI diventerà disponibile quando sarà configurata.";
-     }else{
-       aiEnabled=true;
-       if(aiStatus)aiStatus.textContent="AI attiva: puoi far scrivere una lettera originale o rivedere un testo già modificato. Nessuna modifica viene salvata senza il tuo comando.";
-     }
-   }).catch(()=>{if(aiStatus)aiStatus.textContent="Impossibile verificare il servizio AI. La scrittura manuale rimane disponibile."});
- }
- const runWriter=async(mode)=>{
-   const editor=document.getElementById("coverLetterText");
-   if(!editor||!aiEnabled)return;
-   const requested=instruction?.value?.trim()||"";
-   if(mode==="revise"&&requested.length<3){aiStatus.textContent="Scegli un suggerimento o scrivi cosa cambiare nella lettera.";return}
-   if(mode==="generate"&&editor.value!==row.dossier?.ready_to_send_message&&!window.confirm("La nuova lettera sostituirà temporaneamente le modifiche presenti nell'editor. Puoi annullare il cambiamento, ma le modifiche non salvate potrebbero andare perse. Continuare?"))return;
-   const trigger=mode==="generate"?writeWithAI:improve;
-   const before=editor.value;
-   trigger.disabled=true;
-   const label=trigger.textContent;
-   trigger.textContent=mode==="generate"?"Sto scrivendo…":"Sto migliorando…";
-   aiStatus.textContent=mode==="generate"?"HUNT sta collegando le mansioni alla tua esperienza documentata e alle tue preferenze…":"HUNT sta rielaborando la lettera seguendo il tuo feedback…";
-   try{
-     const cvId=document.getElementById("dossierCv")?.value||row.dossier?.recommended_cv_id;
-     const {data,error}=await supabase.functions.invoke("hunt-letter-polish",{
-       body:{mode,job_id:jobId,cv_id:cvId,language:document.getElementById("dossierLang")?.value||"en",draft:before,instructions:requested}
-     });
-     if(error){
-       let message=error.message||"Il modello non ha completato la richiesta.";
-       try{const details=await error.context?.json?.();if(details?.error)message=details.error}catch{}
-       throw new Error(message);
-     }
-     if(!data?.ok||typeof data.text!=="string")throw new Error(data?.error||"La proposta non è utilizzabile.");
-     earlierLetter=before;
-     editor.value=data.text;
-     lastAiProposal=data.text;
-     if(undo)undo.hidden=false;
-     aiStatus.textContent="Nuova lettera pronta. Leggila: per conservarla devi premere Salva. Puoi modificarla o ripristinare la versione precedente.";
-     editor.focus();
-   }catch(e){aiStatus.textContent=e?.message||String(e)}
-   finally{trigger.disabled=!aiEnabled;trigger.textContent=label}
- };
- if(improve)improve.onclick=()=>runWriter("revise");
- if(writeWithAI)writeWithAI.onclick=()=>runWriter("generate");
- if(undo)undo.onclick=()=>{
-   const editor=document.getElementById("coverLetterText");
-   if(editor&&earlierLetter){editor.value=earlierLetter;lastAiProposal=null;undo.hidden=true;aiStatus.textContent="Versione precedente ripristinata; non è stata salvata automaticamente."}
+   const editedMeta={...(row.dossier?.generated_from||{}),user_edited:true,user_modified_for_style:true,user_edited_at:new Date().toISOString()};
+   const {error}=await supabase.from("user_job_dossiers").update({
+     ready_to_send_message:body,generated_from:editedMeta,updated_at:new Date().toISOString()
+   }).eq("user_id",currentUser.id).eq("job_id",jobId);
+   save.disabled=false;
+   if(error){save.textContent="Errore nel salvataggio";console.error(error);return}
+   row.dossier.ready_to_send_message=body;
+   row.dossier.generated_from=editedMeta;
+   save.textContent="Salvata";
+   setTimeout(()=>{if(save.isConnected)save.textContent="Salva modifiche"},1600);
  };
  const copy=document.getElementById("copyCoverLetter");
  if(copy)copy.onclick=async()=>{
