@@ -135,24 +135,40 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   const b=event.target.closest("[data-cv-action]");if(!b)return;
   const action=b.dataset.cvAction,id=b.dataset.cvId;
   if(action==="select"){selectedId=id;await refresh();return}
-  if(action==="save-targets"){
-   const checked=[...root.querySelectorAll("[data-cv-target]:checked")].map(el=>el.dataset.cvTarget);
-   b.disabled=true;
-   const {error}=await supabase.from("user_cvs").update({target_role_families:checked,updated_at:new Date().toISOString()}).eq("id",id).eq("user_id",user.id);
-   if(error){show("Non riesco a salvare i ruoli: "+error.message,true);b.disabled=false}
-   else await refresh();
-   return;
-  }
   if(action==="remove"){b.closest("[data-cv-entry]")?.remove();return}
   if(action==="add-experience"){root.querySelector("#cvExperiences").insertAdjacentHTML("beforeend",entry("experience"));return}
   if(action==="add-project"){root.querySelector("#cvProjects").insertAdjacentHTML("beforeend",entry("project"));return}
   if(action==="add-education"){root.querySelector("#cvEducation").insertAdjacentHTML("beforeend",entry("education"));return}
-  if(action==="default"){
+  if(action==="default"||action==="secondary"){
+   const target=action==="secondary"?rows.find(x=>x.id!==id&&(x.parsed_profile?.profile_confirmed_by_user||x.parsed_profile?.profile_verified_from_user_history))||rows.find(x=>x.id!==id):rows.find(x=>x.id===id);
+   if(!target){show("Serve almeno un CV principale. Carica un'altra versione prima di rendere secondaria questa.",true);return}
    b.disabled=true;
    const reset=await supabase.from("user_cvs").update({is_default:false}).eq("user_id",user.id).eq("active",true);
-   const promote=reset.error?reset:await supabase.from("user_cvs").update({is_default:true}).eq("user_id",user.id).eq("id",id);
-   if(promote.error){show(promote.error.message,true);b.disabled=false}else{selectedId=id;await refresh()}
+   const setMain=reset.error?reset:await supabase.from("user_cvs").update({is_default:true}).eq("user_id",user.id).eq("active",true).eq("id",target.id);
+   if(setMain.error){show("Non riesco a modificare la priorità del CV: "+setMain.error.message,true);b.disabled=false}
+   else {selectedId=id;await refresh()}
    return;
+  }
+  if(action==="delete-cv"){
+   const cv=rows.find(x=>x.id===id);
+   if(!cv)return;
+   if(!window.confirm('Eliminare il CV «'+cv.name+'» dal tuo archivio? Il documento verrà cancellato e non sarà più utilizzato nei confronti con gli annunci.'))return;
+   b.disabled=true;show("Eliminazione del CV dall'archivio privato…");
+   const deleted=await supabase.from("user_cvs").update({active:false,is_default:false,updated_at:new Date().toISOString()}).eq("id",id).eq("user_id",user.id);
+   if(deleted.error){show("Impossibile eliminare il CV: "+deleted.error.message,true);b.disabled=false;return}
+   const replacement=rows.filter(x=>x.id!==id).find(x=>x.is_default)||rows.find(x=>x.id!==id)||null;
+   if(cv.is_default&&replacement){
+     const promote=await supabase.from("user_cvs").update({is_default:true}).eq("id",replacement.id).eq("user_id",user.id).eq("active",true);
+     if(promote.error){show("CV disattivato, ma non riesco a impostare quello principale: "+promote.error.message,true)}
+   }
+   const removed=await supabase.storage.from("cvs").remove([cv.storage_path]);
+   selectedId=replacement?.id||null;failedReadIds.delete(id);
+   await refresh();
+   if(removed.error)show("CV tolto dall'archivio, ma la cancellazione del file richiede una verifica: "+removed.error.message,true);
+   return;
+  }
+  if(action==="retry-reading"){
+   failedReadIds.clear();await refresh();return;
   }
   if(action==="upload"){
    const file=root.querySelector("#cvUploadFile")?.files?.[0];
@@ -169,33 +185,47 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
     const {data:created,error:dbError}=await supabase.from("user_cvs").insert({user_id:user.id,name,storage_path:path,target_role_families:[],parsed_profile:{},is_default:rows.length===0,active:true}).select("id").single();
     if(dbError){await supabase.storage.from("cvs").remove([path]);throw dbError}
     selectedId=created.id;await refresh();
-    // Start reading the newly uploaded CV without a second manual action.
-    const readButton=document.querySelector('#cvManagerRoot [data-cv-action="read"][data-cv-id="'+created.id+'"]');
-    if(readButton)readButton.click();
+    // Mounting the profile automatically starts local OCR and analysis.
    }catch(e){show("Upload non riuscito: "+(e.message||String(e)),true);b.disabled=false}
    return;
   }
-  if(action==="read"||action==="read-all"){
-   const language=root.querySelector("#cvOcrLang")?.value||"ita+eng";
-   const queue=action==="read-all"?rows.filter(cv=>!cv.parsed_profile?.raw_text):rows.filter(cv=>cv.id===id);
-   if(!queue.length){show("Tutti i CV hanno già un testo riconosciuto. Puoi aprirli e confermare i dati.");return}
-   b.disabled=true;
-   const title=b.textContent;
-   const failed=[];
-   let read=0;
-   for(const [index,cv] of queue.entries()){
-    b.textContent="Lettura "+(index+1)+"/"+queue.length+"…";
-    show("Lettura di "+cv.name+" ("+(index+1)+"/"+queue.length+")…");
-    try{await readSingleCv(cv,language);read++;selectedId=cv.id}
-    catch(e){failed.push(cv.name+": "+(e?.message||String(e)))}
-   }
-   if(read)await refresh();
-   const outcome=read+" CV analizzati. "+(failed.length?"Non completati: "+failed.join(" | "):"Apri ogni CV e conferma le informazioni proposte.");
-   show(outcome,failed.length>0);
-   if(b.isConnected){b.disabled=false;b.textContent=title}
-   return;
-  }
+
  };
+ // Read every pending CV automatically, sequentially, preserving separate provenance.
+ // Failed scans are not retried infinitely; the user sees a clear retry action.
+ if(!autoReading){
+   const pending=rows.filter(cv=>!cv.parsed_profile?.raw_text&&!failedReadIds.has(cv.id));
+   if(pending.length){
+     autoReading=true;
+     Promise.resolve().then(async()=>{
+       const failures=[];let completed=0;
+       for(const [i,cv] of pending.entries()){
+         show("Analisi automatica CV "+(i+1)+"/"+pending.length+" · "+cv.name);
+         try{
+           await readSingleCv(cv,root.querySelector("#cvOcrLang")?.value||"ita+eng");
+           completed++;
+           if(!selectedId)selectedId=cv.id;
+         }catch(e){failedReadIds.add(cv.id);failures.push(cv.name+": "+(e?.message||String(e)))}
+       }
+       autoReading=false;
+       await refresh();
+       if(failures.length){
+         const notice=document.querySelector("#cvReaderStatus");
+         if(notice){
+           notice.classList.add("cvReaderError");
+           notice.textContent="Alcuni CV non sono stati letti: "+failures.join(" | ")+" ";
+           const btn=document.createElement("button");
+           btn.className="btn";btn.type="button";btn.dataset.cvAction="retry-reading";btn.textContent="Riprova la lettura";
+           notice.appendChild(btn);
+         }
+       }else if(completed){
+         const status=document.querySelector("#cvReaderStatus");
+         if(status)status.textContent=completed+" CV analizzati. Controlla la sintesi ed eventualmente conferma i dati.";
+       }
+     }).catch(e=>{autoReading=false;show("Errore di analisi automatica: "+(e?.message||String(e)),true)});
+   }
+ }
+
  const form=root.querySelector("#cvFactsForm");
  if(form)form.onsubmit=async e=>{
   e.preventDefault();
