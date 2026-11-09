@@ -48,7 +48,7 @@ function editor(cv,roleFamilies=[]){
   '<span class="cvInsightState '+(verified?'is-verified':'')+'">'+(verified?"Profilo confermato":"Da verificare")+'</span></div>'+
   '<div class="cvInsightMetrics"><div><strong>'+ex.length+'</strong><span>Esperienze</span></div><div><strong>'+pr.length+'</strong><span>Progetti</span></div><div><strong>'+tools.length+'</strong><span>Software</span></div></div>'+
   '<section class="cvCareerAreas"><div class="cvCareerAreasTitle"><div><div class="eyebrow">I tuoi ambiti professionali</div><h3>Le aree collegate a questo CV</h3><p>Emergono dalle esperienze o dai progetti presenti nel documento, non sono qualifiche aggiunte automaticamente.</p></div><span>'+detectedAreas.length+' aree collegate</span></div>'+
-  '<div class="cvCareerHighlights">'+(detectedAreas.length?detectedAreas.map(x=>'<article class="cvCareerArea"><strong>'+esc(x.name)+'</strong><small>'+esc(x.basis.replace(/\\s+academic project$/i,""))+'</small></article>').join(""):'<p>Non sono stati individuati collegamenti specifici alle categorie professionali.</p>')+'</div>'+
+  '<div class="cvCareerHighlights">'+(detectedAreas.length?detectedAreas.map(x=>'<article class="cvCareerArea"><strong>'+esc(x.name)+'</strong><small>'+esc(x.basis.replace(/academic project$/i,"").trim())+'</small></article>').join(""):'<p>Non sono stati individuati collegamenti specifici alle categorie professionali.</p>')+'</div>'+
   '<details class="cvAllAreas"><summary>Vedi tutte le '+professionalAreas.length+' categorie HUNT <span>Esplora le altre aree</span></summary><div class="cvAllAreaGrid">'+professionalAreas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details></section>'+
   '<form id="cvFactsForm"><div class="cvInsightColumns"><div><h3>Esperienze professionali</h3>'+ (ex.length?showRecord(ex,"company"):'<p class="cvInsightEmpty">Nessuna esperienza riconosciuta.</p>')+'</div>'+
   '<div><h3>Progetti e formazione</h3>'+(pr.length?showRecord(pr,"name"):'<p class="cvInsightEmpty">Nessun progetto rilevato.</p>')+
@@ -115,8 +115,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
     '<button class="btn primary" data-cv-action="upload" type="button">Aggiungi CV</button></div></div>'+
   '<div id="cvReaderStatus" role="status" aria-live="polite" class="cvReaderStatus"></div>'+
   (unread.length?'<p class="cvAutoNotice">HUNT sta preparando la lettura automatica di '+unread.length+' CV. Se la scansione non riesce, troverai qui un comando per riprovare.</p>':"")+
-  '<div class="cvReaderOptions"><label>Lingua del documento <select id="cvOcrLang"><option value="ita+eng">Riconoscimento italiano e inglese</option><option value="eng">Inglese</option><option value="ita">Italiano</option></select></label>'+
-   '<p>Il riconoscimento avviene nel browser. Esperienze e competenze non vengono inventate o assegnate ad altri CV.</p></div>'+
+  (unread.length||failedReadIds.size?'<details class="cvReaderOptions cvReaderOptionsFold"><summary>Opzioni di lettura dei documenti</summary><div><label>Lingua OCR <select id="cvOcrLang"><option value="ita+eng">Italiano e inglese</option><option value="eng">Inglese</option><option value="ita">Italiano</option></select></label><p>Serve solo quando un PDF non può essere letto normalmente.</p></div></details>':"")+
   (current?editor(current,roleFamilies):"")+'</section>';
  const show=(text,bad=false)=>{const el=root.querySelector("#cvReaderStatus");if(el){el.textContent=text;el.classList.toggle("cvReaderError",bad)}};
  const readSingleCv=async (cv,language)=>{
