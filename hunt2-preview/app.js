@@ -425,7 +425,7 @@ async function getOpportunityDetail(jobId){
  ]);
  if(jobError||!job)return null;
  const companyName=String(job.companies?.name||"").trim();
- const searchBrand=companyName.replace(/\s+(Group|Fashion Group|Holdings|S\.p\.A\.|Ltd\.)$/i,"").trim();
+ const searchBrand=companyName.replace(/\s+(Fashion Group|Group|Holdings|S\.p\.A\.|Ltd\.)$/i,"").trim();
  const [{data:signals},{data:relatedMatches},{data:brandMedia},{data:companyJobs}]=await Promise.all([
    supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("published_at",{ascending:false,nullsFirst:false}).limit(35),
    supabase.from("user_job_matches")
@@ -437,7 +437,7 @@ async function getOpportunityDetail(jobId){
      .order("priority_score",{ascending:false})
      .limit(5),
    searchBrand.length>=3
-     ?supabase.from("world_news_items").select("id,title,summary,url,published_at,world_news_sources(publisher)").ilike("title","%"+searchBrand.replace(/[%_,]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(35)
+     ?supabase.from("world_news_items").select("id,title,summary,url,published_at,world_news_sources(publisher)").or("title.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%,summary.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(35)
      :Promise.resolve({data:[]}),
    supabase.from("jobs").select("id,canonical_title,city,role_family,published_at,first_seen_at,primary_apply_url,state,confidence_label")
      .eq("company_id",job.company_id).in("state",["active_verified","active_likely"])
