@@ -728,7 +728,7 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v4");
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v5");
  const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale);
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
    pendingDossiers.add(jobId);
@@ -751,7 +751,7 @@ async function renderOpportunityFolder(jobId){
 
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
- const fit=row.dossier?.model_version==="evidence_dossier_v4"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
+ const fit=row.dossier?.model_version==="evidence_dossier_v5"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
  const smartQuestion=row.dossier?.generated_from?.interview_question||"";
@@ -1155,7 +1155,7 @@ async function renderWorldRadar(){
   currentView="radar";
   const [companyRes,globalRes]=await Promise.all([
     supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,detected_at,relevance_score,companies(name)").order("published_at",{ascending:false,nullsFirst:false}).limit(120),
-    supabase.from("world_news_items").select("id,theme,title,summary,url,published_at,detected_at,relevance_score,world_news_sources(publisher,region,language)").order("published_at",{ascending:false,nullsFirst:false}).limit(350)
+    supabase.from("world_news_items").select("id,theme,title,summary,url,published_at,detected_at,relevance_score,world_news_sources(publisher,region,language)").order("published_at",{ascending:false,nullsFirst:false}).limit(1000)
   ]);
   const global=(globalRes.data||[]).map(item=>({
     id:item.id,signal_type:item.theme||"industry",title:item.title,summary:item.summary,source_name:item.world_news_sources?.publisher||"Fonte",source_url:item.url,published_at:item.published_at,relevance_score:item.relevance_score,companies:{name:item.world_news_sources?.publisher||"Fonte"},region:item.world_news_sources?.region||"global",kind:"industry"
