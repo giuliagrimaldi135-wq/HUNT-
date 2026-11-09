@@ -1122,7 +1122,7 @@ async function renderOpportunityFolder(jobId){
    catch(error){dossierCvSelector.disabled=false;console.error("CV comparison failed",error)}
  };
  const profileButton=document.getElementById("reviewRequirementsProfile");
- if(profileButton)profileButton.onclick=()=>renderProfile();
+ if(profileButton)profileButton.onclick=()=>renderProfile(jobId);
 
 }
 
@@ -1255,7 +1255,7 @@ async function renderWorldRadar(){
   });
 }
 
-async function renderProfile(){
+async function renderProfile(fromJobId=null){
  currentView="profile";
  const [p,pref]=await Promise.all([
   getProfile(),
@@ -1266,7 +1266,10 @@ async function renderProfile(){
   <header class="profileWorkspaceHeading">
     <div><div class="eyebrow">Il tuo spazio</div><h1>Profilo e curriculum</h1>
       <p>Gestisci le tue versioni del CV e controlla le informazioni utilizzate da HUNT per le candidature.</p></div>
-    <button class="profileSignout" id="logoutBtn">Esci</button>
+    <div class="profileHeaderActions">
+      ${fromJobId?`<button class="profileBackToJob" id="profileBackToJob">← Torna alla posizione</button>`:""}
+      <button class="profileSignout" id="logoutBtn">Esci</button>
+    </div>
   </header>
   <div class="profileAccountStrip"><span><strong>${esc(p?.display_name||"Profilo personale")}</strong><small>${esc(currentUser.email||"")}</small></span>
    <span><small>Aree di interesse</small><strong>${esc(Array.isArray(roles)&&roles.length?roles.slice(0,3).join(" · "):"Da definire")}</strong></span></div>
@@ -1274,10 +1277,12 @@ async function renderProfile(){
  </div>`);
  bindNav();
  document.getElementById("logoutBtn").onclick=logout;
+ const backToJob=document.getElementById("profileBackToJob");
+ if(backToJob&&fromJobId)backToJob.onclick=()=>openOpportunityFolder(fromJobId,false);
  try{
    const {mountCvManager}=await import("./cv-profile.js?v=20261109-122");
    const root=document.getElementById("cvManagerRoot");
-   if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:renderProfile,roleFamilies:macroAreas});
+   if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:()=>renderProfile(fromJobId),roleFamilies:macroAreas});
  }catch(e){
    const root=document.getElementById("cvManagerRoot");
    if(root)root.textContent="Impossibile aprire la gestione dei CV: "+(e.message||String(e));
