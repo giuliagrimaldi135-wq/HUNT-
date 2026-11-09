@@ -24,7 +24,9 @@ test("Paused AI is not advertised as a working control",()=>{
  assert.doesNotMatch(cv,/HUNT AI|data-cv-action="interpret"|id="cvAutoAI"/);
  assert.match(app,/id="saveCoverLetter"/);
  assert.match(app,/id="copyCoverLetter"/);
- assert.match(cv,/data-cv-action="read"/);
+ assert.match(cv,/const readSingleCv=async/);
+ assert.match(cv,/if\(!autoReading\)/);
+ assert.match(cv,/data-cv-action="delete-cv"/);
 });
 
 test("Italian dossier uses Italian evidence and switches without waiting for letter service",()=>{
