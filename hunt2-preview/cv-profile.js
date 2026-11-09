@@ -2,10 +2,13 @@
 import {extractCvText} from "./cv-reader.js?v=20261109-60";
 import {interpretCvText} from "./cv-interpreter.js?v=20261109-60";
 import {evidenceForDisplay,projectNameForDisplay,cvProfessionalCategories,cvReviewSummary} from "./cv-display.js?v=20261109-106";
+import {renderCvLibrary,renderCvWorkspace} from "./cv-workspace.js?v=20261109-120";
 const esc=(s="")=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,50);
 const mime={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
 let selectedId=null;
+const selectedPaneByCv=new Map();
+let editingDirty=false;
 let autoReading=false;
 const failedReadIds=new Set();
 const appliedDrafts=new Map();
@@ -32,62 +35,22 @@ function cvStatus(x){
 function editor(cv,roleFamilies=[]){
  const p=cv.parsed_profile||{};
  const d=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
- const info=cvReviewSummary({...p,draft_profile:d}), verified=info.confirmed;
- const {experience:ex,projects:pr,education:ed,tools,languages}=info;
- const categories=cvProfessionalCategories({...p,draft_profile:d},roleFamilies);
- const related=categories.filter(x=>x.related);
- const evidenceList=evidence=>(Array.isArray(evidence)?evidence:[]).slice(0,8).map(t=>{
-   const viewed=evidenceForDisplay(t,"it");
-   return '<li>'+esc(viewed.text)+(viewed.needsTranslation?'<small>Trascrizione originale dal CV</small>':"")+'</li>';
- }).join("");
- const record=(item,type,index)=>{
-   const isExperience=type==="experience",title=isExperience?(item.company||item.role||"Esperienza"):projectNameForDisplay(item.name||"Progetto","it");
-   const role=isExperience?item.role||"":"";
-   const count=Array.isArray(item.evidence)?item.evidence.length:0;
-   return '<details class="cvProfileEntry" '+(isExperience&&index===0?"open":"")+'>'+
-     '<summary><span><strong>'+esc(title)+'</strong>'+(role?'<small>'+esc(role)+'</small>':"")+'</span><span class="cvProfileEntryMeta">'+count+' attività <span aria-hidden="true">＋</span></span></summary>'+
-     (count?'<ul>'+evidenceList(item.evidence)+'</ul>':'<p>Non sono ancora presenti attività dettagliate in questa versione.</p>')+
-     '</details>';
- };
- const pills=(items,variant="")=>items.map(t=>'<span class="cvProfilePill '+variant+'">'+esc(typeof t==="string"?t:[t.program,t.school].filter(Boolean).join(" · "))+'</span>').join("");
- const categoryList=related.length?related.map(x=>'<span class="cvProfilePill cvProfilePillActive">'+esc(x.name)+'</span>').join(""):'<p class="cvProfileQuiet">Non emergono ancora aree specifiche da questa versione.</p>';
- const section=(number,title,description,body,id)=>'<section class="cvProfileSegment" id="'+id+'">'+
-   '<div class="cvProfileSegmentLabel"><span>'+number+'</span><h3>'+title+'</h3><p>'+description+'</p></div>'+
-   '<div class="cvProfileSegmentBody">'+body+'</div></section>';
- const experience=section("01","Esperienza","Attività professionali documentate.",
-   ex.length?ex.map((x,i)=>record(x,"experience",i)).join(""):'<p class="cvProfileQuiet">Nessuna esperienza riconosciuta.</p>',"cv-work");
- const projects=section("02","Progetti","Lavori accademici e competenze applicate.",
-   pr.length?pr.map((x,i)=>record(x,"project",i)).join(""):'<p class="cvProfileQuiet">Nessun progetto presente.</p>',"cv-projects");
- const capabilities=section("03","Formazione e strumenti","Titoli, software e lingue presenti nel CV.",
-   '<div class="cvProfileSkillGroup"><h4>Formazione</h4><div class="cvProfilePills">'+(ed.length?pills(ed):'<span class="cvProfileQuiet">Non indicata</span>')+'</div></div>'+
-   '<div class="cvProfileSkillGroup"><h4>Software</h4><div class="cvProfilePills">'+(tools.length?pills(tools):'<span class="cvProfileQuiet">Nessuno rilevato</span>')+'</div></div>'+
-   '<div class="cvProfileSkillGroup"><h4>Lingue</h4><div class="cvProfilePills">'+(languages.length?pills(languages):'<span class="cvProfileQuiet">Non indicate</span>')+'</div></div>',"cv-skills");
- const areas=section("04","Ambiti professionali","Collegamenti ricavati dalle attività, non qualifiche attribuite.",
-   '<div class="cvProfilePills">'+categoryList+'</div>'+
-   '<details class="cvProfileAllAreas"><summary>Consulta tutte le '+categories.length+' aree di HUNT</summary><div class="cvProfileAreaCatalog">'+categories.map(x=>
-     '<span class="'+(x.related?"active":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details>',"cv-areas");
- const corrections='<details class="cvCorrectionDetails cvProfileCorrections" id="cvCorrectionDetails">'+
-   '<summary>Modifica esperienze, progetti o competenze <span>Apri i campi di modifica</span></summary>'+
-   '<p>Qui puoi correggere le informazioni che HUNT ha estratto, aggiungere ciò che manca e poi salvare.</p>'+
-   '<div class="cvGroupHeading"><h3>Esperienze</h3><button type="button" class="cvTextButton" data-cv-action="add-experience">+ Aggiungi</button></div><div id="cvExperiences">'+(ex.length?ex:[{}]).map(x=>entry("experience",x)).join("")+'</div>'+
-   '<div class="cvGroupHeading"><h3>Progetti</h3><button type="button" class="cvTextButton" data-cv-action="add-project">+ Aggiungi</button></div><div id="cvProjects">'+(pr.length?pr:[{}]).map(x=>entry("project",x)).join("")+'</div>'+
-   '<div class="cvGroupHeading"><h3>Formazione</h3><button type="button" class="cvTextButton" data-cv-action="add-education">+ Aggiungi</button></div><div id="cvEducation">'+(ed.length?ed:[{}]).map(x=>entry("education",x)).join("")+'</div>'+
-   '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(tools.join("\n"))+'</textarea></label><label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(languages.join("\n"))+'</textarea></label></div>'+
-   (p.raw_text?'<details class="cvRawText"><summary>Consulta il testo estratto dal documento</summary><textarea readonly rows="9">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"")+
-   '</details>';
- return '<section class="cvEditor cvProfileDetail">'+
-   '<header class="cvProfileDetailHead"><div class="eyebrow">Profilo ricavato dal curriculum</div><div class="cvProfileTitleLine"><h2>'+esc(cv.name||"Il tuo CV")+'</h2><span class="cvInsightState '+(verified?"is-verified":"")+'">'+(verified?"Confermato":"Da confermare")+'</span></div>'+
-   '<p>Esamina il percorso che HUNT ha riconosciuto. Apri le singole attività per leggerle; puoi correggere o integrare tutto prima di salvare.</p></header>'+
-   '<nav class="cvProfileQuickNav" aria-label="Sezioni del curriculum">'+
-     '<a href="#cv-work">Esperienza <span>'+ex.length+'</span></a><a href="#cv-projects">Progetti <span>'+pr.length+'</span></a>'+
-     '<a href="#cv-skills">Competenze</a><a href="#cv-areas">Ambiti</a></nav>'+
-   '<form id="cvFactsForm">'+experience+projects+capabilities+areas+
-   '<div class="cvProfileEditIntro"><div><strong>Devi correggere o aggiungere qualcosa?</strong><p>Le informazioni possono essere modificate senza dover ricaricare il documento.</p></div>'+
-     '<button type="button" class="cvEditLaunch" data-cv-action="edit-profile">Modifica dati</button></div>'+
-   corrections+
-   '<footer class="cvProfileConfirm"><div><div class="eyebrow">Ultimo passaggio</div><h3>'+(verified?"Le tue informazioni sono salvate":"Conferma le informazioni")+'</h3><p>'+(verified?"Se modifichi un dato, salva la versione aggiornata.":"Controlla il riepilogo e conferma per utilizzare queste informazioni nei confronti con le offerte.")+'</p></div>'+
-   '<button class="btn primary" type="submit">'+(verified?"Salva le modifiche":"Conferma e salva")+'</button></footer>'+
-   '</form></section>';
+ const info=cvReviewSummary({...p,draft_profile:d});
+ const sections=(name,container,type,data)=>'<div class="cvWEditGroup">'+
+   '<div class="cvGroupHeading"><h4>'+name+'</h4><button type="button" class="cvTextButton" data-cv-action="add-'+type+'">+ Aggiungi</button></div>'+
+   '<div id="'+container+'">'+(data.length?data:[{}]).map(x=>entry(type,x)).join("")+'</div></div>';
+ const changes=
+   sections("Esperienze","cvExperiences","experience",info.experience)+
+   sections("Progetti","cvProjects","project",info.projects)+
+   sections("Formazione","cvEducation","education",info.education)+
+   '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(info.tools.join("\n"))+'</textarea></label>'+
+   '<label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(info.languages.join("\n"))+'</textarea></label></div>'+
+   (p.raw_text?'<details class="cvRawText"><summary>Consulta il testo originale estratto</summary><textarea readonly rows="8">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"");
+ return renderCvWorkspace({
+   cv,info,areas:cvProfessionalCategories({...p,draft_profile:d},roleFamilies),
+   confirmed:info.confirmed,activePanel:selectedPaneByCv.get(cv.id)||"overview",
+   corrections:changes
+ });
 }
 function collect(root,original){
  const v=(el,key)=>String(el.querySelector('[data-field="'+key+'"]')?.value||"").trim();
@@ -108,35 +71,16 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  // rather than silently selecting the only legacy structured record.
  if(!rows.some(x=>x.id===selectedId))selectedId=rows.find(x=>x.is_default)?.id||rows[0]?.id||null;
  const current=rows.find(x=>x.id===selectedId);
- const main=rows.find(x=>x.is_default),unread=rows.filter(x=>!x.parsed_profile?.raw_text);
- let fileHtml="";
- for(const cv of rows){
-  const name=esc(cv.name||"Curriculum"),mainCv=!!cv.is_default,open=cv.id===selectedId;
-  const status=esc(cvStatus(cv));
-  fileHtml+='<article class="cvArchiveCard '+(open?'is-open ':'')+(mainCv?'is-main':'')+'">'+
-   '<div class="cvArchiveIcon">CV</div><div class="cvArchiveInfo"><div class="cvArchiveTitle"><button type="button" class="cvArchiveName" data-cv-action="select" data-cv-id="'+cv.id+'">'+name+'</button>'+
-   '<span class="cvArchiveType">'+(mainCv?'Principale':'Secondario')+'</span></div>'+
-   '<p>'+status+'</p></div>'+
-   '<div class="cvArchiveActions">'+
-    
-    (!mainCv?'<button type="button" class="cvArchiveAction" data-cv-action="default" data-cv-id="'+cv.id+'">Rendi principale</button>':rows.length>1?
-     '<button type="button" class="cvArchiveAction" data-cv-action="secondary" data-cv-id="'+cv.id+'">Rendi secondario</button>':"")+
-    '<button type="button" class="cvArchiveAction is-danger" data-cv-action="delete-cv" data-cv-id="'+cv.id+'">Elimina</button>'+
-   '</div></article>';
- }
- root.innerHTML='<section class="cvManager cvArchiveV2">'+
-  '<header class="cvManagerHeading"><div class="eyebrow">Profilo professionale</div><h2>I tuoi curriculum</h2>'+
-   '<p>Apri un curriculum per esaminare le informazioni riconosciute. Puoi impostarlo come principale, scegliere un’altra versione o eliminarlo.</p></header>'+
-  '<div class="cvFileList">'+(fileHtml||'<p class="cvArchiveEmpty">Carica il tuo primo CV: HUNT ne leggerà automaticamente il contenuto.</p>')+'</div>'+
-  '<div class="cvUpload"><details class="cvUploadDetails"><summary>+ Aggiungi un altro CV</summary><div class="cvUploadContent">'+
-   '<p>Puoi conservare diverse versioni e scegliere quella giusta per ogni candidatura.</p>'+
-   '<div class="cvUploadFields"><input id="cvUploadName" placeholder="Nome del CV, per esempio Planning">'+
-    '<input id="cvUploadFile" type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg">'+
-    '<button class="btn primary" data-cv-action="upload" type="button">Carica il documento</button></div></div></details></div>'+
-  '<div id="cvReaderStatus" role="status" aria-live="polite" class="cvReaderStatus"></div>'+
-  (unread.length?'<p class="cvAutoNotice">HUNT sta preparando la lettura automatica di '+unread.length+' CV. Se la scansione non riesce, troverai qui un comando per riprovare.</p>':"")+
-  (unread.length||failedReadIds.size?'<details class="cvReaderOptions cvReaderOptionsFold"><summary>Opzioni di lettura dei documenti</summary><div><label>Lingua OCR <select id="cvOcrLang"><option value="ita+eng">Italiano e inglese</option><option value="eng">Inglese</option><option value="ita">Italiano</option></select></label><p>Serve solo quando un PDF non può essere letto normalmente.</p></div></details>':"")+
-  (current?editor(current,roleFamilies):"")+'</section>';
+ const unread=rows.filter(x=>!x.parsed_profile?.raw_text);
+ root.innerHTML='<div class="cvHub">'+
+   renderCvLibrary({cvs:rows,selectedId,statusFor:cvStatus})+
+   '<div class="cvHubMain">'+
+     '<div id="cvReaderStatus" role="status" aria-live="polite" class="cvReaderStatus"></div>'+
+     (current?editor(current,roleFamilies):renderCvWorkspace({}))+
+     (unread.length||failedReadIds.size?
+       '<details class="cvWAdvanced"><summary>Opzioni per la lettura dei PDF</summary><p>HUNT legge automaticamente i documenti. Queste opzioni servono soltanto in caso di problemi.</p>'+
+       '<label>Lingua di riconoscimento <select id="cvOcrLang"><option value="ita+eng">Italiano e inglese</option><option value="eng">Inglese</option><option value="ita">Italiano</option></select></label></details>':"")+
+   '</div></div>';
  const show=(text,bad=false)=>{const el=root.querySelector("#cvReaderStatus");if(el){el.textContent=text;el.classList.toggle("cvReaderError",bad)}};
  const readSingleCv=async (cv,language)=>{
    const {data:blob,error:dl}=await supabase.storage.from("cvs").download(cv.storage_path);
@@ -155,15 +99,27 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
    if(up)throw up;
    return draft;
  };
+ const setPanel=panel=>{
+   if(!current||!["overview","experience","projects","skills","areas","edit"].includes(panel))return;
+   selectedPaneByCv.set(current.id,panel);
+   root.querySelectorAll("[data-cv-panel]").forEach(item=>{item.hidden=item.dataset.cvPanel!==panel});
+   root.querySelectorAll("[data-cv-panel-target]").forEach(item=>{
+     item.classList.toggle("is-current",item.dataset.cvPanelTarget===panel);
+     item.setAttribute("aria-selected",String(item.dataset.cvPanelTarget===panel));
+   });
+   root.querySelector(".cvWEditButton")?.classList.toggle("is-active",panel==="edit");
+ };
+ const formForEdits=root.querySelector("#cvFactsForm");
+ if(formForEdits)formForEdits.addEventListener("input",event=>{
+   if(event.target.closest("#cvCorrectionDetails"))editingDirty=true;
+ });
  root.onclick=async event=>{
+  const tabButton=event.target.closest("[data-cv-panel-target]");
+  if(tabButton){setPanel(tabButton.dataset.cvPanelTarget);return}
   const b=event.target.closest("[data-cv-action]");if(!b)return;
   const action=b.dataset.cvAction,id=b.dataset.cvId;
-  if(action==="select"){selectedId=id;await refresh();return}
-  if(action==="edit-profile"){
-   const details=root.querySelector("#cvCorrectionDetails");
-   if(details){details.open=true;details.scrollIntoView?.({behavior:"smooth",block:"start"})}
-   return;
-  }
+  if(action==="select"){if(id===selectedId)return;if(editingDirty&&!window.confirm("Hai modifiche non salvate. Vuoi cambiare curriculum senza salvarle?"))return;editingDirty=false;selectedId=id;await refresh();return}
+  if(action==="edit-profile"){setPanel("edit");root.querySelector(".cvWWorkspace")?.scrollIntoView?.({behavior:"smooth",block:"start"});return}
   if(action==="remove"){b.closest("[data-cv-entry]")?.remove();return}
   if(action==="add-experience"){root.querySelector("#cvExperiences").insertAdjacentHTML("beforeend",entry("experience"));return}
   if(action==="add-project"){root.querySelector("#cvProjects").insertAdjacentHTML("beforeend",entry("project"));return}
@@ -264,6 +220,8 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
   btn.disabled=true;show("Salvataggio delle informazioni confermate…");
   try{
    const info=collect(form,current.parsed_profile||{});
+   editingDirty=false;
+   selectedPaneByCv.set(current.id,"overview");
    appliedDrafts.delete(current.id);
    const {error:up}=await supabase.from("user_cvs").update({parsed_profile:info,updated_at:new Date().toISOString()}).eq("id",current.id).eq("user_id",user.id);
    if(up)throw up;
