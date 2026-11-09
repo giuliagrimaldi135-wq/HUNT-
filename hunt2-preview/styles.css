@@ -643,3 +643,13 @@
  .cvInsightHeader{flex-direction:column}
 }
 @media(max-width:560px){.cvInsightMetrics{gap:20px}.cvInsightFooter{align-items:start;flex-direction:column}.cvInsightFooter .btn{width:100%}}
+
+/* Fit summary: three useful questions instead of another promotional panel */
+.huntDecisionV3 .huntDecisionIntro p{max-width:240px;font-size:12px;line-height:1.7;color:#75716b;margin:11px 0}
+.huntDecisionV3 .huntDecisionVerdict{font-size:21px;margin:0 0 16px;color:#292822;line-height:1.3}
+.huntDecisionRows{display:grid;grid-template-columns:1fr;gap:0}
+.huntDecisionRow{display:grid;grid-template-columns:142px minmax(0,1fr);gap:20px;border-top:1px solid var(--line);padding:14px 0 13px}
+.huntDecisionRow>span{color:#74716b;font-size:11px;letter-spacing:.025em;font-weight:760;line-height:1.55}
+.huntDecisionRow>p{font-size:13px;color:#3f3d37;line-height:1.65;margin:0}
+.huntDecisionV3 .huntAnalysisMeta{margin:11px 0 0;font-size:11px;color:#8b8780}
+@media(max-width:700px){.huntDecisionRow{grid-template-columns:1fr;gap:5px}}
