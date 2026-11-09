@@ -172,3 +172,11 @@ Sono configurati 115 feed di ricerca Google News per brand. I feed monitorano ti
 - Mancano ancora collaudi a nuovi utenti, CV multilingue, sicurezza, accuratezza e test del flusso completo.
 
 **Conclusione:** il sistema monitora una selezione internazionale di fonti a rotazione, ma non è un indice universale del web e oggi non soddisfa i criteri per un lancio pubblico affidabile.
+
+## Aggiornamento dopo l'ampliamento dei board ATS (9 novembre 2026)
+
+L'importazione dai board collegati ora riguarda un catalogo globale di ruoli, **non soltanto stage e junior selezionati per un singolo CV**. È il matching dell'utente che deve successivamente filtrare seniority, interessi e città.
+
+**Controllo dopo la modifica:** 228 posizioni nel database, di cui 226 attive verificate, in 20 aziende con almeno un annuncio; 15 match per il profilo attuale, e 1278 news. La copertura è ancora limitata alle aziende e ai portali effettivamente connessi.
+
+Il dossier ora segnala esplicitamente descrizioni parziali e usa evidenze bilingui coerenti per i due annunci verificati manualmente (Prada Retail Merchandising Intern e ZEGNA Retail Operations Intern). Il nuovo servizio automatico per estrarre e tradurre i requisiti richiede una chiave privata OpenAI e **non è ancora testato con una chiamata AI reale**.
