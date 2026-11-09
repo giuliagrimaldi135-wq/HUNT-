@@ -107,8 +107,10 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
        '<div class="cvWAreaCardEvidence"><span>'+esc(src.kind)+'</span><p>'+esc(src.detail)+'</p></div>'+
        '</article>';
    }).join(""):'<p class="cvWEmpty">Non sono state riconosciute aree professionali specifiche in questo CV.</p>')+'</div>'+
-   '<div class="cvWAreaBottom"><span>Vuoi verificare da quali attività derivano?</span>'+
-   '<button type="button" data-cv-panel-target="projects">Esplora i progetti <span aria-hidden="true">↗</span></button></div>'+
+   (related.length?'<div class="cvWAreaBottom"><span>Consulta le attività da cui derivano questi collegamenti.</span><div>'+
+   (related.some(x=>/^Esperienza/i.test(x.basis||""))?'<button type="button" data-cv-panel-target="experience">Esperienze ↗</button>':"")+
+   (related.some(x=>/^Progetto/i.test(x.basis||""))?'<button type="button" data-cv-panel-target="projects">Progetti ↗</button>':"")+
+   '</div></div>':"")+
    '<details class="cvWAllAreas"><summary>Esplora tutte le '+areas.length+' categorie professionali <span aria-hidden="true">⌄</span></summary>'+
     '<p>Le categorie non evidenziate non hanno collegamenti riconosciuti in questo documento.</p>'+
     '<div class="cvWAllAreasGrid">'+areas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details>';
