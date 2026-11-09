@@ -83,61 +83,75 @@ function experienceBridge(cv:any,duty:[string,string]|null){
 function letter(args:any){
  const {language,company,role,name}=args;
  const it=language==="it";
- const exp=args.experience||null;
+ const exp=args.experience||null,projects=list(args.projects);
  const expFacts=list(exp?.evidence).map((x:any)=>str(x)).filter(Boolean);
- const projects=list(args.projects);
- const project=projects.find((x:any)=>list(x.evidence).length>0);
- const projFacts=project?list(project.evidence).map((x:any)=>str(x)).filter(Boolean):[];
- const duties=list(args.highlights).slice(0,2);
- const dutyFocus=it?duties.map((d:any)=>str(d[1])):duties.map((d:any)=>str(d[0]));
- const translated=(facts:string[],lang:"it"|"en")=>{
-   const pairs:[RegExp,string,string][]=[
-    [/welcom|greet|client|customer/i,"accoglienza e relazione con i clienti","welcoming and assisting clients"],
-    [/garment|present.*product|show.*item|presentation of (the )?collection/i,"presentazione dei capi e del prodotto","presenting garments and products"],
-    [/order entry|order process|order management|inserimento ordini/i,"gestione e inserimento degli ordini","handling and entering orders"],
-    [/minimum budget|client budget|budget management/i,"attenzione ai budget dei clienti","working within client budgets"],
-    [/sales campaign|campagna vendite/i,"attività durante la campagna vendite","supporting the sales campaign"],
-    [/merchandis.*mix|assortment|assortimento/i,"analisi del merchandising mix e degli assortimenti","analyzing merchandising mix and assortments"],
-    [/capsule|collection planning|pianificazion.*collezion/i,"pianificazione di collezioni e capsule","planning collections and capsules"],
-    [/costing|cost analysis|costi di prodotto/i,"analisi dei costi di prodotto","analyzing product costs"],
-    [/open.to.buy|otb|kpi|retail strategy|retail planning/i,"progetti di pianificazione retail e KPI","retail planning and KPI projects"],
-    [/excel/i,"lavoro con Excel","using Excel"]
-   ];
-   const out:string[]=[];
-   for(const [re,italiano,english] of pairs){
-     if(facts.some(v=>re.test(v))){const x=lang==="it"?italiano:english;if(!out.includes(x))out.push(x)}
-   }
-   return out;
- };
- const actualExp=translated(expFacts,it?"it":"en");
- const actualProject=translated(projFacts,it?"it":"en");
- const expName=str(exp?.company);
- const projectName=str(project?.name).replace(/\s+(academic\s+)?project$/i,"").trim();
+ const vacancy=list(args.highlights);
+ const subject=(it?list(vacancy).map((x:any)=>str(x[1])):list(vacancy).map((x:any)=>str(x[0]))).slice(0,2);
  const area=str(it?args.areaIt:args.areaEn);
- const companyClean=str(company||"il vostro gruppo"),roleClean=str(role||"la posizione");
- const selected=it?connect(dutyFocus.slice(0,2),"it"):connect(dutyFocus.slice(0,2));
- if(it){
-   const opening="Mi candido per la posizione di "+roleClean+" presso "+companyClean+". "+
-     (selected?"Mi interessano in particolare le attività di "+selected+", perché vorrei lavorare su questi processi da vicino.":"Mi interessa contribuire concretamente alle attività del team.");
-   const experience=expName&&actualExp.length
-     ?"Durante la mia esperienza in "+expName+" mi sono occupata di "+connect(actualExp.slice(0,3),"it")+". È un contesto in cui ho capito quanto contino la precisione e la capacità di lavorare con altre persone."
-     :expName?"Durante l'esperienza in "+expName+" ho avuto modo di conoscere dall'interno alcune attività operative del settore.":"";
-   const projectSentence=projectName&&actualProject.length
-     ?"Nel progetto "+projectName+" ho inoltre lavorato su "+connect(actualProject.slice(0,2),"it")+". Mi piacerebbe portare questo approccio anche in un contesto professionale."
-     :"";
-   const closing="Sono curiosa di imparare sul campo e di essere utile nelle attività quotidiane del team, con attenzione al prodotto e ai dati. Sarei felice di approfondire in un colloquio il contributo che potrei offrire.";
-   return ["Gentile team Recruiting di "+companyClean+",",opening,[experience,projectSentence].filter(Boolean).join(" "),closing,"Cordiali saluti,\n"+str(name)].filter(Boolean).join("\n\n");
+ const jobFocus=subject.length?connect(subject,it?"it":"en"):area;
+ // Every fact comes from the candidate's saved CV, never from another person's application.
+ const dictionary:[RegExp,string,string][]=[
+  [/welcom|greet|client welcome|customer/i,"accoglienza clienti","welcoming clients"],
+  [/garment|present.*product|show.*item|presentazione.*cap/i,"presentazione dei capi","presenting garments"],
+  [/order entry|order process|order management|inserimento ordini|presa ordini/i,"raccolta e inserimento degli ordini","handling and entering orders"],
+  [/minimum budget|client budget|budget management|budget minimo/i,"gestione dei budget minimi dei clienti","monitoring client order budgets"],
+  [/sales campaign|campagna vendite/i,"attività durante le campagne vendite","working during sales campaigns"],
+  [/merchandis.*mix|assortment|assortimento/i,"analisi del mix di merchandising e degli assortimenti","assortment and merchandising-mix analysis"],
+  [/capsule|collection planning|pianificazion.*collezion/i,"pianificazione di capsule e collezioni","capsule and collection planning"],
+  [/costing|cost analysis|costi di prodotto/i,"analisi dei costi di prodotto","product costing"],
+  [/open.to.buy|otb|kpi|retail strategy|retail planning/i,"analisi di KPI e pianificazione retail","retail KPI and planning projects"],
+  [/excel/i,"utilizzo di Excel","using Excel"]
+ ];
+ function distilled(facts:string[],max=3){
+   const hits:string[]=[];
+   for(const [regex,italian,english] of dictionary){
+     if(facts.some(x=>regex.test(x))){const item=it?italian:english;if(!hits.includes(item))hits.push(item)}
+   }
+   return hits.slice(0,max);
  }
- const opening="I am applying for the "+roleClean+" position at "+companyClean+". "+
-   (selected?"I am particularly interested in the work involving "+selected+", and the opportunity to contribute to those decisions directly.":"I would welcome the chance to support the team's day-to-day work.");
- const experience=expName&&actualExp.length
-   ?"During my experience at "+expName+", I worked on "+connect(actualExp.slice(0,3))+". It showed me the value of accuracy, teamwork and being reliable when details matter."
-   :expName?"My time at "+expName+" helped me understand some of the operational work behind the fashion industry.":"";
- const projectSentence=projectName&&actualProject.length
-   ?"In my "+projectName+" project, I also worked on "+connect(actualProject.slice(0,2))+". I would be keen to build on that experience in a professional team."
+ // Choose the academic example matching this vacancy, never simply the first project.
+ const key=String(role+" "+area+" "+subject.join(" ")).toLowerCase();
+ const projectCandidates=projects.filter((p:any)=>list(p.evidence).length).map((p:any)=>{
+   const facts=list(p.evidence).map((x:any)=>str(x));
+   const text=(p.name+" "+facts.join(" ")).toLowerCase();
+   const tokens=key.match(/[a-z]{5,}/g)||[];
+   const overlap=tokens.filter(x=>!["position","intern","support","business","company","working"].includes(x)&&text.includes(x)).length;
+   return {name:str(p.name).replace(/\s+(academic\s+)?project$/i,"").trim(),facts,score:overlap,translated:distilled(facts,2)};
+ }).sort((a:any,b:any)=>b.score-a.score);
+ const project=projectCandidates.find((p:any)=>p.translated.length>0)||null;
+ const expName=str(exp?.company);
+ const expHighlights=distilled(expFacts,3);
+ const projectName=project?.name||"",projectHighlights=project?.translated||[];
+ const companyClean=str(company||"il brand"),roleClean=str(role||"la posizione");
+ // No achievement numbers, employer initiatives or mastered skills are invented.
+ if(it){
+  const opening=subject.length
+   ?"La posizione di "+roleClean+" in "+companyClean+" mi interessa per le attività di "+jobFocus+". Vorrei contribuire a questi processi con l'esperienza e il metodo che sto costruendo tra lavoro e formazione."
+   :"Vorrei candidarmi per la posizione di "+roleClean+" in "+companyClean+". Mi interessa conoscere e supportare il lavoro del team nelle responsabilità descritte nell'annuncio.";
+  const work=expName&&expHighlights.length
+   ?"Durante l'esperienza presso "+expName+" ho seguito "+connect(expHighlights,"it")+". È un'esperienza operativa che mi ha permesso di osservare da vicino il prodotto e le esigenze commerciali."
+   :expName?"L'esperienza presso "+expName+" mi ha permesso di conoscere il lavoro operativo nel settore moda.":"";
+  const academic=projectName&&projectHighlights.length
+   ?"Nel progetto "+projectName+" ho lavorato su "+connect(projectHighlights,"it")+". Questo collegamento fra prodotto, scelta commerciale e analisi è ciò che mi piacerebbe approfondire anche nel vostro team."
    :"";
- const closing="I would bring curiosity, care with the details and a willingness to learn by doing. I would appreciate the opportunity to discuss where I could contribute to your team.";
- return ["Dear "+companyClean+" Hiring Team,",opening,[experience,projectSentence].filter(Boolean).join(" "),closing,"Kind regards,\n"+str(name)].filter(Boolean).join("\n\n");
+  const close=subject.length
+   ?"Credo di poter dare un contributo concreto nella preparazione e nell'analisi delle attività di "+jobFocus+", lavorando con attenzione ai dettagli e disponibilità ad apprendere. Sarei lieta di parlarne durante un colloquio."
+   :"Mi piacerebbe portare cura per il lavoro e disponibilità ad apprendere, entrando nel merito delle attività del team. Sarei lieta di parlarne durante un colloquio.";
+  return ["Gentile team di selezione,",opening,[work,academic].filter(Boolean).join(" "),close,"Cordiali saluti,\n"+name].filter(Boolean).join("\n\n");
+ }
+ const opening=subject.length
+  ?"The "+roleClean+" opportunity at "+companyClean+" stood out to me because of its work on "+jobFocus+". I would like to contribute to these processes while building on the experience I have gained through both work and study."
+  :"I am applying for the "+roleClean+" opportunity at "+companyClean+". I would welcome the chance to contribute to the responsibilities described in the posting.";
+ const work=expName&&expHighlights.length
+  ?"At "+expName+", my responsibilities included "+connect(expHighlights)+". This gave me a practical view of the product and the commercial decisions around it."
+  :expName?"My experience at "+expName+" introduced me to operational work in fashion.":"";
+ const academic=projectName&&projectHighlights.length
+  ?"In my "+projectName+" project, I worked on "+connect(projectHighlights)+". It is this connection between product, commercial decisions and analysis that I would like to explore further with your team."
+  :"";
+ const close=subject.length
+  ?"I would bring an attentive and practical approach to the work involving "+jobFocus+", along with a willingness to learn from your team. I would welcome the opportunity to discuss how I could contribute."
+  :"I would bring care, curiosity and a willingness to learn while supporting your team. I would welcome the opportunity to discuss how I could contribute.";
+ return ["Dear Hiring Team,",opening,[work,academic].filter(Boolean).join(" "),close,"Kind regards,\n"+name].filter(Boolean).join("\n\n");
 }
 
 Deno.serve(async(req)=>{
@@ -231,7 +245,7 @@ Deno.serve(async(req)=>{
  const why=blocked?"Non consigliata senza chiarimenti: "+gaps.join(" "):valueNarrative;
  const edu=education[0]||{};
  const body=blocked?null:letter({language,name,role,company,school:short(edu.school,100),program:short(edu.program,100),experience:exp[0],projects,tools:list(cv.tools).map(x=>short(x,100)),areaEn:area[0],areaIt:area[1],highlights:vacancyHighlights(description),interests:list(personalR.data?.interest_areas)});
- const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v6",updated_at:new Date().toISOString()};
+ const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v7",updated_at:new Date().toISOString()};
  // Refresh relevance without silently destroying a previously edited letter.
  const {data:previous}=await db.from("user_job_dossiers").select("ready_to_send_message,ready_to_send_subject,generated_from").eq("user_id",userId).eq("job_id",job.id).maybeSingle();
  if(previous?.generated_from?.user_edited&&!payload?.force_regenerate){
