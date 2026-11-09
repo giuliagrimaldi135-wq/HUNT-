@@ -135,8 +135,8 @@ function letter(args:any){
    ?"Nel progetto "+projectName+" ho lavorato su "+connect(projectHighlights,"it")+". Questo collegamento fra prodotto, scelta commerciale e analisi è ciò che mi piacerebbe approfondire anche nel vostro team."
    :"";
   const close=subject.length
-   ?"Credo di poter dare un contributo concreto nella preparazione e nell'analisi delle attività di "+jobFocus+", lavorando con attenzione ai dettagli e disponibilità ad apprendere. Sarei lieta di parlarne durante un colloquio."
-   :"Mi piacerebbe portare cura per il lavoro e disponibilità ad apprendere, entrando nel merito delle attività del team. Sarei lieta di parlarne durante un colloquio.";
+   ?"Credo di poter dare un contributo concreto nella preparazione e nell'analisi delle attività di "+jobFocus+", lavorando con attenzione ai dettagli e disponibilità ad apprendere. Mi farebbe piacere approfondire il contributo che potrei offrire durante un colloquio."
+   :"Mi piacerebbe portare cura per il lavoro e disponibilità ad apprendere, entrando nel merito delle attività del team. Mi farebbe piacere approfondire il contributo che potrei offrire durante un colloquio.";
   return ["Gentile team di selezione,",opening,[work,academic].filter(Boolean).join(" "),close,"Cordiali saluti,\n"+name].filter(Boolean).join("\n\n");
  }
  const opening=subject.length
