@@ -804,13 +804,13 @@ async function renderOpportunityFolder(jobId){
    </section>
 
    ${row.dossier?.ready_to_send_message?`<section class="section letterWorkbench">
-     <div class="letterHeading"><div><div class="eyebrow">Cover letter</div><h2>Una lettera che dica qualcosa di nuovo</h2><p>Non un riassunto del CV: usa il ruolo, l'azienda e le tue esperienze per presentare il tuo contributo.</p></div>
-       <div class="letterToolbar"><button class="btn" id="saveCoverLetter">Salva</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
+     <div class="letterHeading"><div><div class="eyebrow">Candidatura personale</div><h2>La tua cover letter</h2><p>La bozza qui sotto è una base tecnica, non una lettera scritta dall'AI. HUNT AI potrà generarne una originale dal CV verificato e dal testo della posizione, seguendo il tuo stile.</p></div>
+       <div class="letterToolbar"><button class="btn aiWriteButton" id="writeLetterAI">✦ Scrivi con HUNT AI</button><button class="btn" id="saveCoverLetter">Salva</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
      </div>
      <label class="dossierSubject">Oggetto: <span>${esc(row.dossier.ready_to_send_subject||"")}</span></label>
      <textarea class="coverLetterEditor" id="coverLetterText" rows="12" spellcheck="true" aria-label="Modifica la cover letter">${esc(row.dossier.ready_to_send_message)}</textarea>
      <div class="letterPolish">
-       <div class="letterPolishTitle"><span class="letterAiMark">✦</span><div><strong>Migliora con AI</strong><p>Scrivi che cosa cambieresti: HUNT lavorerà sulla lettera, sul CV selezionato e sulla posizione.</p></div></div>
+       <div class="letterPolishTitle"><span class="letterAiMark">✦</span><div><strong>La tua voce, non un modello prestampato</strong><p>Puoi chiedere cambiamenti sulla bozza, oppure far scrivere una nuova lettera da HUNT AI. Il sistema usa l’annuncio reale, i CV confermati e le preferenze professionali salvate.</p></div></div>
        <div class="polishPresets">
          <button type="button" data-ai-feedback="Rendila meno formale, più umana e naturale, senza perdere professionalità.">Più naturale</button>
          <button type="button" data-ai-feedback="Rendi l'apertura più incisiva, mettendo subito in evidenza il contributo reale che posso portare, senza inventare risultati.">Apertura più forte</button>
@@ -818,7 +818,7 @@ async function renderOpportunityFolder(jobId){
          <button type="button" data-ai-feedback="Rafforza il valore che posso apportare al team usando una leva della perdita sobria e credibile, senza fare promesse non dimostrate.">Più persuasiva</button>
        </div>
        <div class="polishComposer"><textarea id="letterAiInstruction" rows="2" maxlength="500" placeholder="Es. Falla più personale, dai peso al progetto di buying e taglia l'introduzione."></textarea><button class="btn primary" id="polishLetter">Migliora</button></div>
-       <div class="letterPolishFooter"><span id="letterAiStatus" role="status">La proposta AI non sovrascrive la tua versione salvata. Potrai accettarla, annullarla o modificarla.</span><button class="btn letterUndo" id="undoLetter" hidden>Ripristina testo precedente</button></div>
+       <div class="letterPolishFooter"><span id="letterAiStatus" role="status">Le nuove versioni non si salvano da sole: puoi correggere, annullare e decidere tu quando salvare.</span><button class="btn letterUndo" id="undoLetter" hidden>Ripristina testo precedente</button></div>
      </div>
    </section>`:""}
 
