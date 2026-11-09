@@ -28,7 +28,7 @@ test("Paused AI is not advertised as a working control",()=>{
 });
 
 test("Italian dossier uses Italian evidence and switches without waiting for letter service",()=>{
- assert.match(folder,/it:haveVerifiedSections\?bilingualFacts\.it:italianEvidenceFromJob\(job\.description,evidence\)/);
+ assert.match(folder,/it:normalizeVacancyFacts\(haveVerifiedSections\?bilingualFacts\.it:italianEvidenceFromJob\(job\.description,evidence\)\)/);
  assert.match(folder,/const dossierLang=preferredLocale/);
  assert.match(folder,/showDossierLanguage\(lang\)/);
  assert.match(folder,/localStorage\.setItem\("hunt_dossier_language",lang\)/);
@@ -53,4 +53,19 @@ test("Gucci's English posting is summarized as Italian duties and requirements w
  assert.ok(result.requirements.some(t=>/inglese/i.test(t)));
  assert.ok(result.requirements.some(t=>/Excel/i.test(t)));
  assert.ok(result.tasks.every(t=>!/The main|Understand/.test(t)));
+});
+
+test("Italian tasks, official duties and absent sections all normalize safely",async()=>{
+ const start=app.indexOf("function normalizeVacancyFacts(");
+ const end=app.indexOf("async function renderOpportunityFolder(",start);
+ assert.ok(start>0&&end>start);
+ const moduleSource=app.slice(start,end)+"\nexport {normalizeVacancyFacts};";
+ const {normalizeVacancyFacts}=await import("data:text/javascript;base64,"+Buffer.from(moduleSource).toString("base64"));
+ assert.deepEqual(normalizeVacancyFacts({tasks:["Analizzare vendite"],requirements:["Excel"]}),{duties:["Analizzare vendite"],requirements:["Excel"]});
+ assert.deepEqual(normalizeVacancyFacts({duties:["Monitor stock"],requirements:[]}),{duties:["Monitor stock"],requirements:[]});
+ assert.deepEqual(normalizeVacancyFacts({duties:null,requirements:null}),{duties:[],requirements:[]});
+ assert.deepEqual(normalizeVacancyFacts(null),{duties:[],requirements:[]});
+ assert.deepEqual(normalizeVacancyFacts({tasks:["",42,"  Ordini  "]}),{duties:["Ordini"],requirements:[]});
+ assert.match(folder,/normalizeVacancyFacts\(haveVerifiedSections/);
+ assert.match(app,/history\.replaceState\(\{\},"",location\.pathname\+location\.search\)/);
 });
