@@ -18,3 +18,4 @@ jobs:
           node --check hunt2-preview/app.js
           node --check hunt2-preview/cv-reader.js
           node --check hunt2-preview/cv-profile.js
+          node --test hunt2-preview/tests/dossier-regression.test.mjs
