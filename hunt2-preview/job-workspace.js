@@ -27,7 +27,7 @@ function req(item,compact=false){
 }
 function responsibilities(duties,limit){
  const list=Array.isArray(duties)?duties.filter(Boolean):[];
- return list.length?'<ol class="hwTaskList">'+list.slice(0,limit||list.length).map((t,i)=>'<li><span>'+String(i+1).padStart(2,"0")+'</span><p>'+esc(t)+'</p></li>').join("")+'</ol>':
+ return list.length?'<ul class="hwTaskList">'+list.slice(0,limit||list.length).map(t=>'<li><p>'+esc(t)+'</p></li>').join("")+'</ul>':
  '<p class="hwEmpty">La descrizione acquisita non contiene attività sufficientemente dettagliate. Il collegamento all’annuncio originale rimane disponibile.</p>';
 }
 function naturalJoin(items){
@@ -85,14 +85,15 @@ export function renderJobWorkspace(data={}){
    '<div class="hwEditorialHeadline"><span class="hwEyebrow">Dentro la posizione</span>'+
     '<h3>Il ruolo, in sintesi</h3></div>'+
    '<p class="hwEditorialStory">'+esc(roleDescription)+'</p>'+
+   (summary?'<div class="hwEditorialContext"><span>In relazione al tuo profilo</span><p>'+esc(summary)+'</p></div>':"")+
    '<div class="hwEditorialExplore">'+
     '<button type="button" class="hwEditorialLink" data-switch-job-tab="tasks">'+
-      '<span class="hwEditorialLinkBody"><span class="hwEditorialNumber">01 / IL RUOLO</span>'+
+      '<span class="hwEditorialLinkBody">'+
         '<strong>Attività e responsabilità</strong>'+
         '<small>Scopri le mansioni descritte nell’annuncio</small></span>'+
       '<span class="hwEditorialArrow" aria-hidden="true">↗</span></button>'+
     '<button type="button" class="hwEditorialLink" data-switch-job-tab="criteria">'+
-      '<span class="hwEditorialLinkBody"><span class="hwEditorialNumber">02 / IL PROFILO</span>'+
+      '<span class="hwEditorialLinkBody">'+
         '<strong>Competenze richieste</strong>'+
         '<small>Confronta i requisiti con il tuo curriculum</small></span>'+
       '<span class="hwEditorialArrow" aria-hidden="true">↗</span></button>'+
@@ -108,8 +109,7 @@ export function renderJobWorkspace(data={}){
   (relevant.length?'<div class="hwRequirementList is-full">'+relevant.map(r=>req(r,false)).join("")+'</div>':
   '<p class="hwEmpty">Non sono disponibili requisiti tecnici sufficienti per un confronto documentato.</p>'));
  return '<section class="section huntWorkspace" aria-label="Analisi della candidatura">'+
-   '<header class="hwLead"><span class="hwEyebrow">Analisi di HUNT</span><h2>Questa opportunità, nel concreto.</h2>'+
-   '<p>'+esc(summary)+'</p></header>'+
+
    '<div class="hwLayout"><div class="hwMain">'+
    '<nav class="hwTabs" role="tablist" aria-label="Sezioni della posizione">'+
    tab("overview","Panoramica",active)+tab("tasks","Attività",active)+tab("criteria","Requisiti",active)+'</nav>'+
@@ -125,8 +125,8 @@ export function renderJobWorkspace(data={}){
    '<select id="dossierCv" aria-label="CV per il confronto">'+(cvOpts||'<option value="">Nessun curriculum</option>')+'</select>'+
    '<div class="hwCvState"><span class="hwCvStateDot"></span><span>'+esc(!chosen?"Aggiungi un CV nel Profilo":chosen.verified?"Informazioni confermate":chosen.readable?"Da confermare nel Profilo":"Lettura del CV non completata")+'</span></div>'+
    '<button class="hwAsideTextAction" type="button" id="reviewRequirementsProfile">Apri il Profilo <span aria-hidden="true">↗</span></button></section>'+
-   '<section class="hwNextSteps"><h3>Come procedere</h3><div><span>1</span><p>Valuta le attività e i requisiti</p></div><div><span>2</span><p>Scegli il curriculum più adatto</p></div><div><span>3</span><p>Candidati dal sito dell’azienda</p></div>'+
+   '<section class="hwNextSteps"><h3>Prima di candidarti</h3><p>Rileggi i requisiti e scegli la versione del CV che racconta meglio la tua esperienza. Per la candidatura usa il portale del brand.</p>'+
    (source?'<a href="'+esc(source)+'" target="_blank" rel="noopener noreferrer" class="hwOpenSource">Vai all’annuncio ufficiale <span aria-hidden="true">↗</span></a>':"")+'</section>'+
-   '<div class="hwUpcoming"><span>IN SVILUPPO</span><strong>Cover letter</strong><small>Personalizzazione della lettera, prossimamente.</small></div>'+
+   '<div class="hwUpcoming"><strong>Lettera di presentazione</strong><small>La generazione automatica è temporaneamente sospesa. Nessuna lettera viene rigenerata aprendo questa pagina.</small></div>'+
    '</aside></div></section>';
 }
