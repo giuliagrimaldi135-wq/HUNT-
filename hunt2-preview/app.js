@@ -1,5 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-54";
+import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-61";
+import { interpretCvText } from "./cv-interpreter.js?v=20261109-61";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -8,6 +9,7 @@ const app=document.getElementById("app");
 let currentUser=null;
 let currentView="opportunities";
 let selectedJobId=null;
+let selectedDossierCvId=null;
 let opportunitySort="priority";
 let radarSignalFilter="all";
 let radarCompanyFilter="all";
@@ -557,6 +559,7 @@ async function ignoreJob(jobId){
 async function openOpportunityFolder(jobId,push=true){
  if(!/^[0-9a-f-]{36}$/i.test(String(jobId||"")))return;
  const previousJob=selectedJobId;
+ if(previousJob!==jobId)selectedDossierCvId=null;
  selectedJobId=jobId;
  app.innerHTML=shell('<div class="folderLoading" role="status"><div class="eyebrow">HUNT · Dossier candidatura</div><h2>Caricamento della posizione…</h2><p>Recupero annuncio, CV, informazioni aziendali e notizie senza modificare lo stato della candidatura.</p></div>');
  try{
@@ -649,19 +652,20 @@ function fitSummary(row){
  return [opener,body].filter(Boolean).join(" ");
 }
 
-function hasParsedCv(row){
- return (row.cvs||[]).some(cv=>cv.parsed_profile?.cv_text_extraction_status==="text_extracted"&&String(cv.parsed_profile?.raw_text||"").length>=80);
-}
-
-function verifiedCv(cv){
+function hasParsedCv(row){return (row.cvs||[]).some(cv=>String(cv.parsed_profile?.raw_text||"").length>=80)}
+function verifiedCv(cv){const p=cv?.parsed_profile||{};return Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history)}
+function readableCv(cv){return verifiedCv(cv)||String(cv?.parsed_profile?.raw_text||"").length>=80}
+function profileForAssessment(cv){
  const p=cv?.parsed_profile||{};
- return Boolean(p.experience?.length||p.projects?.length||p.education?.length);
+ return p.raw_text&&!p.draft_profile?.extracted_chars?{...p,draft_profile:interpretCvText(p.raw_text)}:p;
 }
 function chooseCv(row){
- const role=row.job.role_family;
- const cvs=(row.cvs||[]).filter(verifiedCv);
+ const role=row.job.role_family,cvs=(row.cvs||[]).filter(readableCv);
  const saved=row.dossier?.recommended_cv_id;
- return cvs.find(cv=>cv.id===saved)||cvs.find(cv=>Array.isArray(cv.target_role_families)&&cv.target_role_families.includes(role))||cvs.find(cv=>cv.is_default)||cvs[0]||(row.cvs||[]).find(cv=>cv.is_default)||(row.cvs||[])[0]||null;
+ return (row.cvs||[]).find(cv=>cv.id===selectedDossierCvId)||
+  cvs.find(cv=>cv.id===saved)||
+  cvs.find(cv=>Array.isArray(cv.target_role_families)&&cv.target_role_families.includes(role))||
+  cvs.find(cv=>cv.is_default)||cvs[0]||(row.cvs||[]).find(cv=>cv.is_default)||(row.cvs||[])[0]||null;
 }
 async function requestDossier(jobId,language="en",cvId=null,forceRegenerate=false){
  const body={job_id:jobId,language,force_regenerate:forceRegenerate};
@@ -834,13 +838,14 @@ async function renderOpportunityFolder(jobId){
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
  const selectedCv=cv;
- const evidencedProfile=verifiedCv(selectedCv)?selectedCv?.parsed_profile:null;
- const cvChecklistIt=checkRequirements(factLists.it.requirements,evidencedProfile);
- const cvChecklistEn=checkRequirements(factLists.en.requirements,evidencedProfile);
+ const evidencedProfile=profileForAssessment(selectedCv);
+ const alternatives=(row.cvs||[]).filter(x=>x.id!==selectedCv?.id);
+ const cvChecklistIt=checkRequirements(factLists.it.requirements,evidencedProfile,{alternatives});
+ const cvChecklistEn=checkRequirements(factLists.en.requirements,evidencedProfile,{alternatives});
  const assessmentIt=assessDossier(job,evidencedProfile,factLists.it.duties,cvChecklistIt,summaryOnly,"it");
  const assessmentEn=assessDossier(job,evidencedProfile,factLists.en.duties,cvChecklistEn,summaryOnly,"en");
  const cvAssessment=dossierLang==="it"?assessmentIt:assessmentEn;
- const fit=row.dossier?.model_version==="evidence_dossier_v9"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
+ const fit=row.dossier?.model_version==="evidence_dossier_v9"&&row.dossier?.recommended_cv_id===selectedCv?.id&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
  const smartQuestion=row.dossier?.generated_from?.interview_question||"";
@@ -849,7 +854,7 @@ async function renderOpportunityFolder(jobId){
  const dossierEvidence=Array.isArray(row.dossier?.what_to_emphasize)?row.dossier.what_to_emphasize:[];
  const dossierGaps=Array.isArray(row.dossier?.gaps)?row.dossier.gaps:[];
  const dossierCvId=cv?.id||row.dossier?.recommended_cv_id||"";
- const dossierCvOptions=(row.cvs||[]).map((c,index)=>`<option value="${esc(c.id)}" ${c.id===dossierCvId?"selected":""} ${verifiedCv(c)?"":"disabled"}>${index+1}. ${esc(c.name||"Curriculum")}${c.is_default?" · principale":""}${verifiedCv(c)?"":" · completa lettura e conferma nel Profilo"}</option>`).join("");
+ const dossierCvOptions=(row.cvs||[]).map((x,index)=>`<option value="${esc(x.id)}" ${x.id===(selectedCv?.id||"")?"selected":""}>${index+1}. ${esc(x.name||"CV")}${x.is_default?" · principale":""}${verifiedCv(x)?" · confermato":readableCv(x)?" · da confermare":" · da leggere"}</option>`).join("");
  const repostCount=(row.reposts||[]).length;
  const firstSeen=job.published_at?new Date(job.published_at):null;
  const repostSummary=repostCount
@@ -942,7 +947,7 @@ async function renderOpportunityFolder(jobId){
 
  <div data-folder-panel="application">
    <section class="section huntDecision huntDecisionV3">
-     <div class="huntDecisionIntro"><div class="eyebrow">Analisi della posizione</div><h2>Vale la pena approfondirla?</h2></div>
+     <div class="huntDecisionIntro"><div class="eyebrow">Valutazione professionale</div><h2>Coerenza con il tuo percorso</h2></div>
      <div class="huntDecisionBody">
        ${["it","en"].map(locale=>{
          const analysis=locale==="it"?assessmentIt:assessmentEn;
@@ -960,12 +965,12 @@ async function renderOpportunityFolder(jobId){
    <section class="section dossierWorkspace dossierWorkspaceV3">
      <div class="workspaceHeader">
        <div><div class="eyebrow">Dossier personalizzato</div><h2>L'offerta confrontata con il tuo CV</h2></div>
-       <span class="workspaceSub">HUNT legge requisiti e mansioni, sceglie il CV pertinente e prepara i documenti. Non completa i dati mancanti per supposizione.</span>
+       <span class="workspaceSub">Requisiti dell'azienda confrontati con il CV selezionato. Puoi consultare tutte le versioni, mantenendo distinte le informazioni confermate da quelle riconosciute automaticamente.</span>
      </div>
      <div class="workspaceBar">
        <label>CV da utilizzare <select id="dossierCv">${dossierCvOptions}</select></label>
        <label>Lingua dell'analisi e della lettera <select id="dossierLang"><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option><option value="en" ${dossierLang==="en"?"selected":""}>English</option></select></label>
-       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna lettera e confronto":"Analizza CV e offerta"}</button>
+       <button class="btn primary" id="generateDossier" ${verifiedCv(selectedCv)?"":"disabled title='Conferma il CV nel Profilo'"}>${verifiedCv(selectedCv)?row.dossier?"Aggiorna il dossier":"Prepara il dossier":"Conferma il CV per la lettera"}</button>
      </div>
      <div id="dossierMessage" class="workspaceMessage"></div>
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
@@ -1002,7 +1007,7 @@ async function renderOpportunityFolder(jobId){
      ${!row.dossier?`<p class="workspaceEmpty">Conferma almeno un CV nel Profilo per ottenere una selezione realmente personalizzata.</p>`:""}
    </section>
 
-   ${row.dossier?.ready_to_send_message?`<section class="section letterWorkbench letterManualOnly">
+   ${row.dossier?.ready_to_send_message&&row.dossier.recommended_cv_id===selectedCv?.id&&verifiedCv(selectedCv)?`<section class="section letterWorkbench letterManualOnly">
      <div class="letterHeading"><div><div class="eyebrow">Lettera · prima bozza</div><h2>La tua presentazione per ${esc(brand)}</h2><p>Costruita sui compiti reali e sulle prove presenti nel CV. Non vengono aggiunti risultati o competenze che il CV non documenta. Puoi modificare ogni frase e salvare il tuo stile.</p></div>
        <div class="letterToolbar"><button class="btn" id="saveCoverLetter">Salva modifiche</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
      </div>
