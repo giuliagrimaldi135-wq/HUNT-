@@ -1,4 +1,4 @@
-// HUNT editorial engine v9: deterministic, source-backed cover letters.
+// HUNT editorial engine v10: deterministic, source-backed cover letters.
 // Pure ES module: used by the Supabase Edge Function and tested with Node.
 // Never infer a qualification, result, skill level, company achievement or performance metric.
 const clean=v=>String(v??"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();
@@ -93,33 +93,44 @@ export function generateEditorialLetter(args={}){
  if(!hasConcrete)return null;
  const expName=clean(exp?.record?.company||exp?.record?.role);
  const projectName=clean(project?.record?.name);
- const backgroundIt=exp&&project?"dalla mia esperienza pratica e dai progetti formativi":exp?"dalla mia esperienza professionale":"dai progetti formativi";
- const backgroundEn=exp&&project?"practical experience and academic projects":exp?"professional experience":"academic projects";
+ // One precise reason to apply, two source-backed examples at most, and no repeated
+ // claims about company culture, skills, achievements or personal traits.
+ const roleType=/wholesale|orders?|ordini|showroom/i.test(evidenceFocus)?"wholesale":
+  /stock|allocat|planning|forecast|pianificazion/i.test(evidenceFocus)?"planning":
+  /assort|merchand|collection|collezion/i.test(evidenceFocus)?"product":
+  /e.?commerce|digital/i.test(evidenceFocus)?"digital":"general";
+ const motivations={
+  product:it?"Vorrei approfondire come le scelte di assortimento si colleghino alle esigenze commerciali.":"I would like to explore how assortment decisions relate to commercial needs.",
+  planning:it?"Mi interessa capire come dati e pianificazione orientino le decisioni operative.":"I am interested in how data and planning inform operational decisions.",
+  wholesale:it?"Vorrei conoscere meglio il lavoro che collega prodotto, ordini e relazione commerciale.":"I am keen to learn more about the work connecting products, orders and commercial relationships.",
+  digital:it?"Mi interessa il rapporto fra assortimento online e bisogni del cliente.":"I am interested in the relationship between online assortment and customer needs.",
+  general:it?"Vorrei approfondire queste responsabilità in un contesto professionale.":"I would like to develop my experience in these responsibilities."
+ };
+ const first=clean(highlights[0]?.[it?1:0]),second=clean(highlights[1]?.[it?1:0]);
+ const area=second?first+"; "+second:first;
  const intro=it
-   ?"Mi candido per la posizione di "+role+" presso "+company+". Nell'annuncio mi interessa soprattutto il lavoro su "+focus+": è un'area che vorrei approfondire partendo da "+backgroundIt+"."
-   :"I am applying for the "+role+" position at "+company+". I am particularly interested in its focus on "+focus+", an area where I hope to build on my "+backgroundEn+".";
+  ?"La posizione di "+role+" presso "+company+" mi interessa per le attività legate a "+area+". Ho affrontato temi collegati attraverso "+(exp&&project?"esperienze pratiche e progetti formativi":exp?"un'esperienza professionale":"progetti formativi")+"."
+  :"I am interested in the "+role+" position at "+company+" for its focus on "+area+". I have explored related work through "+(exp&&project?"practical experience and academic projects":exp?"professional experience":"academic projects")+".";
  const work=exp&&expName&&expActivities.length
-   ?it?"Durante la mia esperienza presso "+expName+" ho lavorato su aspetti concreti come "+join(expActivities,true)+"."
-      :"At "+expName+", I gained practical experience with "+join(expActivities,false)+"."
-   :"";
+  ?it?"Durante l'esperienza presso "+expName+" ho lavorato su "+join(expActivities.slice(0,2),true)+"."
+     :"At "+expName+", I worked on "+join(expActivities.slice(0,2),false)+"."
+  :"";
  const academic=project&&projectName&&projectActivities.length
-   ?it?"Nel progetto "+projectName+" ho approfondito aspetti come "+join(projectActivities,true)+"."
-      :"In the "+projectName+" project, I also explored "+join(projectActivities,false)+"."
-   :"";
- // Do not claim the same CV proof twice: a role-specific paragraph earns its space.
- const proof=[work,academic].filter(Boolean).join("\n\n");
- const close=it
-   ?"Mi piacerebbe conoscere meglio le priorità del team e capire come potrei essere utile. Grazie per l'attenzione alla mia candidatura."
-   :"I would welcome the chance to learn more about the team's priorities and discuss where I could contribute. Thank you for considering my application.";
- const heading=it?"Gentile team Selezione,":"Dear Recruitment Team,";
+  ?it?"Nel progetto "+projectName.replace(/\s+academic project$/i,"")+" ho approfondito "+join(projectActivities.slice(0,2),true)+"."
+     :"My "+projectName.replace(/\s+academic project$/i,"")+" project involved "+join(projectActivities.slice(0,2),false)+"."
+  :"";
+ const close=(motivations[roleType]||motivations.general)+" "+
+  (it?"Mi farebbe piacere confrontarmi con voi sulle responsabilità del ruolo. Grazie per l'attenzione.":"I would welcome the opportunity to discuss the position with your team. Thank you for your consideration.");
+ const heading=it?"Gentile team Recruiting,":"Dear Recruitment Team,";
  const signature=it?"Cordiali saluti,\n"+name:"Kind regards,\n"+name;
+ const text=[heading,intro,[work,academic].filter(Boolean).join("\n\n"),close,signature].filter(Boolean).join("\n\n");
  return {
-   text:[heading,intro,proof,close,signature].filter(Boolean).join("\n\n"),
+   text,
    evidence:[
      ...(exp?exp.evidence.filter(value=>exp.overlap.some(id=>signals.find(s=>s.id===id)?.re.test(value))).map(value=>({type:"experience",origin:expName,value})):[]),
      ...(project?project.evidence.filter(value=>project.overlap.some(id=>signals.find(s=>s.id===id)?.re.test(value))).map(value=>({type:"project",origin:projectName,value})):[])
    ],
-   editorial_version:"evidence_editorial_v9",
+   editorial_version:"evidence_editorial_v10",
    scope:focus
  };
 }
