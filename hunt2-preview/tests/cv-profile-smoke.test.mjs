@@ -23,7 +23,7 @@ test("Profile displays principal/secondary/delete, Italian evidence and hides ma
  assert.match(root.innerHTML,/Rendi secondario/);
  assert.match(root.innerHTML,/Elimina/);
  assert.match(root.innerHTML,/Accoglienza clienti e presentazione dei capi/);
- assert.match(root.innerHTML,/Raccolta degli ordini tramite l'applicazione Max Mara/);
+ assert.match(root.innerHTML,/Raccolta degli ordini tramite l&#39;applicazione Max Mara/);
  assert.doesNotMatch(root.innerHTML,/Anni pertinenti|Salva destinazioni CV|data-cv-action="read"/);
  assert.match(root.innerHTML,/Competenze e strumenti/);
 });
