@@ -41,13 +41,13 @@ export function checkRequirements(requirements,profile){
    return {text:txt,type,label,proof};
  });
 }
-export function assessDossier(job,profile,duties,checks,incomplete){
- const p=profile||{};
- const tasks=arr(duties).map(clean).filter(Boolean);
+// Natural-language decision, grounded in the exact responsibilities and candidate's own evidence.
+export function assessDossier(job,profile,duties,checks,incomplete,language="it"){
+ const it=language!=="en",p=profile||{},tasks=arr(duties).map(clean).filter(Boolean);
  const words=new Set(fold(tasks.join(" ")).match(/\b[a-z]{5,}\b/g)||[]);
  const evidence=[
-  ...arr(p.experience).flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"Esperienza",kind:"esperienza",text:clean(t)}))),
-  ...arr(p.projects).flatMap(x=>arr(x.evidence).map(t=>({origin:x.name||"Progetto",kind:"progetto",text:clean(t)})))
+  ...arr(p.experience).flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"Esperienza",kind:"experience",text:clean(t)}))),
+  ...arr(p.projects).flatMap(x=>arr(x.evidence).map(t=>({origin:x.name||"Progetto",kind:"project",text:clean(t)})))
  ];
  const jobThemes=fold(tasks.join(" "));
  const topics=[
@@ -61,13 +61,43 @@ export function assessDossier(job,profile,duties,checks,incomplete){
   topics.filter(([a,b])=>a.test(jobThemes)&&b.test(fold(e.text))).length*2})).sort((a,b)=>b.score-a.score);
  const matched=matches.find(x=>x.score>0)||null;
  const missing=arr(checks).filter(x=>x.type!=="found");
- const judgement=incomplete?"Annuncio incompleto: valutazione preliminare.":missing.length?"Interessante, ma ci sono requisiti ancora da chiarire.":"Da approfondire: le attività sono coerenti con parte del profilo disponibile.";
- const work=tasks.length?"Le attività previste includono "+brief(tasks[0].replace(/[.;]$/,""),170)+(tasks[1]?" e "+brief(tasks[1].replace(/[.;]$/,""),115):"")+".":"La fonte acquisita non permette di descrivere con precisione le attività.";
- const why=matched?"Nel CV caricato risulta: "+matched.kind+" "+matched.origin+" — «"+brief(matched.text,140)+"»."+(p.profile_confirmed_by_user===true?"":" Il profilo va ancora confermato dall’utente."):
-   "Non ho trovato nel CV acquisito una prova diretta per queste mansioni: il punteggio non va considerato una garanzia.";
- const watch=missing.length?"Prima di candidarti, verifica: "+missing.slice(0,2).map(x=>brief(x.text,95)).join(" · ")+".":"Controlla il testo completo dell'annuncio prima dell'invio.";
- return {judgement,work,why,watch,missingCount:missing.length};
+ const label=missing.map(x=>brief(x.text,95));
+ // A source evidence quote is not automatically an Italian translation. Keep facts separate.
+ const item=t=>brief(t.replace(/[.;]$/,""),135);
+ const work=tasks.length?(it?"In pratica, il lavoro richiede di ":"In practice, the job involves ")+
+  item(tasks[0])+(tasks[1]?(it?"; inoltre, ":"; also, ")+item(tasks[1]):"")+"."
+  :(it?"La fonte disponibile non descrive le mansioni in modo sufficiente.":"The available source does not describe the responsibilities sufficiently.");
+ const themes=fold(matched?.text||"");
+ let proof="";
+ if(matched){
+  if(it){
+   let detail="";
+   if(/merchandis.*mix|capsule/.test(themes))detail="lavoro su merchandising mix e pianificazione di capsule";
+   else if(/order|ordini|budget/.test(themes))detail="attività su ordini e budget";
+   else if(/client|customer|garment|product presentation/.test(themes))detail="accoglienza dei clienti e presentazione del prodotto";
+   else if(/otb|kpi|retail planning/.test(themes))detail="analisi di KPI e pianificazione retail";
+   else if(/costing/.test(themes))detail="analisi dei costi di prodotto";
+   proof="Nel CV: "+(matched.kind==="project"?"progetto formativo ":"esperienza professionale ")+clean(matched.origin)+
+    (detail?", con "+detail:"; verifica la descrizione dettagliata nel Profilo")+".";
+  }else{
+   proof="Evidence in your CV: "+(matched.kind==="project"?"academic project ":"work experience ")+clean(matched.origin)+
+    " — "+brief(matched.text,110)+".";
+  }
+  if(p.profile_confirmed_by_user!==true)proof+=" "+(it?"Informazioni del profilo ancora da confermare.":"The CV profile still needs your confirmation.");
+ }else{
+  proof=it?"Non emerge una prova diretta nel CV acquisito per queste mansioni: non considerare il match già dimostrato.":
+    "No direct supporting example was found in the uploaded CV. Do not treat the match as verified.";
+ }
+ const judgement=incomplete
+  ?(it?"Annuncio parziale: non è ancora possibile valutarlo con affidabilità.":"Incomplete posting: a reliable evaluation is not yet possible.")
+  :missing.length
+   ?(it?"Da approfondire: le attività sono pertinenti, ma alcuni requisiti non sono documentati.":"Worth exploring, but some requirements are not yet documented.")
+   :(it?"Da approfondire: emergono attività collegabili a esperienze del CV.":"Worth exploring: some responsibilities link to documented CV experience.");
+ const watch=missing.length?(it?"Requisiti da controllare: ":"Requirements to check: ")+label.slice(0,3).join(" · ")+"."
+  :(it?"Controlla comunque la descrizione completa prima dell'invio.":"Review the complete job posting before applying.");
+ return {judgement,work,why:proof,watch,missingCount:missing.length};
 }
+
 export function newsTeaser(title,summary){
  const t=clean(title),s=clean(summary);
  const headline=fold(t.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
