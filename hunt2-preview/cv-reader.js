@@ -9,9 +9,13 @@ function loadScript(url,key){
  const pending=new Promise((resolve,reject)=>{
   const script=document.createElement("script");
   script.src=url;script.async=true;script.crossOrigin="anonymous";
-  script.onload=()=>window[key]?resolve(window[key]):reject(new Error("Libreria "+key+" non caricata."));
-  script.onerror=()=>reject(new Error("Impossibile caricare la libreria "+key+". Controlla la connessione."));
+  script.onload=()=>window[key]?resolve(window[key]):reject(new Error("Libreria "+key+" non inizializzata. Riprova."));
+  script.onerror=()=>reject(new Error("Impossibile scaricare la libreria "+key+". Verifica rete, firewall o filtri del browser, poi riprova."));
   document.head.appendChild(script);
+ }).catch(error=>{
+   // Crucial: a temporary CDN failure must not permanently poison all future clicks.
+   scripts.delete(key);
+   throw error;
  });
  scripts.set(key,pending);
  return pending;
