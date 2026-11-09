@@ -35,7 +35,7 @@ test("Italian dossier uses Italian evidence and switches without waiting for let
  assert.doesNotMatch(folder,/<details class="sourceVerification"/);
  assert.match(folder,/data-decision-lang=/);
 });
-test("Letter generator v8 is used and manual edits are preserved",()=>{
+test("Letter generator v9 is used and manual edits are preserved",()=>{
  assert.match(folder,/evidence_dossier_v9/);
  assert.match(folder,/user_edited/);
  assert.match(folder,/Controllo qualità HUNT/);
