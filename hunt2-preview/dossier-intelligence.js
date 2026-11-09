@@ -49,7 +49,16 @@ export function assessDossier(job,profile,duties,checks,incomplete){
   ...arr(p.experience).flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"Esperienza",kind:"esperienza",text:clean(t)}))),
   ...arr(p.projects).flatMap(x=>arr(x.evidence).map(t=>({origin:x.name||"Progetto",kind:"progetto",text:clean(t)})))
  ];
- const matches=evidence.map(e=>({...e,score:(fold(e.text).match(/\b[a-z]{5,}\b/g)||[]).filter(w=>words.has(w)&&!["support","activities","process","working","product","business","store","client"].includes(w)).length})).sort((a,b)=>b.score-a.score);
+ const jobThemes=fold(tasks.join(" "));
+ const topics=[
+  [/assort|merchand|prodotto|product|collection|collezion/,/assort|merchand|product|capsule|collection|prodotto|collezion/],
+  [/vendit|performance|sales|budget|kpi|pianific/,/ordini|order|budget|kpi|sales|vendit|analys|analysis|costing|planning/],
+  [/retail|negozi|store|vetrin|visual/,/client|customer|store|showroom|retail|garment|visual/],
+  [/digital|online|ecommerce/,/digital|online|ecommerce|e-commerce|web/],
+  [/forecast|allocation|stock|inventar/,/forecast|stock|inventory|allocation|otb|planning/]
+ ];
+ const matches=evidence.map(e=>({...e,score:(fold(e.text).match(/\b[a-z]{5,}\b/g)||[]).filter(w=>words.has(w)&&!["support","activities","process","working","product","business","store","client"].includes(w)).length+
+  topics.filter(([a,b])=>a.test(jobThemes)&&b.test(fold(e.text))).length*2})).sort((a,b)=>b.score-a.score);
  const matched=matches.find(x=>x.score>0)||null;
  const missing=arr(checks).filter(x=>x.type!=="found");
  const judgement=incomplete?"Annuncio incompleto: valutazione preliminare.":missing.length?"Interessante, ma ci sono requisiti ancora da chiarire.":"Da approfondire: le attività sono coerenti con parte del profilo disponibile.";
