@@ -418,3 +418,119 @@
 .brandOtherPositions>p{font-size:11px;color:#78746b;line-height:1.6;margin:10px 0 16px}
 .brandOtherPositions .brandJobItem{opacity:.92}
 .brandOtherPositions .brandJobItem h3{font-size:14px}
+
+
+/* HUNT dossier v4 — quiet premium editorial hierarchy, not warning-heavy cards */
+.huntDecisionV3{
+ display:grid;grid-template-columns:minmax(210px,.32fr) minmax(0,.68fr);
+ gap:34px;align-items:start;background:#fff;border:1px solid #dedfdc;
+ border-radius:9px;padding:32px 36px;margin-top:28px;margin-bottom:22px;
+ box-shadow:0 5px 26px rgba(20,28,37,.027);
+}
+.huntDecisionV3 .huntDecisionIntro h2{
+ font-size:23px;max-width:265px;line-height:1.16;letter-spacing:-.04em;color:#252b34;
+}
+.huntDecisionV3 .huntDecisionIntro .eyebrow{color:#777a80;letter-spacing:.12em}
+.huntDecisionV3 .huntDecisionBody{padding-left:25px;border-left:1px solid #e8e9e6}
+.huntDecisionV3 .huntDecisionVerdict{
+ color:#253447;font-size:20px;line-height:1.34;letter-spacing:-.026em;margin:0 0 12px;
+}
+.huntDecisionV3 .huntDecisionText{font-size:14px;line-height:1.7;color:#30343a;margin:0 0 16px}
+.huntDecisionV3 .huntDecisionEvidence{
+ border:0;border-left:2px solid #667f95;background:#f5f6f6;
+ font-size:13px;line-height:1.7;padding:13px 16px;color:#404b56;margin:12px 0;
+}
+.huntDecisionV3 .huntDecisionCaution{
+ border-top:1px solid #e3e6e8;padding-top:13px;margin:14px 0 0;
+ color:#6c6661;font-size:12px;line-height:1.65;
+}
+.huntDecisionV3 .huntAnalysisMeta{font-size:11px;color:#8a8d90;margin-top:11px}
+.dossierWorkspaceV3{
+ padding:30px 32px;border:1px solid #dedfdc;border-radius:9px;
+ box-shadow:0 5px 22px rgba(20,28,37,.022);
+}
+.dossierWorkspaceV3 .workspaceHeader h2{font-size:25px;color:#262c36;letter-spacing:-.035em}
+.dossierWorkspaceV3 .workspaceSub{max-width:360px;font-size:12px;color:#686c73;line-height:1.7}
+.dossierWorkspaceV3 .workspaceBar{margin-top:19px;margin-bottom:6px;gap:12px}
+.dossierWorkspaceV3 .workspaceBar label{font-size:12px;color:#454b55}
+.dossierWorkspaceV3 .vacancyEvidenceGrid{
+ grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:36px;
+ border-top:1px solid #e2e4e3;margin-top:24px;padding:24px 0 0;
+}
+.dossierWorkspaceV3 .vacancyEvidenceColumn,
+.dossierWorkspaceV3 .vacancyEvidenceColumn+.vacancyEvidenceColumn{
+ background:transparent;border:0;border-radius:0;padding:0;
+}
+.dossierWorkspaceV3 .vacancyEvidenceColumn+.vacancyEvidenceColumn{
+ border-left:1px solid #e5e7e7;padding-left:31px;
+}
+.dossierWorkspaceV3 .vacancyEvidenceColumn .eyebrow{
+ font-size:11px;letter-spacing:.11em;color:#6e737b;
+}
+.dossierWorkspaceV3 .vacancyEvidenceColumn ul{margin-top:17px;padding-left:18px}
+.dossierWorkspaceV3 .vacancyEvidenceColumn li{
+ font-size:13px;line-height:1.65;color:#313840;padding-bottom:5px;
+}
+.dossierWorkspaceV3 .vacancyEvidenceColumn li::marker{color:#8692a1}
+.requirementsWithCv{list-style:none;padding:0!important}
+.requirementsWithCv li{border-bottom:1px solid #e7e8e7;padding:0 0 15px!important;margin:0 0 15px!important;gap:14px}
+.requirementsWithCv .requirementDetail>span{font-size:13px;line-height:1.55;font-weight:600;color:#2e343e}
+.requirementsWithCv .requirementDetail>p{font-size:11.5px;color:#666e75;line-height:1.55;margin-top:5px}
+.requirementsWithCv li small.cvProof{
+ border-radius:3px;background:#eff1f2;color:#53616d;max-width:135px;
+ text-align:center;padding:7px 10px;font-size:10.5px;font-weight:700;
+}
+.requirementsWithCv li small.cvProof-found{background:#e7eff0;color:#325462}
+.requirementsWithCv li small.cvProof-detected{background:#f0f0ea;color:#65634e}
+.requirementsWithCv li small.cvProof-alternate{background:#e9edf4;color:#3d5871}
+.requirementsWithCv li small.cvProof-partial{background:#f4efe6;color:#786348}
+.requirementsWithCv li small.cvProof-missing{background:#f3eeed;color:#825f5c}
+.cvAlternateSwitch{
+ align-self:flex-start;border:0;background:transparent;padding:2px 0;
+ color:#2c5676;text-decoration:underline;text-underline-offset:3px;
+ font:inherit;font-size:11px;font-weight:700;cursor:pointer;
+}
+.dossierWorkspaceV3 .jobSourceContext{
+ background:#f6f7f7;border-color:#e3e5e6;border-radius:5px;
+}
+.dossierWorkspaceV3 .jobSourceContext span{color:#425568}
+.dossierWorkspaceV3 .jobSourceContext a{color:#34556f}
+.dossierWorkspaceV3 .cvProofAction{color:#34556f}
+.cvBatchToolbar{
+ display:flex;align-items:center;justify-content:space-between;
+ padding:15px 0;gap:15px;flex-wrap:wrap;border-block:1px solid #e0e3e2;
+ margin:16px 0;color:#56616c;font-size:12px;font-weight:650;
+}
+.cvDraftNotice{
+ background:#f2f5f7;border:1px solid #dce5ec;padding:13px 16px;
+ border-radius:5px;color:#465869;font-size:12px;line-height:1.7;
+}
+.cvFileActions{display:flex;gap:7px;flex-wrap:wrap}
+.cvReaderStatus:not(:empty){padding:12px 14px;margin:12px 0;border:1px solid #dbe4e8;border-radius:5px;background:#f2f6f7;color:#425b6a;font-size:12px;line-height:1.6}
+.cvReaderStatus.cvReaderError{color:#8b4c47;border-color:#e6ccc7;background:#faf3f1}
+.brandNewsItem{border:1px solid #e2e5e5;border-radius:7px;box-shadow:0 4px 15px rgba(25,34,43,.02)}
+.brandNewsItem .brandNewsTeaser{
+ font-size:12.5px;line-height:1.65;color:#626c75;
+ margin:7px 0 17px;display:-webkit-box;
+ -webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.letterWorkbench .coverLetterEditor{border-color:#dce0e3;box-shadow:0 6px 23px rgba(28,43,56,.04);color:#272d34}
+.letterWorkbench .letterHeading h2{color:#252e39}
+@media(max-width:840px){
+ .huntDecisionV3{grid-template-columns:1fr;gap:14px;padding:24px}
+ .huntDecisionV3 .huntDecisionIntro h2{max-width:none;font-size:22px}
+ .huntDecisionV3 .huntDecisionBody{border-left:0;padding-left:0;border-top:1px solid #e5e8e8;padding-top:17px}
+ .dossierWorkspaceV3{padding:22px 18px}
+ .dossierWorkspaceV3 .workspaceHeader{flex-direction:column}
+ .dossierWorkspaceV3 .workspaceSub{max-width:none}
+ .dossierWorkspaceV3 .vacancyEvidenceGrid{grid-template-columns:1fr;gap:27px}
+ .dossierWorkspaceV3 .vacancyEvidenceColumn+.vacancyEvidenceColumn{
+  border-left:0;border-top:1px solid #e5e7e7;padding:24px 0 0;
+ }
+}
+@media(max-width:550px){
+ .dossierWorkspaceV3 .workspaceBar{display:flex;flex-direction:column;align-items:stretch}
+ .dossierWorkspaceV3 .workspaceBar label{width:100%;max-width:none}
+ .requirementsWithCv li{flex-direction:column}
+ .requirementsWithCv li small.cvProof{text-align:left;max-width:100%}
+}
