@@ -179,30 +179,44 @@ function flattenProfileText(cv:any){
 }
 function profileEvidence(cv:any,family:string|null){
   if(!cv||typeof cv!=="object")return [];
+  // Only cite specific facts actually in a confirmed profile, not a bundle of
+  // adjacent skills inferred from one keyword such as "order" or "client".
   const t=flattenProfileText(cv);
   const out:string[]=[];
+  const add=(regex:RegExp,text:string)=>{if(regex.test(t))out.push(text)};
   if(family==="Merchandising"){
-    if(/merchandising mix|assortment|assortimento|capsule planning/.test(t))out.push("Nel tuo profilo ci sono già progetti su merchandising mix, assortimento e pianificazione di collezione");
-    if(/costing|pricing|product coding|codifica/.test(t))out.push("Hai già lavorato su costing, codifica prodotto o logiche di pricing in progetti accademici");
+    add(/merchandising mix/,"Nel CV è documentato un progetto sul merchandising mix");
+    add(/assortment|assortimento/,"Nel CV compaiono attività di assortimento");
+    add(/capsule/,"Nel CV compaiono attività su capsule e collezioni");
   }
   if(family==="Buying"){
-    if(/buying logic|buying|budget|assortment|assortimento/.test(t))out.push("Nel tuo percorso hai già affrontato logiche di buying, assortimento e budget");
+    add(/\bbuying\b/,"Nel CV compare un'attività formativa sul buying");
+    add(/assortment|assortimento/,"Nel CV compaiono attività di assortimento");
+    add(/open.to.buy|\botb\b/,"Nel CV è riportato lavoro su OTB");
   }
   if(family==="Planning & Allocation"){
-    if(/planning|distribution|budget|kpi|stock|order|ordini/.test(t))out.push("Hai già lavorato su pianificazione, budget, KPI e flussi che collegano ordini e distribuzione");
+    add(/\bkpi\b/,"Il CV riporta attività legate ai KPI");
+    add(/\bplanning\b|pianificazion/,"Il CV riporta attività di pianificazione");
+    add(/allocation|allocazione/,"Il CV contiene attività di allocazione");
   }
   if(family==="Retail & Retail Operations"){
-    if(/showroom|order|ordini|client|retail/.test(t))out.push("Hai già visto da vicino processi commerciali e operativi durante una campagna vendite in showroom");
-    if(/kpi|excel|budget|planning/.test(t))out.push("Hai una base analitica su Excel, KPI e pianificazione costruita attraverso i progetti");
+    add(/showroom/,"Il CV contiene un'esperienza in showroom");
+    add(/order entry|inserimento (?:degli )?ordini|registrazione ordini/,"Il CV riporta attività di inserimento ordini");
+    add(/store operations|operativit[aà] (?:dei )?negozi/,"Il CV descrive attività operative nella rete retail");
   }
   if(family==="Supply Chain & Logistics"){
-    if(/distribution|order|ordini|logistics|logistica|planning/.test(t))out.push("Hai già lavorato, almeno a livello di progetto e supporto operativo, sul collegamento tra ordini, pianificazione e distribuzione");
+    add(/inventory|inventario|\bstock\b/,"Il CV riporta esperienza su stock e inventario");
+    add(/distribution|distribuzion/,"Il CV cita attività di distribuzione");
+    add(/logistics|logistica/,"Il CV cita attività di logistica");
   }
   if(family==="E-commerce & Digital"){
-    if(/e-commerce|ecommerce|excel|kpi|performance/.test(t))out.push("Il tuo profilo contiene già elementi di analisi dati e performance utili per un contesto e-commerce");
+    add(/e-commerce|ecommerce|e-shop/,"Nel CV è documentata un'attività legata all'e-commerce");
+    add(/digital strategy|digital experience/,"Nel CV è riportato un progetto sull'esperienza digitale");
   }
   if(family==="Product Management & Development"){
-    if(/product coding|costing|capsule|product development|sviluppo prodotto/.test(t))out.push("Nei tuoi progetti hai già lavorato su sviluppo di capsule, costing e struttura del prodotto");
+    add(/product development|sviluppo prodotto/,"Nel CV compaiono attività di sviluppo prodotto");
+    add(/capsule/,"Nel CV è documentato un progetto su capsule e collezioni");
+    add(/costing/,"Nel CV è documentato lavoro sul costing");
   }
   return [...new Set(out)].slice(0,2);
 }
@@ -240,7 +254,7 @@ Deno.serve(async(req)=>{
     // An uploaded but unread PDF must not displace a CV containing documented experience.
     const ready=versions.filter((v:any)=>{
       const p=v.parsed_profile||{};
-      return Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history||p.experience?.length||p.projects?.length);
+      return Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
     });
     if(!ready.length)return {};
     const common=new Set((family+" "+desc.slice(0,1600)).toLowerCase().match(/[a-z]{5,}/g)||[]);
@@ -294,7 +308,7 @@ Deno.serve(async(req)=>{
       const hardReasons:string[]=[];
 
       if(job.remote_mode!=="remote"&&(pref.preferred_locations||[]).length+(pref.relocation_locations||[]).length>0&&!preferredHit&&!relocationHit)hardReasons.push("location");
-      const cvParsed=Boolean(cv?.profile_confirmed_by_user||cv?.profile_verified_from_user_history||cv?.experience?.length||cv?.projects?.length);
+      const cvParsed=Boolean(cv?.profile_confirmed_by_user||cv?.profile_verified_from_user_history);
       const earlyCareer=["internship","trainee","entry_level","assistant","junior"].includes(profile?.seniority||"entry_level");
       if(minYears!==null&&minYears>capacity+0.25)hardReasons.push("experience_years");
       if(minYears!==null&&minYears>0&&earlyCareer&&!cvParsed)hardReasons.push("experience_unverified_until_cv");
