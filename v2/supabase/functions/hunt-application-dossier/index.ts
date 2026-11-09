@@ -89,6 +89,8 @@ function letter(args:any){
  const focus=highlights.map((d:any)=>str(it?d[1]:d[0])).filter(Boolean);
  const roleFocus=focus.length?connect(focus,it?"it":"en"):str(it?args.areaIt:args.areaEn);
  const companyName=str(company),roleName=str(role),candidate=str(name);
+ const hasSalesCampaign=list(exp?.evidence).some((v:any)=>/sales campaign|campagna vendite|showroom/i.test(str(v)));
+ const hasBusyShifts=list(exp?.evidence).some((v:any)=>/peak|picchi|busy|alta affluenza/i.test(str(v)));
  const projectCandidates=projects.map((x:any)=>{
    const facts=list(x.evidence).map((v:any)=>str(v));
    const search=(roleName+" "+roleFocus+" "+companyName).toLowerCase();
@@ -107,10 +109,12 @@ function letter(args:any){
  const partsIt:string[]=[],partsEn:string[]=[];
  if(has(/welcome|greet|clients?|customers?|accoglienz/)){partsIt.push("accolto i clienti durante la campagna vendite");partsEn.push("welcomed clients during the sales campaign")}
  if(has(/garment|show.*item|present.*product|presentazione.*capi/)){partsIt.push("presentato i capi");partsEn.push("presented garments")}
- if(has(/orders?|ordini|order entry|order taking/)){partsIt.push("raccolto e inserito ordini tramite gli strumenti aziendali");partsEn.push("recorded orders using the company's own systems")}
+ if(has(/orders?|ordini|order entry|order taking/)){
+  partsIt.push(has(/product cod|codici prodotto/)?"raccolto ordini usando l'applicazione aziendale e i codici prodotto":"raccolto e inserito ordini tramite gli strumenti aziendali");
+  partsEn.push(has(/product cod|codici prodotto/)?"entered orders using the company's application and product codes":"recorded orders using the company's own systems");
+ }
  if(has(/minimum.budget|client budget|budget minimo/)){partsIt.push("seguito i budget minimi previsti per i clienti");partsEn.push("tracked minimum order budgets for clients")}
  if(!partsIt.length&&expCompany){partsIt.push("svolto attività operative durante la mia esperienza");partsEn.push("worked on operational tasks during my placement")}
- const sortedExp=(isBusiness?[2,3,0,1]:isMerch?[1,2,0,3]:[0,1,2,3]).filter((i:number)=>i<partsIt.length);
  // Keep supported facts only, do not create new achievements from inferred responsibilities.
  const activities=(it?partsIt:partsEn).slice(0,3);
  const pdata=(project?.facts||[]).join(" ").toLowerCase();
@@ -124,19 +128,19 @@ function letter(args:any){
  // A CV with no concrete evidence is NOT enough to generate a polished sounding letter.
  if((!expCompany||!activities.length)&&(!project||!projectHighlights.length))return null;
  const intro=it
-  ?"Mi interessa il ruolo di "+roleName+" in "+companyName+" soprattutto per il lavoro su "+roleFocus+". È il tipo di attività in cui vorrei mettere in relazione quello che ho imparato sul prodotto con l'esperienza pratica delle campagne vendite."
-  :"The "+roleName+" position at "+companyName+" caught my attention because it involves "+roleFocus+". It is a chance to connect the product decisions I have studied with the practical side of working through a sales campaign.";
+  ?"La posizione di "+roleName+" in "+companyName+" mi ha colpito per il lavoro su "+roleFocus+". Nel mio percorso ho affrontato temi collegati sia attraverso "+(expCompany?"un'esperienza operativa":"la formazione")+" sia attraverso "+(project?"progetti su prodotto e scelte commerciali":"lo studio del settore")+". Mi piacerebbe mettere insieme queste prospettive nel vostro team."
+  :"The "+roleName+" position at "+companyName+" stood out for its focus on "+roleFocus+". My background brings together "+(expCompany?"hands-on experience":"academic training")+" and "+(project?"project work on product and commercial decisions":"a grounding in fashion")+". I would like to put these perspectives to work in your team.";
  const work=expCompany&&activities.length
-  ?it?"Durante la mia esperienza presso "+expCompany+" ho "+connect(activities,"it")+". Questo lavoro mi ha insegnato a prestare attenzione ai dettagli dei prodotti e degli ordini, soprattutto quando il ritmo cresce.":
-      "At "+expCompany+", I "+connect(activities)+". Working in this setting taught me to pay attention to product and order details, particularly when the pace picked up."
+  ?it?"Durante la mia esperienza presso "+expCompany+" ho "+connect(activities,"it")+"."+(hasBusyShifts?" Nei momenti di maggiore affluenza ho imparato quanto contino precisione e autonomia.":" Queste attività mi hanno avvicinato al processo concreto che collega prodotto, cliente e ordini."):
+      "At "+expCompany+", I "+connect(activities)+"."+(hasBusyShifts?" Busy periods taught me the importance of accuracy and working independently.":" This gave me a practical view of how product, customers and orders come together.")
   :"";
  const academic=project&&projectHighlights.length
   ?it?"Nel progetto formativo "+project.name+" ho invece lavorato su "+connect(projectHighlights,"it")+". Mi interessa portare queste due prospettive nello stesso contesto: capire il prodotto e tradurre le decisioni in attività commerciali curate.":
       "In an academic project focused on "+project.name+", I worked on "+connect(projectHighlights)+". It gave me a different perspective on the same questions: how product choices connect to real commercial activity."
   :"";
  const value=it
-  ?"Vorrei essere utile al team proprio nelle attività di "+roleFocus+", con precisione nel lavoro quotidiano e disponibilità a imparare i metodi dell'azienda. Mi farebbe piacere approfondire il ruolo in un colloquio."
-  :"I would be keen to support the team on "+roleFocus+", bringing care to the day-to-day work and learning the company's way of working. I would welcome a conversation about the role.";
+  ?"Mi piacerebbe approfondire come queste esperienze possano essere utili nelle attività di "+roleFocus+". Grazie per l'attenzione alla mia candidatura: sarei felice di parlarne in un colloquio."
+  :"I would welcome the opportunity to discuss how these experiences could support the team on "+roleFocus+". Thank you for considering my application.";
  const heading=it?"Gentile team Recruiting,":"Dear Recruitment Team,";
  const signature=it?"Cordiali saluti,\n"+candidate:"Kind regards,\n"+candidate;
  return [heading,intro,[work,academic].filter(Boolean).join("\n\n"),value,signature].filter(Boolean).join("\n\n");
