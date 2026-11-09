@@ -18,6 +18,10 @@ export function prioritizeRequirements(requirements,limit=4){
  for(let index=0;index<(Array.isArray(requirements)?requirements.length:0);index++){
    const original=String(requirements[index]||"").trim();if(!original)continue;
    const cleaned=norm(original),cat=category(cleaned);
+   // A planning-related word does NOT turn ambition or motivation into evidence.
+   // Do not compare character traits against CVs.
+   if(/motivazion|ambition|passion|attitude|ownership|iniziativ|attenzione ai dettagli|precision|accuracy|manage priorities|gestire le priorita/i.test(cleaned)&&
+       !/\b(?:excel|powerpoint|sap|erp)\b|\d+\s*[-–]?\s*\d*\s*(?:anni|years)|\bdegree\b|laurea/i.test(cleaned))continue;
    if(!cat)continue; // refuse unassessable generic claims
    // Some requirements combine a technical qualification and softer adjectives.
    // Keep the objectively assessable part only, but retain the full source for traceability.
