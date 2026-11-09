@@ -996,10 +996,10 @@ async function renderOpportunityFolder(jobId){
        <div class="vacancyEvidenceColumn">
          <div class="eyebrow">Requisiti e confronto con il CV</div>
          <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
-           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.label||"Non documentato nel CV acquisito")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
+           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}${cvChecklistIt[i]?.suggested_cv_id?`<button type="button" class="cvAlternateSwitch" data-switch-cv="${esc(cvChecklistIt[i].suggested_cv_id)}">Confronta quel CV</button>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.label||"Non documentato nel CV acquisito")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
          </div>
          <div data-fact-display="en" class="${dossierLang==="en"?"":"hide"}">
-           ${factLists.en.requirements.length?`<ul class="requirementsWithCv">${factLists.en.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistEn[i]?.proof?`<p>${esc(cvChecklistEn[i].proof)}</p>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistEn[i]?.type||"missing")}">${cvChecklistEn[i]?.type==="found"?"Mentioned in CV":cvChecklistEn[i]?.type==="partial"?"Partially documented":"Not documented in uploaded CV"}</small></li>`).join("")}</ul>`:"<p>The complete source requirements are not available.</p>"}
+           ${factLists.en.requirements.length?`<ul class="requirementsWithCv">${factLists.en.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistEn[i]?.proof?`<p>${esc(cvChecklistEn[i].proof)}</p>`:""}${cvChecklistEn[i]?.suggested_cv_id?`<button type="button" class="cvAlternateSwitch" data-switch-cv="${esc(cvChecklistEn[i].suggested_cv_id)}">Compare this CV</button>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistEn[i]?.type||"missing")}">${cvChecklistEn[i]?.type==="found"?"Documented in confirmed CV":cvChecklistEn[i]?.type==="detected"?"Detected · confirm CV":cvChecklistEn[i]?.type==="alternate"?"Found in another CV":cvChecklistEn[i]?.type==="partial"?"Partially documented":"Not documented in selected CV"}</small></li>`).join("")}</ul>`:"<p>The complete source requirements are not available.</p>"}
          </div>
        </div>
      </div>
@@ -1016,7 +1016,7 @@ async function renderOpportunityFolder(jobId){
      <div class="manualLetterGuide">
        <strong>Controllo qualità HUNT · prima dell'invio</strong>
        <p>${(dossierLang==="it"?cvChecklistIt:cvChecklistEn).filter(x=>x.type!=="found").length
-         ?(dossierLang==="it"?"Non dichiarare come già posseduti questi requisiti non documentati: ":"Do not claim these undocumented requirements: ")+
+         ?(dossierLang==="it"?"Verifica prima di dichiarare il possesso di: ":"Do not claim these undocumented requirements: ")+
             esc((dossierLang==="it"?cvChecklistIt:cvChecklistEn).filter(x=>x.type!=="found").slice(0,2).map(x=>x.text).join(" · "))
          :(dossierLang==="it"?"Non risultano scostamenti evidenti tra i requisiti acquisiti e il profilo; controlla comunque l'annuncio completo.":"No obvious gap was detected in the captured requirements; check the full posting.")}</p>
      </div>
@@ -1176,6 +1176,19 @@ async function renderOpportunityFolder(jobId){
  const syncDossier=async(kind)=>{
    const lang=languageSelect?.value||"it";
    const cvId=cvSelect?.value||null;
+   if(kind==="cv"&&cvId)selectedDossierCvId=cvId;
+   const chosen=(row.cvs||[]).find(x=>x.id===cvId);
+   if(chosen&&!verifiedCv(chosen)){
+     if(kind==="cv"){
+       await renderOpportunityFolder(jobId);
+       const message=document.getElementById("dossierMessage");
+       if(message)message.textContent=readableCv(chosen)?"Questo CV è stato letto: verifica i dati proposti nel Profilo per creare una lettera.":"Questo CV deve ancora essere letto e interpretato nel Profilo.";
+     }else{
+       try{localStorage.setItem("hunt_dossier_language",lang)}catch{}
+       showDossierLanguage(lang);
+     }
+     return;
+   }
    const notice=document.getElementById("dossierMessage");
    const editor=document.getElementById("coverLetterText");
    if(kind==="language"){
@@ -1183,7 +1196,7 @@ async function renderOpportunityFolder(jobId){
      // The visible job analysis NEVER depends on an API request to change language.
      showDossierLanguage(lang);
    }
-   if(cvId&&!row.cvs?.some(cv=>cv.id===cvId&&verifiedCv(cv))){
+   if(cvId&&!row.cvs?.some(cv=>cv.id===cvId&&readableCv(cv))){
      if(notice)notice.textContent="Per usare questo CV, controlla prima le informazioni nel Profilo. La lingua dell'analisi è stata aggiornata comunque.";
      if(cvSelect)cvSelect.value=dossierCvId;
      return;
@@ -1208,6 +1221,9 @@ async function renderOpportunityFolder(jobId){
      if(languageSelect)languageSelect.disabled=false;
    }
  };
+ document.querySelectorAll("[data-switch-cv]").forEach(btn=>btn.onclick=()=>{
+   if(cvSelect){cvSelect.value=btn.dataset.switchCv;syncDossier("cv")}
+ });
  if(cvSelect)cvSelect.onchange=()=>syncDossier("cv");
  if(languageSelect)languageSelect.onchange=()=>syncDossier("language");
  const generate=document.getElementById("generateDossier");
