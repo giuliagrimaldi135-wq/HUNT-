@@ -713,8 +713,8 @@ function jobTextEvidence(description){
    .filter(x=>x.length>=30&&x.length<=750&&
      !/^(about us|about the company|equal opportunity|who we are|privacy|cookie policy)/i.test(x));
  const isBrandHistory=x=>/(founded in|founded by|pioneer of|headquartered in|in 20\d\d.*(created|became|changed)|\bemployees\b|operat(?:es|ing) in \d+ countries|billion (?:euros|dollars)|azienda fondata nel|fatturato del gruppo)/i.test(x);
- const tasks=sentences.filter(x=>!isBrandHistory(x)&&!/^(the opportunity to learn|what will you learn|what are the basics|qualifications|key accountabilities|what benefits)/i.test(x)&&/support|coordinate|responsibilit|manage|monitor|analys|plan|merchandis|buying|purchase|assort|stock|allocation|report|collection|product|vendit|acquist|gestione|pianific|analisi|assortimento|negozi|retail/i.test(x)).slice(0,3);
- const requirements=sentences.filter(x=>!isBrandHistory(x)&&/\b(required|requirement|must|minimum|at least|years? of experience|proficient|fluent|excel|degree|preferred|conoscenza|requisiti|esperienza|laurea|lingua|padronanza|necessari|essenziale)\b/i.test(x)).slice(0,3);
+ const tasks=sentences.filter(x=>!isBrandHistory(x)&&!/^(the opportunity to learn|what will you learn|what are the basics|qualifications|key accountabilities|what benefits)/i.test(x)&&/support|coordinate|responsibilit|manage|monitor|analys|plan|merchandis|buying|purchase|assort|stock|allocation|report|collection|product|vendit|acquist|gestione|pianific|analisi|assortimento|negozi|retail/i.test(x)).slice(0,15);
+ const requirements=sentences.filter(x=>!isBrandHistory(x)&&/\b(required|requirement|must|minimum|at least|years? of experience|proficient|fluent|excel|degree|preferred|conoscenza|requisiti|esperienza|laurea|lingua|padronanza|necessari|essenziale)\b/i.test(x)).slice(0,15);
  const clip=x=>x.length>290?x.slice(0,287).trim()+"…":x;
  return {tasks:tasks.map(clip),requirements:requirements.map(clip),hasDetails:original.length>=150};
 }
@@ -731,6 +731,17 @@ function evidenceItSummary(text,type="task"){
    add(/\b(excel|spreadsheet|fogli di calcolo)\b/i,"Competenze Excel richieste");
    add(/\b(powerpoint|power point|presentation software)\b/i,"Conoscenza di PowerPoint richiesta");
    add(/\b(interpersonal|communication skills|capacità comunicative)\b/i,"Capacità comunicative e relazionali");
+   add(/(?:1\s*[-–]\s*2|one\s+to\s+two)\s+years?['’]?\s*(?:of\s+)?experience/i,"1–2 anni di esperienza professionale pertinente richiesti");
+   add(/strong numerical capability|numerical skills|capacità numeriche/i,"Solide capacità numeriche");
+   add(/analytical skills|analytical capability|capacità analitiche/i,"Capacità di analisi dei dati");
+   add(/commercial mindset|commercially minded|orientamento commerciale/i,"Orientamento commerciale");
+   add(/stakeholders|cross.function|collaborative relationships|teamwork/i,"Collaborazione con stakeholder di diverse funzioni");
+   add(/translate (?:analytical )?(?:findings|data|information).*?(?:insights|commercial)|interpret data/i,"Tradurre dati e analisi in indicazioni commerciali");
+   add(/takes ownership|shows initiative|proactiv|initiative/i,"Iniziativa e autonomia nel lavoro");
+   add(/attention to detail|accuracy|precisione/i,"Precisione e attenzione ai dettagli");
+   add(/manage priorities|tight deadlines|scadenze/i,"Gestione delle priorità e delle scadenze");
+   add(/develop their planning expertise|take on increasing responsibility/i,"Motivazione a sviluppare competenze di planning");
+
    add(/\b(curricular|university activit|universitar|volunteer)\b/i,"Partecipazione ad attività universitarie o di volontariato");
    add(/\b(fashion and luxury|luxury trends|passion for fashion)\b/i,"Interesse per moda e lusso");
    const years=t.match(/\b(\d{1,2})\s*\+?\s*(?:years?|anni)\s+(?:of\s+)?experience\b/i);
@@ -740,7 +751,7 @@ function evidenceItSummary(text,type="task"){
      if(/econom|finance|business/i.test(t))hits.push("Laurea magistrale in Economia o disciplina affine richiesta");
      else hits.push("Laurea magistrale richiesta");
    }else if(/\b(degree|bachelor|laurea)\b/i.test(t))hits.push("Titolo di studio richiesto");
-   return hits.slice(0,6);
+   return hits;
  }
  if(/(collection|collezion)/i.test(t)&&/(creat|structur|present|ciclo|lifecycle|life of the product)/i.test(t))
    hits.push("Seguire le fasi di sviluppo e presentazione della collezione");
@@ -755,7 +766,7 @@ function evidenceItSummary(text,type="task"){
    hits.push("Conoscere i metodi di lavoro del merchandising"+(/men ready to wear/i.test(t)?" con focus sull'abbigliamento uomo":""));
  if(!hits.length&&/\b(product development|product lifecycle|fine vita|end of life)\b/i.test(t))
    hits.push("Seguire le attività di prodotto durante il suo ciclo di vita");
- return hits.slice(0,4);
+ return hits;
 }
 function italianEvidenceFromJob(description,evidence){
  const tasks=new Set();
@@ -766,7 +777,7 @@ function italianEvidenceFromJob(description,evidence){
  // Some requirements run together in the original source and are not split into sentences.
  const full=String(description||"");
  for(const hit of evidenceItSummary(full,"requirement"))requirements.add(hit);
- return {tasks:[...tasks].slice(0,5),requirements:[...requirements].slice(0,6)};
+ return {tasks:[...tasks].slice(0,20),requirements:[...requirements].slice(0,24)};
 }
 
 function documentedRequirement(item,profile){
