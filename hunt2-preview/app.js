@@ -721,6 +721,17 @@ function italianEvidenceFromJob(description,evidence){
  return {tasks:[...tasks].slice(0,5),requirements:[...requirements].slice(0,6)};
 }
 
+function documentedRequirement(item,profile){
+ const t=String(item||"").toLowerCase(),p=profile||{};
+ const tools=(Array.isArray(p.tools)?p.tools:[]).join(" ").toLowerCase();
+ const education=(Array.isArray(p.education)?p.education:[]).map(x=>String(x.program||"")+" "+String(x.school||"")).join(" ").toLowerCase();
+ const languages=(Array.isArray(p.languages)?p.languages:[]).join(" ").toLowerCase();
+ if(/excel/.test(t)&&!(/powerpoint|power point/.test(t))&&/excel/.test(tools))return true;
+ if(/powerpoint|power point/.test(t)&&!(/excel/.test(t))&&/powerpoint|power point/.test(tools))return true;
+ if(/c1|cefr c1|qcer c1/.test(t))return /english\s*c1|inglese\s*c1/.test(languages);
+ if(/laurea magistrale in economia|master.s degree in economics/.test(t))return /(?:master|magistrale|msc).{0,35}(?:econom|business)/.test(education);
+ return false;
+}
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
  const row=await getOpportunityDetail(jobId);
@@ -743,14 +754,25 @@ async function renderOpportunityFolder(jobId){
  const job=row.job;
  const brand=job.companies?.name||"Brand";
  const evidence=jobTextEvidence(job.description);
- const italianEvidence=italianEvidenceFromJob(job.description,evidence);
+ const actualFacts=job.metadata?.source_facts;
+ const haveVerifiedSections=actualFacts?.verification==="official_page_reviewed_2026_11_09"
+   &&Array.isArray(actualFacts?.sections?.en?.duties)
+   &&Array.isArray(actualFacts?.sections?.it?.duties);
+ const bilingualFacts=haveVerifiedSections?actualFacts.sections:null;
+ const summaryOnly=!haveVerifiedSections&&(String(job.description||"").length<340||job.metadata?.verification==="official_search_result");
+ const factLists={
+   it:haveVerifiedSections?bilingualFacts.it:{duties:evidence.tasks,requirements:evidence.requirements},
+   en:haveVerifiedSections?bilingualFacts.en:{duties:evidence.tasks,requirements:evidence.requirements}
+ };
  const targetIsRelevant=Boolean((row.cvs||[]).some(cv=>(cv.target_role_families||[]).includes(job.role_family)));
- const shortlistVerdict=!evidence.tasks.length
-   ?"HUNT ha verificato l'esistenza dell'offerta, ma i contenuti disponibili non bastano per valutare con precisione il lavoro."
-   :`La posizione riguarda ${job.role_family||"un'area da approfondire"}${job.city?" a "+job.city:""}. L'annuncio descrive questo lavoro: «${evidence.tasks[0]}»${targetIsRelevant?". È un'area per cui hai già predisposto una versione del CV.":"."}`;
+ const shortlistVerdict=summaryOnly
+   ?"HUNT ha individuato la posizione, ma dispone soltanto di una sintesi dell'annuncio: prima di valutarla davvero deve acquisire mansioni e requisiti completi."
+   :`Questa posizione riguarda ${job.role_family||"l'area indicata nell'annuncio"}${job.city?" a "+job.city:""}. ${targetIsRelevant?"Hai indicato quest'area tra le destinazioni dei tuoi CV.":"Le attività riportate sotto permettono di capire se è coerente con i tuoi obiettivi."}`;
 
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
+ const selectedCv=row.cvs?.find(x=>x.id===row.dossier?.recommended_cv_id)||cv;
+ const evidencedProfile=verifiedCv(selectedCv)?selectedCv?.parsed_profile:null;
  const fit=row.dossier?.model_version==="evidence_dossier_v5"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
@@ -829,7 +851,7 @@ async function renderOpportunityFolder(jobId){
      <div class="huntDecisionIntro"><div class="eyebrow">Analisi della posizione</div><h2>Vale la pena approfondirla?</h2></div>
      <div class="huntDecisionBody">
        <p class="huntDecisionText">${esc(shortlistVerdict)}</p>
-       <p class="huntAnalysisMeta">Compatibilità stimata ${Number(row.match_score)||0}% · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
+       <p class="huntAnalysisMeta">${summaryOnly?"Compatibilità preliminare":"Compatibilità stimata "+(Number(row.match_score)||0)+"%"} · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
        ${dossierGaps.length?`<p class="huntDecisionCaution"><strong>Prima di decidere, controlla:</strong> ${esc(dossierGaps[0])}</p>`:""}
      </div>
    </section>
@@ -846,31 +868,36 @@ async function renderOpportunityFolder(jobId){
      </div>
      <div id="dossierMessage" class="workspaceMessage"></div>
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
+     <div class="jobSourceContext">
+       ${haveVerifiedSections
+         ?`<span class="jobSourcePass">Fonte aziendale verificata · mansioni e requisiti ricontrollati</span>`
+         :summaryOnly
+           ?`<span class="jobSourceNeed">Scheda parziale: HUNT non ha ancora acquisito l'annuncio integrale. Il match è preliminare.</span>`
+           :`<span class="jobSourcePass">Testo acquisito dall'annuncio · possibili informazioni mancanti</span>`}
+       ${safeRadarUrl(job.primary_apply_url)?`<a href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Apri la fonte ufficiale</a>`:""}
+     </div>
+     <p class="sourceVerifiedNote">${haveVerifiedSections?"Italiano e inglese descrivono le stesse attività e gli stessi requisiti verificati.":"La fonte disponibile non contiene una traduzione verificata. HUNT mostra il testo acquisito senza inventare altre mansioni: la lingua scelta determina anche quella della lettera."}</p>
      <div class="vacancyEvidenceGrid">
        <div class="vacancyEvidenceColumn">
-         <div class="eyebrow">Cosa farai realmente</div>
-         <div data-evidence-language="it" class="${dossierLang==="it"?"":"hide"}">
-           ${italianEvidence.tasks.length?`<ul>${italianEvidence.tasks.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Non è disponibile una sintesi italiana affidabile. Consulta il testo originale.</p>"}
+         <div class="eyebrow">Cosa prevede il ruolo</div>
+         <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
+           ${factLists.it.duties.length?`<ul>${factLists.it.duties.slice(0,7).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Mansioni non disponibili nel testo acquisito.</p>"}
          </div>
-         <div data-evidence-language="en" class="${dossierLang==="en"?"":"hide"}">
-           ${evidence.tasks.length?`<ul>${evidence.tasks.slice(0,3).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>No detailed duties could be extracted from the original posting.</p>"}
+         <div data-fact-display="en" class="${dossierLang==="en"?"":"hide"}">
+           ${factLists.en.duties.length?`<ul>${factLists.en.duties.slice(0,7).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Job duties have not been captured from the employer's posting.</p>"}
          </div>
        </div>
        <div class="vacancyEvidenceColumn">
-         <div class="eyebrow">Cosa cerca l'azienda</div>
-         <div data-evidence-language="it" class="${dossierLang==="it"?"":"hide"}">
-           ${italianEvidence.requirements.length?`<ul>${italianEvidence.requirements.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Non abbiamo identificato requisiti sufficientemente chiari nella descrizione.</p>"}
+         <div class="eyebrow">Requisiti e confronto con il CV</div>
+         <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
+           ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><span>${esc(t)}</span><small>${documentedRequirement(bilingualFacts?.en?.requirements?.[i]||t,evidencedProfile)?"Presente nel profilo":"Da verificare"}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
          </div>
-         <div data-evidence-language="en" class="${dossierLang==="en"?"":"hide"}">
-           ${evidence.requirements.length?`<ul>${evidence.requirements.slice(0,3).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>No explicit requirements were detected in the source posting.</p>"}
+         <div data-fact-display="en" class="${dossierLang==="en"?"":"hide"}">
+           ${factLists.en.requirements.length?`<ul class="requirementsWithCv">${factLists.en.requirements.slice(0,8).map(t=>`<li><span>${esc(t)}</span><small>${documentedRequirement(t,evidencedProfile)?"Documented in CV":"To verify"}</small></li>`).join("")}</ul>`:"<p>The complete source requirements are not available.</p>"}
          </div>
        </div>
      </div>
-     <details class="sourceVerification"><summary>Confronta con le frasi originali dell'annuncio</summary>
-       <div class="sourceVerificationGrid"><div><strong>Mansioni nella lingua originale</strong><ul>${evidence.tasks.slice(0,3).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
-       <div><strong>Requisiti originali</strong><ul>${evidence.requirements.slice(0,3).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div>
-       <p>La sintesi italiana è una classificazione orientativa delle attività: i requisiti ufficiali sono soltanto quelli riportati nell'annuncio originale.</p>
-     </details>
+     ${!haveVerifiedSections&&evidence.tasks.length?`<details class="sourceVerification"><summary>Mostra il testo acquisito dalla fonte</summary><p>Estratto disponibile, non necessariamente completo.</p><ul>${evidence.tasks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`:""}
      ${dossierGaps.length?`<div class="workspaceGap"><strong>Possibili ostacoli da controllare</strong><p>${esc(dossierGaps.slice(0,3).join(" · "))}</p></div>`:""}
      ${dossierEvidence.length?`<details class="workspaceEvidence"><summary>Come HUNT ha collegato il CV a questa offerta</summary><ul>${dossierEvidence.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><p>Queste sono evidenze disponibili nel profilo, non garanzie di compatibilità o di selezione.</p></details>`:""}
      ${!row.dossier?`<p class="workspaceEmpty">Conferma almeno un CV nel Profilo per ottenere una selezione realmente personalizzata.</p>`:""}
@@ -1014,9 +1041,9 @@ async function renderOpportunityFolder(jobId){
  const selectionNote=()=>{const notice=document.getElementById("dossierMessage");if(notice)notice.textContent="Selezione aggiornata. Premi Aggiorna dossier per applicarla alla lettera e al confronto con i requisiti.";};
  if(cvSelect)cvSelect.onchange=selectionNote;
  if(languageSelect)languageSelect.onchange=()=>{
-   document.querySelectorAll("[data-evidence-language]").forEach(el=>el.classList.toggle("hide",el.dataset.evidenceLanguage!==languageSelect.value));
+   document.querySelectorAll("[data-fact-display]").forEach(el=>el.classList.toggle("hide",el.dataset.factDisplay!==languageSelect.value));
    const notice=document.getElementById("dossierMessage");
-   if(notice)notice.textContent="Analisi mostrata in "+(languageSelect.value==="it"?"italiano":"inglese")+". Per aggiornare anche la cover letter nella nuova lingua, premi Aggiorna candidatura.";
+   if(notice)notice.textContent=(haveVerifiedSections?"Analisi mostrata nella lingua selezionata. ":"Dati disponibili nella lingua originale acquisita. ")+"Premi Aggiorna candidatura per aggiornare anche la cover letter.";
  };
  const generate=document.getElementById("generateDossier");
  if(generate)generate.onclick=async()=>{
