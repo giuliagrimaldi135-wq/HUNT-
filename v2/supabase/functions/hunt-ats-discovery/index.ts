@@ -10,17 +10,17 @@ function client(){
  if(!url||!key)throw Error("Missing Supabase credentials");
  return createClient(url,String(key),{auth:{persistSession:false,autoRefreshToken:false}});
 }
-type Board={family:"ats_lever"|"ats_greenhouse"|"ats_ashby"|"ats_smartrecruiters",site:string,url:string};
+type Board={family:"ats_lever"|"ats_greenhouse"|"ats_ashby"|"ats_smartrecruiters"|"ats_workable",site:string,url:string};
 const HOSTS=[
  ["jobs.lever.co","ats_lever"],["jobs.eu.lever.co","ats_lever"],
  ["boards.greenhouse.io","ats_greenhouse"],["job-boards.greenhouse.io","ats_greenhouse"],
  ["jobs.ashbyhq.com","ats_ashby"],
- ["jobs.smartrecruiters.com","ats_smartrecruiters"],["careers.smartrecruiters.com","ats_smartrecruiters"]
+ ["jobs.smartrecruiters.com","ats_smartrecruiters"],["careers.smartrecruiters.com","ats_smartrecruiters"],["apply.workable.com","ats_workable"]
 ] as const;
 function boardsIn(html:string){
  const found=new Map<string,Board>();
  const text=html.replace(/\\\//g,"/").replace(/&amp;/gi,"&").replace(/&#x2f;|&#47;/gi,"/");
- const expr=/(?:https?:)?\/\/(?:jobs\.eu\.lever\.co|jobs\.lever\.co|boards\.greenhouse\.io|job-boards\.greenhouse\.io|jobs\.ashbyhq\.com|jobs\.smartrecruiters\.com|careers\.smartrecruiters\.com)\/[a-zA-Z0-9_-]{2,90}/gi;
+ const expr=/(?:https?:)?\/\/(?:jobs\.eu\.lever\.co|jobs\.lever\.co|boards\.greenhouse\.io|job-boards\.greenhouse\.io|jobs\.ashbyhq\.com|jobs\.smartrecruiters\.com|careers\.smartrecruiters\.com|apply\.workable\.com)\/[a-zA-Z0-9_-]{2,90}/gi;
  for(const m of text.matchAll(expr)){
   try{
    const parsed=new URL(m[0].startsWith("//")?"https:"+m[0]:m[0]);
@@ -38,6 +38,7 @@ function endpoint(board:Board){
  if(board.family==="ats_lever")return "https://api.lever.co/v0/postings/"+site+"?mode=json&limit=25";
  if(board.family==="ats_greenhouse")return "https://boards-api.greenhouse.io/v1/boards/"+site+"/jobs";
  if(board.family==="ats_smartrecruiters")return "https://api.smartrecruiters.com/v1/companies/"+site+"/postings?limit=100";
+ if(board.family==="ats_workable")return "https://www.workable.com/api/accounts/"+site+"?details=true";
  return "https://api.ashbyhq.com/posting-api/job-board/"+site;
 }
 async function validates(board:Board){
