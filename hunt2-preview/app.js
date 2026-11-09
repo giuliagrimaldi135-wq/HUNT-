@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-42";
+import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-45";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
