@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-53";
+import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-54";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -1148,8 +1148,8 @@ async function renderOpportunityFolder(jobId){
  if(brandReadError){const el=document.getElementById("brandNewsError");if(el){el.hidden=false;el.textContent="Stato di lettura non disponibile: "+brandReadError.message}}
  renderBrandFeed();
  document.getElementById("backToFeed").onclick=()=>{
-   if(location.hash.startsWith("#job="))history.back();
-   else renderOpportunities();
+   history.replaceState({},"",location.pathname+location.search);
+   renderOpportunities().catch(e=>{console.error("HUNT feed return failed",e);location.reload()});
  };
  document.querySelectorAll("[data-folder-tab]").forEach(btn=>btn.onclick=()=>{
    const tab=btn.dataset.folderTab;
