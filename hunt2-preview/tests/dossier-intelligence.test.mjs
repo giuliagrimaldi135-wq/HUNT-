@@ -38,3 +38,14 @@ test("News always has an honest topical preview",()=>{
  assert.match(newsTeaser("Prada launches new holiday campaign",""),/Campagne e comunicazione/);
  assert.match(newsTeaser("Brand news","Detailed article on public store openings and team training in Paris"),/Detailed article/);
 });
+
+test("Italian fashion dossier avoids mixing raw English duties into the decision",()=>{
+ const it=assessDossier({canonical_title:"Merchandising Intern"},{experience:[{company:"Marina Rinaldi",evidence:["Client welcome and order entry"]}],projects:[{name:"Gucci academic project",evidence:["Merchandising mix and capsule planning"]}]},["Seguire le fasi di creazione e presentazione della collezione","Analizzare le vendite"],[{text:"Conoscenza dell'inglese richiesta",type:"missing"}],false,"it");
+ assert.match(it.work,/Seguire le fasi/);
+ assert.match(it.why,/progetto formativo Gucci/);
+ assert.doesNotMatch(it.work,/The main objectives of the internship/);
+ assert.match(it.watch,/Requisiti da controllare/);
+ const en=assessDossier({canonical_title:"Merchandising Intern"},{projects:[{name:"Gucci",evidence:["Merchandising mix and capsule planning"]}]},["Understand the creation of the collection"],[{text:"English proficiency",type:"missing"}],false,"en");
+ assert.match(en.work,/In practice/);
+ assert.match(en.watch,/Requirements to check/);
+});
