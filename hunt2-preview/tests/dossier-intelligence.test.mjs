@@ -71,3 +71,16 @@ test("Confirmed exact advanced Office levels are considered documented",()=>{
  assert.equal(r[0].type,"found");
  assert.match(r[0].proof,/avanzato/);
 });
+
+test("Excellent software proficiency is not claimed from tool names without explicit levels",()=>{
+ const p={profile_confirmed_by_user:true,tools:["Excel","PowerPoint"]};
+ const match=checkRequirements(["Ottima conoscenza di Excel e PowerPoint"],p)[0];
+ assert.equal(match.type,"partial");
+ assert.match(match.proof,/livello avanzato non confermato/);
+});
+test("Italian CV proof does not expose raw English CV bullet in the Italian dossier",()=>{
+ const req=checkRequirements(["Capacità di lavorare in team, comunicare e raggiungere obiettivi"],cv);
+ assert.equal(req[0].type,"partial");
+ assert.match(req[0].proof,/accoglienza clienti/);
+ assert.doesNotMatch(req[0].proof,/Client welcome and garment presentation/);
+});
