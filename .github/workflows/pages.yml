@@ -29,8 +29,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate HUNT 2 preview JavaScript
-        run: node --check hunt2-preview/app.js
+      - name: Block deployment if HUNT dossier, CV or letter regressions fail
+        run: |
+          node --check hunt2-preview/app.js
+          node --check hunt2-preview/cv-profile.js
+          node --check hunt2-preview/cv-reader.js
+          node --check hunt2-preview/cv-interpreter.js
+          node --check hunt2-preview/dossier-intelligence.js
+          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs
       - uses: actions/configure-pages@v5
         with:
           enablement: true
