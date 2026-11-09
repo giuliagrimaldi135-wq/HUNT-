@@ -958,6 +958,7 @@ async function renderOpportunityFolder(jobId){
 
  <div data-folder-panel="application">
    ${renderJobWorkspace({
+     roleTitle:job.canonical_title,
      summary:applicationInsight(assessmentIt,cvChecklistIt,factLists.it.duties),
      duties:factLists.it.duties,
      relevant:keyRequirements,
