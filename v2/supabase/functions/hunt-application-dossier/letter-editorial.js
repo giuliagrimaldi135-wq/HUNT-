@@ -117,10 +117,10 @@ export function generateEditorialLetter(args={}){
   ?"Vorrei candidarmi per il ruolo di "+role+" presso "+company+". Dalla descrizione della posizione mi interessa in particolare il lavoro su "+area+": è un collegamento concreto tra il percorso che ho intrapreso e le responsabilità in cui desidero crescere."
   :"I would like to apply for the "+role+" position at "+company+". I was particularly interested in its responsibilities across "+area+", as these are areas in which I would like to build on my current experience and develop further.";
  const expText=exp&&expName&&expActivities.length
-  ?it?"Nella mia esperienza presso "+expName+" ho seguito attività come "+join(expActivities.slice(0,2),true)+". È stata un'occasione per conoscere il lavoro quotidiano che sta dietro a una campagna commerciale, dalle operazioni concrete alla gestione delle priorità."
-     :"During my experience at "+expName+", I was involved in "+join(expActivities.slice(0,2),false)+". This gave me a practical view of the day-to-day work behind commercial activities and the importance of handling tasks accurately."
+  ?it?"Nella mia esperienza presso "+expName+" ho seguito attività come "+join(expActivities.slice(0,2),true)+". Questa esperienza mi ha permesso di conoscere da vicino le attività operative che svolgevo e il modo in cui si organizzano nel lavoro quotidiano."
+     :"During my experience at "+expName+", I was involved in "+join(expActivities.slice(0,2),false)+". This gave me a closer understanding of the work involved in these tasks and how they fit into a team's daily activities."
   :"";
- const projectLabel=projectName.replace(/\\s+academic project$/i,"");
+ const projectLabel=projectName.replace(/\s+academic project$/i,"");
  const projectText=project&&projectName&&projectActivities.length
   ?it?"Nel progetto "+projectLabel+" ho inoltre approfondito "+join(projectActivities.slice(0,2),true)+". Ho trovato utile affrontare questi temi in modo strutturato, collegando le scelte di prodotto alle attività previste dal progetto."
      :"The "+projectLabel+" project also involved "+join(projectActivities.slice(0,2),false)+". It allowed me to explore the product-related decisions described in the project in a more structured way."
@@ -136,9 +136,9 @@ export function generateEditorialLetter(args={}){
   ?motivation+" Sarebbe un piacere approfondire con voi il ruolo e raccontarvi come potrei contribuire. Vi ringrazio per l'attenzione dedicata alla mia candidatura."
   :motivation+" I would welcome the chance to discuss the role and how my background could be useful to the team. Thank you for taking the time to consider my application.";
  const heading=it?"Gentile team Recruiting,":"Dear Recruitment Team,";
- const signature=it?"Cordiali saluti,\\n"+name:"Kind regards,\\n"+name;
+ const signature=it?"Cordiali saluti,\n"+name:"Kind regards,\n"+name;
  const paragraphs=[intro,study,expText,projectText,close].filter(Boolean);
- const text=[heading,...paragraphs,signature].join("\\n\\n");
+ const text=[heading,...paragraphs,signature].join("\n\n");
  return {
    text,
    evidence:[
