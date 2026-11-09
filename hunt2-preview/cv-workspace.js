@@ -1,5 +1,5 @@
 /* HUNT resume management — library navigation and clearly separated profile views. */
-import {evidenceForDisplay,projectNameForDisplay} from "./cv-display.js?v=20261109-133";
+import {evidenceForDisplay,projectNameForDisplay} from "./cv-display.js?v=20261109-138";
 const esc=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
 function fileIcon(){
  return '<svg width="20" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 2.5h9l5 5V22H5z"/><path d="M14 2.5V8h5"/><path d="M8 12h8M8 16h8"/></svg>';
