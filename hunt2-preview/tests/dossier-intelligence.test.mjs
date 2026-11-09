@@ -16,7 +16,7 @@ test("Do not call partial English C1 or incomplete Office a verified match",()=>
  assert.match(a[0].proof,/C1 non documentato/);
  assert.equal(a[1].type,"partial");
  assert.match(a[1].proof,/PowerPoint non trovato/);
- assert.equal(a[2].type,"partial");
+ assert.equal(a[2].type,"missing"); // Fashion Management diploma is not proof of a Master in Economics.
  assert.ok(a.every(x=>x.type!=="found"),"Cannot declare these hard requirements satisfied");
 });
 test("Explicit CV evidence stays provisional until user confirmation",()=>{
