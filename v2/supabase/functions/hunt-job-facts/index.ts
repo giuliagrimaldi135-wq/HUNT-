@@ -48,7 +48,7 @@ Deno.serve(async(req)=>{
     String(x.description||"").length>=480&&
     x.metadata?.verification!=="official_search_result"&&
     !x.metadata?.source_facts&&
-    !x.metadata?.fact_analysis_retry_after
+    (!x.metadata?.fact_analysis_retry_after||Date.parse(x.metadata.fact_analysis_retry_after)<Date.now())
   ).slice(0,2);
   let ok=0,unverified=0,failed=0;
   const details:any[]=[];
@@ -69,7 +69,7 @@ Deno.serve(async(req)=>{
       ].join(" "),
       input:JSON.stringify({job_title:job.canonical_title,public_job_description:jobText}),
       text:{format:{type:"json_schema",name:"hunt_job_source_facts",schema:fields,strict:true}},
-      max_output_tokens:2000,store:false
+      max_output_tokens:3500,store:false
     };
     const res=await fetch("https://api.openai.com/v1/responses",{
       method:"POST",signal:AbortSignal.timeout(40000),
