@@ -534,3 +534,6 @@
  .requirementsWithCv li{flex-direction:column}
  .requirementsWithCv li small.cvProof{text-align:left;max-width:100%}
 }
+
+/* One-line editorial context for sourced brand news cards */
+.brandNewsBriefLabel{display:block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;font-weight:750;color:#647483;margin:0 0 5px}
