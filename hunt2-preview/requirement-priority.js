@@ -36,23 +36,30 @@ export function prioritizeRequirements(requirements,limit=4){
 }
 export function compareKeyRequirement(requirement,check,profile){
  const kind=requirement?.category,raw=String(check?.proof||"").trim(),type=check?.type||"missing";
- const confirmed=!!(profile?.profile_confirmed_by_user||profile?.profile_verified_from_user_history);
+ const p=profile||{},draft=p.draft_profile||{};
+ const confirmed=!!(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
  if(kind==="experience"){
-   // Never rely on the obsolete self-entered relevant_years_experience field.
-   // Sector experience and duration must both be demonstrated by dated roles.
-   const jobs=Array.isArray(profile?.experience)?profile.experience:[];
-   const relevant=jobs.filter(x=>/planning|buyer|buying|sourcing|merchandis|allocation|pianificazion/i.test([x.role,...(x.evidence||[])].join(" ")));
-   return relevant.length?{state:"partial",label:"Esperienza collegata",evidence:"Attività pertinenti presenti nel CV; durata richiesta da verificare."}:
-     {state:"missing",label:"Non documentato",evidence:"Il CV non documenta ancora esperienza professionale specifica in quest'area."};
+   // A qualifying job needs relevant tasks AND dated experience, not a self-entered
+   // numerical estimate or an academic project.
+   const jobs=Array.isArray(p.experience)&&p.experience.length?p.experience:
+     Array.isArray(draft.experience)?draft.experience:[];
+   const related=jobs.filter(x=>/planning|buyer|buying|sourcing|merchandis|allocation|pianificazion/i.test(
+     [x.role,...(Array.isArray(x.evidence)?x.evidence:[])].join(" ")));
+   if(related.length)return {state:"partial",label:"Esperienza collegata",
+     evidence:"Il CV riporta attività pertinenti; la durata richiesta non è ancora documentata in modo sufficiente."};
+   return {state:"missing",label:"Non indicato nel CV",
+     evidence:"Non risultano esperienze professionali specifiche in planning, sourcing, buying o merchandising con la durata richiesta."};
  }
  if(kind==="analytics"){
-   const p=profile||{},draft=p.draft_profile||{};
-   const project=[...(p.projects||draft.projects||[])].find(x=>/kpi|analisi|analysis|report|excel|budget|data/i.test((x.evidence||[]).join(" ")));
-   if(project)return {state:"partial",label:"Da un progetto",evidence:"Il CV riporta attività formative di analisi"+(project.name?" nel progetto "+String(project.name).replace(/ academic project$/i,""):"")+". Non equivalgono a esperienza lavorativa."};
+   const projects=Array.isArray(p.projects)&&p.projects.length?p.projects:Array.isArray(draft.projects)?draft.projects:[];
+   const project=projects.find(x=>/kpi|analisi|analysis|report|excel|budget|data/i.test((x.evidence||[]).join(" ")));
+   if(project)return {state:"partial",label:"Esperienza formativa",
+     evidence:"Analisi svolte nel progetto "+String(project.name||"accademico").replace(/ academic project$/i,"")+
+     ". Una base pertinente, distinta dall’esperienza professionale."};
  }
- if(type==="found"&&confirmed)return {state:"found",label:"Documentato",evidence:raw};
- if(type==="alternate")return {state:"alternate",label:"In un altro CV",evidence:raw};
- if(type==="detected")return {state:"detected",label:"Nel CV",evidence:raw};
- if(type==="partial")return {state:"partial",label:"Parzialmente documentato",evidence:raw};
- return {state:"missing",label:"Non documentato",evidence:""};
+ if(type==="found")return {state:"found",label:"Presente nel CV",evidence:raw};
+ if(type==="detected")return {state:"detected",label:"Indicato nel CV",evidence:raw};
+ if(type==="alternate")return {state:"alternate",label:"Solo in un altro CV",evidence:raw};
+ if(type==="partial")return {state:"partial",label:"Presente in parte",evidence:raw};
+ return {state:"missing",label:"Non indicato nel CV",evidence:"Il requisito non risulta dalle informazioni presenti in questa versione del curriculum."};
 }
