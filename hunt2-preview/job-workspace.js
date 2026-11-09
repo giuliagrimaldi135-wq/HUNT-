@@ -40,17 +40,20 @@ export function renderJobWorkspace(data={}){
  const chosen=cvs.find(x=>x.selected)||null;
  const cvOpts=cvs.map(cv=>'<option value="'+esc(cv.id)+'" '+(cv.selected?"selected":"")+'>'+esc(cv.name)+(cv.primary?" · principale":"")+'</option>').join("");
  const previewTasks=responsibilities(duties,3);
- const previewReq=relevant.length?'<div class="hwRequirementList">'+relevant.slice(0,3).map(r=>req(r,true)).join("")+'</div>':
-  '<p class="hwEmpty">L’annuncio non specifica abbastanza requisiti professionali per un confronto attendibile.</p>';
+ const previewReq=relevant.length?'<div class="hwOverviewRequirements">'+relevant.slice(0,3).map(item=>req(item,true)).join("")+'</div>':
+  '<p class="hwEmpty">Non sono disponibili requisiti professionali sufficientemente specifici per il confronto.</p>';
  const overview=panel("overview",active,
-  '<div class="hwPanelHeading"><h3>In sintesi</h3><span>Le informazioni essenziali per decidere</span></div>'+
-  '<div class="hwSummaryGrid">'+
-   '<article class="hwSummaryCard"><div class="hwCardHead"><span class="hwCardIcon">01</span><h4>Attività del ruolo</h4></div>'+previewTasks+
-   '<button type="button" class="hwCardLink" data-switch-job-tab="tasks">Tutte le attività <span aria-hidden="true">→</span></button></article>'+
-   '<article class="hwSummaryCard"><div class="hwCardHead"><span class="hwCardIcon">02</span><h4>Competenze richieste</h4></div>'+previewReq+
-   '<button type="button" class="hwCardLink" data-switch-job-tab="criteria">Apri il confronto CV <span aria-hidden="true">→</span></button></article>'+
-  '</div>'
- );
+  '<div class="hwOverview">'+
+   '<div class="hwOverviewHeading"><div><span class="hwEyebrow">La posizione</span><h3>Il lavoro, in breve</h3>'+
+    '<p>Le responsabilità principali riportate nell’annuncio.</p></div>'+
+    '<button type="button" class="hwOverviewOpen" data-switch-job-tab="tasks">Tutte le attività <span aria-hidden="true">↗</span></button></div>'+
+   '<div class="hwOverviewTasks">'+previewTasks+'</div>'+
+   '<div class="hwOverviewDivider"></div>'+
+   '<div class="hwOverviewHeading hwOverviewHeadingSkills"><div><span class="hwEyebrow">Per questa candidatura</span>'+
+    '<h3>Le competenze determinanti</h3><p>Requisiti professionali confrontati con il curriculum scelto.</p></div>'+
+    '<button type="button" class="hwOverviewOpen" data-switch-job-tab="criteria">Confronto completo <span aria-hidden="true">↗</span></button></div>'+
+   previewReq+
+  '</div>');
  const tasks=panel("tasks",active,
   '<div class="hwPanelHeading"><h3>Attività e responsabilità</h3><span>La descrizione del lavoro</span></div>'+
   '<p class="hwPanelSubhead">Attività riportate nell’annuncio della posizione.</p>'+
