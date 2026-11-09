@@ -431,7 +431,7 @@ async function getOpportunityDetail(jobId){
  if(!job)throw new Error("Questa posizione non è più disponibile nel database di HUNT.");
  const companyName=String(job.companies?.name||"").trim();
  const searchBrand=companyName.replace(/\s+(Fashion Group|Group|Holdings|S\.p\.A\.|Ltd\.)$/i,"").trim();
- const [{data:signals},{data:relatedMatches},{data:brandMedia},{data:companyJobs}]=await Promise.all([
+ const [{data:signals},{data:relatedMatches},{data:brandMedia},{data:companyJobs},{data:nearbyJobs}]=await Promise.all([
    supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("published_at",{ascending:false,nullsFirst:false}).limit(35),
    supabase.from("user_job_matches")
      .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,first_seen_at,state)")
@@ -446,13 +446,21 @@ async function getOpportunityDetail(jobId){
      :Promise.resolve({data:[]}),
    supabase.from("jobs").select("id,canonical_title,city,role_family,published_at,first_seen_at,primary_apply_url,state,confidence_label")
      .eq("company_id",job.company_id).in("state",["active_verified","active_likely"])
-     .neq("id",jobId).order("first_seen_at",{ascending:false}).limit(24)
+     .neq("id",jobId).order("first_seen_at",{ascending:false}).limit(40),
+   supabase.from("user_job_matches")
+     .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,first_seen_at,primary_apply_url,state,companies(name))")
+     .eq("user_id",currentUser.id).gte("match_score",65)
+     .in("jobs.state",["active_verified","active_likely"])
+     .order("priority_score",{ascending:false}).limit(40)
  ]);
  const cutoff=new Date(Date.now()-20*86400000);
  const sameJobs=(relatedMatches||[])
    .map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
    .filter(x=>{const date=x?.published_at||x?.first_seen_at;return date&&new Date(date)>=cutoff});
- return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:companyJobs||[],sameJobs,dossier:dossier||null};
+ const alternatives=(nearbyJobs||[]).map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
+   .filter(x=>x.id&&x.id!==jobId&&x.company_id!==job.company_id)
+   .sort((a,b)=>b.priority_score-a.priority_score).slice(0,6);
+ return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:companyJobs||[],sameJobs,alternatives,dossier:dossier||null};
 }
 
 function ageLabel(value,firstSeen=null){
@@ -1000,8 +1008,18 @@ async function renderOpportunityFolder(jobId){
            ${safeRadarUrl(j.primary_apply_url)?`<a href="${esc(j.primary_apply_url)}" class="btn primary" target="_blank" rel="noopener noreferrer">Annuncio originale</a>`:""}
          </div>
        </article>`).join("")}
-     </div>`:`<p class="workspaceEmpty">Non risultano altre posizioni attive verificate nelle fonti attualmente collegate a questo brand.</p>`}
+     </div>`:`<div class="companyNoJobs"><strong>Il radar HUNT non ha ancora acquisito altri annunci verificati di questo brand.</strong><p>Non significa che l'azienda non stia assumendo. Usa il collegamento al portale ufficiale qui sopra per vedere l'elenco completo; intanto qui sotto trovi alternative del tuo radar personale.</p></div>`}
    </section>
+   ${row.alternatives?.length?`<section class="section companyAlternatives">
+     <div class="eyebrow">Opzioni vicine al tuo obiettivo</div><h2>Ruoli simili in altri brand</h2>
+     <p>Queste non sono offerte di ${esc(brand)}: provengono dai match del tuo radar personale, filtrati in base alle preferenze già salvate.</p>
+     <div class="companyOpenRolesList">${row.alternatives.slice(0,6).map(j=>`<article class="brandJobItem">
+       <div class="brandJobContent"><div class="eyebrow">${esc(j.companies?.name||"Altro brand")} · Match indicativo ${Number(j.match_score)||0}%</div>
+         <h3>${esc(j.canonical_title)}</h3><p>${esc(j.city||"Località da verificare")} · ${esc(j.role_family||"Ruolo")}</p></div>
+       <div class="brandJobActions"><button type="button" class="btn" data-open-dossier="${esc(j.id)}">Apri dossier</button>
+         ${safeRadarUrl(j.primary_apply_url)?`<a class="btn primary" href="${esc(j.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Annuncio originale</a>`:""}
+       </div></article>`).join("")}</div>
+   </section>`:""}
  </div>
 
  ${showInterview?`<div class="hide" data-folder-panel="interview">
