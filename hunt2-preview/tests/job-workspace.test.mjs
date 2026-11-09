@@ -31,7 +31,7 @@ test("Product page uses clear navigation rather than one continuous AI report",(
  assert.match(html,/hwAsideCard/);
  assert.match(html,/id="dossierCv"/);
  assert.match(html,/CV principale|CV selezionato/);
- assert.match(html,/Cover letter/);
+ assert.match(html,/Lettera di presentazione/);
  assert.match(html,/Attività riportate nell’annuncio della posizione/);
  assert.doesNotMatch(html,/attenzione al dettaglio|autonomia professionale|precisione dei candidati/i);
 });
@@ -53,14 +53,17 @@ test("Escape hostile source content and reject unsafe original URLs",()=>{
  assert.doesNotMatch(html,/href="javascript:/);
 });
 
-test("Approved application sidebar stays unchanged while overview becomes one coherent panel",()=>{
+test("Editorial overview keeps working application controls without numbered infographics",()=>{
  const html=renderJobWorkspace(facts);
  assert.match(html,/class="hwAside"/);
  assert.match(html,/class="hwAsideCard"/);
- assert.match(html,/Come procedere/);
+ assert.match(html,/Prima di candidarti/);
  assert.match(html,/Vai all’annuncio ufficiale/);
  assert.match(html,/Informazioni confermate/);
  assert.match(html,/hwEditorialExplore/);
+ assert.match(html,/hwEditorialContext/);
+ assert.doesNotMatch(html,/01 \/ IL RUOLO|02 \/ IL PROFILO|Come procedere/);
+ assert.doesNotMatch(html,/<div><span>1<\/span><p>Valuta le attività/);
  const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
  assert.ok(overview.includes("hwEditorialStory")&&overview.includes("hwEditorialLink"));
  assert.equal((overview.match(/<article/g)||[]).length,0,"Panoramica should not be made of cards");
