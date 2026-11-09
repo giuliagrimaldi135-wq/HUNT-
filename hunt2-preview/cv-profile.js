@@ -80,7 +80,7 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
  const rows=data||[];
  // Respect the explicitly opened CV; otherwise prioritise one that needs review,
  // rather than silently selecting the only legacy structured record.
- if(!rows.some(x=>x.id===selectedId))selectedId=rows.find(x=>x.parsed_profile?.draft_profile&&!x.parsed_profile?.profile_confirmed_by_user)?.id||rows.find(x=>x.is_default)?.id||rows[0]?.id||null;
+ if(!rows.some(x=>x.id===selectedId))selectedId=rows.find(x=>x.is_default)?.id||rows[0]?.id||null;
  const current=rows.find(x=>x.id===selectedId);
  const main=rows.find(x=>x.is_default),unread=rows.filter(x=>!x.parsed_profile?.raw_text);
  let fileHtml="";
