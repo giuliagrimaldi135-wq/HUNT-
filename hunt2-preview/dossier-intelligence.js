@@ -198,26 +198,32 @@ export function assessDossier(job,profile,duties,checks,incomplete,language="it"
  * A single employer-aware editorial explanation, rather than three disconnected
  * technical statements. Only claims already grounded by assessDossier are used.
  */
-export function applicationInsight(assessment,checks=[]){
- const a=assessment||{},work=clean(a.work),proof=clean(a.why),watch=clean(a.watch);
- const hasEvidence=proof&& !/non emerge|does not yet provide|deve ancora essere confermato/i.test(proof);
- const gaps=arr(checks).filter(x=>["missing","partial"].includes(x.type));
- const serious=gaps.filter(x=>/laurea magistrale|c1|\banni\b|years|advanced|avanzat/i.test(x.text));
- const paragraphs=[];
- const meaningfulWork=work&&!/descrizione disponibile non permette|non sono disponibili/i.test(work);
- if(meaningfulWork)paragraphs.push(work);
- if(hasEvidence){
-   paragraphs.push(proof);
-   if(/\bprogetto\b|\bformativ/i.test(proof))
-     paragraphs.push("Il collegamento è soprattutto formativo: puoi usarlo per spiegare il tuo interesse per il ruolo, senza presentarlo come esperienza professionale già acquisita.");
-   else paragraphs.push("È un'esperienza concreta da valorizzare nella candidatura, spiegando quali attività hai svolto personalmente.");
- }else{
-   paragraphs.push("Nel CV selezionato, però, non emergono ancora attività documentate abbastanza vicine a quelle richieste: sarebbe prematuro considerarla una candidatura prioritaria.");
- }
- if(serious.length)paragraphs.push("Prima di candidarti, verifica soprattutto "+serious.slice(0,2).map(x=>clean(x.text).replace(/[.;]+$/,"")).join(" e ")+": sono requisiti che possono influire sulla selezione.");
- else if(gaps.length)paragraphs.push("Restano alcuni requisiti da verificare nell'annuncio completo; non considerarli automaticamente soddisfatti.");
- else if(watch&&/Alcuni requisiti risultano/i.test(watch))paragraphs.push(watch);
- return paragraphs.join(" ").replace(/\s+/g," ").trim();
+export function applicationInsight(assessment,checks=[],duties=[]){
+ const a=assessment||{},proof=clean(a.why),source=fold(arr(duties).join(" "));
+ const topics=[];
+ const add=(re,value)=>{if(re.test(source)&&!topics.includes(value))topics.push(value)};
+ add(/\bsku\b|piani di produzione|production plan/i,"pianificazione della produzione per SKU");
+ add(/domanda e offerta|supply and demand|demand plan/i,"equilibrio tra domanda e disponibilità");
+ add(/allocaz|allocation/i,"allocazioni di prodotto");
+ add(/giacenz|stock|inventar/i,"monitoraggio delle giacenze");
+ add(/report|kpi/i,"reporting e analisi");
+ add(/assort|merchandis/i,"assortimento e merchandising");
+ add(/client|customer|wholesale/i,"relazioni commerciali");
+ const list=items=>items.length>1?items.slice(0,-1).join(", ")+" e "+items.at(-1):items[0]||"";
+ const focus=topics.length?"Questa posizione unisce "+list(topics.slice(0,3))+".":clean(a.work);
+ const hasProof=proof&&!/non emerge|does not yet provide|deve ancora essere confermato/i.test(proof);
+ let fit="";
+ if(hasProof){
+   const project=/Il progetto «([^»]+)»/.exec(proof);
+   fit=project
+    ?"Il collegamento più concreto con il tuo CV è il progetto "+project[1]+": una base formativa pertinente, pur diversa dall'esperienza professionale richiesta per alcune attività."
+    :proof.replace(/ documenta attività collegate a /," permette di valorizzare attività connesse a ");
+ }else fit="Nel CV selezionato non emerge ancora un'esperienza chiaramente collegata a queste responsabilità.";
+ const hard=arr(checks).filter(x=>["missing","partial"].includes(x.type)&&/\banni\b|years|\bc1\b|advanced|avanzat|laurea magistrale|degree/i.test(fold(x.text)));
+ const final=hard.length
+   ?"Un elemento da considerare è "+list(hard.slice(0,2).map(x=>clean(x.text).replace(/[.;]+$/,""))).toLowerCase()+": il curriculum scelto non ne documenta pienamente il possesso."
+   :"L'interesse per il ruolo è motivabile con queste esperienze, distinguendo ciò che hai già svolto da ciò che vorresti imparare.";
+ return [focus,fit,final].filter(Boolean).join(" ").replace(/\s+/g," ").trim();
 }
 
 export function newsTeaser(title,summary){
