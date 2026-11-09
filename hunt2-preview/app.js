@@ -1010,8 +1010,8 @@ async function renderOpportunityFolder(jobId){
    </section>
 
    ${row.dossier?.ready_to_send_message&&row.dossier.recommended_cv_id===selectedCv?.id&&verifiedCv(selectedCv)?`<section class="section letterWorkbench letterManualOnly">
-     <div class="letterHeading"><div><div class="eyebrow">Lettera · prima bozza</div><h2>La tua presentazione per ${esc(brand)}</h2><p>Costruita sui compiti reali e sulle prove presenti nel CV. Non vengono aggiunti risultati o competenze che il CV non documenta. Puoi modificare ogni frase e salvare il tuo stile.</p></div>
-       <div class="letterToolbar"><button class="btn" id="saveCoverLetter">Salva modifiche</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
+     <div class="letterHeading"><div><div class="eyebrow">Candidatura · bozza personalizzabile</div><h2>La lettera per ${esc(brand)}</h2><p>Una bozza completa costruita sulle responsabilità dell'annuncio e sulle esperienze documentate. Puoi modificarla, salvarla o crearne una nuova senza perdere il controllo sul testo.</p></div>
+       <div class="letterToolbar"><button class="btn" id="regenerateCoverLetter">Crea nuova bozza</button><button class="btn" id="saveCoverLetter">Salva</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
      </div>
      <label class="dossierSubject">Oggetto: <span>${esc(row.dossier.ready_to_send_subject||"")}</span></label>
      <textarea class="coverLetterEditor" id="coverLetterText" rows="15" spellcheck="true" aria-label="Modifica la cover letter">${esc(row.dossier.ready_to_send_message)}</textarea>
@@ -1241,6 +1241,8 @@ async function renderOpportunityFolder(jobId){
    catch(e){info.textContent=e instanceof Error?e.message:String(e);info.className="dossierError";generate.disabled=false}
  };
 
+ const regenerateDraft=document.getElementById("regenerateCoverLetter");
+ if(regenerateDraft)regenerateDraft.onclick=()=>syncDossier("draft");
  const save=document.getElementById("saveCoverLetter");
  if(save)save.onclick=async()=>{
    const editor=document.getElementById("coverLetterText");
