@@ -998,7 +998,7 @@ async function renderOpportunityFolder(jobId){
             esc((dossierLang==="it"?cvChecklistIt:cvChecklistEn).filter(x=>x.type!=="found").slice(0,2).map(x=>x.text).join(" · "))
          :(dossierLang==="it"?"Non risultano scostamenti evidenti tra i requisiti acquisiti e il profilo; controlla comunque l'annuncio completo.":"No obvious gap was detected in the captured requirements; check the full posting.")}</p>
      </div>
-   </section>`:${row.dossier?`<section class="section letterUnavailable"><div class="eyebrow">Lettera · non pronta</div><h2>Una bozza generica non ti aiuterebbe.</h2><p>HUNT non ha ancora elementi sufficienti o ha rilevato requisiti incompatibili. Controlla le prove nel CV e i requisiti dell'annuncio prima di generare una lettera.</p></section>`:""}}
+   </section>`:(row.dossier?`<section class="section letterUnavailable"><div class="eyebrow">Lettera · non pronta</div><h2>Una bozza generica non ti aiuterebbe.</h2><p>HUNT non ha ancora elementi sufficienti o ha rilevato requisiti incompatibili. Controlla le prove nel CV e i requisiti dell'annuncio prima di generare una lettera.</p></section>`:"")}
 
    <section class="section compactJobStatus">
      <div class="eyebrow">Stato annuncio</div>
