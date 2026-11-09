@@ -93,64 +93,63 @@ export function checkRequirements(requirements,profile,options={}){
  });
 }
 // Natural-language decision, grounded in the exact responsibilities and candidate's own evidence.
+// Sober, short, evidence-led editorial assessment. Avoid awkward concatenation of
+// raw infinitive job duties and never describe OCR-only data as verified.
 export function assessDossier(job,profile,duties,checks,incomplete,language="it"){
  const it=language!=="en",p=profile||{},tasks=arr(duties).map(clean).filter(Boolean);
- const words=new Set(fold(tasks.join(" ")).match(/\b[a-z]{5,}\b/g)||[]);
+ const text=fold(tasks.join(" "));
+ const verified=Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
+ const draft=p.draft_profile||{};
+ const ex=arr(p.experience).length?arr(p.experience):arr(draft.experience);
+ const pr=arr(p.projects).length?arr(p.projects):arr(draft.projects);
  const evidence=[
-  ...arr(p.experience).flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"Esperienza",kind:"experience",text:clean(t)}))),
-  ...arr(p.projects).flatMap(x=>arr(x.evidence).map(t=>({origin:x.name||"Progetto",kind:"project",text:clean(t)})))
+  ...ex.flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"",kind:"experience",text:clean(t)}))),
+  ...pr.flatMap(x=>arr(x.evidence).map(t=>({origin:x.name||"",kind:"project",text:clean(t)})))
  ];
- const jobThemes=fold(tasks.join(" "));
- const topics=[
-  [/assort|merchand|prodotto|product|collection|collezion/,/assort|merchand|product|capsule|collection|prodotto|collezion/],
-  [/vendit|performance|sales|budget|kpi|pianific/,/ordini|order|budget|kpi|sales|vendit|analys|analysis|costing|planning/],
-  [/retail|negozi|store|vetrin|visual/,/client|customer|store|showroom|retail|garment|visual/],
-  [/digital|online|ecommerce/,/digital|online|ecommerce|e-commerce|web/],
-  [/forecast|allocation|stock|inventar/,/forecast|stock|inventory|allocation|otb|planning/]
+ const categories=[
+  {re:/assort|selezione|prodotto|product|merchandis/,it:"selezione e assortimento dei prodotti",en:"product selection and assortment",proof:/assort|merchandis|product mix|capsule|collezion/},
+  {re:/budget|planning|pianific|forecast/,it:"pianificazione commerciale",en:"commercial planning",proof:/budget|planning|forecast|otb|costing/},
+  {re:/vendit|sales|performance|kpi|sell.through/,it:"analisi delle vendite e della performance",en:"sales and performance analysis",proof:/vendit|sales|kpi|sell.through|performance/},
+  {re:/stock|allocation|allocazion|inventar/,it:"stock e allocazioni",en:"stock and allocation",proof:/stock|allocation|allocazion|inventar/},
+  {re:/visual|presentazion|collezion|collection/,it:"presentazione delle collezioni",en:"collection presentation",proof:/collezion|collection|present|garment|capi/},
+  {re:/ordini|orders?|wholesale|showroom/,it:"processi wholesale e ordini",en:"wholesale and order processes",proof:/ordini|orders?|wholesale|showroom/}
  ];
- const matches=evidence.map(e=>({...e,score:(fold(e.text).match(/\b[a-z]{5,}\b/g)||[]).filter(w=>words.has(w)&&!["support","activities","process","working","product","business","store","client"].includes(w)).length+
-  topics.filter(([a,b])=>a.test(jobThemes)&&b.test(fold(e.text))).length*2})).sort((a,b)=>b.score-a.score);
- const matched=matches.find(x=>x.score>0)||null;
- const missing=arr(checks).filter(x=>x.type!=="found");
- const label=missing.map(x=>brief(x.text,95));
- // A source evidence quote is not automatically an Italian translation. Keep facts separate.
- const item=t=>brief(t.replace(/[.;]$/,""),135);
- const work=tasks.length?(it?"In pratica, il lavoro richiede di ":"In practice, the job involves ")+
-  item(tasks[0])+(tasks[1]?(it?"; inoltre, ":"; also, ")+item(tasks[1]):"")+"."
-  :(it?"La fonte disponibile non descrive le mansioni in modo sufficiente.":"The available source does not describe the responsibilities sufficiently.");
- const themes=fold(matched?.text||"");
- let proof="";
- if(matched){
-  if(it){
-   let detail="";
-   if(/merchandis.*mix|capsule/.test(themes))detail="lavoro su merchandising mix e pianificazione di capsule";
-   else if(/order|ordini|budget/.test(themes))detail="attività su ordini e budget";
-   else if(/client|customer|garment|product presentation/.test(themes))detail="accoglienza dei clienti e presentazione del prodotto";
-   else if(/otb|kpi|retail planning/.test(themes))detail="analisi di KPI e pianificazione retail";
-   else if(/costing/.test(themes))detail="analisi dei costi di prodotto";
-   proof="Nel CV: "+(matched.kind==="project"?"progetto formativo ":"esperienza professionale ")+clean(matched.origin)+
-    (detail?", con "+detail:"; verifica la descrizione dettagliata nel Profilo")+".";
-  }else{
-   proof="Evidence in your CV: "+(matched.kind==="project"?"academic project ":"work experience ")+clean(matched.origin)+
-    " — "+brief(matched.text,110)+".";
-  }
-  if(p.profile_confirmed_by_user!==true)proof+=" "+(it?"Informazioni del profilo ancora da confermare.":"The CV profile still needs your confirmation.");
- }else{
-  proof=it?"Non emerge una prova diretta nel CV acquisito per queste mansioni: non considerare il match già dimostrato.":
-    "No direct supporting example was found in the uploaded CV. Do not treat the match as verified.";
- }
- const significant=missing.filter(x=>/english|inglese|c1|excel|powerpoint|laurea|degree|master|years?|anni|esperienza/i.test(x.text));
- const lead=significant.map(x=>brief(x.text,72)).slice(0,2).join(" e ");
+ const mentioned=categories.filter(x=>x.re.test(text)).slice(0,3);
+ const join=(a)=>a.length>1?a.slice(0,-1).join(", ")+(it?" e ":" and ")+a[a.length-1]:(a[0]||"");
+ const work=incomplete?(it?"La descrizione disponibile non permette ancora una sintesi completa delle responsabilità.":"The available description is not sufficient for a complete assessment.")
+  :mentioned.length?(it?"Le responsabilità si concentrano su ":"The responsibilities focus on ")+join(mentioned.map(x=>it?x.it:x.en))+"."
+  :tasks.length?(it?"Le principali attività sono riportate nella scheda dell'annuncio, ma richiedono una lettura più approfondita.":"The main duties appear below; their scope needs a closer review.")
+  :(it?"Non sono disponibili responsabilità sufficientemente dettagliate.":"The responsibilities are not described in enough detail.");
+ const candidates=evidence.map(x=>{
+  const relevant=mentioned.filter(cat=>cat.proof.test(fold(x.text)));
+  return {...x,relevant,score:relevant.length*4+(x.kind==="experience"?0.1:0)};
+ }).sort((a,b)=>b.score-a.score);
+ const chosen=candidates.find(x=>x.score>=4)||null;
+ let why;
+ if(chosen){
+  const origin=clean(chosen.origin).replace(/\s+academic project$/i,"").replace(/\s+progetto accademico$/i,"");
+  const matchedArea=join(chosen.relevant.slice(0,2).map(x=>it?x.it:x.en));
+  why=it
+   ?(chosen.kind==="project"?"Il progetto «"+origin+"»":"L'esperienza presso "+origin)+" fornisce elementi pertinenti su "+matchedArea+"."
+   :(chosen.kind==="project"?"The "+origin+" project":"Experience at "+origin)+" offers relevant evidence for "+matchedArea+".";
+  if(!verified)why+=" "+(it?"Il testo del CV deve ancora essere confermato.":"The CV evidence still needs confirmation.");
+ }else why=it?"Nel CV selezionato non emerge ancora un collegamento documentato con queste responsabilità.":"The selected CV does not yet provide direct evidence for these duties.";
+ const unresolved=arr(checks).filter(x=>x.type==="missing"||x.type==="partial");
+ const alternate=arr(checks).filter(x=>x.type==="alternate");
+ const shortRequirement=x=>brief(x.text,92);
+ const significant=unresolved.filter(x=>/master|magistral|english|inglese|c1|excel|powerpoint|degree|anni|years/i.test(x.text));
  const judgement=incomplete
-  ?(it?"Annuncio parziale: non è ancora possibile valutarlo con affidabilità.":"Incomplete posting: a reliable evaluation is not yet possible.")
+  ?(it?"Analisi preliminare: annuncio incompleto":"Preliminary review: incomplete vacancy")
   :significant.length
-   ?(it?"Prima di darle priorità, verifica i requisiti su "+lead+".":"Before prioritizing this role, check "+lead+".")
-   :missing.length
-    ?(it?"Le mansioni meritano attenzione, ma alcune capacità richieste non risultano ancora dimostrate.":"The duties are worth exploring, but some expected abilities are not yet evidenced.")
-    :(it?"Da approfondire: emergono attività collegabili a esperienze del CV.":"Worth exploring: some responsibilities link to documented CV experience.");
- const watch=missing.length?(it?"Requisiti da controllare: ":"Requirements to check: ")+label.slice(0,3).join(" · ")+"."
-  :(it?"Controlla comunque la descrizione completa prima dell'invio.":"Review the complete job posting before applying.");
- return {judgement,work,why:proof,watch,missingCount:missing.length};
+    ?(it?"Attività pertinenti, requisiti da verificare":"Relevant duties, qualifications need review")
+    :chosen
+      ?(it?"Esperienze coerenti con le attività del ruolo":"Experience aligns with the role's duties")
+      :(it?"Coerenza ancora da dimostrare":"Role fit not yet established");
+ const watchParts=[];
+ if(unresolved.length)watchParts.push((it?"Da verificare: ":"To verify: ")+unresolved.slice(0,3).map(shortRequirement).join(" · "));
+ if(alternate.length)watchParts.push(it?"Alcuni requisiti risultano in un'altra versione del CV.":"Some qualifications appear in another CV version.");
+ const watch=watchParts.length?watchParts.join(" "):(it?"Non emergono lacune dai requisiti acquisiti; verifica comunque la versione completa dell'annuncio.":"No gaps are evident in the captured requirements; review the complete posting.");
+ return {judgement,work,why,watch,missingCount:unresolved.length,alternateCount:alternate.length};
 }
 
 export function newsTeaser(title,summary){
