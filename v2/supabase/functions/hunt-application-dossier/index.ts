@@ -78,35 +78,74 @@ function experienceBridge(cv:any,duty:[string,string]|null){
  return null;
 }
 
+
 function letter(args:any){
  const {language,company,role,name}=args;
- const it=language==="it",exp=args.experience,projects=list(args.projects),school=str(args.school),program=str(args.program);
- const focusEn=str(args.areaEn),focusIt=str(args.areaIt);
- const duties=list(args.highlights).slice(0,2),allFacts=list(exp?.evidence).map(clause).filter(Boolean);
- const relevantFacts=allFacts.slice(0,2);
- const project=projects.find((x:any)=>list(x.evidence).length>0);
- const projectFact=project?clause(list(project.evidence)[0]):"";
- const projectName=project?str(project.name).replace(/\s+(academic\s+)?project$/i,"").trim():"";
- const tool=list(args.tools).map((x:any)=>str(x)).filter(Boolean)[0]||"";
- const selection=it?duties.map((x:any)=>x[1]):duties.map((x:any)=>x[0]);
- const skillArea=it?focusIt:focusEn;
- const mention=(it?"soprattutto per le attività di ":"its focus on ")+(selection.length?connect(selection,it?"it":"en"):skillArea);
- if(it){
-  const first="Gentile team Recruiting di "+company+",\n\nla posizione di "+role+" mi interessa "+mention+". È un ambito in cui desidero crescere mettendo a frutto esperienze concrete e una forte attenzione al prodotto e ai processi.";
-  const experience=exp&&relevantFacts.length?"Durante l'esperienza presso "+str(exp.company)+", ho lavorato su "+connect(relevantFacts,"it")+".":"";
-  const academic=project&&projectFact?"In un progetto dedicato a "+(projectName||str(project.name))+" ho inoltre approfondito "+projectFact+".":"";
-  const education=school&&program?"La formazione in "+program+" presso "+school+" mi ha dato una base per comprendere il settore.":"";
-  const toolLine=tool?" Ho lavorato anche con "+tool+".":"";
-  const connection="Questo percorso mi ha insegnato quanto sia importante non perdere precisione nei passaggi tra prodotto, dati e attività operative: è un'attenzione che vorrei portare nel vostro team, continuando a imparare sul campo.";
-  return [first,[experience,academic,education].filter(Boolean).join(" ")+toolLine,connection,"Sarei felice di approfondire in un colloquio il contributo che potrei offrire alla squadra.\n\nCordiali saluti,\n"+name].filter(Boolean).join("\n\n");
+ const it=language==="it";
+ const evidence=list(args.experience?.evidence).map((x:any)=>str(x)).filter(Boolean);
+ const project=list(args.projects).find((x:any)=>list(x.evidence).length>0);
+ const projectEvidence=project?list(project.evidence).map((x:any)=>str(x)):[];
+ const all=(evidence+" "+projectEvidence).toLowerCase();
+ const duties=list(args.highlights).slice(0,2);
+ const focusIt=duties.length?connect(duties.map((d:any)=>d[1]),"it"):str(args.areaIt||"il lavoro fra prodotto e mercato");
+ const focusEn=duties.length?connect(duties.map((d:any)=>d[0])):str(args.areaEn||"the connection between product and the market");
+ const area=(str(role)+" "+duties.map((d:any)=>d[0]).join(" ")).toLowerCase();
+ const isAssort=/merchandis|assortment|collection|buying|product selection/i.test(area);
+ const isNumbers=/analys|planning|sales|data|forecast|performance|allocation/i.test(area);
+ const isDigital=/e-commerce|digital|online/i.test(area);
+ const tagsIt:string[]=[];
+ const tagsEn:string[]=[];
+ const tags=[
+  [/showroom|sales campaign/i,"attività di showroom e campagna vendite","showroom and sales-campaign work"],
+  [/order|ordini/i,"gestione e inserimento degli ordini","order handling"],
+  [/presentation|garment|client|customer/i,"presentazione del prodotto e relazione con i clienti","product presentation and client interaction"],
+  [/budget/i,"attenzione ai budget commerciali","commercial budget constraints"],
+  [/merchandis|assortment|mix/i,"assortimenti e merchandising mix","assortment and merchandising-mix projects"],
+  [/capsule|collection planning/i,"pianificazione di capsule e collezioni","capsule and collection planning"],
+  [/costing/i,"valutazione dei costi","cost analysis"],
+  [/kpi|performance|otb|open.to.buy/i,"analisi di KPI e pianificazione commerciale","KPI analysis and commercial planning"],
+  [/excel/i,"utilizzo di Excel","Excel analysis"]
+ ];
+ for(const [regex,itName,enName] of tags as [RegExp,string,string][]){
+  if(regex.test(all)){tagsIt.push(itName);tagsEn.push(enName)}
  }
- const first="Dear "+company+" Hiring Team,\n\nThe "+role+" opportunity stands out to me for "+mention+". I am interested in building my career in "+skillArea+", where careful product and operational decisions matter.";
- const experience=exp&&relevantFacts.length?"At "+str(exp.company)+", I gained hands-on experience with "+connect(relevantFacts)+".":"";
- const academic=project&&projectFact?"Through an academic project focused on "+(projectName||str(project.name))+", I also explored "+projectFact+".":"";
- const education=school&&program?"My "+program+" studies at "+school+" helped me understand the wider industry context.":"";
- const toolLine=tool?" I have also worked with "+tool+".":"";
- const connection="When product information and commercial decisions move across teams, careful coordination matters. I would bring attention to detail, curiosity and a willingness to learn, with the aim of supporting the team and building on the responsibilities described in the role.";
- return [first,[experience,academic,education].filter(Boolean).join(" ")+toolLine,connection,"I would welcome the opportunity to discuss how I could contribute to your team.\n\nKind regards,\n"+name].filter(Boolean).join("\n\n");
+ const place=str(args.experience?.company||"");
+ const projectName=str(project?.name||"").replace(/\s+(academic\s+)?project$/i,"").trim();
+ const study=str(args.program||"");
+ if(it){
+  const opening=isAssort
+    ?"Mi interessa il momento in cui una collezione diventa una scelta concreta: quali prodotti valorizzare, come costruire l'assortimento e come capire ciò che funziona davvero."
+    :isNumbers
+      ?"Mi piace l'idea che dietro le decisioni su prodotto e negozi ci siano dati da leggere, dettagli da controllare e persone che lavorano insieme."
+      :isDigital
+        ?"Mi incuriosisce il lavoro che rende un prodotto visibile e rilevante online, dal modo in cui viene presentato all'analisi delle sue performance."
+        :"Mi interessa capire da vicino come le scelte di prodotto e il lavoro quotidiano dei team contribuiscano ai risultati del brand.";
+  const bridge="È per questo che ho letto con attenzione la posizione di "+role+" presso "+company+", in particolare le attività legate a "+focusIt+".";
+  const experience=place&&tagsIt.length
+    ?"Nell'esperienza presso "+place+" ho avuto modo di lavorare su "+connect(tagsIt.slice(0,2),"it")+". Mi ha fatto capire quanto contino precisione, ascolto e passaggi ben organizzati, anche nelle attività che dall'esterno si vedono meno."
+    :place?"L'esperienza presso "+place+" mi ha permesso di conoscere più da vicino i processi operativi del settore.":"";
+  const academia=projectName&&projectEvidence.length
+    ?"Con il progetto "+projectName+" ho poi potuto esplorare il lavoro dietro le decisioni di prodotto, passando dalla teoria a scelte concrete su cui confrontarmi."
+    :study?"La formazione in "+study+" mi ha dato un punto di partenza che desidero mettere alla prova sul campo.":"";
+  const closing="Non cerco di presentarmi come una persona con anni di esperienza: posso però portare cura per il lavoro, curiosità autentica e voglia di contribuire dove servono metodo e attenzione ai dettagli. Mi piacerebbe parlarne con voi e capire come potrei essere utile al team.";
+  return ["Gentile team di "+company+",",opening+" "+bridge,[experience,academia].filter(Boolean).join(" "),closing,"Cordiali saluti,\n"+name].filter(Boolean).join("\n\n");
+ }
+ const opening=isAssort
+   ?"I am interested in what happens between a collection idea and a real product decision: what to select, how to shape an assortment, and how to understand what works."
+   :isNumbers
+     ?"I am drawn to the decisions behind the products customers eventually see: understanding the numbers, noticing the details and bringing teams together around them."
+     :isDigital
+       ?"I am curious about what makes a product work online, from how it is presented to how its performance is understood."
+       :"I want to learn how thoughtful product decisions and the everyday work of a team contribute to what customers ultimately experience.";
+ const bridge="That is why the "+role+" opportunity at "+company+" caught my attention, especially its focus on "+focusEn+".";
+ const experience=place&&tagsEn.length
+   ?"At "+place+", I worked on "+connect(tagsEn.slice(0,2))+". That experience gave me an appreciation for careful coordination and for the details that matter even when customers never see them."
+   :place?"My experience at "+place+" gave me a closer view of the operational side of fashion.":"";
+ const academic=projectName&&projectEvidence.length
+   ?"Through my "+projectName+" project, I had the chance to explore the decisions behind product and collection planning, and to question how those choices translate into practice."
+   :study?"My studies in "+study+" gave me a foundation I am eager to build on through hands-on work.":"";
+ const closing="I would not claim to bring years of experience. What I can offer is real curiosity, care with the work and a willingness to learn quickly while contributing wherever accuracy and attention to detail make a difference. I would welcome the opportunity to discuss that with your team.";
+ return ["Dear "+company+" Hiring Team,",opening+" "+bridge,[experience,academic].filter(Boolean).join(" "),closing,"Kind regards,\n"+name].filter(Boolean).join("\n\n");
 }
 
 Deno.serve(async(req)=>{
@@ -200,7 +239,7 @@ Deno.serve(async(req)=>{
  const why=blocked?"Non consigliata senza chiarimenti: "+gaps.join(" "):valueNarrative;
  const edu=education[0]||{};
  const body=blocked?null:letter({language,name,role,company,school:short(edu.school,100),program:short(edu.program,100),experience:exp[0],projects,tools:list(cv.tools).map(x=>short(x,100)),areaEn:area[0],areaIt:area[1],highlights:vacancyHighlights(description),interests:list(personalR.data?.interest_areas)});
- const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v4",updated_at:new Date().toISOString()};
+ const record={user_id:userId,job_id:job.id,recommended_cv_id:chosen.id,why_you:why,why_now:"Controlla i requisiti e conferma che la vacancy sia ancora aperta prima di candidarti.",positioning_angle:selectedDuty?"Punta su "+selectedDuty[1]+(bridge?"; collega "+bridge:""):("Chiarisci le attività reali del ruolo"),cv_reason:"CV scelto in base al ruolo, alle evidenze pertinenti e alle preferenze salvate: "+chosen.name+". Verifica la scelta prima dell'invio.",gaps:[...new Set(gaps)],what_to_emphasize:recommended,contact_route:{type:"official_vacancy",url:job.primary_apply_url||null},ready_to_send_subject:body?(language==="it"?"Candidatura":"Application")+" — "+role+" — "+name:null,ready_to_send_message:body,generated_from:{cv_id:chosen.id,cv_updated_at:chosen.updated_at,cv_source:cv.source||"unknown",language,generated_at:new Date().toISOString(),evidence:recommended,eligibility_blocked:blocked,matching_model:matchR.data?"eligibility_v2":"not_calculated",duty_focus:specificDuties,interview_question:sharpQuestion,opportunity_cost:opportunityCost,comparison_cv_count:cvs.length,cv_selection:"role_and_evidence_v2"},model_version:"evidence_dossier_v5",updated_at:new Date().toISOString()};
  // Refresh relevance without silently destroying a previously edited letter.
  const {data:previous}=await db.from("user_job_dossiers").select("ready_to_send_message,ready_to_send_subject,generated_from").eq("user_id",userId).eq("job_id",job.id).maybeSingle();
  if(previous?.generated_from?.user_edited&&!payload?.force_regenerate){
