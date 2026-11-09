@@ -117,7 +117,9 @@ Deno.serve(async(req)=>{
    const role=str(job.role_family).toLowerCase();
    const evidence=[...list(p.experience).flatMap((y:any)=>list(y.evidence)),...list(p.projects).flatMap((y:any)=>list(y.evidence)),...list(p.tools)].join(" ").toLowerCase();
    let overlaps=0;for(const word of roleWords)if(evidence.includes(word))overlaps++;
-   return (targets.includes(role)?65:0)+Math.min(overlaps*3,21)+strength(x)*12+(x.is_default?4:0);
+   // Prefer confirmed, role-relevant evidence. User no longer tags each CV manually.
+   const signals=role.includes("merchand")?/merchandis|assort|capsule|product mix/:role.includes("buy")?/buying|assort|order|budget/:role.includes("planning")?/planning|forecast|kpi|stock|allocat/:role.includes("wholesale")?/showroom|order|wholesale|campagna vendite/:role.includes("e-commerce")?/ecommerce|e-commerce|digital/:/retail|client|showroom|order/;
+   return (confirmedCv(x)?40:0)+(signals.test(evidence)?32:0)+Math.min(overlaps*3,18)+(x.is_default?8:0)+strength(x)*3;
  };
  // An unparsed PDF may have role tags but cannot outrank a CV with confirmed evidence.
  const confirmedCv=x=>x.parsed_profile?.profile_confirmed_by_user===true||x.parsed_profile?.profile_verified_from_user_history===true;
