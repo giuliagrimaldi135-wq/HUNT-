@@ -282,6 +282,7 @@
 .cvWWorkspace .cvWAreaBottom>span{font-size:11px;line-height:1.65;color:#889389}
 .cvWWorkspace .cvWAreaBottom button{border:0;background:transparent;color:#29674a;font:inherit;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}
 .cvWWorkspace .cvWAreaBottom button:hover{text-decoration:underline;text-underline-offset:3px}
+.cvWWorkspace .cvWAreaBottom>div{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .cvWWorkspace .cvWAllAreas{border-top:0;margin:0;padding:16px 0 2px}
 .cvWWorkspace .cvWAllAreas summary{display:flex;justify-content:space-between;gap:14px;font-size:11px}
 .cvWWorkspace .cvWAllAreas>p{margin:10px 0 5px;color:#8b988e;font-size:10.5px;line-height:1.55}
