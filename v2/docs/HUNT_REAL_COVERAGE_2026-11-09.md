@@ -180,3 +180,13 @@ L'importazione dai board collegati ora riguarda un catalogo globale di ruoli, **
 **Controllo dopo la modifica:** 228 posizioni nel database, di cui 226 attive verificate, in 20 aziende con almeno un annuncio; 15 match per il profilo attuale, e 1278 news. La copertura è ancora limitata alle aziende e ai portali effettivamente connessi.
 
 Il dossier ora segnala esplicitamente descrizioni parziali e usa evidenze bilingui coerenti per i due annunci verificati manualmente (Prada Retail Merchandising Intern e ZEGNA Retail Operations Intern). Il nuovo servizio automatico per estrarre e tradurre i requisiti richiede una chiave privata OpenAI e **non è ancora testato con una chiamata AI reale**.
+
+## Aggiornamento: percorsi candidati, Workable e Ashby
+
+- Frontend: tutte le opportunità usano **Apri dossier**, con navigazione unica e stato caricamento/errore/riprova. Preparare non equivale a essere candidata; solo **Già candidata** registra l'invio.
+- CV: upload PDF/DOCX/TXT/immagine e lettura/OCR privati nel browser. È disponibile un'opzione esplicita per avviare automaticamente l'interpretazione AI dopo l'OCR; i dati strutturati richiedono ancora verifica e conferma dell'utente.
+- ATS pubblico **Workable** con Colmar / Manifattura Mario Colombo, Wolf & Badger, Love, Bonito, Printfresh. CXG è stato identificato ma il suo feed supera il limite di dimensione: disattivato finché non sarà disponibile una soluzione adatta per cataloghi grandi.
+- ATS pubblico **Ashby**: Veliu, Dweet, Short Story, risultati del primo test con scansione healthy.
+- Nuovi brand effettivamente inseriti: Colmar / Manifattura Mario Colombo, Wolf & Badger, Love, Bonito, Printfresh, CXG, Veliu, Dweet, Short Story.
+- Catalogo globale e matching per utente sono separati: ruoli senior e non pertinenti possono essere indicizzati, ma non devono diventare consigli per una persona senza requisiti.
+- **L'AI delle lettere è ancora non configurata**. Il provider API ha costi a consumo distinti dall'abbonamento ChatGPT; senza la chiave privata sul server il pulsante resta chiaramente disabilitato. Non è stato svolto un test autenticato end-to-end con un utente reale.
