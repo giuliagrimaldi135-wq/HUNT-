@@ -766,33 +766,41 @@ async function renderOpportunityFolder(jobId){
  </div>
 
  <div data-folder-panel="application">
-   <section class="section huntDecision">
-     <div class="huntDecisionIntro"><div class="eyebrow">La valutazione di HUNT</div><h2>Perché vale la pena guardarla</h2></div>
-     <p class="huntDecisionText">${esc(fit)}</p>
-     ${dossierGaps.length?`<p class="huntDecisionCaution"><strong>Da verificare:</strong> ${esc(dossierGaps[0])}</p>`:""}
+   <section class="section huntDecision huntDecisionV3">
+     <div class="huntDecisionIntro"><div class="eyebrow">Analisi della posizione</div><h2>Vale la pena approfondirla?</h2></div>
+     <div class="huntDecisionBody">
+       <p class="huntDecisionText">${esc(shortlistVerdict)}</p>
+       <p class="huntAnalysisMeta">Compatibilità stimata ${Number(row.match_score)||0}% · ${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</p>
+       ${dossierGaps.length?`<p class="huntDecisionCaution"><strong>Prima di decidere, controlla:</strong> ${esc(dossierGaps[0])}</p>`:""}
+     </div>
    </section>
 
-   <section class="section dossierWorkspace">
+   <section class="section dossierWorkspace dossierWorkspaceV3">
      <div class="workspaceHeader">
-       <div><div class="eyebrow">Il tuo dossier</div><h2>Come affrontare questa candidatura</h2></div>
-       <span class="workspaceSub">Preparato sul CV e sui requisiti della posizione</span>
+       <div><div class="eyebrow">Dossier personalizzato</div><h2>L'offerta confrontata con il tuo CV</h2></div>
+       <span class="workspaceSub">HUNT legge requisiti e mansioni, sceglie il CV pertinente e prepara i documenti. Non completa i dati mancanti per supposizione.</span>
      </div>
      <div class="workspaceBar">
-       <label>Versione CV <select id="dossierCv">${dossierCvOptions}</select></label>
-       <label>Lingua della lettera <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
-       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna dossier":"Prepara dossier"}</button>
+       <label>CV da utilizzare <select id="dossierCv">${dossierCvOptions}</select></label>
+       <label>Lingua <select id="dossierLang"><option value="en" ${dossierLang==="en"?"selected":""}>English</option><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option></select></label>
+       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna analisi":"Analizza CV e offerta"}</button>
        ${cv?`<button class="btn workspaceDownload" id="downloadDossierCv">Scarica CV</button>`:""}
      </div>
      <div id="dossierMessage" class="workspaceMessage"></div>
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
-     ${row.dossier?`
-     <div class="workspaceBrief">
-       <article><div class="eyebrow">Il messaggio da portare</div><p>${esc(row.dossier.positioning_angle||"Collega un'esperienza pertinente alle responsabilità effettive.")}</p></article>
-       <article><div class="eyebrow">Una domanda intelligente</div><p>${esc(smartQuestion||"Quali sono gli obiettivi più importanti dei primi tre mesi?")}</p></article>
+     <div class="vacancyEvidenceGrid">
+       <div class="vacancyEvidenceColumn">
+         <div class="eyebrow">Mansioni riportate nell'annuncio</div>
+         ${evidence.tasks.length?`<ul>${evidence.tasks.slice(0,2).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>L'annuncio non descrive mansioni abbastanza specifiche. Apri la posizione ufficiale per verificarle.</p>"}
+       </div>
+       <div class="vacancyEvidenceColumn">
+         <div class="eyebrow">Requisiti dichiarati dal datore di lavoro</div>
+         ${evidence.requirements.length?`<ul>${evidence.requirements.slice(0,2).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Non sono disponibili requisiti verificabili nel testo acquisito. Non li inventiamo.</p>"}
+       </div>
      </div>
-     ${dossierGaps.length?`<div class="workspaceGap"><strong>Attenzione ai requisiti</strong><p>${esc(dossierGaps.slice(0,2).join(" "))}</p></div>`:""}
-     ${dossierEvidence.length?`<details class="workspaceEvidence"><summary>Vedi quali elementi del CV usa HUNT</summary><ul>${dossierEvidence.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`:""}
-     `:`<p class="workspaceEmpty">Scegli un CV con le informazioni confermate e prepara un dossier per vedere il punto forte della candidatura, i rischi e la domanda da fare al recruiter.</p>`}
+     ${dossierGaps.length?`<div class="workspaceGap"><strong>Possibili ostacoli da controllare</strong><p>${esc(dossierGaps.slice(0,3).join(" · "))}</p></div>`:""}
+     ${dossierEvidence.length?`<details class="workspaceEvidence"><summary>Come HUNT ha collegato il CV a questa offerta</summary><ul>${dossierEvidence.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><p>Queste sono evidenze disponibili nel profilo, non garanzie di compatibilità o di selezione.</p></details>`:""}
+     ${!row.dossier?`<p class="workspaceEmpty">Conferma almeno un CV nel Profilo per ottenere una selezione realmente personalizzata.</p>`:""}
    </section>
 
    ${row.dossier?.ready_to_send_message?`<section class="section letterWorkbench">
@@ -813,14 +821,6 @@ async function renderOpportunityFolder(jobId){
        <div class="letterPolishFooter"><span id="letterAiStatus" role="status">La proposta AI non sovrascrive la tua versione salvata. Potrai accettarla, annullarla o modificarla.</span><button class="btn letterUndo" id="undoLetter" hidden>Ripristina testo precedente</button></div>
      </div>
    </section>`:""}
-
-   <section class="section companySnapshot">
-     <div class="companySnapshotHead"><div class="eyebrow">Prima di candidarti</div><h2>Cosa sapere su ${esc(brand)}</h2><button type="button" id="openCompanyTab">Apri dossier azienda</button></div>
-     ${signals.length||media.length?`<div class="companySnapshotList">
-       ${signals.slice(0,2).map(x=>`<article><span>Fonte ufficiale · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non disponibile")}</span><strong>${esc(x.title)}</strong>${safeRadarUrl(x.source_url)?`<a href="${esc(x.source_url)}" target="_blank" rel="noopener noreferrer">Fonte</a>`:""}</article>`).join("")}
-       ${media.slice(0,2).map(x=>`<article><span>${esc(x.world_news_sources?.publisher||"Stampa di settore")} · ${esc(x.published_at?new Date(x.published_at).toLocaleDateString("it-IT"):"Data non disponibile")}</span><strong>${esc(x.title)}</strong>${safeRadarUrl(x.url)?`<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Fonte</a>`:""}</article>`).join("")}
-     </div>`:'<p class="workspaceEmpty">HUNT non ha ancora notizie recenti con fonte verificabile per questo brand. Il dossier azienda mostrerà quelle disponibili quando vengono raccolte.</p>'}
-   </section>
 
    <section class="section compactJobStatus">
      <div class="eyebrow">Stato annuncio</div>
