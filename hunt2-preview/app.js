@@ -1,6 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-63";
 import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
+import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -460,9 +461,9 @@ async function getOpportunityDetail(jobId){
  const sameJobs=(relatedMatches||[])
    .map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
    .filter(x=>{const date=x?.published_at||x?.first_seen_at;return date&&new Date(date)>=cutoff});
- const alternatives=(nearbyJobs||[]).map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
-   .filter(x=>x.id&&x.id!==jobId&&x.company_id!==job.company_id)
-   .sort((a,b)=>b.priority_score-a.priority_score).slice(0,6);
+ const candidates=(nearbyJobs||[]).map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
+   .filter(x=>x.id&&x.id!==jobId&&x.company_id!==job.company_id&&["active_verified","active_likely"].includes(x.state));
+ const alternatives=findSimilarOpportunities(job,candidates,4);
  return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:companyJobs||[],sameJobs,alternatives,careerPrefs:careerPrefs||{},dossier:dossier||null};
 }
 
@@ -1079,7 +1080,7 @@ async function renderOpportunityFolder(jobId){
    </section>
    ${row.alternatives?.length?`<section class="section companyAlternatives">
      <div class="eyebrow">Opzioni vicine al tuo obiettivo</div><h2>Ruoli simili in altri brand</h2>
-     <p>Queste non sono offerte di ${esc(brand)}: provengono dai match del tuo radar personale, filtrati in base alle preferenze già salvate.</p>
+     <p>Stessa area professionale, specializzazione comparabile e livello compatibile. Un punteggio HUNT alto, da solo, non rende due lavori simili.</p>
      <div class="companyOpenRolesList">${row.alternatives.slice(0,6).map(j=>`<article class="brandJobItem">
        <div class="brandJobContent"><div class="eyebrow">${esc(j.companies?.name||"Altro brand")} · Match indicativo ${Number(j.match_score)||0}%</div>
          <h3>${esc(j.canonical_title)}</h3><p>${esc(j.city||"Località da verificare")} · ${esc(j.role_family||"Ruolo")}</p></div>
