@@ -110,10 +110,12 @@ Deno.serve(async(req)=>{
   const db=client(),supplied=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error:secretError}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(secretError||!secret||!supplied||!eq(await hash(supplied),secret.secret_hash))return Response.json({error:"unauthorized"},{status:401});
-  const {data:sources,error}=await db.from("sources")
+  const params=await req.json().catch(()=>({}));
+  let selection=db.from("sources")
     .select("id,company_id,source_family,base_url,config,last_scan_at,consecutive_failures")
-    .eq("source_type","public_ats_board").eq("active",true)
-    .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(6);
+    .eq("source_type","public_ats_board").eq("active",true);
+  if(params?.source_id&&/^[0-9a-f-]{36}$/i.test(String(params.source_id)))selection=selection.eq("id",String(params.source_id));
+  const {data:sources,error}=await selection.order("last_scan_at",{ascending:true,nullsFirst:true}).limit(params?.source_id?1:6);
   if(error)throw Error(error.message);
   let boards=0,available=0,inserted=0,updated=0,rejected=0;
   const details:any[]=[];
