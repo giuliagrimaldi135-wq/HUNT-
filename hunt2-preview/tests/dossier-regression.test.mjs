@@ -40,3 +40,17 @@ test("Letter generator v8 is used and manual edits are preserved",()=>{
  assert.match(folder,/user_edited/);
  assert.match(folder,/Controllo qualità HUNT/);
 });
+
+test("Gucci's English posting is summarized as Italian duties and requirements without fabricated claims",async()=>{
+ const start=app.indexOf("function evidenceItSummary("),end=app.indexOf("function documentedRequirement(",start);
+ assert.ok(start>0&&end>start);
+ const moduleSource=app.slice(start,end)+"\nexport {italianEvidenceFromJob};";
+ const mod=await import("data:text/javascript;base64,"+Buffer.from(moduleSource).toString("base64"));
+ const sample="The main objectives of the internship will be: Understand the processes related to the creation of the collection: from structure to presentation, with constant monitoring of sales data. Proficiency in English is required. Excellent Excel and PowerPoint proficiency.";
+ const facts={tasks:["Understand the processes related to the creation of the collection: from structure to presentation, with constant monitoring of sales data"],requirements:["Proficiency in English is required.","Excellent Excel and PowerPoint proficiency."]};
+ const result=mod.italianEvidenceFromJob(sample,facts);
+ assert.ok(result.tasks.some(t=>/collezione|vendit/i.test(t)));
+ assert.ok(result.requirements.some(t=>/inglese/i.test(t)));
+ assert.ok(result.requirements.some(t=>/Excel/i.test(t)));
+ assert.ok(result.tasks.every(t=>!/The main|Understand/.test(t)));
+});
