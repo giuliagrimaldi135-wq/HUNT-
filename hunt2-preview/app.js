@@ -4,6 +4,7 @@ import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-106";
+import {renderJobWorkspace} from "./job-workspace.js?v=20261109-113";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -14,6 +15,7 @@ let currentView="opportunities";
 let selectedJobId=null;
 let selectedDossierCvId=null;
 const dossierCvChoices=new Map();
+const jobWorkspaceTabs=new Map();
 let opportunitySort="priority";
 let radarSignalFilter="all";
 let radarCompanyFilter="all";
@@ -955,55 +957,16 @@ async function renderOpportunityFolder(jobId){
  </div>
 
  <div data-folder-panel="application">
-   <section class="section huntEditorial">
-     <header class="huntEditorialIntro">
-       <div class="eyebrow">HUNT / Analisi della posizione</div>
-       <h2>Questa opportunità, nel concreto.</h2>
-       <p class="huntEditorialNarrative">${esc(applicationInsight(assessmentIt,cvChecklistIt,factLists.it.duties))}</p>
-     </header>
-     <div class="huntEditorialCvRow">
-       <div><span class="eyebrow">Confronto con il tuo curriculum</span><p>HUNT ti propone una versione, ma puoi scegliere quella che preferisci.</p></div>
-       <label for="dossierCv">CV utilizzato
-         <select id="dossierCv" aria-label="Curriculum da usare per il confronto">${dossierCvOptions}</select>
-       </label>
-       <button class="huntInlineLink" type="button" id="reviewRequirementsProfile">Gestisci CV</button>
-     </div>
-     <section class="huntEditorialSection">
-       <div class="huntEditorialSectionHead"><div class="huntEditorialIndex">01</div><div><h3>Il lavoro, in pratica</h3>
-         <p>Le principali attività ricavate dall’annuncio aziendale.</p></div></div>
-       <div class="huntEditorialMain">
-         ${factLists.it.duties.length?`<ul class="huntEditorialDuties">${factLists.it.duties.slice(0,4).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>${factLists.it.duties.length>4?`<details class="huntEditorialMore"><summary>Leggi le altre attività (${factLists.it.duties.length-4})</summary><ul>${factLists.it.duties.slice(4).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></details>`:""}`:"<p class='huntEditorialEmpty'>Le mansioni non sono sufficientemente dettagliate nel testo acquisito.</p>"}
-       </div>
-     </section>
-     <section class="huntEditorialSection huntEditorialLast">
-       <div class="huntEditorialSectionHead"><div class="huntEditorialIndex">02</div><div><h3>Le competenze che contano</h3>
-         <p>Solo requisiti professionali concreti: software, esperienza, formazione e attività tecniche. Non valutiamo qualità personali da un CV.</p></div></div>
-       <div class="huntEditorialMain">
-         ${keyRequirements.length?`<div class="huntKeyRequirements">${keyRequirements.map(item=>`<article class="huntKeyRequirement">
-           <div class="huntKeyRequirementContent"><h4>${esc(item.text)}</h4>${item.match.evidence?`<p>${esc(item.match.evidence)}</p>`:""}</div>
-           <span class="huntKeyStatus huntKeyStatus-${esc(item.match.state)}">${esc(item.match.label)}</span>
-         </article>`).join("")}</div>`:"<p class='huntEditorialEmpty'>L’annuncio non riporta requisiti tecnici sufficientemente specifici da confrontare in modo attendibile.</p>"}
-         ${factLists.it.requirements.length>keyRequirements.length?`<p class="huntCriteriaNote">Gli altri criteri indicati dall’azienda, come attitudini e caratteristiche personali, non vengono trasformati in punteggi o giudizi sul CV.</p>`:""}
-       </div>
-     </section>
-     ${!verifiedCv(selectedCv)?`<p class="huntCvReviewNote">Questa versione del curriculum non è ancora stata confermata. Puoi controllarla e completarla nel Profilo.</p>`:""}
-     <footer class="huntEditorialFooter">
-       <span>${haveVerifiedSections?"Attività e requisiti verificati sul sito aziendale":summaryOnly?"Dati ricavati da una descrizione sintetica":"Dati ricavati dal testo dell’annuncio"}</span>
-       <span>${esc(verifiedLabel(job))} · ${esc(sourceLabel(job))}</span>
-       ${safeRadarUrl(job.primary_apply_url)?`<a href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener noreferrer">Annuncio originale ↗</a>`:""}
-     </footer>
-     <div class="huntLettersLater"><span>IN ARRIVO</span><strong>Cover letter</strong><p>La scrittura personalizzata delle lettere sarà introdotta più avanti.</p></div>
-   </section>
+   ${renderJobWorkspace({
+     summary:applicationInsight(assessmentIt,cvChecklistIt,factLists.it.duties),
+     duties:factLists.it.duties,
+     relevant:keyRequirements,
+     cvs:(row.cvs||[]).map(x=>({id:x.id,name:x.name||"Curriculum",primary:!!x.is_default,selected:x.id===selectedCv?.id,verified:verifiedCv(x),readable:readableCv(x)})),
+     officiallyVerified:haveVerifiedSections,
+     sourceUrl:safeRadarUrl(job.primary_apply_url)?job.primary_apply_url:"",
+     activeTab:jobWorkspaceTabs.get(jobId)||"overview"
+   })}
 
-   <section class="section compactJobStatus">
-     <div class="eyebrow">Stato annuncio</div>
-     <div class="statusLine">
-       <strong>${esc(ageLabel(job.published_at,job.first_seen_at))}</strong>
-       <span>${esc(verifiedLabel(job))}</span>
-       <span>${repostCount?`${repostCount} ripubblicazione${repostCount===1?"":"i"} rilevata${repostCount===1?"":"e"}`:"Nessun repost rilevato"}</span>
-     </div>
-     ${repostCount?`<p class="repostNote">${esc(repostSummary)}</p>`:""}
-   </section>
  </div>
 
  <div class="hide" data-folder-panel="company">
@@ -1136,6 +1099,19 @@ async function renderOpportunityFolder(jobId){
  });
  const openBrand=document.getElementById("openCompanyTab");
  if(openBrand)openBrand.onclick=()=>document.querySelector('[data-folder-tab="company"]')?.click();
+ const activateJobTab=tab=>{
+   if(!["overview","tasks","criteria"].includes(tab))return;
+   jobWorkspaceTabs.set(jobId,tab);
+   document.querySelectorAll("[data-job-workspace-tab]").forEach(button=>{
+     const active=button.dataset.jobWorkspaceTab===tab;
+     button.classList.toggle("is-active",active);
+     button.setAttribute("aria-selected",String(active));
+   });
+   document.querySelectorAll("[data-job-workspace-pane]").forEach(panel=>{panel.hidden=panel.dataset.jobWorkspacePane!==tab});
+ };
+ document.querySelectorAll("[data-job-workspace-tab],[data-switch-job-tab]").forEach(button=>{
+   button.onclick=()=>activateJobTab(button.dataset.jobWorkspaceTab||button.dataset.switchJobTab);
+ });
  const dossierCvSelector=document.getElementById("dossierCv");
  if(dossierCvSelector)dossierCvSelector.onchange=async()=>{
    const next=dossierCvSelector.value;
