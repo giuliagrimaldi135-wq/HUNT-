@@ -782,7 +782,7 @@ async function renderOpportunityFolder(jobId){
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
  const lastCvUpdate=row.dossier?.generated_from?.cv_updated_at;
  const dossierStale=Boolean(lastCvUpdate&&savedCv?.updated_at&&new Date(savedCv.updated_at)>new Date(lastCvUpdate));
- const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v7");
+ const modelStale=Boolean(row.dossier?.model_version!=="evidence_dossier_v8");
  const languageStale=Boolean(row.dossier?.generated_from?.language!==preferredLocale&&!row.dossier?.generated_from?.user_edited);
  const shouldRefresh=Boolean(!row.dossier||dossierStale||modelStale||languageStale);
  if(shouldRefresh&&!pendingDossiers.has(jobId)&&(row.cvs||[]).some(verifiedCv)){
@@ -823,7 +823,7 @@ async function renderOpportunityFolder(jobId){
  const assessmentIt=assessDossier(job,evidencedProfile,factLists.it.duties,cvChecklistIt,summaryOnly,"it");
  const assessmentEn=assessDossier(job,evidencedProfile,factLists.en.duties,cvChecklistEn,summaryOnly,"en");
  const cvAssessment=dossierLang==="it"?assessmentIt:assessmentEn;
- const fit=row.dossier?.model_version==="evidence_dossier_v7"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
+ const fit=row.dossier?.model_version==="evidence_dossier_v8"&&row.dossier?.why_you?row.dossier.why_you:"L’analisi specifica dell’annuncio non è ancora aggiornata. Verifica i requisiti prima di dare priorità a questa candidatura.";
  const focusItems=Array.isArray(row.dossier?.generated_from?.duty_focus)?row.dossier.generated_from.duty_focus:[];
  const topDuty=focusItems[0]?.[1]||"";
  const smartQuestion=row.dossier?.generated_from?.interview_question||"";
@@ -948,7 +948,7 @@ async function renderOpportunityFolder(jobId){
      <div class="workspaceBar">
        <label>CV da utilizzare <select id="dossierCv">${dossierCvOptions}</select></label>
        <label>Lingua dell'analisi e della lettera <select id="dossierLang"><option value="it" ${dossierLang==="it"?"selected":""}>Italiano</option><option value="en" ${dossierLang==="en"?"selected":""}>English</option></select></label>
-       <button class="btn primary" id="generateDossier">${row.dossier?"Ricalcola dossier":"Analizza CV e offerta"}</button>
+       <button class="btn primary" id="generateDossier">${row.dossier?"Aggiorna lettera e confronto":"Analizza CV e offerta"}</button>
      </div>
      <div id="dossierMessage" class="workspaceMessage"></div>
      ${row.dossierError?`<p class="dossierError">${esc(row.dossierError)}</p>`:""}
@@ -986,13 +986,19 @@ async function renderOpportunityFolder(jobId){
    </section>
 
    ${row.dossier?.ready_to_send_message?`<section class="section letterWorkbench letterManualOnly">
-     <div class="letterHeading"><div><div class="eyebrow">La tua candidatura</div><h2>Lettera di presentazione</h2><p>Una prima bozza basata sui dati confermati nel CV e sulle attività disponibili nell'annuncio. Modificala come preferisci, poi salvala o copiala per la candidatura.</p></div>
+     <div class="letterHeading"><div><div class="eyebrow">Lettera · prima bozza</div><h2>La tua presentazione per ${esc(brand)}</h2><p>Costruita sui compiti reali e sulle prove presenti nel CV. Non vengono aggiunti risultati o competenze che il CV non documenta. Puoi modificare ogni frase e salvare il tuo stile.</p></div>
        <div class="letterToolbar"><button class="btn" id="saveCoverLetter">Salva modifiche</button><button class="btn primary" id="copyCoverLetter">Copia lettera</button></div>
      </div>
      <label class="dossierSubject">Oggetto: <span>${esc(row.dossier.ready_to_send_subject||"")}</span></label>
      <textarea class="coverLetterEditor" id="coverLetterText" rows="15" spellcheck="true" aria-label="Modifica la cover letter">${esc(row.dossier.ready_to_send_message)}</textarea>
-     <div class="manualLetterGuide"><strong>Prima di inviarla</strong><p>Inserisci una motivazione specifica per questa posizione, verifica che ogni esperienza citata sia nel CV e rileggi il tono ad alta voce. Nessuna lettera viene inviata automaticamente.</p></div>
-   </section>`:""}
+     <div class="manualLetterGuide">
+       <strong>Controllo qualità HUNT · prima dell'invio</strong>
+       <p>${(dossierLang==="it"?cvChecklistIt:cvChecklistEn).filter(x=>x.type!=="found").length
+         ?(dossierLang==="it"?"Non dichiarare come già posseduti questi requisiti non documentati: ":"Do not claim these undocumented requirements: ")+
+            esc((dossierLang==="it"?cvChecklistIt:cvChecklistEn).filter(x=>x.type!=="found").slice(0,2).map(x=>x.text).join(" · "))
+         :(dossierLang==="it"?"Non risultano scostamenti evidenti tra i requisiti acquisiti e il profilo; controlla comunque l'annuncio completo.":"No obvious gap was detected in the captured requirements; check the full posting.")}</p>
+     </div>
+   </section>`:${row.dossier?`<section class="section letterUnavailable"><div class="eyebrow">Lettera · non pronta</div><h2>Una bozza generica non ti aiuterebbe.</h2><p>HUNT non ha ancora elementi sufficienti o ha rilevato requisiti incompatibili. Controlla le prove nel CV e i requisiti dell'annuncio prima di generare una lettera.</p></section>`:""}}
 
    <section class="section compactJobStatus">
      <div class="eyebrow">Stato annuncio</div>
