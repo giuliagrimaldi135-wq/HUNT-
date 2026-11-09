@@ -38,8 +38,14 @@ Deno.serve(async(req)=>{
    if(bytes.byteLength>8*1024*1024){results.push({id:cv.id,status:"file_too_large"});continue}
    if(String.fromCharCode(...bytes.slice(0,4))!=="%PDF"){results.push({id:cv.id,status:"not_a_pdf"});continue}
    const extracted=await extractPdf(bytes);
+   const prior=(cv.parsed_profile&&typeof cv.parsed_profile==="object"&&!Array.isArray(cv.parsed_profile))?cv.parsed_profile:{};
+   // A server text-layer check must never downgrade or overwrite successful
+   // browser OCR of an image-based PDF. The two extractors are complementary.
+   if(String(prior.raw_text||"").length>=80&&String(prior.extractor_version||"").startsWith("browser-")){
+     results.push({id:cv.id,status:"already_read_in_browser",chars:String(prior.raw_text).length,pages:prior.read_pages||prior.page_count||extracted.pages});
+     continue;
+   }
    if(extracted.text.length<80){
-     const prior=(cv.parsed_profile&&typeof cv.parsed_profile==="object"&&!Array.isArray(cv.parsed_profile))?cv.parsed_profile:{};
      // Image-only PDFs need a separate visual/OCR reader; preserve all verified facts.
      await db.from("user_cvs").update({
        parsed_profile:{...prior,cv_text_extraction_status:"image_pdf_no_text_layer",page_count:extracted.pages},
@@ -48,7 +54,6 @@ Deno.serve(async(req)=>{
      results.push({id:cv.id,status:"image_pdf_no_text_layer",chars:extracted.text.length,pages:extracted.pages});continue
    }
    // Crucial: extraction does NOT replace a previously verified structured profile.
-   const prior=(cv.parsed_profile&&typeof cv.parsed_profile==="object"&&!Array.isArray(cv.parsed_profile))?cv.parsed_profile:{};
    const profile={...prior,raw_text:extracted.text.slice(0,40000),raw_text_hash:await sha256Hex(extracted.text),extracted_at:new Date().toISOString(),extractor_version:"pdfjs-text-v3",page_count:extracted.pages,cv_text_extraction_status:"text_extracted"};
    const {error:up}=await db.from("user_cvs").update({parsed_profile:profile,updated_at:new Date().toISOString()}).eq("id",cv.id);
    results.push({id:cv.id,status:up?"update_error":"parsed",chars:extracted.text.length,pages:extracted.pages});
