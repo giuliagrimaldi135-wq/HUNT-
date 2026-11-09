@@ -5,7 +5,7 @@ const facts={
  summary:"Il ruolo collega stock, allocazioni e la pianificazione commerciale. Il progetto Gucci offre una base formativa.",
  duties:["Sviluppare piani di produzione per SKU","Monitorare lo stock","Supportare allocazione e reporting","Collaborare con altri team"],
  relevant:[
-  {text:"Excel avanzato",category:"excel",match:{state:"alternate",evidence:"Excel avanzato nel CV Fashion Management"}},
+  {text:"Competenze Excel richieste",category:"excel",match:{state:"detected",evidence:"Excel (avanzato)"}},
   {text:"1–2 anni di esperienza in planning",category:"experience",match:{state:"missing",evidence:""}},
   {text:"Analisi dei dati",category:"analytics",match:{state:"partial",evidence:"Progetto Alaïa con KPI e budget"}}
  ],
@@ -62,4 +62,13 @@ test("Approved application sidebar stays unchanged while overview becomes one co
  const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
  assert.ok(overview.includes("hwOverviewTasks")&&overview.includes("hwOverviewRequirements"));
  assert.equal((overview.match(/<article/g)||[]).length,0,"No extra nested cards in the overview");
+});
+
+test("Compact Excel row shows the exact level in the selected CV, not an unrelated version",()=>{
+ const html=renderJobWorkspace(facts);
+ assert.match(html,/Conoscenza di Excel/);
+ assert.match(html,/hwCompactEvidence/);
+ assert.match(html,/Excel \(avanzato\)/);
+ assert.match(html,/Indicato nel CV/);
+ assert.doesNotMatch(html,/In un altro CV|Solo in un altro CV/);
 });
