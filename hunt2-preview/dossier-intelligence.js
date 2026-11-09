@@ -43,6 +43,19 @@ export function checkRequirements(requirements,profile,options={}){
  const languages=[...arr(p.languages),...(!arr(p.languages).length?arr(rawDraft.languages):[])].map(x=>clean(typeof x==="string"?x:(x?.language||"")+" "+(x?.level||"")));
  const education=[...arr(p.education),...(!arr(p.education).length?arr(rawDraft.education):[])].map(x=>clean((x?.program||"")+" "+(x?.school||"")));
  const experience=[...arr(p.experience),...(!arr(p.experience).length?arr(rawDraft.experience):[])].flatMap(x=>arr(x.evidence).map(t=>({origin:x.company||x.role||"Esperienza",text:clean(t)})));
+ const projects=[...arr(p.projects),...(!arr(p.projects).length?arr(rawDraft.projects):[])].flatMap(x=>arr(x.evidence).map(t=>({origin:x.name||"Progetto",text:clean(t)})));
+ const allEvidence=[...experience.map(x=>({...x,kind:"Esperienza"})),...projects.map(x=>({...x,kind:"Progetto"}))];
+ const evidenceHint=(x)=>{
+   const t=fold(x.text);
+   const description=/\bkpi\b|analisi comparativa|comparative analysis/.test(t)?"analisi comparativa e KPI":
+     /costing|costi di prodotto/.test(t)?"analisi dei costi di prodotto":
+     /planning|pianificazion/.test(t)?"attività di pianificazione":
+     /autonom|independent client/.test(t)?"attività svolte in autonomia":
+     /budget/.test(t)?"analisi di budget":
+     /data|dati|analysis|analisi/.test(t)?"attività di analisi":"attività collegate al requisito";
+   return x.kind+" "+x.origin+" — "+description;
+ };
+
  const altCvs=arr(options.alternatives).filter(x=>x?.parsed_profile);
  return arr(requirements).map(requirement=>{
    const txt=clean(requirement),t=fold(txt);
@@ -72,6 +85,18 @@ export function checkRequirements(requirements,profile,options={}){
      const needsMaster=/magistrale|master.s degree|\bmsc\b|master of science/.test(t);
      const d=education.find(x=>needsMaster?/laurea magistrale|master.s degree|\bmsc\b|master of science/i.test(x):/diploma|laurea|bachelor|degree|master/i.test(x));
      if(d)result(/econom|finance|business/.test(t)&&!/econom|finance|business/i.test(d)?"partial":confirmed?"found":"detected",d);
+   }else if(/capacita analitiche|analytical skills|interpretare dati|commercial insights|capacita numeriche|numerical|orientamento commerciale|commercial mindset/.test(t)){
+     const hit=allEvidence.find(x=>/\bkpi\b|analisi comparativa|comparative analysis|data analysis|analisi dei dati|\bbudget\b|costing/.test(fold(x.text)));
+     if(hit)result("partial",brief(evidenceHint(hit),130));
+   }else if(/iniziativa|autonomia|accuracy|precisione|attention to detail|attenzione ai dettagli/.test(t)){
+     const hit=allEvidence.find(x=>/autonom|independently|ownership|precision|accurac/.test(fold(x.text)));
+     if(hit)result("partial",brief(evidenceHint(hit),130));
+   }else if(/gestire le priorita|scadenze|manage priorities|deadlines/.test(t)){
+     const hit=allEvidence.find(x=>/deadline|scadenz|priorit|peak traffic|maggiore affluenza/.test(fold(x.text)));
+     if(hit)result("partial",brief(evidenceHint(hit),130));
+   }else if(/motivazione.*planning|planning expertise|develop planning|sviluppare competenze.*pianificazion/.test(t)){
+     const hit=projects.find(x=>/planning|pianificazion|\botb\b/.test(fold(x.text)));
+     if(hit)result("partial",brief("Progetto "+hit.origin+" — attività formative di pianificazione",120));
    }else if(/communication|comunicazion|teamwork|lavorare in team|interpersonal/.test(t)){
      const x=experience.find(v=>/client|customer|team|collabor|relazion|accoglienz/.test(fold(v.text)));
      if(x){
