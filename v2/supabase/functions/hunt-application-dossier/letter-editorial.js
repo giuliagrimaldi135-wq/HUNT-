@@ -76,14 +76,16 @@ export function generateEditorialLetter(args={}){
  if(!highlights.length)return null;
  const focus=highlights.slice(0,2).map(x=>clean(x[it?1:0])).filter(Boolean).join(it?" e ":" and ");
  const evidenceFocus=highlights.map(x=>clean(x[0])+" "+clean(x[1])).join(" ");
- const exp=pickCandidate(args.experiences,evidenceFocus,"experience");
- const project=pickCandidate(args.projects,evidenceFocus,"project");
+ const rankedExp=pickCandidate(args.experiences,evidenceFocus,"experience");
+ const rankedProject=pickCandidate(args.projects,evidenceFocus,"project");
+ // Exclude irrelevant experiences rather than inserting an arbitrary CV paragraph.
+ const exp=rankedExp?.overlap.length?rankedExp:null;
+ const project=rankedProject?.overlap.length?rankedProject:null;
  const expActivities=phrases(exp,it,evidenceFocus);
  const projectActivities=phrases(project,it,evidenceFocus);
- // Require at least one concrete, role-relevant CV proof: not just 'passion', 'showroom', or 'clients'.
- const hasRelevant=[exp,project].some(c=>c&&c.overlap.length>0);
- const hasConcrete=[exp,project].some(c=>c&&c.ids.some(id=>id!=="showroom"&&id!=="clients"));
- if(!hasRelevant||!hasConcrete)return null;
+ // Require a role-relevant concrete activity, not just generic client contact.
+ const hasConcrete=[exp,project].some(c=>c&&c.overlap.some(id=>id!=="showroom"&&id!=="clients"));
+ if(!hasConcrete)return null;
  const expName=clean(exp?.record?.company||exp?.record?.role);
  const projectName=clean(project?.record?.name);
  const backgroundIt=exp&&project?"esperienza pratica e progetti formativi":exp?"esperienza professionale":"progetti formativi";
