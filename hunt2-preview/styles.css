@@ -340,3 +340,23 @@
  .letterWorkbench .coverLetterEditor{font-size:13px;min-height:370px;padding:19px}
  .letterWorkbench .letterPolish{padding:16px}
 }
+
+
+/* Employer evidence, CV proof and restrained editorial news */
+.jobSourceContext{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:13px 0 8px;padding:13px 15px;background:#f7f7f4;border:1px solid #e5e4df;border-radius:4px}
+.jobSourceContext span{font-size:11px;font-weight:690;line-height:1.65;color:#455b49}
+.jobSourceContext .jobSourceNeed{color:#7f5745}
+.jobSourceContext a,.companyOpenRolesHead .brandCareersLink{font-size:12px;font-weight:730;color:#31583b;text-decoration:underline;text-underline-offset:3px}
+.sourceVerifiedNote{font-size:11px;line-height:1.6;color:#78756e;margin:9px 0 15px}
+.requirementsWithCv li{display:flex;justify-content:space-between;align-items:start;gap:15px;margin:0 0 13px;padding-bottom:10px;border-bottom:1px solid #e6e4dd}
+.requirementsWithCv li span{flex:1;min-width:0}
+.requirementsWithCv li small{font-size:10px;white-space:nowrap;letter-spacing:.005em;color:#745e47;background:#f2eee7;border-radius:20px;padding:4px 7px;line-height:1.4}
+.requirementsWithCv li small:first-child{color:#425e45}
+.brandNewsMore{display:block;max-width:100%;margin:17px auto 0;border:1px solid #cfd6cc;border-radius:4px;padding:10px 16px;background:#fff;color:#365844;font-family:inherit;font-weight:740;font-size:12px;cursor:pointer}
+.brandNewsMore[hidden]{display:none}
+.companyOpenRolesHead .brandCareersLink{display:inline-block;margin:0 0 20px}
+@media(max-width:780px){
+ .jobSourceContext{align-items:flex-start;flex-direction:column}
+ .requirementsWithCv li{flex-direction:column;gap:5px}
+ .requirementsWithCv li small{white-space:normal}
+}
