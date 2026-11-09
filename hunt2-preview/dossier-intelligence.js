@@ -171,15 +171,25 @@ export function assessDossier(job,profile,duties,checks,incomplete,language="it"
 
 export function newsTeaser(title,summary){
  const t=clean(title),s=clean(summary);
- const headline=fold(t.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
- const synopsis=fold(s.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
- if(s.length>=38&&synopsis!==headline&&!headline.includes(synopsis)&&!synopsis.includes(headline))return brief(s,135);
+ const cleanHead=fold(t.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
+ const cleanSummary=fold(s.replace(/\s+[–-]\s+[^–-]{2,50}$/,""));
+ // Editorial extracts are taken from actual publisher copy; no invented article facts.
+ if(s.length>=55&&cleanSummary!==cleanHead&&!cleanHead.includes(cleanSummary)&&!cleanSummary.includes(cleanHead)){
+   const sentences=s.split(/(?<=[.!?])\s+/).filter(Boolean);
+   const useful=sentences.filter(x=>fold(x)!==cleanHead).slice(0,3).join(" ").trim();
+   return brief(useful||s,300);
+ }
+ // If only the headline is available, disclose the limited evidence.
  const h=fold(t);
- if(/revenue|growth|profit|sales|earnings|results|ricavi|fatturato|investor|financial|highlights|bilancio/.test(h))return "Risultati economici: notizia sui ricavi, sulle vendite o sulle performance del gruppo.";
- if(/ceo|director|management|leadership|appointment|nomina/.test(h))return "Strategia e persone: aggiornamento sui vertici e sulle decisioni aziendali.";
- if(/store|boutique|opening|expansion|flagship|retail|apertura/.test(h))return "Retail ed espansione: sviluppo della rete di negozi o presenza nei mercati.";
- if(/collection|capsule|runway|collezion|product|fashion week/.test(h))return "Collezioni e prodotto: novità sulle proposte e sulla loro presentazione.";
- if(/campaign|animation|creative|advertis|christmas|campagn/.test(h))return "Campagne e comunicazione: iniziative creative e racconto del marchio.";
- if(/sustainab|circular|recycl|sostenibil/.test(h))return "Sostenibilità: iniziative e dichiarazioni del marchio.";
- return "Aggiornamento sul brand: apri la fonte per conoscere i dettagli completi.";
+ if(/revenue|growth|profit|sales|earnings|results|ricavi|fatturato|financial|bilancio/.test(h))
+   return "La notizia riguarda risultati economici, vendite o andamento del gruppo. HUNT ha acquisito il titolo, ma non una sintesi dettagliata: apri la fonte per conoscere dati, periodo e contesto.";
+ if(/ceo|director|management|appointment|nomina/.test(h))
+   return "L'articolo segnala un cambiamento nella direzione o nell'organizzazione del brand. La fonte può chiarire il ruolo della persona coinvolta e le eventuali implicazioni strategiche; qui non è disponibile una sintesi completa.";
+ if(/store|boutique|opening|expansion|flagship|retail|apertura/.test(h))
+   return "La notizia riguarda la presenza retail del marchio, come punti vendita o mercati. Per sede, tempi e dimensioni dell'iniziativa occorre consultare l'articolo: HUNT dispone solo del titolo.";
+ if(/collection|capsule|runway|collezion|product|fashion week/.test(h))
+   return "L'aggiornamento tratta prodotto, collezioni o presentazioni del marchio. Per dettagli su assortimento, posizionamento e lancio, consulta l'articolo originale: la sintesi della fonte non è stata acquisita.";
+ if(/campaign|creative|advertis|christmas|campagn/.test(h))
+   return "Il titolo riguarda una campagna o un'iniziativa di comunicazione del brand. Il contenuto completo è disponibile presso l'editore; HUNT non ha una descrizione sufficientemente ricca per anticiparne i dettagli.";
+ return "HUNT ha acquisito il titolo e la fonte della notizia, ma non abbastanza contenuto per un riepilogo affidabile. Apri l'articolo per il contesto e i dettagli.";
 }
