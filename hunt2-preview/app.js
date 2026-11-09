@@ -1057,7 +1057,7 @@ async function renderOpportunityFolder(jobId){
        aiEnabled=false;
        if(improve){improve.disabled=true;improve.textContent="AI da attivare"}
        if(writeWithAI){writeWithAI.disabled=true;writeWithAI.textContent="✦ AI da attivare"}
-       if(aiStatus)aiStatus.textContent="L'AI non è attiva in questa versione: manca la chiave privata del provider, che va configurata sul server. Puoi comunque modificare e salvare la bozza.";
+       if(aiStatus)aiStatus.textContent="HUNT AI non è ancora attiva. Puoi comunque personalizzare e salvare questa bozza; la generazione AI diventerà disponibile quando sarà configurata.";
      }else{
        aiEnabled=true;
        if(aiStatus)aiStatus.textContent="AI attiva: puoi far scrivere una lettera originale o rivedere un testo già modificato. Nessuna modifica viene salvata senza il tuo comando.";
