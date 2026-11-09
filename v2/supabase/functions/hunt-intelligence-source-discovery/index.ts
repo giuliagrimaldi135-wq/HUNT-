@@ -92,6 +92,10 @@ Deno.serve(async(req)=>{
      updated_at:new Date().toISOString()
    }).eq("id",company.id);
   }catch{errors++}
+  finally{
+   // Rotate even when an employer temporarily blocks us; otherwise the first failed websites starve all newer brands.
+   await db.from("companies").update({updated_at:new Date().toISOString()}).eq("id",company.id);
+  }
  }
  return new Response(JSON.stringify({ok:true,scanned,discovered,errors}),{headers:{"content-type":"application/json"}});
 });
