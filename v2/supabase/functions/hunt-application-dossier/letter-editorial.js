@@ -32,6 +32,7 @@ const themes=[
  {re:/assort|merchand|product mix|mix di prodotto/i,ids:["assortment","merch_mix","collection","costing","product_codes"]},
  {re:/performance|sell.through|vendit|report|\bKPI\b/i,ids:["performance","minimum_budget","planning"]},
  {re:/stock|invent|allocat|allocazion/i,ids:["stock","allocation","planning"]},
+ {re:/planning|forecast|pianificazion|previsioni/i,ids:["planning","stock","performance"]},
  {re:/buying|acquist|budget|open.to.buy/i,ids:["planning","minimum_budget","costing","assortment"]},
  {re:/wholesale|order|ordini|showroom/i,ids:["order_entry","order_taking","showroom","sales_campaign","product_codes","clients"]},
  {re:/ecommerce|e-commerce|online|digital/i,ids:["ecommerce","assortment","performance"]},
