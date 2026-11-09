@@ -239,3 +239,12 @@ GitHub Pages: il workflow `.github/workflows/pages.yml` ora filtra soltanto i fi
 - luxury-refinement.css, caricato dopo product-workspace.css, usa spaziature, linee sottili e tipografia anziché card e badge. Sidebar Candidatura approvata invariata. Responsive su mobile.
 - Versione cache 20261109-150; test job-workspace e cv-workspace aggiornati. HUNT Preview Syntax run 42711926331 SUCCESS; Deploy HUNT run 42711926476 SUCCESS, commit dd99f81f.
 - Verificare ancora resa reale desktop/mobile nell’account autenticato. Non dichiarare pronto per vendita. Conservare bugfix Excel avanzato in entrambe le versioni del CV.
+
+
+## 9 November 2026 — Luxury dossier refinement rev 151 (follow-up chat)
+- Updated GitHub Pages preview sources: `hunt2-preview/job-workspace.js` and `luxury-refinement.css`, with cache references bumped in `app.js` and `index.html` to `20261109-151`.
+- Preserve the functional three-tab navigation **Panoramica / Attività / Requisiti**, right-side CV selector, link to original job post, candidate assessment, and profile navigation.
+- In the overview, put the sourced role narrative first and the existing profile comparison in understated inline typography; remove duplicate generic AI-style introduction and decorative 01/02 section numbers.
+- Display duties as a simple unnumbered editorial list; remove numbered 1/2/3 application guidance and de-emphasize card framing, round badges and sidebar boxes. Responsive CSS maintained.
+- **Important limitation:** `app.js` currently pauses automatic cover-letter generation when opening an opportunity. Do NOT claim cover-letter editing/generation has been validated in the preview. The UI now explicitly marks the feature temporarily suspended; restore/verify the complete saved, editable, bilingual letter workflow separately, preserving user edits.
+- Update `hunt2-preview/tests/job-workspace.test.mjs` for the new text and require the absence of numbered infographics. Static render checks performed; authenticated end-to-end visual/browser testing and successful GitHub Pages deployment remain to be independently verified.
