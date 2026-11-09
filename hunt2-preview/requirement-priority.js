@@ -54,7 +54,7 @@ export function compareKeyRequirement(requirement,check,profile){
    const projects=Array.isArray(p.projects)&&p.projects.length?p.projects:Array.isArray(draft.projects)?draft.projects:[];
    const project=projects.find(x=>/kpi|analisi|analysis|report|excel|budget|data/i.test((x.evidence||[]).join(" ")));
    if(project)return {state:"partial",label:"Esperienza formativa",
-     evidence:"Analisi svolte nel progetto "+String(project.name||"accademico").replace(/ academic project$/i,"")+
+     evidence:"Il CV riporta attività formative di analisi nel progetto "+String(project.name||"accademico").replace(/ academic project$/i,"")+
      ". Una base pertinente, distinta dall’esperienza professionale."};
  }
  if(type==="found")return {state:"found",label:"Presente nel CV",evidence:raw};
