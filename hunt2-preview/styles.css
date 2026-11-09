@@ -672,3 +672,102 @@
 .cvInsightWorkspace .cvInsightFooter{border-top:1px solid var(--line);margin-top:24px;padding:28px 0 4px}
 .cvInsightWorkspace .cvInsightFooter .btn{min-width:190px}
 @media(max-width:780px){.workspaceCvSummary .cvProofAction{margin-left:0}.huntWhyNarrative{font-size:14px;line-height:1.75}}
+
+/* HUNT atelier system — job and CV intelligence / Italian-first editorial layout */
+.huntDecisionV3{display:grid;grid-template-columns:minmax(190px,.30fr) minmax(0,.70fr);gap:40px;
+ background:transparent!important;border:0!important;border-top:1px solid #ddd7cd!important;border-bottom:1px solid #ddd7cd!important;
+ border-radius:0!important;box-shadow:none!important;margin:28px 0 0!important;padding:46px 0!important}
+.huntDecisionV3 .huntDecisionBody{padding:0!important;border:0!important;max-width:790px}
+.huntDecisionV3 .huntDecisionIntro .eyebrow{font-size:10px;letter-spacing:.19em;color:#857b6a}
+.huntDecisionV3 .huntDecisionIntro h2{color:#292723;font-size:26px;max-width:225px;font-weight:720;letter-spacing:-.055em}
+.huntDecisionV3 .huntDecisionVerdict{font-size:21px!important;color:#302f2a;letter-spacing:-.032em;margin:0 0 13px!important}
+.huntDecisionV3 .huntWhyNarrative{font-size:14.5px;line-height:1.92;max-width:735px;color:#57514a}
+.dossierWorkspaceV3{padding:53px 0 10px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.luxDossierHeader{display:flex;justify-content:space-between;align-items:end;gap:28px;padding:0 0 24px;border-bottom:1px solid #dcd5c9}
+.luxDossierHeader .eyebrow{letter-spacing:.18em;color:#827869;font-size:10px}
+.luxDossierTitle h2{font-size:clamp(27px,2.6vw,37px);line-height:1.18;letter-spacing:-.055em;color:#292722;margin:10px 0}
+.luxDossierTitle p{color:#777066;font-size:13px;line-height:1.72;max-width:560px;margin:8px 0 0}
+.luxDossierCounts{display:flex;gap:22px;white-space:nowrap;flex-shrink:0;margin-bottom:4px}
+.luxDossierCounts span{font-size:11px;color:#7c766b;display:flex;align-items:baseline;gap:6px}
+.luxDossierCounts strong{font-family:inherit;font-size:23px;font-weight:690;color:#3b362e;letter-spacing:-.045em}
+.luxCvPicker{display:grid;grid-template-columns:minmax(180px,1fr) minmax(220px,1.2fr) auto;align-items:center;gap:26px;
+ border-bottom:1px solid #e1dcd3;padding:24px 0 26px;margin:0 0 26px}
+.luxCvPickerHeading .eyebrow{font-size:10px;letter-spacing:.15em;color:#88765f}
+.luxCvPickerHeading p{font-size:11px;color:#847c73;line-height:1.65;margin:7px 0 0;max-width:340px}
+.luxCvSelectLabel{display:flex;flex-direction:column;gap:8px;font-size:11px;font-weight:760;color:#625c54}
+.luxCvSelectLabel select{font-family:inherit;font-size:13px;font-weight:600;width:100%;height:42px;border:1px solid #d8d2c7;border-radius:3px;background:#fffdfa;color:#34312d;padding:8px 14px;box-shadow:none}
+.luxCvPicker .cvProofAction{white-space:nowrap;font-size:12px;margin:13px 0 0;color:#5e5446;text-decoration:none;border-bottom:1px solid #92816b}
+.luxEvidenceGrid{display:grid!important;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)!important;gap:54px!important;padding:10px 0 38px!important;margin:0!important;border:0!important}
+.luxEvidenceGrid .vacancyEvidenceColumn{background:transparent!important;border:0!important;padding:0!important}
+.luxEvidenceGrid .vacancyEvidenceColumn+.vacancyEvidenceColumn{border:0!important;border-left:1px solid #e4ded5!important;padding:0 0 0 36px!important}
+.luxColumnHead{margin-bottom:22px}
+.luxColumnHead .eyebrow{font-size:10px!important;letter-spacing:.14em!important;color:#937e63!important}
+.luxColumnHead h3{font-size:22px;line-height:1.22;letter-spacing:-.04em;color:#2c2a25;margin:9px 0 7px;font-weight:750}
+.luxColumnHead p{font-size:12px;color:#847d73;line-height:1.7;margin:0;max-width:400px}
+.luxDutyList{list-style:none!important;margin:0!important;padding:0!important;counter-reset:hunt-duties}
+.luxDutyList li{list-style:none!important;position:relative;border-bottom:1px solid #e9e5de;line-height:1.76!important;font-size:13px!important;color:#48443e!important;margin:0!important;padding:14px 0 14px 36px!important}
+.luxDutyList li::before{counter-increment:hunt-duties;content:counter(hunt-duties,decimal-leading-zero);position:absolute;left:0;top:14px;font-size:10px;font-weight:730;letter-spacing:.07em;color:#ac977d}
+.luxMoreDuties{padding:13px 0;border-bottom:1px solid #e2ded7}
+.luxMoreDuties summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;color:#51483d;font-weight:750;font-size:12px;padding:8px 0}
+.luxMoreDuties summary span{font-weight:560;font-size:11px;color:#948a7c}
+.luxMoreDuties[open] summary{margin-bottom:9px}
+.luxMoreDuties .luxDutyList{counter-reset:hunt-duties 5}
+.luxMoreDuties .luxDutyOrdinal{display:none}
+.luxRequirementList{list-style:none!important;margin:0!important;padding:0!important}
+.luxRequirementList li{display:grid!important;grid-template-columns:minmax(0,1fr) 120px;align-items:start;gap:14px;
+ margin:0!important;padding:13px 0 15px!important;border-bottom:1px solid #e9e5de}
+.luxRequirementList .requirementDetail{min-width:0}
+.luxRequirementList .requirementDetail>span{font-size:13px!important;line-height:1.58!important;font-weight:630;color:#302f2b}
+.luxRequirementList .requirementDetail>p{font-size:11.2px!important;color:#817a70!important;margin-top:6px!important;line-height:1.55!important}
+.luxRequirementList li .cvProof{border:0!important;border-radius:0!important;background:transparent!important;padding:5px 0!important;
+ max-width:120px!important;white-space:normal;text-align:right!important;letter-spacing:.01em;font-size:10px!important;font-weight:740!important;color:#827765!important}
+.luxRequirementList li .cvProof-found{color:#3c6149!important}
+.luxRequirementList li .cvProof-detected{color:#816f48!important}
+.luxRequirementList li .cvProof-alternate{color:#6c665b!important}
+.luxRequirementList li .cvProof-missing,.luxRequirementList li .cvProof-partial{color:#8b7169!important}
+.luxCvNote{font-size:12px;color:#877463;border-top:1px solid #e9e4dc;padding:15px 0}
+.luxSourceFooter{margin:27px 0 9px;padding:15px 0;border-top:1px solid #e3ddd4;
+ display:flex;align-items:center;gap:12px 22px;flex-wrap:wrap;font-size:10.5px;color:#898177;line-height:1.7}
+.luxSourceFooter span+span{color:#999188}
+.luxSourceFooter a{margin-left:auto;color:#62584c;text-decoration:underline;text-underline-offset:3px;font-weight:700}
+.luxLetterReminder{margin:0 0 26px;padding:26px 0!important;display:flex;justify-content:space-between;align-items:center;gap:24px;
+ border-top:1px solid #e4dfd5;border-bottom:1px solid #e4dfd5;background:transparent}
+.luxLetterReminder .eyebrow{letter-spacing:.14em;color:#93836a;font-size:10px}
+.luxLetterReminder h3{font-size:19px;letter-spacing:-.04em;color:#51493c;margin:8px 0}
+.luxLetterReminder p{font-size:12px;color:#827a6e;line-height:1.6;margin:0}
+.luxLetterWordmark{font-size:11px;letter-spacing:.2em;color:#b3aa9a;white-space:nowrap}
+.cvCareerAreas{padding:27px 0 14px;border-top:1px solid #e5dfd5;margin:27px 0 0}
+.cvCareerAreasTitle{display:flex;justify-content:space-between;align-items:center;gap:22px;margin-bottom:21px}
+.cvCareerAreasTitle .eyebrow{letter-spacing:.16em;font-size:10px;color:#8b7b66}
+.cvCareerAreasTitle h3{font-size:20px;letter-spacing:-.035em;color:#33302a;margin:8px 0}
+.cvCareerAreasTitle p{font-size:12px;line-height:1.7;color:#837e73;max-width:620px;margin:4px 0}
+.cvCareerAreasTitle>span{font-size:11px;font-weight:730;color:#6b645a;white-space:nowrap}
+.cvCareerHighlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cvCareerArea{border:1px solid #e4ded3;border-radius:3px;padding:14px 17px;display:flex;flex-direction:column;gap:6px;background:#faf9f6}
+.cvCareerArea strong{font-size:12px;color:#373a31;font-weight:730}
+.cvCareerArea small{font-size:10px;color:#827b70;line-height:1.5}
+.cvAllAreas{margin-top:17px;border-top:1px solid #e5ded4;border-bottom:1px solid #e5ded4;padding:15px 0}
+.cvAllAreas summary{cursor:pointer;font-size:12px;font-weight:730;color:#5b5549;display:flex;justify-content:space-between;gap:10px}
+.cvAllAreas summary span{font-size:11px;font-weight:450;color:#8b8277}
+.cvAllAreaGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0 5px}
+.cvAllAreaGrid span{font-size:11px;padding:9px 10px;border:1px solid #e6e0d6;color:#999187;border-radius:2px;background:transparent}
+.cvAllAreaGrid span.is-related{border-color:#c7cebF;color:#3d5945;background:#f5f7f2}
+@media(max-width:900px){
+ .luxEvidenceGrid{grid-template-columns:1fr!important;gap:36px!important}
+ .luxEvidenceGrid .vacancyEvidenceColumn+.vacancyEvidenceColumn{border-left:0!important;border-top:1px solid #e4ded5!important;padding:26px 0 0!important}
+ .luxCvPicker{grid-template-columns:1fr 1.2fr;gap:16px}
+ .luxCvPicker .cvProofAction{grid-column:2;justify-self:start;margin:0}
+}
+@media(max-width:650px){
+ .huntDecisionV3{grid-template-columns:1fr;gap:15px;padding:34px 0!important}
+ .luxDossierHeader{align-items:start;flex-direction:column}
+ .luxDossierCounts{gap:20px}
+ .luxCvPicker{grid-template-columns:1fr}
+ .luxCvPicker .cvProofAction{grid-column:1;margin:0}
+ .luxRequirementList li{grid-template-columns:1fr;gap:4px}
+ .luxRequirementList li .cvProof{text-align:left!important}
+ .luxLetterWordmark{display:none}
+ .cvCareerHighlights{grid-template-columns:1fr}
+ .cvAllAreaGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cvCareerAreasTitle{align-items:start;flex-direction:column;gap:10px}
+}
