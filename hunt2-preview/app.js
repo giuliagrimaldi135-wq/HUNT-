@@ -2,6 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { checkRequirements, assessDossier, newsTeaser } from "./dossier-intelligence.js?v=20261109-63";
 import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
+import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -661,12 +662,10 @@ function profileForAssessment(cv){
  return p.raw_text&&!p.draft_profile?.extracted_chars?{...p,draft_profile:interpretCvText(p.raw_text)}:p;
 }
 function chooseCv(row){
- const role=row.job.role_family,cvs=(row.cvs||[]).filter(readableCv);
- const saved=row.dossier?.recommended_cv_id;
- return (row.cvs||[]).find(cv=>cv.id===selectedDossierCvId)||
-  cvs.find(cv=>cv.id===saved)||
-  cvs.find(cv=>Array.isArray(cv.target_role_families)&&cv.target_role_families.includes(role))||
-  cvs.find(cv=>cv.is_default)||cvs[0]||(row.cvs||[]).find(cv=>cv.is_default)||(row.cvs||[])[0]||null;
+ const cvs=(row.cvs||[]).filter(readableCv);
+ const userChoice=(row.cvs||[]).find(cv=>cv.id===selectedDossierCvId);
+ if(userChoice)return userChoice;
+ return chooseRelevantCv(cvs.length?cvs:row.cvs,row.job,row.dossier?.recommended_cv_id)||null;
 }
 async function requestDossier(jobId,language="en",cvId=null,forceRegenerate=false){
  const body={job_id:jobId,language,force_regenerate:forceRegenerate};
