@@ -154,17 +154,19 @@ export async function mountCvManager(root,{supabase,user,refresh,roleFamilies=[]
    if(!cv)return;
    if(!window.confirm('Eliminare il CV «'+cv.name+'» dal tuo archivio? Il documento verrà cancellato e non sarà più utilizzato nei confronti con gli annunci.'))return;
    b.disabled=true;show("Eliminazione del CV dall'archivio privato…");
-   const deleted=await supabase.from("user_cvs").update({active:false,is_default:false,updated_at:new Date().toISOString()}).eq("id",id).eq("user_id",user.id);
-   if(deleted.error){show("Impossibile eliminare il CV: "+deleted.error.message,true);b.disabled=false;return}
+   // ON DELETE SET NULL detaches the CV from saved dossiers. No silent soft-delete
+   // leaves sensitive parsed CV content in a supposedly deleted user_cvs record.
+   const deleted=await supabase.from("user_cvs").delete().eq("id",id).eq("user_id",user.id).select("id");
+   if(deleted.error||!deleted.data?.length){show("Impossibile eliminare il CV: "+(deleted.error?.message||"operazione non autorizzata"),true);b.disabled=false;return}
    const replacement=rows.filter(x=>x.id!==id).find(x=>x.is_default)||rows.find(x=>x.id!==id)||null;
    if(cv.is_default&&replacement){
      const promote=await supabase.from("user_cvs").update({is_default:true}).eq("id",replacement.id).eq("user_id",user.id).eq("active",true);
-     if(promote.error){show("CV disattivato, ma non riesco a impostare quello principale: "+promote.error.message,true)}
+     if(promote.error){show("CV eliminato, ma non riesco a impostare quello principale: "+promote.error.message,true)}
    }
    const removed=await supabase.storage.from("cvs").remove([cv.storage_path]);
    selectedId=replacement?.id||null;failedReadIds.delete(id);
    await refresh();
-   if(removed.error)show("CV tolto dall'archivio, ma la cancellazione del file richiede una verifica: "+removed.error.message,true);
+   if(removed.error)show("CV eliminato dal database; è necessaria una verifica della cancellazione del documento privato: "+removed.error.message,true);
    return;
   }
   if(action==="retry-reading"){
