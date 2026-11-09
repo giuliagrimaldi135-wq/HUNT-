@@ -218,9 +218,9 @@ Deno.serve(async(req)=>{
   cutoffDate.setUTCHours(0,0,0,0);
   const cutoff=cutoffDate.toISOString();
   const [{data:jobs},{data:prefs},{data:profiles},{data:personal},{data:cvs}]=await Promise.all([
-    db.from("jobs").select("id,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,vacancy_confidence,state,metadata")
+    db.from("jobs").select("id,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,last_verified_at,vacancy_confidence,state,metadata")
       .in("state",["active_verified","active_likely"])
-      .or(`published_at.gte.${cutoff},and(published_at.is.null,first_seen_at.gte.${cutoff})`)
+      .or(`published_at.gte.${cutoff},first_seen_at.gte.${cutoff},last_verified_at.gte.${cutoff}`)
       .limit(2000),
     db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences"),
     db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true),
