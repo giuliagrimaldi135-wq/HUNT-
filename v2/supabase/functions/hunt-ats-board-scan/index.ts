@@ -57,6 +57,7 @@ function apiURL(source:any){
  if(source.source_family==="ats_greenhouse")return "https://boards-api.greenhouse.io/v1/boards/"+board+"/jobs?content=true";
  if(source.source_family==="ats_ashby")return "https://api.ashbyhq.com/posting-api/job-board/"+board;
  if(source.source_family==="ats_smartrecruiters")return "https://api.smartrecruiters.com/v1/companies/"+board+"/postings?limit=100&offset=0";
+ if(source.source_family==="ats_workable")return "https://www.workable.com/api/accounts/"+board+"?details=true";
  throw Error("Unsupported ATS family");
 }
 function mapped(source:any,data:any){
@@ -82,6 +83,16 @@ function mapped(source:any,data:any){
     description:cleanHTML(x.descriptionPlain||x.descriptionHtml||""),
     url:safeURL(x.jobUrl),apply:safeURL(x.applyUrl)||safeURL(x.jobUrl),
     id:trim(x.id,100),remote:Boolean(x.isRemote)
+  }));
+ }
+ if(source.source_family==="ats_workable"&&Array.isArray(data.jobs)){
+  return data.jobs.map((x:any)=>({
+    title:trim(x.title,200),location:trim([x.city,x.state,x.country].filter(Boolean).join(", "),140),
+    description:cleanHTML(x.description||""),url:safeURL(x.application_url)||safeURL(x.url)||safeURL(x.shortlink),
+    apply:safeURL(x.url)||safeURL(x.application_url)||safeURL(x.shortlink),
+    id:trim(x.shortcode||x.code||x.id,110),
+    remote:Boolean(x.telecommuting)||/remote/i.test(String(x.workplace_type||"")),
+    posted:x.published_on||null,providerEmploymentType:trim(x.employment_type,90)
   }));
  }
  if(source.source_family==="ats_smartrecruiters"&&Array.isArray(data.content)){
@@ -171,7 +182,9 @@ Deno.serve(async(req)=>{
       }
       const {data:job,error:insertError}=await db.from("jobs").insert({
         company_id:source.company_id,canonical_title:item.title,normalized_title:norm(item.title),
-        role_family:role,seniority:sen(item.title),employment_type:sen(item.title)==="internship"?"internship":"full_time",
+        role_family:role,seniority:sen(item.title),employment_type:item.providerEmploymentType
+          ?(/^intern|stag|tirocin|apprentice/i.test(item.providerEmploymentType)?"internship":/^part/i.test(item.providerEmploymentType)?"part_time":"full_time")
+          :(sen(item.title)==="internship"?"internship":"full_time"),
         city:location,remote_mode:item.remote?"remote":"onsite",
         description:item.description,requisition_id:item.id||null,
         primary_apply_url:item.apply,
@@ -179,7 +192,7 @@ Deno.serve(async(req)=>{
         published_at:item.posted&&Number.isFinite(new Date(item.posted).getTime())&&new Date(item.posted).getTime()<=Date.now()
           ?new Date(item.posted).toISOString():null,
         first_seen_at:stamp,last_seen_at:stamp,last_verified_at:stamp,
-        metadata:{discovered_by:"hunt-ats-board-v3",catalog_scope:"all_public_roles",public_ats:source.source_family,posted_date:item.posted?"provider_released_date":"not_exposed",employment_type_inferred_from_title:true,source_verified_at:stamp}
+        metadata:{discovered_by:"hunt-ats-board-v4",catalog_scope:"all_public_roles",public_ats:source.source_family,posted_date:item.posted?"provider_date":"not_exposed",employment_type_inferred_from_title:!item.providerEmploymentType,source_verified_at:stamp}
       }).select("id").single();
       if(insertError||!job)throw Error(insertError?.message||"Job insert failed");
       const {error:linkError}=await db.from("job_sources").insert({
