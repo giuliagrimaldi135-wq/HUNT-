@@ -35,7 +35,7 @@ test("Merchandising matches the Gucci project across Italian and English facts",
 });
 test("News always has an honest topical preview",()=>{
  assert.match(newsTeaser("Prada Group reports 15% revenue growth","Prada Group reports 15% revenue growth - Prada Group"),/risultati economici/i);
- assert.match(newsTeaser("Prada launches new holiday campaign",""),/Campagne e comunicazione/);
+ assert.match(newsTeaser("Prada launches new holiday campaign",""),/campagna o un.iniziativa di comunicazione/i);
  assert.match(newsTeaser("Brand news","Detailed article on public store openings and team training in Paris"),/Detailed article/);
 });
 
