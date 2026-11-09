@@ -20,9 +20,11 @@ test("Product page uses clear navigation rather than one continuous AI report",(
   assert.match(html,new RegExp('data-job-workspace-tab="'+tab+'"'));
   assert.match(html,new RegExp('data-job-workspace-pane="'+tab+'"'));
  }
- assert.match(html,/hwOverviewHeading/);
- assert.match(html,/hwOverviewTasks/);
- assert.match(html,/hwOverviewRequirements/);
+ assert.match(html,/hwEditorialOverview/);
+ assert.match(html,/hwEditorialStory/);
+ assert.match(html,/Il ruolo, in sintesi/);
+ assert.match(html,/Attività e responsabilità/);
+ assert.match(html,/Competenze richieste/);
  assert.match(html,/data-switch-job-tab="tasks"/);
  assert.match(html,/data-switch-job-tab="criteria"/);
  assert.doesNotMatch(html,/hwSummaryGrid|hwSummaryCard|hwCardIcon/);
@@ -58,17 +60,35 @@ test("Approved application sidebar stays unchanged while overview becomes one co
  assert.match(html,/Come procedere/);
  assert.match(html,/Vai all’annuncio ufficiale/);
  assert.match(html,/Informazioni confermate/);
- assert.match(html,/hwOverviewDivider/);
+ assert.match(html,/hwEditorialExplore/);
  const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
- assert.ok(overview.includes("hwOverviewTasks")&&overview.includes("hwOverviewRequirements"));
- assert.equal((overview.match(/<article/g)||[]).length,0,"No extra nested cards in the overview");
+ assert.ok(overview.includes("hwEditorialStory")&&overview.includes("hwEditorialLink"));
+ assert.equal((overview.match(/<article/g)||[]).length,0,"Panoramica should not be made of cards");
+ assert.doesNotMatch(overview,/hwOverviewRequirements|hwTaskList|hwRequirementList|hwSummaryCard/);
 });
 
-test("Compact Excel row shows the exact level in the selected CV, not an unrelated version",()=>{
+test("Detailed requirements show precise Excel evidence, but do not clutter Panoramica",()=>{
  const html=renderJobWorkspace(facts);
  assert.match(html,/Conoscenza di Excel/);
- assert.match(html,/hwCompactEvidence/);
  assert.match(html,/Excel \(avanzato\)/);
  assert.match(html,/Indicato nel CV/);
  assert.doesNotMatch(html,/In un altro CV|Solo in un altro CV/);
+ const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
+ assert.doesNotMatch(overview,/Conoscenza di Excel|Excel \(avanzato\)/);
+});
+
+test("An overview of a planning and stock role tells the story instead of repeating bullets",()=>{
+ const html=renderJobWorkspace({...facts,roleTitle:"Assistant Planner",
+  duties:["Supportare pianificazione e monitoraggio dei budget","Monitorare stock e allocazione dei prodotti"]});
+ const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
+ assert.match(overview,/pianificazione commerciale/);
+ assert.match(overview,/disponibilità dei prodotti/);
+ assert.match(overview,/controllo dei budget/);
+ assert.doesNotMatch(overview,/<ol|<article|hwRequirement/);
+ assert.match(overview,/data-switch-job-tab="tasks"/);
+ assert.match(overview,/data-switch-job-tab="criteria"/);
+});
+test("Sparse listings do not invite HUNT to invent detailed duties",()=>{
+ const html=renderJobWorkspace({...facts,duties:[],roleTitle:"Retail Intern"});
+ assert.match(html,/non è ancora disponibile una descrizione/);
 });
