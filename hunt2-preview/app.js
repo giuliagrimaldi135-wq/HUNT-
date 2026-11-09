@@ -796,8 +796,7 @@ function normalizeVacancyFacts(facts){
 
 async function renderOpportunityFolder(jobId){
  selectedJobId=jobId;
- let preferredLocale="it";
- try{preferredLocale=localStorage.getItem("hunt_dossier_language")==="en"?"en":"it"}catch{}
+ const preferredLocale="it";
  const row=await getOpportunityDetail(jobId);
  if(!row)throw new Error("Dossier non disponibile per questa posizione.");
  const savedCv=(row.cvs||[]).find(x=>x.id===row.dossier?.recommended_cv_id);
@@ -824,7 +823,7 @@ async function renderOpportunityFolder(jobId){
    en:normalizeVacancyFacts(haveVerifiedSections?bilingualFacts.en:{duties:evidence.tasks,requirements:evidence.requirements})
  };
  // A source excerpt is not a translation; do not show English tasks in the Italian view.
- const dossierLang=preferredLocale;
+ const dossierLang="it";
 
  const appStatus=row.application?.status||null;
  const cv=chooseCv(row);
@@ -964,13 +963,13 @@ async function renderOpportunityFolder(jobId){
      <div class="vacancyEvidenceGrid">
        <div class="vacancyEvidenceColumn">
          <div class="eyebrow">Cosa prevede il ruolo</div>
-         <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
+         <div data-fact-display="it" class="">
            ${factLists.it.duties.length?`<ul>${factLists.it.duties.slice(0,7).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:"<p>Mansioni non disponibili nel testo acquisito.</p>"}
          </div>
        </div>
        <div class="vacancyEvidenceColumn">
          <div class="eyebrow">Requisiti e confronto con il CV</div>
-         <div data-fact-display="it" class="${dossierLang==="it"?"":"hide"}">
+         <div data-fact-display="it" class="">
            ${factLists.it.requirements.length?`<ul class="requirementsWithCv">${factLists.it.requirements.slice(0,8).map((t,i)=>`<li><div class="requirementDetail"><span>${esc(t)}</span>${cvChecklistIt[i]?.proof?`<p>${esc(cvChecklistIt[i].proof)}</p>`:""}${cvChecklistIt[i]?.suggested_cv_id?`<button type="button" class="cvAlternateSwitch" data-switch-cv="${esc(cvChecklistIt[i].suggested_cv_id)}">Confronta quel CV</button>`:""}</div><small class="cvProof cvProof-${esc(cvChecklistIt[i]?.type||"missing")}">${esc(cvChecklistIt[i]?.label||"Non documentato nel CV acquisito")}</small></li>`).join("")}</ul>`:"<p>Requisiti non acquisiti: la compatibilità non può essere confermata.</p>"}
          </div>
        </div>
