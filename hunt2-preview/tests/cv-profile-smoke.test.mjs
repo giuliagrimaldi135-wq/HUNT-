@@ -25,5 +25,10 @@ test("Profile displays principal/secondary/delete, Italian evidence and hides ma
  assert.match(root.innerHTML,/Accoglienza clienti e presentazione dei capi/);
  assert.match(root.innerHTML,/Raccolta degli ordini tramite l&#39;applicazione Max Mara/);
  assert.doesNotMatch(root.innerHTML,/Anni pertinenti|Salva destinazioni CV|data-cv-action="read"/);
- assert.match(root.innerHTML,/Strumenti e competenze/);
+ assert.match(root.innerHTML,/Formazione e strumenti/);
+ assert.match(root.innerHTML,/cvProfileQuickNav/);
+ assert.match(root.innerHTML,/cvProfileSegment/);
+ assert.match(root.innerHTML,/cvProfileCorrections/);
+ assert.match(root.innerHTML,/Conferma le informazioni|Salva le modifiche/);
+ assert.doesNotMatch(root.innerHTML,/cvInsightMetrics|cvArchiveStats/);
 });
