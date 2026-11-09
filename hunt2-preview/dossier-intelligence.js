@@ -29,6 +29,8 @@ function sourceTools(profile){
   const re=toolRegex[key];
   const structured=reported.find(x=>re.test(x));
   const extracted=[...draft,...inferred].find(x=>re.test(x));
+  if(structured&&extracted&&!/avanzat|advanced|intermedi|intermediate|basic|base|expert/i.test(structured)&&/avanzat|advanced|intermedi|intermediate|basic|base|expert/i.test(extracted))
+   return {value:extracted,confirmed:false};
   return structured?{value:structured,confirmed}:extracted?{value:extracted,confirmed:false}:null;
  };
  return {get};
@@ -52,7 +54,12 @@ export function checkRequirements(requirements,profile,options={}){
      const present=requiredTools.map(hasTool);
      const found=present.filter(Boolean);
      const missing=requiredTools.filter((_,i)=>!present[i]);
-     if(!missing.length)result(present.every(x=>x.confirmed)?"found":"detected",present.map(x=>x.value).join(" · "));
+     if(!missing.length){
+       const needsAdvanced=/ottim|excellent|advanced|avanzat|molto buon/i.test(t);
+       const advanced=present.every(x=>/avanzat|advanced|expert/i.test(x.value));
+       const state=needsAdvanced&&!advanced?"partial":present.every(x=>x.confirmed)?"found":"detected";
+       result(state,present.map(x=>x.value).join(" · ")+(needsAdvanced&&!advanced?" — livello avanzato non confermato per tutti gli strumenti":""));
+     }
      else if(found.length)result("partial",found.map(x=>x.value).join(" · ")+" presente; "+missing.map(x=>x==="powerpoint"?"PowerPoint":"Excel").join(" e ")+" non trovato nel CV selezionato");
    }else if(/english|inglese/.test(t)){
      const a=languages.find(x=>/english|inglese/i.test(x));
@@ -67,7 +74,14 @@ export function checkRequirements(requirements,profile,options={}){
      if(d)result(/econom|finance|business/.test(t)&&!/econom|finance|business/i.test(d)?"partial":confirmed?"found":"detected",d);
    }else if(/communication|comunicazion|teamwork|lavorare in team|interpersonal/.test(t)){
      const x=experience.find(v=>/client|customer|team|collabor|relazion|accoglienz/.test(fold(v.text)));
-     if(x)result("partial",brief(x.origin+" — "+x.text,120));
+     if(x){
+       const v=fold(x.text),facts=[];
+       if(/client welcome|greet|accoglienz/.test(v))facts.push("accoglienza clienti");
+       if(/garment presentation|presentazione (?:dei )?capi/.test(v))facts.push("presentazione dei capi");
+       if(/team|collabor/.test(v))facts.push("collaborazione con il team");
+       const summary=facts.length?facts.join(" · "):/\b[a-z]{4,}\b/.test(v)?"attività professionali riportate nel CV":x.text;
+       result("partial",brief(x.origin+" — "+summary,125));
+     }
    }else if(/fashion|luxury|moda|lusso/.test(t)){
      const d=education.find(v=>/fashion|moda|luxury|lusso/.test(fold(v)));
      if(d)result("partial",d);
@@ -77,7 +91,10 @@ export function checkRequirements(requirements,profile,options={}){
    }
    // Explicitly say when the evidence belongs to ANOTHER uploaded CV.
    if(requiredTools.length&&type!=="found"){
-     const other=altCvs.find(cv=>requiredTools.every(key=>sourceTools(cv.parsed_profile).get(key)));
+     const other=altCvs.find(cv=>requiredTools.every(key=>{
+       const match=sourceTools(cv.parsed_profile).get(key);
+       return Boolean(match&&(!/ottim|excellent|advanced|avanzat|molto buon/i.test(t)||/avanzat|advanced|expert/i.test(match.value)));
+     }));
      if(other){
        const matches=requiredTools.map(key=>sourceTools(other.parsed_profile).get(key));
        type="alternate";
