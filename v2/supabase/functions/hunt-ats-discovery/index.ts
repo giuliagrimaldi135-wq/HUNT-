@@ -57,9 +57,9 @@ Deno.serve(async(req)=>{
   const {data:secret,error:e}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(e||!secret||!supplied||!same(await digest(supplied),secret.secret_hash))return Response.json({error:"unauthorized"},{status:401});
   const [{data:origins,error:se},{data:runs,error:re},{data:existing,error:ee}]=await Promise.all([
-   db.from("sources").select("id,company_id,source_type,source_family,base_url,companies(name)").eq("active",true).eq("official",true).neq("source_type","public_ats_board").not("base_url","is",null).limit(500),
-   db.from("ats_discovery_runs").select("source_id,checked_at").limit(500),
-   db.from("sources").select("company_id,base_url").eq("source_type","public_ats_board").limit(500)
+   db.from("sources").select("id,company_id,source_type,source_family,base_url,companies(name)").eq("active",true).or("official.eq.true,source_type.eq.brand_website_candidate").neq("source_type","public_ats_board").not("base_url","is",null).limit(2000),
+   db.from("ats_discovery_runs").select("source_id,checked_at").limit(2000),
+   db.from("sources").select("company_id,base_url").eq("source_type","public_ats_board").limit(2000)
   ]);
   if(se||re||ee)throw Error(se?.message||re?.message||ee?.message);
   const times=new Map((runs||[]).map((x:any)=>[x.source_id,Date.parse(x.checked_at)||0]));
@@ -82,7 +82,28 @@ Deno.serve(async(req)=>{
     });
     if(!response.ok)throw Error("Origin HTTP "+response.status);
     const html=(await response.text()).slice(0,1200000);
-    const boards=boardsIn(html);
+    const foundBoards=new Map<string,Board>();
+    for(const board of boardsIn(html))foundBoards.set(board.family+":"+board.site,board);
+    if(source.source_type==="brand_website_candidate"&&foundBoards.size===0){
+      // Probe at most 2 same-origin careers pages found on the verified directory website.
+      const rootURL=new URL(source.base_url);
+      const targetURLs=new Set<string>();
+      for(const m of html.matchAll(/<a\\b[^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]{0,180}?)<\\/a>/gi)){
+        const txt=(m[1]+" "+m[2].replace(/<[^>]+>/g," ")).toLowerCase();
+        if(!/careers?|jobs|join[- ]?(?:us|our team)|lavora con noi|offerte di lavoro|work with us/i.test(txt))continue;
+        try{const u=new URL(m[1],response.url);if(u.origin===rootURL.origin&&u.protocol==="https:"&&u.pathname!=="/")targetURLs.add(u.toString())}catch{}
+        if(targetURLs.size>=2)break;
+      }
+      for(const target of targetURLs){
+        try{
+          const page=await fetch(target,{redirect:"follow",signal:AbortSignal.timeout(7500),headers:{"accept":"text/html","user-agent":"HUNT ATS source-discovery/1.1"}});
+          if(!page.ok||!page.headers.get("content-type")?.includes("text/html"))continue;
+          const body=(await page.text()).slice(0,850000);
+          for(const board of boardsIn(body))foundBoards.set(board.family+":"+board.site,board);
+        }catch{}
+      }
+    }
+    const boards=[...foundBoards.values()];
     for(const board of boards){
      const id=source.company_id+"|"+board.url;
      if(known.has(id))continue;
