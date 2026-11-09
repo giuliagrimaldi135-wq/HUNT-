@@ -537,3 +537,109 @@
 
 /* One-line editorial context for sourced brand news cards */
 .brandNewsBriefLabel{display:block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;font-weight:750;color:#647483;margin:0 0 5px}
+
+/* HUNT editorial profile and application review: follow the core app typography,
+   warm background and hairline separators. No competing blue-gray card theme. */
+.folderPage .huntDecisionV3,.huntDecisionV3{
+ background:transparent;border:0;border-bottom:1px solid var(--line);
+ box-shadow:none;border-radius:0;margin:0;padding:43px 0 34px;
+ grid-template-columns:minmax(210px,.32fr) minmax(0,.68fr);gap:40px;
+}
+.huntDecisionV3 .huntDecisionBody{border-left:0;padding-left:0}
+.huntDecisionV3 .huntDecisionIntro h2{color:var(--ink,#24231f);max-width:240px;font-size:25px;line-height:1.14}
+.huntDecisionV3 .huntDecisionVerdict{color:var(--ink,#25241f);font-size:20px;font-weight:780;margin-bottom:11px}
+.huntDecisionV3 .huntDecisionEvidence{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;margin:15px 0 5px;padding:15px 0 0;font-size:13px;color:#54514b}
+.huntDecisionV3 .huntDecisionCaution{border-top:0;margin-top:4px;padding-top:0}
+.huntDecisionV3 .huntAnalysisMeta{font-size:11px}
+.dossierWorkspaceV3{
+ background:transparent;border:0;border-radius:0;box-shadow:none;
+ padding:34px 0 37px;margin:0;border-bottom:1px solid var(--line);
+}
+.dossierWorkspaceV3 .workspaceHeader h2{color:var(--ink,#25231f);font-size:28px}
+.dossierWorkspaceV3 .workspaceSub{max-width:300px;font-size:12px;line-height:1.6;color:#77746f}
+.dossierWorkspaceV3 .workspaceBar{background:transparent;padding:18px 0;border-block:1px solid var(--line)}
+.dossierWorkspaceV3 .vacancyEvidenceGrid{gap:30px;padding:27px 0 10px;margin-top:24px}
+.dossierWorkspaceV3 .vacancyEvidenceColumn+.vacancyEvidenceColumn{border-left:1px solid var(--line);padding-left:32px}
+.dossierWorkspaceV3 .vacancyEvidenceColumn .eyebrow{color:#77716b;font-size:11px}
+.dossierWorkspaceV3 .vacancyEvidenceColumn li{font-size:13px}
+.requirementsWithCv li small.cvProof{background:#f1f0ec;border-radius:3px;color:#605e58}
+.requirementsWithCv li small.cvProof-found{background:#edf1eb;color:#3d5c48}
+.requirementsWithCv li small.cvProof-detected{background:#f4f1e6;color:#655d3f}
+.requirementsWithCv li small.cvProof-alternate{background:#eeede6;color:#625c45}
+.cvAlternateSwitch,.dossierWorkspaceV3 .cvProofAction{color:#335e48}
+.dossierWorkspaceV3 .jobSourceContext{border:1px solid var(--line);background:#f6f5f1}
+.dossierWorkspaceV3 .jobSourceContext a,.dossierWorkspaceV3 .jobSourceContext span{color:#3e5141}
+.cvArchiveV2{margin-top:28px;max-width:1100px}
+.cvArchiveV2 .cvManagerHeading h2{font-size:34px;letter-spacing:-.05em;color:var(--ink,#282620)}
+.cvArchiveV2 .cvManagerHeading p{max-width:710px;font-size:14px;color:#615e58;line-height:1.75}
+.cvArchiveStats{display:flex;gap:30px;flex-wrap:wrap;padding:25px 0 22px;border-bottom:1px solid var(--line);margin-top:20px}
+.cvArchiveStats span{display:flex;gap:9px;align-items:baseline;color:#726d66;font-size:12px}
+.cvArchiveStats strong{font-size:25px;letter-spacing:-.04em;font-weight:780;color:#262821}
+.cvArchiveV2 .cvFileList{border-top:0;margin-top:0}
+.cvArchiveCard{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:start;gap:17px;padding:25px 4px;border-bottom:1px solid var(--line);background:transparent}
+.cvArchiveCard.is-open{background:linear-gradient(90deg,rgba(70,96,72,.045),transparent 48%)}
+.cvArchiveIcon{height:42px;width:42px;display:grid;place-items:center;border:1px solid #d9ded7;background:#f2f4ef;color:#536b57;font-size:12px;letter-spacing:.07em;font-weight:800;border-radius:4px}
+.cvArchiveInfo{min-width:0}
+.cvArchiveTitle{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cvArchiveTitle strong{font-size:15px;color:#2a2a26;line-height:1.3}
+.cvArchiveType{font-size:10px;font-weight:760;letter-spacing:.045em;text-transform:uppercase;color:#536752;border:1px solid #d6ded6;border-radius:3px;padding:4px 7px}
+.cvArchiveInfo p{font-size:12px;color:#605e58;margin:5px 0}
+.cvArchiveInfo small{font-size:11px;color:#8a857e;line-height:1.6}
+.cvArchiveActions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:end}
+.cvArchiveAction{border:1px solid var(--line);background:#fff;border-radius:4px;color:#403f39;padding:9px 12px;font-family:inherit;font-size:11px;font-weight:740;cursor:pointer}
+.cvArchiveAction:hover{border-color:#849d8b;color:#2b5940;background:#f7faf7}
+.cvArchiveAction.is-danger{color:#956458;border-color:transparent;background:transparent}
+.cvArchiveAction.is-danger:hover{background:#f9efec;border-color:#e9d1c9}
+.cvArchiveV2 .cvUpload{background:transparent;border:1px solid var(--line);border-radius:6px;margin:30px 0 14px;padding:23px}
+.cvArchiveV2 .cvUploadFields{align-items:center}
+.cvArchiveV2 .cvReaderOptions{margin:14px 0 22px;padding:13px 0;color:#77736a;gap:25px}
+.cvArchiveV2 .cvReaderOptions label{font-weight:650;color:#69655f}
+.cvArchiveV2 .cvReaderOptions p{font-size:11px}
+.cvInsightWorkspace{border-top:1px solid var(--line);padding-top:33px;margin-top:24px}
+.cvInsightHeader{display:flex;align-items:start;justify-content:space-between;gap:24px}
+.cvInsightHeader h2{font-size:29px;line-height:1.15;letter-spacing:-.045em;color:#262721;margin:8px 0}
+.cvInsightHeader p{font-size:13px;color:#65625c;max-width:660px;line-height:1.7}
+.cvInsightState{white-space:nowrap;border:1px solid #ddd7ca;color:#75664b;background:#f8f5ed;font-size:11px;font-weight:740;border-radius:3px;padding:7px 10px}
+.cvInsightState.is-verified{background:#eef3ec;border-color:#d6e4d7;color:#3d6047}
+.cvInsightMetrics{display:flex;border-block:1px solid var(--line);gap:37px;padding:23px 0;margin:20px 0 22px}
+.cvInsightMetrics>div{display:flex;flex-direction:column;gap:2px;min-width:82px}
+.cvInsightMetrics strong{font-size:26px;line-height:1.1;color:#272821;letter-spacing:-.04em}
+.cvInsightMetrics span{font-size:11px;color:#777169}
+.cvRoleReadout{background:#f5f5f2;border-left:2px solid #8d9c88;padding:18px 22px;margin:21px 0 27px}
+.cvRoleReadout p{font-size:15px;font-weight:750;color:#313e35;margin:8px 0}
+.cvRoleReadout small{font-size:11px;color:#6a6c67}
+.cvInsightColumns{display:grid;grid-template-columns:1fr 1fr;gap:35px;margin:27px 0}
+.cvInsightColumns>div+div{border-left:1px solid var(--line);padding-left:30px}
+.cvInsightColumns h3,.cvDetectedSkills h3{font-size:17px;letter-spacing:-.02em;color:#2a2925;margin:0 0 15px}
+.cvStoryItem{padding:0 0 17px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.cvStoryItem h4{font-size:13.5px;color:#292a26;margin:0 0 6px}
+.cvStoryItem p{font-size:12px;color:#76716a;margin:0 0 7px}
+.cvStoryItem ul{margin:9px 0 0;padding-left:18px}
+.cvStoryItem li{font-size:12px;line-height:1.65;color:#4c4a45;margin-bottom:6px}
+.cvOriginalNote{font-size:10px;color:#9a8b7d;display:block}
+.cvPillRow{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0 18px}
+.cvPill{border:1px solid #dfdfda;background:#f9f8f5;border-radius:3px;padding:7px 10px;color:#4b4c45;font-size:12px;line-height:1.35}
+.cvDetectedSkills{padding:21px 0;border-top:1px solid var(--line)}
+.cvDetectedSkills h4{margin:18px 0 6px;font-size:12px;color:#57534d}
+.cvInsightEmpty,.cvArchiveEmpty{font-size:12px;line-height:1.7;color:#878078}
+.cvCorrectionDetails{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:7px;padding:17px 0}
+.cvCorrectionDetails summary{cursor:pointer;font-size:13px;color:#3e5c48;font-weight:760}
+.cvCorrectionDetails summary span{font-weight:500;font-size:11px;color:#8a8580;margin-left:10px}
+.cvCorrectionDetails>p{font-size:12px;color:#726e68;line-height:1.7}
+.cvCorrectionDetails .cvEvidenceCard{background:#faf9f6}
+.cvInsightFooter{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 0 0}
+.cvInsightFooter strong{font-size:14px;color:#292923}
+.cvInsightFooter p{font-size:12px;line-height:1.6;color:#727069;max-width:540px;margin:5px 0}
+.cvAutoNotice{font-size:12px;color:#687362;line-height:1.65;margin:10px 0}
+@media(max-width:850px){
+ .huntDecisionV3{grid-template-columns:1fr;gap:12px;padding:28px 0}
+ .dossierWorkspaceV3 .vacancyEvidenceGrid{grid-template-columns:1fr;gap:20px}
+ .dossierWorkspaceV3 .vacancyEvidenceColumn+.vacancyEvidenceColumn{border-left:0;border-top:1px solid var(--line);padding:24px 0 0}
+ .cvArchiveCard{grid-template-columns:36px 1fr;gap:11px}
+ .cvArchiveIcon{width:36px;height:36px}
+ .cvArchiveActions{grid-column:2;justify-content:start}
+ .cvInsightColumns{grid-template-columns:1fr;gap:17px}
+ .cvInsightColumns>div+div{border-left:0;border-top:1px solid var(--line);padding:25px 0 0}
+ .cvInsightHeader{flex-direction:column}
+}
+@media(max-width:560px){.cvInsightMetrics{gap:20px}.cvInsightFooter{align-items:start;flex-direction:column}.cvInsightFooter .btn{width:100%}}
