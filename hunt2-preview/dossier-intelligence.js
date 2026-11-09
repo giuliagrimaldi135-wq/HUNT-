@@ -12,8 +12,10 @@ const toolRegex={
 function sourceTools(profile){
  const p=profile||{};
  const confirmed=Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
- const reported=arr(p.tools).map(x=>clean(typeof x==="string"?x:x?.name+" "+(x?.level||""))).filter(Boolean);
- const draft=arr(p.draft_profile?.tools).map(clean);
+ const asTool=x=>clean(typeof x==="string"?x:((x?.name||"")+" "+(x?.level?"("+x.level+")":"")));
+ const reported=arr(p.tools).map(asTool).filter(Boolean);
+ const draft=arr(p.draft_profile?.tools).map(asTool).filter(Boolean);
+ // Keep software evidence inside this CV. Never silently borrow another CV's skills.
  const softwareLines=String(p.raw_text||"").split(/\r?\n/).map(clean).filter(line=>/^(software|technical skills|digital skills|competenze informatiche|strumenti|tools)\s*:/i.test(line));
  const inferred=[];
  for(const line of softwareLines){
@@ -25,13 +27,20 @@ function sourceTools(profile){
    inferred.push(name+(lvl?" ("+lvl+")":""));
   }
  }
+ const level=/avanzat|advanced|expert|intermedi|intermediate|basic|base/i;
  const get=key=>{
-  const re=toolRegex[key];
-  const structured=reported.find(x=>re.test(x));
-  const extracted=[...draft,...inferred].find(x=>re.test(x));
-  if(structured&&extracted&&!/avanzat|advanced|intermedi|intermediate|basic|base|expert/i.test(structured)&&/avanzat|advanced|intermedi|intermediate|basic|base|expert/i.test(extracted))
-   return {value:extracted,confirmed:false};
-  return structured?{value:structured,confirmed}:extracted?{value:extracted,confirmed:false}:null;
+   const re=toolRegex[key];
+   const structured=reported.find(x=>re.test(x));
+   const extracted=[...draft,...inferred].filter(x=>re.test(x));
+   const detailed=extracted.find(x=>level.test(x));
+   // If the structured profile only says "Excel", do not discard "Excel (avanzato)"
+   // written explicitly in the very same document. The more precise OCR evidence
+   // is still provisional unless the user confirmed that same detailed claim.
+   if(structured&&level.test(structured))return {value:structured,confirmed};
+   if(detailed)return {value:detailed,confirmed:false};
+   if(structured)return {value:structured,confirmed};
+   if(extracted.length)return {value:extracted[0],confirmed:false};
+   return null;
  };
  return {get};
 }
@@ -115,8 +124,9 @@ export function checkRequirements(requirements,profile,options={}){
      // evidence of dated work experience. Duration needs specific jobs and dates.
      // A missing explicit duration remains undocumented.
    }
-   // Explicitly say when the evidence belongs to ANOTHER uploaded CV.
-   if(requiredTools.length&&type!=="found"){
+   // A different CV is only relevant when the selected one has NO evidence.
+   // Never overwrite a local Excel/PowerPoint match with an "other CV" result.
+   if(requiredTools.length&&type==="missing"){
      const other=altCvs.find(cv=>requiredTools.every(key=>{
        const match=sourceTools(cv.parsed_profile).get(key);
        return Boolean(match&&(!/ottim|excellent|advanced|avanzat|molto buon/i.test(t)||/avanzat|advanced|expert/i.test(match.value)));
@@ -124,14 +134,14 @@ export function checkRequirements(requirements,profile,options={}){
      if(other){
        const matches=requiredTools.map(key=>sourceTools(other.parsed_profile).get(key));
        type="alternate";
-       proof="Nel CV «"+cvTitle(other)+"»: "+matches.map(x=>x.value).join(" · ");
+       proof="Indicato nel CV «"+cvTitle(other)+"»: "+matches.map(x=>x.value).join(" · ");
        suggested_cv_id=other.id||null;
      }
    }
-   const label=type==="found"?"Documentato nel CV confermato":
-     type==="detected"?"Rilevato dal CV · da confermare":
-     type==="alternate"?"Presente in un'altra versione":
-     type==="partial"?"Parzialmente documentato":"Non documentato nel CV selezionato";
+   const label=type==="found"?"Presente nel CV":
+     type==="detected"?"Indicato nel CV · da confermare":
+     type==="alternate"?"Solo in un altro CV":
+     type==="partial"?"Presente in parte":"Non indicato nel CV";
    return {text:txt,type,label,proof,suggested_cv_id};
  });
 }
