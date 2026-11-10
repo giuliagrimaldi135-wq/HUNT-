@@ -11,6 +11,7 @@ const publicSignals=(Array.isArray(values)?values:[]).map(x=>({
  source_url:safeUrl(x.source_url||x.url),
  contact:/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(x.contact||""))&&safeUrl(x.contact_source_url)?String(x.contact):"",
  contact_kind:String(x.contact_kind||"").slice(0,150),
+ contact_hint:String(x.contact||"").includes("@")?"":String(x.contact||"").slice(0,250),
  contact_source_url:safeUrl(x.contact_source_url),
  careers_url:safeUrl(x.careers_url),
  signals:(Array.isArray(x.signals)?x.signals:[]).map(s=>({
