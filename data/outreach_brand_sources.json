@@ -1,0 +1,146 @@
+{
+  "armarium": {
+    "company_url": "https://www.armariumbrand.com/",
+    "official_profiles": [
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/company/armarium-srl",
+        "source_url": "https://www.linkedin.com/company/armarium-srl",
+        "status": "profilo pubblico"
+      },
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/armariumbrand/",
+        "source_url": "https://www.armariumbrand.com/pages/contact-us",
+        "status": "link dal sito ufficiale"
+      }
+    ],
+    "articles": [
+      {
+        "title": "ARMARIUM — Control/Release, primavera 2027",
+        "publisher": "Vogue",
+        "date": "2026-09-28",
+        "url": "https://www.vogue.com/fashion-shows/spring-2027-ready-to-wear/armarium"
+      }
+    ],
+    "email_hook": "Ho seguito con interesse la presentazione di Control/Release SS27 e il percorso con cui ARMARIUM sta sviluppando la propria identità tra prodotto e distribuzione.",
+    "message_angle": "L'evoluzione delle collezioni e l'eventuale sviluppo retail rendono pertinenti competenze di prodotto, assortimento e pianificazione. L'apertura del flagship è annunciata ma non ancora confermata."
+  },
+  "fivefourfive": {
+    "company_url": "https://fivefourfive.it/",
+    "official_profiles": [
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/fivefourfive",
+        "source_url": "https://fivefourfive.it/",
+        "status": "link dal sito ufficiale"
+      },
+      {
+        "platform": "TikTok",
+        "url": "https://www.tiktok.com/@fivefourfive.it",
+        "source_url": "https://fivefourfive.it/",
+        "status": "link dal sito ufficiale"
+      },
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/company/fivefourfive/",
+        "source_url": "https://www.linkedin.com/company/fivefourfive/",
+        "status": "profilo pubblico"
+      }
+    ],
+    "articles": [
+      {
+        "title": "FiveFourFive: dal digitale al primo store a Brera",
+        "publisher": "Pambianconews",
+        "date": "2026-04-30",
+        "url": "https://www.pambianconews.com/2026/04/30/fivefourfive-dal-digitale-a-brera-il-brand-dei-drop-apre-il-suo-primo-store-a-milano-482530/"
+      }
+    ],
+    "email_hook": "Ho seguito l'apertura del vostro primo negozio permanente a Brera e l'evoluzione dell'offerta tra drop, linea Everyday e nuove categorie di prodotto.",
+    "message_angle": "Il passaggio da un modello fortemente digitale a un negozio fisico è un motivo concreto per proporsi nei team prodotto, assortimenti e pianificazione retail."
+  },
+  "plan-c": {
+    "company_url": "https://plan-c.com/it/",
+    "official_profiles": [
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/company/plan-c-official",
+        "source_url": "https://www.linkedin.com/company/plan-c-official",
+        "status": "profilo pubblico"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Plan C Frame apre al mondo della bellezza",
+        "publisher": "Vanity Fair",
+        "date": "2026-09-21",
+        "url": "https://www.vanityfair.it/article/plan-c-framework-si-apre-al-mondo-della-bellezza"
+      }
+    ],
+    "email_hook": "Ho seguito l'evoluzione di Plan C Frame e l'introduzione del corner beauty nel concept store milanese.",
+    "message_angle": "L'introduzione di categorie diverse all'interno dello stesso spazio retail richiede attenzione all'assortimento, al posizionamento e alla gestione commerciale."
+  },
+  "blaze-milano": {
+    "company_url": "https://www.blaze-milano.com/en-eu/",
+    "official_profiles": [
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/company/blaz%C3%A9milano",
+        "source_url": "https://www.linkedin.com/company/blaz%C3%A9milano",
+        "status": "profilo pubblico"
+      }
+    ],
+    "articles": [
+      {
+        "title": "BLAZÉ Milano da Lodenfrey: pop-up e distribuzione",
+        "publisher": "Harper's Bazaar",
+        "date": "2026-09-08",
+        "url": "https://www.harpersbazaar.de/fashion/blaze-milano-lodenfrey-trachtenjacke-oktoberfest-2026"
+      }
+    ],
+    "email_hook": "Ho seguito il pop-up di BLAZÉ Milano da Lodenfrey e la presentazione della collezione SS27.",
+    "message_angle": "L'attività wholesale e i progetti retail del brand sono una ragione plausibile per presentarsi con un profilo junior orientato a prodotto, assortimento e coordinamento commerciale."
+  },
+  "durazzi-milano": {
+    "company_url": "https://www.durazzimilano.com/",
+    "official_profiles": [
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/company/durazzi-milano",
+        "source_url": "https://www.linkedin.com/company/durazzi-milano",
+        "status": "profilo pubblico"
+      }
+    ],
+    "articles": [
+      {
+        "title": "DURAZZI Milano: una visione di moda che richiede tempo",
+        "publisher": "nss magazine",
+        "date": "2026-09-23",
+        "url": "https://www.nssmag.com/en/fashion/46960/for-ilenia-durazzi-fashion-needs-time"
+      }
+    ],
+    "email_hook": "Ho seguito il progetto Atrium e la presentazione della collezione SS27, interessata al modo in cui DURAZZI Milano costruisce l'esperienza del brand attorno al prodotto.",
+    "message_angle": "Il format diretto al pubblico e i progetti di collezione creano un contesto interessante per chi vuole imparare nelle funzioni di prodotto e coordinamento commerciale."
+  },
+  "giuseppe-di-morabito": {
+    "company_url": "https://www.giuseppedimorabito.com/",
+    "official_profiles": [],
+    "articles": [],
+    "message_angle": "La presenza in showroom multibrand è pertinente a una candidatura junior nell'area wholesale e prodotto.",
+    "email_hook": "Ho seguito la presenza del brand nelle campagne showroom tra Milano e Parigi."
+  },
+  "francesco-russo": {
+    "company_url": "https://francescorusso.fr/",
+    "official_profiles": [],
+    "articles": [],
+    "email_hook": "Ho seguito l'apertura della prima boutique milanese in via Bagutta, un passaggio interessante per lo sviluppo del retail diretto del brand.",
+    "message_angle": "Il nuovo spazio retail rende pertinente un contatto mirato su merchandising, supporto prodotto e coordinamento commerciale."
+  },
+  "aliita": {
+    "company_url": "https://aliita.com/",
+    "official_profiles": [],
+    "articles": [],
+    "email_hook": "Ho seguito le iniziative retail di ALIITA, fra cui il progetto shop-in-shop a Milano e il pop-up internazionale a Tokyo.",
+    "message_angle": "Questi formati commerciali richiamano competenze di prodotto e gestione degli assortimenti fra canali retail e wholesale."
+  }
+}
