@@ -408,3 +408,67 @@
 @media(max-width:1100px){.huntWorkspace .hwLayout{grid-template-columns:minmax(0,1fr) 230px;gap:23px}.huntWorkspace .hwAside{padding-left:20px}}
 @media(max-width:810px){.huntWorkspace .hwLayout{grid-template-columns:1fr;gap:20px}.huntWorkspace .hwAside{position:static;border:0;border-top:1px solid #e0e5dd;padding:12px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:20px}.huntWorkspace .hwUpcoming{grid-column:1/-1}.huntWorkspace .hwPane:has(.hwEditorialOverview){padding:27px 0}}
 @media(max-width:540px){.huntWorkspace .hwAside{display:flex;gap:0}.huntWorkspace .hwPane:has(.hwEditorialOverview){padding:26px 0}.huntWorkspace .hwTabs{gap:5px}.huntWorkspace .hwTab{padding:14px 11px;font-size:11.5px}.huntWorkspace .hwRequirementList.is-full .hwRequirement{grid-template-columns:20px minmax(0,1fr)}.huntWorkspace .hwRequirementList.is-full .hwRequirementStatus{grid-column:2;text-align:left;padding:0}.huntWorkspace .hwEditorialContext{margin-bottom:7px}}
+
+
+/* HUNT 152 — one-page clarity rather than multiple nested dashboards */
+.huntWorkspaceSimplified{margin-top:28px!important}
+.huntWorkspaceSimplified .hwLayout{grid-template-columns:minmax(0,1fr) 268px;gap:48px}
+.huntWorkspaceSimplified .hwMain{background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible}
+.huntWorkspaceSimplified .hwIntro{padding:10px 0 24px}
+.huntWorkspaceSimplified .hwIntro .hwEyebrow{text-transform:none;font-size:11px;letter-spacing:.01em;color:#708073;font-weight:690}
+.huntWorkspaceSimplified .hwIntro h2{font-size:clamp(25px,2.2vw,32px);font-weight:710;letter-spacing:-.04em;line-height:1.2;color:#232d25;margin:9px 0 17px}
+.huntWorkspaceSimplified .hwIntro .hwEditorialStory{font-size:15px;line-height:1.8;color:#505951;margin:0;max-width:740px}
+.huntWorkspaceSimplified .hwDisclosureList{border-top:1px solid #d9e0d8}
+.huntWorkspaceSimplified .hwDisclosure{border-bottom:1px solid #d9e0d8}
+.huntWorkspaceSimplified .hwDisclosure summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;background:transparent}
+.huntWorkspaceSimplified .hwDisclosure summary::-webkit-details-marker{display:none}
+.huntWorkspaceSimplified .hwDisclosure summary:focus-visible{outline:2px solid #547962;outline-offset:4px}
+.huntWorkspaceSimplified .hwDisclosureHeading{display:flex;flex-direction:column;gap:5px}
+.huntWorkspaceSimplified .hwDisclosureHeading strong{font-size:15px;font-weight:700;color:#27342a;letter-spacing:-.01em}
+.huntWorkspaceSimplified .hwDisclosureHeading small{font-size:12px;color:#7c897f;line-height:1.5}
+.huntWorkspaceSimplified .hwChevron{width:9px;height:9px;flex:0 0 9px;border-right:1.6px solid #536f5b;border-bottom:1.6px solid #536f5b;transform:rotate(45deg);margin:0 5px 5px;transition:transform .18s}
+.huntWorkspaceSimplified .hwDisclosure[open] .hwChevron{transform:rotate(225deg);margin:7px 5px 0}
+.huntWorkspaceSimplified .hwDisclosureContent{padding:0 0 25px;max-width:720px;color:#4b584e}
+.huntWorkspaceSimplified .hwTaskList li{padding:11px 0;border-bottom:1px solid #edf0eb}
+.huntWorkspaceSimplified .hwTaskList li p{font-size:13px;line-height:1.76}
+.huntWorkspaceSimplified .hwRequirementList.is-full .hwRequirement{padding:13px 0;grid-template-columns:20px minmax(0,1fr) 106px}
+.huntWorkspaceSimplified .hwProfileExplanation{font-size:13px;line-height:1.8;color:#59675b;margin:0}
+.huntWorkspaceSimplified .hwSource{border:0;padding:17px 0;font-size:10.5px;color:#8c958c}
+.huntWorkspaceSimplified .hwAside{border-left:1px solid #dde4dd;padding:0 0 0 27px;gap:0}
+.huntWorkspaceSimplified .hwAsideCard{padding:8px 0 20px;border:0;box-shadow:none}
+.huntWorkspaceSimplified .hwAsideCard h3{font-size:17px;line-height:1.35;font-weight:720;margin:0 0 12px;letter-spacing:-.025em}
+.huntWorkspaceSimplified .hwAsideCard>p{font-size:12px;line-height:1.65;color:#737e75}
+.huntWorkspaceSimplified .hwCvLabel{font-size:11px;color:#596d60}
+.huntWorkspaceSimplified .hwCvState{font-size:11px;align-items:center;margin:12px 0 18px}
+.huntWorkspaceSimplified .hwAsideTextAction{font-size:12px;padding:13px 0}
+.huntWorkspaceSimplified .hwOpenSource{display:flex;margin:18px 0 0;border-radius:4px;font-size:12px;line-height:1.4;padding:14px 13px;text-align:left}
+
+/* The selected CV should read like a document, not an admin control panel */
+.cvWWorkspaceSimple .cvWWorkspaceHead{padding:28px 30px 23px;align-items:center;gap:25px}
+.cvWWorkspaceSimple .cvWTitle h2{font-size:clamp(24px,2.2vw,31px);font-weight:720}
+.cvWWorkspaceSimple .cvWEyebrow{color:#687768;font-size:10px;letter-spacing:.04em;text-transform:none}
+.cvWWorkspaceSimple .cvWWorkspaceHead>div>p{font-size:12px;line-height:1.68;color:#727f74;max-width:600px}
+.cvWWorkspaceSimple .cvWEditButton{font-size:12px;flex-shrink:0}
+.cvWWorkspaceSimple .cvWPane{padding:27px 32px 32px;min-height:0}
+.cvWWorkspaceSimple .cvWPanelHeader{margin-bottom:25px}
+.cvWWorkspaceSimple .cvWPanelHeader h3{font-size:22px;letter-spacing:-.035em}
+.cvWWorkspaceSimple .cvWPanelHeader p{font-size:12px;line-height:1.7}
+.cvWWorkspaceSimple .cvWSimpleSummary{grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:32px}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotMain{padding:0 26px 0 0}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotSide>section{padding-bottom:22px;margin-bottom:22px}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotSide>section:last-child{border:0;margin:0;padding:0}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotTitle{margin:0 0 15px}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotTitle h4{font-size:11px;color:#647767;font-weight:710}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotMain>strong{font-size:17px;line-height:1.45;letter-spacing:-.025em;font-weight:710;display:block}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWEvidence li{font-size:12.5px;line-height:1.7}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotRole{font-size:12px;line-height:1.6}
+.cvWWorkspaceSimple .cvWSimpleSummary .cvWInlineTools{font-size:12px;line-height:1.7}
+.cvWWorkspaceSimple .cvWDetailsLink,.cvWWorkspaceSimple .cvWBack{border:0;border-bottom:1px solid #7e9782;background:transparent;border-radius:0;padding:7px 0;margin-top:17px;font:inherit;font-size:11px;font-weight:700;color:#36634a;cursor:pointer}
+.cvWWorkspaceSimple .cvWDetailsLink:hover,.cvWWorkspaceSimple .cvWBack:hover{color:#183f2a;border-color:#183f2a}
+.cvWWorkspaceSimple .cvWBack{margin:0 0 27px;font-size:12px}
+.cvWWorkspaceSimple .cvWAreasLink{margin-top:27px}
+.cvWWorkspaceSimple .cvWConfirm{padding:18px 30px}
+.cvWWorkspaceSimple .cvWConfirm[hidden]{display:none!important}
+@media(max-width:1100px){.huntWorkspaceSimplified .hwLayout{grid-template-columns:minmax(0,1fr) 244px;gap:30px}.cvWWorkspaceSimple .cvWSimpleSummary{gap:22px}}
+@media(max-width:810px){.huntWorkspaceSimplified .hwLayout{grid-template-columns:1fr;gap:14px}.huntWorkspaceSimplified .hwAside{border:0;border-top:1px solid #dce3db;padding:22px 0 0;display:flex}.huntWorkspaceSimplified .hwOpenSource{margin:11px 0 5px}.cvWWorkspaceSimple .cvWSimpleSummary{grid-template-columns:1fr}.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotMain{padding:0 0 22px;border-right:0;border-bottom:1px solid #e2e8e1}}
+@media(max-width:540px){.huntWorkspaceSimplified .hwIntro{padding-top:0}.huntWorkspaceSimplified .hwIntro .hwEditorialStory{font-size:14px}.huntWorkspaceSimplified .hwDisclosure summary{padding:18px 0}.huntWorkspaceSimplified .hwRequirementList.is-full .hwRequirement{grid-template-columns:20px minmax(0,1fr)}.huntWorkspaceSimplified .hwRequirementStatus{grid-column:2;text-align:left}.cvWWorkspaceSimple .cvWWorkspaceHead{padding:24px 18px;align-items:flex-start}.cvWWorkspaceSimple .cvWPane{padding:24px 18px}.cvWWorkspaceSimple .cvWConfirm{padding:18px}.cvWWorkspaceSimple .cvWEditButton{white-space:normal}}
