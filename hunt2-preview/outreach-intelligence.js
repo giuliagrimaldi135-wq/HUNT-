@@ -176,7 +176,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}=
    '<span class="outFolderSub">Un’opportunità di contatto basata su un movimento documentato del brand; non è un annuncio di lavoro.</span></header>'+
   '<section class="outStorySection"><div class="outSectionIntro"><span class="outSectionKicker">01 · Il momento</span><h2>Perché candidarti adesso</h2></div>'+
    '<p class="outStory">'+esc(lead.whyNow||lead.evidence[0]?.description||"")+'</p>'+
-   (lead.messageAngle?'<p class="outStoryReason">'+esc(lead.messageAngle)+'</p>':"")+
+
    '<div class="outStorySources">'+primary.map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' <span>↗</span></a>').join("")+'</div></section>'+
   '<section class="outPrepare"><div class="outSectionIntro"><span class="outSectionKicker">02 · La candidatura</span><h2>Come presentarti</h2></div>'+
    '<div class="outPrepareColumns"><div><span class="outMiniTitle">Area su cui puntare</span><strong>'+esc(lead.area)+'</strong>'+
