@@ -333,6 +333,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
  const selected=cvs.find(c=>c.id===cvId)||suggestion;
  const email=composeOutreachEmail(lead,selected,person,preferences);
  const cvExplanation=describeOutreachCv(selected,lead.area);
+ const suggestedAnalysis=analyzeOutreachCv(lead,suggestion);
  const subject=draft?.subject??email.subject,body=draft?.email_body??email.body;
  const candidacyStatus=draft?.status==="applied"?"Candidatura inviata":draft?.status==="preparing"?"In preparazione":"Da preparare";
  const cvOptions=cvs.map(c=>'<option value="'+esc(c.id)+'" '+(selected?.id===c.id?"selected":"")+'>'+esc(c.name)+(c.is_default?" · principale":"")+'</option>').join("");
@@ -396,17 +397,23 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
         '<div class="outSignalSources">'+press.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+
           esc(x.kind==="radar"?"World Radar":x.source)+' ↗</a>').join("")+'</div></article>'+
       (relevanceText?'<aside class="outEditorialInterpretation"><span class="outInsightEyebrow">PERCHÉ PUÒ ESSERE INTERESSANTE</span>'+
-        '<p>'+esc(relevanceText)+'</p></aside>':"")+
+        '<p>'+esc(relevanceText.split(/(?<=\.)\s+/).slice(0,2).join(" "))+'</p>'+
+         '<div id="outBrandEvidence">'+renderOutreachBrandEvidence(lead,selected)+'</div></aside>':"")+
     '</div></section>'+ 
   '<div class="outTabPanel outApplicationPane" id="outApplication" role="tabpanel" aria-labelledby="outTabApplication" data-outreach-panel="application" hidden><section class="outV3Section outV3Application"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO PERCORSO</span><h2>Scheda candidatura</h2>'+
    '<p>HUNT parte dal tuo curriculum verificato e dalle esigenze che emergono dal brand.</p></div>'+
-   '<div class="outCandidateSnapshot"><div><span>PRIORITÀ</span><strong>'+esc(priority||"Da valutare")+'</strong></div>'+
-    '<div><span>STATO</span><strong>'+esc(candidacyStatus)+'</strong></div></div>'+
-   '<div class="outCvOnly"><label for="outCvChoice" class="outMiniTitle">CV da utilizzare</label>'+
-     '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
-     '<p class="outSuggestedCv">'+(suggestion?'HUNT consiglia: <strong>'+esc(suggestion.name)+'</strong>':'Carica e conferma un CV dal tuo profilo.')+'</p>'+
-     '<p class="outCvReason" id="outCvReason">'+esc(cvExplanation.text)+'</p></div></section>'+
+   '<div class="outCandidateDecision"><div class="outCandidateDecisionTop">'+
+    '<span>CONTATTO MIRATO · '+esc(priority||"da valutare")+'</span>'+
+    '<span>'+esc(candidacyStatus)+'</span></div>'+
+    '<label for="outCvChoice" class="outMiniTitle">Curriculum per questo brand</label>'+
+    '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
+    '<p class="outSuggestedCv" id="outSuggestedCv">'+(suggestion?
+      'HUNT sceglierebbe <strong>'+esc(suggestion.name)+'</strong> '+(suggestedAnalysis.highlights.length?
+      'per le attività documentate in '+esc(suggestedAnalysis.highlights[0].topic.toLowerCase())+'.':
+      'in base al profilo disponibile.'):'Carica e conferma un CV dal tuo Profilo.')+'</p>'+
+    '<p class="outCvReason" id="outCvReason">'+esc(cvExplanation.text)+'</p></div>'+
+    '<div id="outCvEvidence">'+renderOutreachCvInsight(lead,selected,cvs)+'</div></section>'+
   '<section class="outV3Section outLetterSection" id="outLetter"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO MESSAGGIO</span><h2>Email pronta da personalizzare</h2>'+
    '<p>Un messaggio professionale costruito sul brand e sulle tue esperienze verificate. Ogni parola è modificabile.</p></div>'+
