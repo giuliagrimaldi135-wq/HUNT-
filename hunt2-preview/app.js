@@ -1180,7 +1180,7 @@ let outreachCache={leads:[],drafts:{},cvs:[],person:{},selectedCv:{}};
 async function renderOutreach(){
  currentView="outreach";
  const [curatedRes,signalsRes,draftsRes,cvsRes,personRes,newsRes]=await Promise.all([
-   fetch("../data/chatgpt_outreach.json?v=20261110-156",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
+   fetch("../data/outreach_signals_public.json?v=20261110-158",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
    supabase.from("company_signals").select("id,signal_type,title,summary,source_url,published_at,detected_at,companies(name,is_independent,size_band,careers_url)").order("published_at",{ascending:false,nullsFirst:false}).limit(200),
    supabase.from("user_outreach_drafts").select("outreach_key,brand_name,subject,email_body,status,updated_at").eq("user_id",currentUser.id),
    supabase.from("user_cvs").select("id,name,is_default,parsed_profile").eq("user_id",currentUser.id).eq("active",true),
