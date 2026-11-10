@@ -53,10 +53,10 @@ export function describePosition(duties=[],title=""){
  ];
  const matched=topics.filter(([re])=>re.test(text)).map(x=>x[1]);
  if(/budget/.test(text)&&/stock|giacenz|allocaz/.test(text)){
-  return "La posizione si concentra sulla pianificazione commerciale e sulla disponibilità dei prodotti. Il lavoro comprende il controllo dei budget e il monitoraggio dello stock e delle allocazioni: attività che collegano analisi commerciale e gestione operativa del prodotto.";
+  return "La posizione si concentra sulla pianificazione commerciale e sulla disponibilità dei prodotti. L’annuncio descrive un lavoro che collega il controllo dei budget al monitoraggio dello stock e delle allocazioni: informazioni da leggere insieme per seguire la disponibilità dei prodotti. Nel concreto, il ruolo prevede di tenere sotto osservazione questi aspetti e di supportare le attività di pianificazione. È quindi una posizione che mette in relazione analisi commerciale e gestione operativa del prodotto, con un’attenzione particolare ai budget, alle giacenze e alla loro distribuzione.";
  }
- if(matched.length>=2)return "Dalla descrizione emerge un ruolo che unisce "+naturalJoin(matched.slice(0,3))+". Sono queste le attività principali indicate nell'annuncio, da approfondire nelle responsabilità pubblicate dal brand.";
- if(matched.length===1)return "L'annuncio mette al centro "+matched[0]+".";
+ if(matched.length>=2)return "Dalla descrizione emerge una posizione che mette in relazione "+naturalJoin(matched.slice(0,3))+". Le responsabilità pubblicate si concentrano su queste aree e sul modo in cui vengono gestite nel lavoro quotidiano. Per capire quali compiti sono espressamente richiesti dall’azienda puoi aprire la sezione «Attività e responsabilità», dove trovi il dettaglio acquisito dall’annuncio.";
+ if(matched.length===1)return "Il lavoro si concentra soprattutto su "+matched[0]+". È l’area che emerge con maggiore chiarezza dalle responsabilità pubblicate dal brand. Nella sezione «Attività e responsabilità» puoi leggere i compiti descritti nell’annuncio, senza aggiungere attività non indicate dall’azienda.";
  const role=String(title||"").trim();
  if((Array.isArray(duties)?duties:[]).filter(Boolean).length){
   return "Per il ruolo"+(role?" di "+role:"")+" sono disponibili alcune attività nell'annuncio originale. Apri «Attività» per leggerle.";
@@ -100,8 +100,8 @@ export function renderJobWorkspace(data={}){
    '</div><div class="hwExplorePanels">'+tasks+criteria+'</div>'+
    '<footer class="hwSource"><span>'+(data.officiallyVerified?"Dettagli verificati sull’annuncio aziendale":"Sintesi ricavata dal testo disponibile dell’annuncio")+'</span></footer>'+
   '</div><aside class="hwAside" aria-label="Prepara la candidatura">'+
-   '<section class="hwAsideCard"><span class="hwEyebrow">Per questa candidatura</span><h3>Scegli il tuo CV</h3>'+
-   '<p>Puoi utilizzare una versione diversa per ogni posizione.</p>'+
+   '<section class="hwAsideCard"><span class="hwEyebrow">Il tuo dossier</span><h3>Curriculum da utilizzare</h3>'+
+   '<p>HUNT propone la versione più pertinente. La scelta finale è tua.</p>'+
    '<label for="dossierCv" class="hwCvLabel">Curriculum</label>'+
    '<select id="dossierCv" aria-label="CV da utilizzare">'+(cvOpts||'<option value="">Nessun CV caricato</option>')+'</select>'+
    '<p class="hwCvState"><span class="hwCvStateDot" aria-hidden="true"></span><span>'+esc(verification)+'</span></p>'+
