@@ -28,7 +28,7 @@ export function buildOutreachLeads(curated=[],corporate=[],now=Date.now()){
     evidence,priority:String(item.priority||"").toLowerCase(),
     dated:recent,checkedAt:item.updated_at||null,
     contactEmail:email,contactSourceUrl:safeLink(item.contact_source_url),
-    contactDescription:email?"Email indicata nel dossier: verifica sulla pagina ufficiale, non necessariamente recruiting":String(item.contact||"").trim(),
+    contactDescription:email?"Email indicata nel dossier: verifica sulla pagina ufficiale, non necessariamente recruiting":String(item.contact_hint||item.contact_kind||item.contact||"").trim(),
     careerUrl:safeLink(item.careers_url),signalOrigin:"curated",score:Number(item.score)||0
   });
  }
