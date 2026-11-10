@@ -902,3 +902,26 @@
  .outFolderV4 .brandNewsItem h3{font-size:18px}
  .outFolderV4 .outV3Relevance{padding:20px 19px}
 }
+
+/* Brand dossier refinement — source story + commercial interpretation, no highlighted block. */
+.outFolderV4 .outReason{max-width:none}
+.outFolderV4 .outBrandInsightGrid{display:grid;grid-template-columns:minmax(0,1.24fr) minmax(265px,.76fr);gap:32px;margin:27px 0 17px;align-items:start}
+.outFolderV4 .outSignalNarrative{min-width:0}
+.outFolderV4 .outInsightEyebrow{display:block;color:#789081;font-size:10px;font-weight:770;letter-spacing:.105em;margin-bottom:15px}
+.outFolderV4 .outSignalNarrative .outV3Story{margin:0;font-size:15px;line-height:1.9;color:#33483b}
+.outFolderV4 .outSignalSources{display:flex;gap:13px 21px;flex-wrap:wrap;margin-top:20px}
+.outFolderV4 .outSignalSources a{font-size:12px;color:#1d5e40;text-decoration:underline;text-underline-offset:5px;font-weight:720}
+.outFolderV4 .outEditorialInterpretation{background:transparent;border:0;border-left:1px solid #cfdcd0;border-radius:0;box-shadow:none;padding:2px 0 2px 29px}
+.outFolderV4 .outEditorialInterpretation p{font-size:13px;line-height:1.85;color:#596a5d;margin:0}
+.outFolderV4 .outReason>.outV3Caution{max-width:870px;color:#8b968d;font-size:11px;line-height:1.7;margin:22px 0 0}
+.outFolderV4 .outCvOnly{width:100%;max-width:710px;padding:6px 0 2px;margin-top:12px}
+.outFolderV4 .outCvOnly .outMiniTitle{display:block;margin:0 0 11px;color:#556d5a;font-size:12px;letter-spacing:0}
+.outFolderV4 .outCvOnly #outCvChoice{display:block;width:100%;max-width:none;box-sizing:border-box;margin:0;border-radius:5px;padding:14px 15px;font-size:14px}
+.outFolderV4 .outCvOnly .outSuggestedCv{font-size:12px;margin:13px 0 0;color:#617365}
+.outFolderV4 .outCvOnly .outSuggestedCv strong{color:#245e41}
+.outFolderV4 .outCvOnly .outCvReason{font-size:11px;color:#94a095;margin:7px 0 0}
+@media(max-width:780px){
+ .outFolderV4 .outBrandInsightGrid{grid-template-columns:1fr;gap:23px}
+ .outFolderV4 .outEditorialInterpretation{border-left:0;border-top:1px solid #dbe4d9;padding:21px 0 0}
+ .outFolderV4 .outCvOnly{max-width:none}
+}
