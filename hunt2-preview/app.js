@@ -4,7 +4,7 @@ import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
-import {renderJobWorkspace} from "./job-workspace.js?v=20261110-152";
+import {renderJobWorkspace} from "./job-workspace.js?v=20261110-153";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -943,7 +943,7 @@ async function renderOpportunityFolder(jobId){
    
   </div>
   <div class="actions">
-   ${job.primary_apply_url?`<a class="btn green" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ufficiale ↗</a>`:""}
+   <button class="btn green" type="button" id="jumpToCv">Prepara candidatura ↓</button>
    <button class="btn darkSecondary" data-applied="${job.id}">Segna come candidata</button>
    <button class="btn darkGhost" data-ignore="${job.id}">Ignora</button>
   </div>
@@ -1029,6 +1029,9 @@ async function renderOpportunityFolder(jobId){
  </div>`:""}`);
 
  bindNav();bindOpportunityActions();
+ document.getElementById("jumpToCv")?.addEventListener("click",()=>{
+   document.getElementById("huntJobPreparation")?.scrollIntoView({behavior:"smooth",block:"start"});
+ });
  let brandArchive=false;
  let brandFeedFilter="all";
  let brandShowAll=false;
