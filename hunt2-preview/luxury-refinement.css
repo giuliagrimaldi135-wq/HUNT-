@@ -963,3 +963,57 @@
  .outFolderV4 .outEditorialInterpretation{padding:19px 20px;border-left:1px solid #dfe9dd;border-top:3px solid #7fa68a}
  .outFolderV4 .outCandidateSnapshot{max-width:none;gap:15px}
 }
+
+
+/* HUNT — brand outreach as product intelligence, not a generic job board. */
+.outResultsV6{display:grid;grid-template-columns:1fr;margin:15px 0 34px;border-top:1px solid #dbe4d9}
+.outEditorialRow{display:grid;grid-template-columns:minmax(180px,.73fr) minmax(330px,1.45fr) minmax(105px,.42fr);align-items:center;column-gap:34px;row-gap:14px;padding:30px 7px 33px;border-bottom:1px solid #dbe4d9;background:transparent}
+.outEditorialIdentity{align-self:start;min-width:0}
+.outEditorialKicker{display:block;font-size:10px;line-height:1.5;font-weight:750;letter-spacing:.105em;color:#829485}
+.outEditorialIdentity h2{font-size:clamp(23px,2.5vw,32px);font-weight:755;letter-spacing:-.05em;line-height:1.14;color:#26392c;margin:11px 0 0}
+.outDraftStatus{display:block;font-size:11px;color:#557962;margin-top:14px;font-weight:680}
+.outEditorialSignal{min-width:0}
+.outEditorialSignal h3{font-size:16px;color:#2d4234;line-height:1.48;font-weight:730;letter-spacing:-.015em;margin:10px 0 7px}
+.outEditorialSignal>p{font-size:12.5px;line-height:1.75;color:#5d7062;margin:0;max-width:590px}
+.outEditorialSources{display:flex;flex-wrap:wrap;gap:9px 17px;margin-top:13px}
+.outEditorialSources a{color:#226144;font-size:11px;font-weight:720;text-decoration:underline;text-underline-offset:4px}
+.outEditorialAction{display:flex;justify-content:flex-end;align-self:center;min-width:0}
+.outEditorialAction button{font:inherit;font-size:12px;font-weight:770;color:#215e3f;display:inline-flex;gap:11px;align-items:center;white-space:nowrap;cursor:pointer;background:transparent;border:0;border-bottom:1px solid #a5bfa8;padding:7px 0 8px}
+.outEditorialAction button:hover{color:#123b28;border-bottom-color:#336e4b}
+.outFolderV4 .outBrandPersonalEvidence{border-top:1px solid #dce8db;margin-top:18px;padding-top:16px;display:flex;flex-direction:column;gap:5px}
+.outFolderV4 .outBrandPersonalEvidence span{font-size:10px;font-weight:770;letter-spacing:.09em;color:#79917c}
+.outFolderV4 .outBrandPersonalEvidence strong{font-size:12px;font-weight:725;line-height:1.45;color:#2f6141}
+.outFolderV4 .outBrandPersonalEvidence small{font-size:11px;line-height:1.6;color:#607565}
+.outFolderV4 .outCandidateDecision{padding:3px 0 22px;max-width:820px}
+.outFolderV4 .outCandidateDecisionTop{display:flex;flex-wrap:wrap;gap:8px 22px;margin:0 0 21px;color:#799081;font-size:10px;font-weight:730;letter-spacing:.065em;text-transform:uppercase}
+.outFolderV4 .outCandidateDecision .outMiniTitle{font-size:12px;color:#516b58;font-weight:760;letter-spacing:0;margin:0 0 9px}
+.outFolderV4 .outCandidateDecision #outCvChoice{display:block;width:100%;max-width:760px;border-radius:5px;background:#fff;padding:13px 15px;font:inherit;font-size:13px;color:#24402d;border:1px solid #c8d9cb;box-sizing:border-box}
+.outFolderV4 .outCandidateDecision .outSuggestedCv{font-size:12px;color:#536e59;line-height:1.7;margin:12px 0 0;max-width:760px}
+.outFolderV4 .outCandidateDecision .outSuggestedCv strong{font-size:12px;display:inline;font-weight:760;color:#235a3d}
+.outFolderV4 .outCandidateDecision .outCvReason{font-size:11px;color:#829287;margin:5px 0 0}
+.outFolderV4 .outCvAnalysis{max-width:900px;border-top:1px solid #e4e9e2;padding-top:24px;margin-top:2px}
+.outFolderV4 .outCvAnalysisHead{display:grid;grid-template-columns:minmax(210px,.85fr) minmax(260px,1.15fr);gap:25px;align-items:start;margin-bottom:20px}
+.outFolderV4 .outCvAnalysisHead h3{font-family:Georgia,serif;font-size:24px;font-weight:500;letter-spacing:-.025em;line-height:1.3;color:#243b2a;margin:7px 0 0}
+.outFolderV4 .outCvAnalysisHead p{font-size:12px;line-height:1.8;color:#647566;margin:3px 0 0}
+.outFolderV4 .outCvProofs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.outFolderV4 .outCvProof{display:flex;flex-direction:column;align-items:flex-start;min-width:0;background:#f4f6f1;border:1px solid #e5eae2;border-radius:7px;padding:18px 20px}
+.outFolderV4 .outProofTag{font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:#618169;font-weight:740;margin-bottom:11px}
+.outFolderV4 .outCvProof strong{font-size:13px;line-height:1.74;font-weight:600;color:#32483a}
+.outFolderV4 .outCvProof small{font-size:11px;color:#8a968c;line-height:1.6;margin-top:10px}
+.outFolderV4 .outCvCheck{padding:16px 19px;background:#faf9f6;border-radius:6px;border-left:2px solid #c7bfae;margin-top:17px;max-width:845px}
+.outFolderV4 .outCvCheck strong{display:block;color:#606556;font-size:12px;font-weight:730;margin:0 0 5px}
+.outFolderV4 .outCvCheck p{color:#717c72;font-size:11px;line-height:1.8;margin:0}
+.outFolderV4 .outCvEmpty,.outFolderV4 .outProofEmpty{font-size:12px;line-height:1.7;color:#728475;padding:19px 0}
+.outFolderV4 .outApplicationPane .outV3Application{padding:30px 34px}
+@media(max-width:850px){
+ .outEditorialRow{grid-template-columns:1fr 1.25fr;gap:16px 24px}
+ .outEditorialAction{grid-column:2;justify-content:flex-start}
+ .outFolderV4 .outCvAnalysisHead{grid-template-columns:1fr;gap:8px}
+}
+@media(max-width:630px){
+ .outEditorialRow{grid-template-columns:1fr;gap:12px;padding:25px 4px 28px}
+ .outEditorialAction{grid-column:1;justify-content:flex-start}
+ .outEditorialIdentity h2{font-size:28px}
+ .outFolderV4 .outCvProofs{grid-template-columns:1fr}
+ .outFolderV4 .outApplicationPane .outV3Application{padding:24px 18px}
+}
