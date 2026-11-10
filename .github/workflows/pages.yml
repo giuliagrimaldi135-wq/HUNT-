@@ -30,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Build the public outreach evidence feed without personalized drafts
+        run: node hunt2-preview/build-outreach-public.mjs
       - name: Block deployment if HUNT dossier, CV or letter regressions fail
         run: |
           node --check hunt2-preview/app.js
@@ -41,6 +43,7 @@ jobs:
           node --check hunt2-preview/opportunity-similarity.js
           node --check hunt2-preview/job-workspace.js
           node --check hunt2-preview/outreach-intelligence.js
+          node --check hunt2-preview/build-outreach-public.mjs
           node --check hunt2-preview/cv-workspace.js
           node --check hunt2-preview/requirement-priority.js
           node --check hunt2-preview/dossier-intelligence.js
