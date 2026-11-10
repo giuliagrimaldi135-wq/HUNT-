@@ -272,11 +272,11 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
   '<span class="outFolderTag">Ricerca brand · Contatto mirato</span></div>'+
   '<header class="outBrandHero"><span class="outSectionKicker">BRAND DA CONTATTARE</span>'+
    '<h1>'+esc(lead.brand)+'</h1>'+
-   '<p class="outBrandHeroSignal">'+esc(factsText)+'</p>'+
+   '<p class="outBrandHeroSignal">Segnali pubblici da conoscere prima di proporre una collaborazione · '+esc(roleTitle)+'</p>'+
    '<div class="outBrandHeroMeta"><span>'+esc(lead.dated?"Segnale recente":"Segnale da ricontrollare")+'</span>'+
     '<span>Priorità '+esc(priority||"da valutare")+'</span><span>'+esc(dateText(signalDate))+'</span><span>'+sourceCount+' fonti collegate</span></div>'+
    '<div class="outBrandHeroActions"><button type="button" class="outOpen" data-outreach-jump="application">Prepara la candidatura ↗</button>'+
-    '<button type="button" class="outSecondaryAction" data-outreach-save="preparing">Salva per dopo</button></div></header>'+
+    '</div></header>'+
   '<nav class="outSectionNav" role="tablist" aria-label="Dossier brand">'+
    '<button type="button" class="folderTab active" role="tab" id="outTabReason" aria-selected="true" aria-controls="outReason" data-outreach-jump="reason">Il brand</button>'+
    '<button type="button" class="folderTab" role="tab" id="outTabApplication" aria-selected="false" aria-controls="outApplication" data-outreach-jump="application">La candidatura</button>'+
