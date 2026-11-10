@@ -1,5 +1,56 @@
 [
   {
+    "key": "95f862d1d88219d8bae1",
+    "brand": "Valentino",
+    "title": "Store Planning Intern",
+    "location": "Milano",
+    "score": 100,
+    "reasons": [
+      "Ruolo coerente dal titolo",
+      "Seniority junior/intern",
+      "Località target coerente",
+      "Competenze: retail",
+      "Priorità Milano"
+    ],
+    "role_family": "Planning/Allocation",
+    "decision": "strong",
+    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
+    "recommended_cv": "merch_buying",
+    "url": "https://jobs.valentino.com/job/Milano-Store-Planning-Intern/1448037433/",
+    "source_name": "Valentino careers",
+    "provider": "career_page",
+    "published_at": null,
+    "years_required": null,
+    "junior_fit": true,
+    "first_seen_at": "2026-11-10T11:28:43.501200+00:00",
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
+  },
+  {
+    "key": "f698eac7d1c3ce140a65",
+    "brand": "Kering",
+    "title": "BRIONI Merchandising Intern",
+    "location": "Roma",
+    "score": 100,
+    "reasons": [
+      "Ruolo coerente dal titolo",
+      "Seniority junior/intern",
+      "Località target coerente",
+      "Competenze: excel, pricing, competitor, retail"
+    ],
+    "role_family": "Merchandising",
+    "decision": "strong",
+    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
+    "recommended_cv": "merch_buying",
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/brioni-merchandising-intern/",
+    "source_name": "Kering careers",
+    "provider": "career_page",
+    "published_at": "2026-11-10T00:00:00+00:00",
+    "years_required": null,
+    "junior_fit": true,
+    "first_seen_at": "2026-11-10T11:28:43.501200+00:00",
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
+  },
+  {
     "key": "4450b91259c69e552232",
     "brand": "Bottega Veneta",
     "title": "BOTTEGA VENETA Jewellery Product Development Intern",
@@ -23,7 +74,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-07T10:24:34.504438+00:00",
-    "last_seen_at": "2026-11-10T10:37:53.600718+00:00"
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
   },
   {
     "key": "b0cb1c8d0110374cf3e9",
@@ -49,7 +100,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-05T18:23:32.619739+00:00",
-    "last_seen_at": "2026-11-10T10:37:53.600718+00:00"
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
   },
   {
     "key": "68ef732d031b2af141ca",
@@ -75,7 +126,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-04T10:51:36.696347+00:00",
-    "last_seen_at": "2026-11-10T10:37:53.600718+00:00"
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
   },
   {
     "key": "a457cc063cb8288560d0",
@@ -101,7 +152,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T19:05:59.550269+00:00",
-    "last_seen_at": "2026-11-10T10:37:53.600718+00:00"
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
   },
   {
     "key": "87ad6510dd6b0946c03c",
@@ -127,7 +178,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-02T15:32:50.971442+00:00",
-    "last_seen_at": "2026-11-10T10:37:53.600718+00:00"
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
   },
   {
     "key": "b9145e91275901c9339c",
@@ -153,6 +204,6 @@
     "years_required": 1,
     "junior_fit": false,
     "first_seen_at": "2026-11-03T02:37:56.737226+00:00",
-    "last_seen_at": "2026-11-10T10:37:53.600718+00:00"
+    "last_seen_at": "2026-11-10T11:28:43.501200+00:00"
   }
 ]
