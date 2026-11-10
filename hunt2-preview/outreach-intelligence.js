@@ -267,36 +267,32 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
     '<h3>'+esc(n.title)+'</h3>'+intro+
     '<div class="brandNewsActions"><a href="'+esc(n.url)+'" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a></div></article>';
  }).join("");
- return '<div class="outFolder outFolderV3">'+
+ return '<div class="outFolder outFolderV3 outFolderV4">'+
   '<div class="folderTopbar outTopbar"><button type="button" class="textBack" data-outreach-back>← Brand da contattare</button>'+
   '<span class="outFolderTag">Ricerca brand · Contatto mirato</span></div>'+
-  '<section class="folderHero section outHero"><div class="folderLabel">Candidatura spontanea</div>'+
-   '<div class="eyebrow brandEyebrow">'+esc(lead.brand)+'</div>'+
-   '<h1>'+esc(roleTitle)+'</h1>'+
-   '<p class="lead">Proposta di collaborazione junior · '+esc(lead.brand)+'</p>'+
-   '<div class="heroMeta editorialMeta darkMeta">'+
-    (priority?'<span class="heroMatch">Priorità '+esc(priority)+'</span>':"")+
-    '<span>'+esc(lead.dated?"Segnale recente":"Segnale da rivalutare")+'</span>'+
-    '<span>'+esc(dateText(signalDate))+'</span>'+
-    '<span>'+sourceCount+' fonti e collegamenti</span></div>'+
-   '<div class="actions"><button class="btn green" type="button" data-outreach-jump="letter">Prepara candidatura ↓</button>'+
-   '<button class="btn darkSecondary" type="button" data-outreach-save="preparing">Salva in preparazione</button></div></section>'+
-  '<nav class="folderTabs section outSectionNav" aria-label="Sezioni del dossier">'+
-   '<button type="button" class="folderTab active" data-outreach-jump="reason">Il brand</button>'+
-   '<button type="button" class="folderTab" data-outreach-jump="application">La candidatura</button>'+
-   '<button type="button" class="folderTab" data-outreach-jump="news">News & fonti</button></nav>'+
-  '<section class="outV3Section outReason" id="outReason"><div class="outSectionIntro"><span class="outSectionKicker">IL MOTIVO DEL CONTATTO</span>'+
+  '<header class="outBrandHero"><span class="outSectionKicker">BRAND DA CONTATTARE</span>'+
+   '<h1>'+esc(lead.brand)+'</h1>'+
+   '<p class="outBrandHeroSignal">'+esc(factsText)+'</p>'+
+   '<div class="outBrandHeroMeta"><span>'+esc(lead.dated?"Segnale recente":"Segnale da ricontrollare")+'</span>'+
+    '<span>Priorità '+esc(priority||"da valutare")+'</span><span>'+esc(dateText(signalDate))+'</span><span>'+sourceCount+' fonti collegate</span></div>'+
+   '<div class="outBrandHeroActions"><button type="button" class="outOpen" data-outreach-jump="application">Prepara la candidatura ↗</button>'+
+    '<button type="button" class="outSecondaryAction" data-outreach-save="preparing">Salva per dopo</button></div></header>'+
+  '<nav class="outSectionNav" role="tablist" aria-label="Dossier brand">'+
+   '<button type="button" class="folderTab active" role="tab" id="outTabReason" aria-selected="true" aria-controls="outReason" data-outreach-jump="reason">Il brand</button>'+
+   '<button type="button" class="folderTab" role="tab" id="outTabApplication" aria-selected="false" aria-controls="outApplication" data-outreach-jump="application">La candidatura</button>'+
+   '<button type="button" class="folderTab" role="tab" id="outTabNews" aria-selected="false" aria-controls="outNews" data-outreach-jump="news">News & fonti</button></nav>'+
+  '<section class="outV3Section outReason outTabPanel" id="outReason" role="tabpanel" aria-labelledby="outTabReason" data-outreach-panel="reason"><div class="outSectionIntro"><span class="outSectionKicker">IL MOTIVO DEL CONTATTO</span>'+
    '<h2>Perché contattare '+esc(lead.brand)+' adesso</h2></div>'+
    '<p class="outV3Story">'+esc(factsText)+'</p>'+
    (relevanceText?'<div class="outV3Relevance"><strong>Il collegamento con il tuo profilo</strong><p>'+esc(relevanceText)+'</p></div>':"")+
    '<p class="outV3Caution">'+esc(caveatText)+'</p>'+
    '<div class="outStorySources">'+press.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.source)+' ↗</a>').join("")+'</div></section>'+
-  '<section class="outV3Section outV3Application" id="outApplication"><div class="outSectionIntro">'+
-   '<span class="outSectionKicker">PREPARA LA CANDIDATURA</span><h2>La tua proposta</h2>'+
+  '<div class="outTabPanel outApplicationPane" id="outApplication" role="tabpanel" aria-labelledby="outTabApplication" data-outreach-panel="application" hidden><section class="outV3Section outV3Application"><div class="outSectionIntro">'+
+   '<span class="outSectionKicker">IL TUO PERCORSO</span><h2>Scheda candidatura</h2>'+
    '<p>HUNT parte dal tuo curriculum verificato e dalle esigenze che emergono dal brand.</p></div>'+
    '<div class="outPrepareColumns"><div>'+
-    '<span class="outMiniTitle">Area di interesse</span><strong>'+esc(lead.area)+'</strong>'+
-    (lead.messageAngle?'<p class="outRoleAngle">'+esc(lead.messageAngle)+'</p>':"")+
+    '<span class="outMiniTitle">PRIORITÀ</span><strong>'+esc(priority||"Da valutare")+'</strong><span class="outMiniTitle">AREA</span><strong>'+esc(lead.area)+'</strong>'+
+    (lead.messageAngle?'<span class="outMiniTitle">ANGOLO DEL MESSAGGIO</span><p class="outRoleAngle">'+esc(lead.messageAngle)+'</p>':"")+
     '</div><div><label for="outCvChoice" class="outMiniTitle">CV da utilizzare</label>'+
     '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
     '<p class="outSuggestedCv">'+(suggestion?'HUNT consiglia: <strong>'+esc(suggestion.name)+'</strong>':'Carica e conferma un CV dal profilo per personalizzare la candidatura.')+'</p>'+
@@ -311,28 +307,10 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
     '<button type="button" data-outreach-regenerate>Ripristina testo consigliato</button></div>'+
    '<p class="outSaveState" id="outSaveState" aria-live="polite"></p></section>'+
   '<section class="outV3Section outV3Contact"><div class="outSectionIntro"><span class="outSectionKicker">DOVE SCRIVERE</span>'+
-   '<h2>Contatta il brand</h2></div>'+
+   '<h2>Dove contattare il brand</h2></div>'+
    '<div class="outContactLine">'+contact+'</div>'+
    (lead.contactEmail&&lead.contactSourceUrl?'<button type="button" class="outMailtoAction" data-outreach-mailto>Apri nel programma email ↗</button>':"")+
    (lead.careerUrl?'<p><a href="'+esc(lead.careerUrl)+'" target="_blank" rel="noopener noreferrer">Controlla prima le posizioni ufficiali ↗</a></p>':"")+
    '<p class="outSmallNote">Un indirizzo generale non è un indirizzo HR. HUNT non invia email automaticamente.</p></section>'+
-  '<section class="outV3Section brandGlobalNews outV3News" id="outNews"><div class="brandGlobalNewsHead">'+
-    '<div><div class="eyebrow">News & mondo fashion</div><h2>'+esc(lead.brand)+' nel mondo</h2>'+
-    '<p>Notizie aziendali e stampa internazionale con fonte e data. Sono informazioni per prepararti, non annunci di lavoro.</p></div>'+
-    '<div class="brandGlobalNewsNav"><button type="button" class="worldReadToggle" data-outreach-all-news>Apri tutte le Fashion News</button></div></div>'+
-   '<div class="brandNewsSwitch" role="group" aria-label="Filtra le notizie del brand">'+
-    '<button type="button" class="active" data-outreach-news-filter="all">Tutte</button>'+
-    '<button type="button" data-outreach-news-filter="press">Stampa</button>'+
-    '<button type="button" data-outreach-news-filter="radar">World Radar</button>'+
-    '<button type="button" data-outreach-news-filter="signal">Segnali</button></div>'+
-   '<p class="brandNewsCounter" id="outNewsCounter">'+news.length+' notizie e segnali documentati</p>'+
-   '<div class="brandGlobalNewsList" id="outNewsList">'+newsCards+'</div>'+
-   (news.length?'':'<p class="outV3Caution">Nessuna notizia pertinente verificata in questo momento.</p>')+
-   '<div class="outV3Sources"><h3>Fonti e profili del brand</h3>'+
-    (socialLinks?'<div class="outSocialLinks">'+socialLinks+'</div>':"")+
-    '<p>Questi sono collegamenti a profili ufficiali, non un monitoraggio automatico di tutti i loro post.</p>'+
-    '<details class="outEvidenceDetails"><summary>Tutte le fonti utilizzate <span>'+sourceCount+' collegamenti</span></summary>'+
-      '<ul class="outSources">'+sourceRows+'</ul></details></div></section>'+
-  '<footer class="outFolderFoot"><button type="button" data-outreach-save="applied" class="outApplied">Ho inviato la candidatura</button>'+
-   '<span>Registra un invio effettuato personalmente. HUNT non spedisce messaggi.</span></footer></div>';
+  '</div>';
 }
