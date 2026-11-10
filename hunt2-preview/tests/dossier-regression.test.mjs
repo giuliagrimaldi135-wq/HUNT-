@@ -38,12 +38,18 @@ test("Job dossier is a navigable product workspace, not a wall of personality ra
  assert.match(folder,/prioritizeRequirements\(factLists\.it\.requirements,4\)/);
  assert.match(folder,/compareKeyRequirement\(x,cvChecklistIt\[x\.sourceIndex\],evidencedProfile\)/);
  assert.match(folder,/renderJobWorkspace\(/);
- assert.match(jobWorkspace,/role="tablist"/);
+ assert.match(jobWorkspace,/Il ruolo, in sintesi/);
+ assert.match(jobWorkspace,/hwRoleDescription/);
+ assert.match(jobWorkspace,/data-hunt-explore="tasks"/);
+ assert.match(jobWorkspace,/data-hunt-explore="criteria"/);
+ assert.doesNotMatch(jobWorkspace,/role="tablist"/);
  assert.match(jobWorkspace,/hwAsideCard/);
  assert.match(jobWorkspace,/id="dossierCv"/);
- assert.match(jobWorkspace,/Attività riportate nell’annuncio della posizione/);
+ assert.match(jobWorkspace,/responsibilities\(duties\)/);
+ assert.match(jobWorkspace,/HUNT propone la versione più pertinente/);
  assert.match(folder,/dossierCvChoices\.set\(jobId,next\)/);
- assert.match(folder,/jobWorkspaceTabs\.set\(jobId,tab\)/);
+ assert.doesNotMatch(folder,/jobWorkspaceTabs\.set\(jobId,tab\)/);
+ assert.match(folder,/data-hunt-explore/);
  assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
  assert.doesNotMatch(folder,/relevant_years_experience/);
 });
@@ -99,7 +105,9 @@ test("Generic vacancy parsing retains a full list of explicitly stated qualifica
 });
 
 test("Candidate can return to the same vacancy after reviewing or editing a CV",()=>{
- assert.match(app,/profileButton\.onclick=\(\)=>renderProfile\(jobId\)/);
+ assert.match(app,/profileButton\.onclick=async\(\)=>/);
+ assert.match(app,/await renderProfile\(jobId\)/);
+ assert.match(app,/requestCvVerification\(cvId\)/);
  assert.match(app,/async function renderProfile\(fromJobId=null\)/);
  assert.match(app,/id="profileBackToJob"/);
  assert.match(app,/backToJob\.onclick=\(\)=>openOpportunityFolder\(fromJobId,false\)/);
