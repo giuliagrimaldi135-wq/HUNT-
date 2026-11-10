@@ -83,6 +83,7 @@ export function enrichOutreachLeads(leads=[],registry={}){
    socialProfiles:(record.official_profiles||[]).filter(x=>safeLink(x.url)).map(x=>({...x,url:safeLink(x.url),sourceUrl:safeLink(x.source_url),kind:"official_profile"})),
    editorial,news:[...(lead.news||[])],messageAngle:String(record.message_angle||""),emailHook:String(record.email_hook||""),
    outreachStory:String(record.outreach_story||""),outreachRelevance:String(record.outreach_relevance||""),outreachCaution:String(record.outreach_caution||""),emailBridge:String(record.email_bridge||""),
+   previewTitle:String(record.preview_title||""),previewSummary:String(record.preview_summary||""),
    contactKind:String(lead.contactKind||record.contact_kind||"")
   };
  });
@@ -219,14 +220,24 @@ const sourceItem=(x)=>'<li class="outSourceRow"><div><span class="outSourceType"
   '<small>'+esc(x.publisher)+(x.date?" · "+esc(dateText(x.date)):"")+(x.verification?" · "+esc(x.verification):"")+'</small></div>'+
   '<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Apri fonte ↗</a></li>';
 export function renderOutreachCards(leads=[],drafts={}){
- if(!leads.length)return '<section class="outEmpty"><h2>Nessun brand pronto per una proposta documentata.</h2><p>HUNT segnalerà soltanto movimenti commerciali con fonti consultabili.</p></section>';
- return '<div class="outResults">'+leads.map(x=>{
-  const status=drafts[x.key]?.status,first=x.evidence.find(e=>e.date)?.date||x.checkedAt;
-  return '<article class="outLead"><div class="outLeadMain"><span class="outEyebrow">'+esc(x.dated?"Segnale recente":"Segnale da ricontrollare")+'</span><h2>'+esc(x.brand)+'</h2>'+
-   '<p class="outLeadWhy">'+esc(x.whyNow||x.evidence[0]?.description||"")+'</p>'+
-   '<div class="outLeadMeta"><span>'+esc(x.area)+'</span><span>'+esc(dateText(first))+'</span></div></div>'+
-   '<div class="outLeadActions">'+(status?'<span class="outStatus">'+esc(status==="applied"?"Invio registrato":status==="archived"?"Archiviata":"Bozza salvata")+'</span>':"")+
-   '<button type="button" class="outOpen" data-outreach-open="'+esc(x.key)+'">Apri il dossier <span aria-hidden="true">↗</span></button></div></article>';
+ if(!leads.length)return '<section class="outEmpty"><h2>Ancora nessun brand da proporre.</h2><p>HUNT mostra soltanto opportunità di contatto sostenute da fonti consultabili.</p></section>';
+ return '<div class="outResults outResultsV5">'+leads.map(lead=>{
+  const status=drafts[lead.key]?.status||"";
+  const first=(lead.evidence||[]).find(e=>e.date)?.date||lead.checkedAt;
+  const summary=String(lead.previewSummary||lead.whyNow||lead.evidence?.[0]?.description||"");
+  const title=String(lead.previewTitle||"Un movimento commerciale da conoscere");
+  const sources=new Set([...(lead.evidence||[]),...(lead.editorial||[]),...(lead.news||[])].map(e=>safeLink(e.url)).filter(Boolean)).size;
+  const stage=status==="applied"?"Candidatura inviata":status==="preparing"?"Bozza salvata":status==="archived"?"Archiviata":"Dossier disponibile";
+  return '<article class="outLead outLeadV5">'+
+   '<div class="outLeadContent"><div class="outLeadTopline"><span class="outEyebrow">'+esc(lead.dated?"DAL MERCATO":"DAL BRAND")+'</span>'+
+   '<span class="outLeadDate">'+esc(dateText(first))+'</span></div>'+
+   '<h2>'+esc(lead.brand)+'</h2>'+
+   '<div class="outLeadEditorial"><strong>'+esc(title)+'</strong><p>'+esc(summary)+'</p></div>'+
+   '<div class="outLeadMeta"><span>'+esc(lead.area)+'</span>'+
+   '<span>'+sources+' '+(sources===1?"fonte":"fonti")+'</span>'+
+   (lead.priority?'<span>Priorità '+esc(lead.priority)+'</span>':"")+'</div></div>'+
+   '<div class="outLeadActions"><span class="outStatus">'+esc(stage)+'</span>'+
+   '<button type="button" class="outOpen" data-outreach-open="'+esc(lead.key)+'">Esplora il brand <span aria-hidden="true">↗</span></button></div></article>';
  }).join("")+'</div>';
 }
 export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},preferences={}}={}){
@@ -235,6 +246,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
  const email=composeOutreachEmail(lead,selected,person,preferences);
  const cvExplanation=describeOutreachCv(selected,lead.area);
  const subject=draft?.subject??email.subject,body=draft?.email_body??email.body;
+ const candidacyStatus=draft?.status==="applied"?"Candidatura inviata":draft?.status==="preparing"?"In preparazione":"Da preparare";
  const cvOptions=cvs.map(c=>'<option value="'+esc(c.id)+'" '+(selected?.id===c.id?"selected":"")+'>'+esc(c.name)+(c.is_default?" · principale":"")+'</option>').join("");
  const sources=sourceCatalog(lead);
  const priority=String(lead.priority||"").toLowerCase();
@@ -297,10 +309,12 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
           esc(x.kind==="radar"?"World Radar":x.source)+' ↗</a>').join("")+'</div></article>'+
       (relevanceText?'<aside class="outEditorialInterpretation"><span class="outInsightEyebrow">PERCHÉ PUÒ ESSERE INTERESSANTE</span>'+
         '<p>'+esc(relevanceText)+'</p></aside>':"")+
-    '</div><p class="outV3Caution">'+esc(caveatText)+'</p></section>'+ 
+    '</div></section>'+ 
   '<div class="outTabPanel outApplicationPane" id="outApplication" role="tabpanel" aria-labelledby="outTabApplication" data-outreach-panel="application" hidden><section class="outV3Section outV3Application"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO PERCORSO</span><h2>Scheda candidatura</h2>'+
    '<p>HUNT parte dal tuo curriculum verificato e dalle esigenze che emergono dal brand.</p></div>'+
+   '<div class="outCandidateSnapshot"><div><span>PRIORITÀ</span><strong>'+esc(priority||"Da valutare")+'</strong></div>'+
+    '<div><span>STATO</span><strong>'+esc(candidacyStatus)+'</strong></div></div>'+
    '<div class="outCvOnly"><label for="outCvChoice" class="outMiniTitle">CV da utilizzare</label>'+
      '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
      '<p class="outSuggestedCv">'+(suggestion?'HUNT consiglia: <strong>'+esc(suggestion.name)+'</strong>':'Carica e conferma un CV dal tuo profilo.')+'</p>'+
