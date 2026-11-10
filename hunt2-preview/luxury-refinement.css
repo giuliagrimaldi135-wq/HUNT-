@@ -840,3 +840,65 @@
 
 /* Author styles must respect the native hidden attribute when changing news filters. */
 .outFolderV3 .brandNewsItem[hidden]{display:none!important}
+
+
+/* HUNT 166 — Brand dossiers are not vacancies. Exclusive navigation, understated luxury. */
+.outFolderV4{max-width:1080px;margin:0 auto 54px}
+.outFolderV4 [data-outreach-panel][hidden]{display:none!important}
+.outFolderV4 .outBrandHero{background:#e9eee7;border-radius:10px;padding:35px 42px 31px;margin:14px 0 22px;color:#263a2e}
+.outFolderV4 .outBrandHero h1{font-size:clamp(35px,4.8vw,60px);line-height:1.08;letter-spacing:-.052em;font-weight:750;margin:14px 0 16px;color:#22382b}
+.outFolderV4 .outBrandHeroSignal{font-size:14px;line-height:1.83;max-width:870px;margin:0 0 22px;color:#4e6255;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.outFolderV4 .outBrandHeroMeta{display:flex;gap:11px 22px;flex-wrap:wrap;color:#6f8274;font-size:11px;line-height:1.55}
+.outFolderV4 .outBrandHeroActions{margin-top:23px;display:flex;gap:11px;flex-wrap:wrap;align-items:center}
+.outFolderV4 .outBrandHeroActions .outOpen{font:inherit;font-size:12px;font-weight:760;min-height:43px}
+.outFolderV4 .outSecondaryAction{font:inherit;font-size:12px;font-weight:730;background:transparent;color:#2a6143;border:1px solid #b6c9b8;border-radius:4px;padding:12px 16px;cursor:pointer}
+.outFolderV4 .outSectionNav{display:flex;gap:28px;padding:0;margin:0 0 12px;border-bottom:1px solid #dce5dc}
+.outFolderV4 .outSectionNav .folderTab{background:transparent!important;border:0;border-bottom:2px solid transparent!important;padding:15px 0 16px;margin:0;color:#758477!important;font-weight:690;font-size:13px}
+.outFolderV4 .outSectionNav .folderTab.active{color:#1c5d40!important;border-bottom-color:#1c6745!important;font-weight:790}
+.outFolderV4 .outTabPanel{padding:14px 0 36px}
+.outFolderV4 .outV3Section{border:0;margin:0}
+.outFolderV4 .outReason{max-width:890px}
+.outFolderV4 .outReason .outSectionIntro h2{font-family:Georgia,serif;font-size:clamp(25px,3vw,38px);font-weight:500;letter-spacing:-.028em;color:#26372b}
+.outFolderV4 .outV3Story{font-size:15px;line-height:1.86;color:#425746;margin-top:17px}
+.outFolderV4 .outV3Relevance{background:#edf2eb;border:0;border-radius:8px;padding:23px 26px;margin:25px 0 15px;max-width:830px}
+.outFolderV4 .outV3Relevance>p{line-height:1.82;font-size:13px}
+.outFolderV4 .outV3Caution{font-size:11px;margin-top:18px}
+.outFolderV4 .outStorySources{gap:21px}
+.outFolderV4 .outV3Application,.outFolderV4 .outLetterSection,.outFolderV4 .outV3Contact{margin:14px 0 20px;padding:26px 30px;border:1px solid #e0e6de;border-radius:9px;background:#fff}
+.outFolderV4 .outApplicationPane .outV3Application{background:#fafaf7}
+.outFolderV4 .outApplicationPane .outSectionIntro h2{font-family:Georgia,serif;font-weight:500;font-size:29px;letter-spacing:-.03em}
+.outFolderV4 .outApplicationPane .outSectionIntro>p{font-size:12px}
+.outFolderV4 .outPrepareColumns{display:grid;grid-template-columns:1fr 1fr;gap:18px 31px;margin-top:19px}
+.outFolderV4 .outPrepareColumns>div+div{border:0;border-left:1px solid #e4e9e0;padding:0 0 0 27px}
+.outFolderV4 .outMiniTitle{font-size:10px;letter-spacing:.08em;font-weight:760;color:#758774;margin:16px 0 6px}
+.outFolderV4 .outMiniTitle:first-child{margin-top:0}
+.outFolderV4 .outRoleAngle{font-size:12px;line-height:1.75;color:#536957;margin:4px 0 0}
+.outFolderV4 .outLetterSection .outField textarea{background:#191b19;color:#f6f6f1;border:1px solid #272e29;border-radius:8px;padding:23px 25px;font-family:inherit;font-size:13px;line-height:1.88;min-height:295px;resize:vertical}
+.outFolderV4 .outLetterSection .outField textarea:focus-visible{outline:2px solid #9caf9b;outline-offset:3px}
+.outFolderV4 .outLetterSection .outField input{background:#fbfcfa}
+.outFolderV4 .outV3Contact{background:#faf7f1}
+.outFolderV4 .outV3Contact .outContactLine{background:#f3efe7;border:1px solid #e2d8c9;padding:20px 22px;border-radius:8px;display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.outFolderV4 .outContactEmail{font-weight:730;font-size:16px;overflow-wrap:anywhere}
+.outFolderV4 .outMailtoAction{border:1px solid #1d6044;color:#fff;background:#1d6044;padding:11px 15px;border-radius:5px;text-decoration:none;margin-top:7px}
+.outFolderV4 .outV3News{padding:18px 0 30px}
+.outFolderV4 .brandGlobalNewsHead h2{font-family:Georgia,serif;font-weight:500;font-size:30px}
+.outFolderV4 .brandGlobalNewsList{display:grid;grid-template-columns:1fr;gap:13px}
+.outFolderV4 .brandNewsItem{padding:22px 25px;border:1px solid #e1e7e0;border-radius:9px;background:#fff}
+.outFolderV4 .brandNewsItem h3{font-family:Georgia,serif;font-size:20px;line-height:1.35;font-weight:550}
+.outFolderV4 .brandNewsMeta{font-size:11px}
+.outFolderV4 .brandNewsSwitch{margin:21px 0 16px}
+.outFolderV4 .outV3Sources{background:#eef2eb;padding:23px 25px;border:0;border-radius:9px;margin-top:22px}
+.outFolderV4 .outFolderFoot{margin:8px 0 0;padding:10px 0 2px;border:0}
+@media(max-width:700px){
+ .outFolderV4 .outBrandHero{padding:25px 20px}
+ .outFolderV4 .outBrandHero h1{font-size:36px}
+ .outFolderV4 .outBrandHeroSignal{font-size:13px}
+ .outFolderV4 .outSectionNav{gap:18px;overflow-x:auto}
+ .outFolderV4 .outSectionNav .folderTab{font-size:12px;white-space:nowrap}
+ .outFolderV4 .outV3Application,.outFolderV4 .outLetterSection,.outFolderV4 .outV3Contact{padding:21px 17px}
+ .outFolderV4 .outPrepareColumns{grid-template-columns:1fr}
+ .outFolderV4 .outPrepareColumns>div+div{border-left:0;border-top:1px solid #e5e9e3;padding:16px 0 0}
+ .outFolderV4 .outLetterSection .outField textarea{padding:18px 17px}
+ .outFolderV4 .brandNewsItem h3{font-size:18px}
+ .outFolderV4 .outV3Relevance{padding:20px 19px}
+}
