@@ -27,7 +27,7 @@ export function buildOutreachLeads(curated=[],corporate=[],now=Date.now()){
     whyNow:String(item.why_now||"").trim(),sourceUrl:url,
     evidence,priority:String(item.priority||"").toLowerCase(),
     dated:recent,checkedAt:item.updated_at||null,
-    contactEmail:email,contactSourceUrl:safeLink(item.contact_source_url),
+    contactEmail:email,contactSourceUrl:safeLink(item.contact_source_url),contactKind:String(item.contact_kind||""),
     contactDescription:email?"Email indicata nel dossier: verifica sulla pagina ufficiale, non necessariamente recruiting":String(item.contact_hint||item.contact_kind||item.contact||"").trim(),
     careerUrl:safeLink(item.careers_url),signalOrigin:"curated",score:Number(item.score)||0
   });
@@ -178,13 +178,14 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}=
    '<p class="outStory">'+esc(lead.whyNow||lead.evidence[0]?.description||"")+'</p>'+
 
    '<div class="outStorySources">'+primary.map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' <span>↗</span></a>').join("")+'</div></section>'+
-  '<section class="outPrepare"><div class="outSectionIntro"><span class="outSectionKicker">02 · La candidatura</span><h2>Come presentarti</h2></div>'+
+  '<section class="outPrepare"><div class="outSectionIntro"><span class="outSectionKicker">02 · La candidatura</span><h2>Scheda candidatura</h2></div>'+
    '<div class="outPrepareColumns"><div><span class="outMiniTitle">Area su cui puntare</span><strong>'+esc(lead.area)+'</strong>'+
-   (lead.messageAngle?'<p>'+esc(lead.messageAngle)+'</p>':"")+'</div>'+
+   (lead.priority?'<span class="outMiniTitle outPriorityText">Priorità di ricerca: '+esc(lead.priority)+'</span>':"")+
+   (lead.messageAngle?'<span class="outMiniTitle outAngleLabel">Angolo del messaggio</span><p>'+esc(lead.messageAngle)+'</p>':"")+'</div>'+
    '<div><label for="outCvChoice" class="outMiniTitle">CV per questa candidatura</label>'+
    '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
    '<p class="outSuggestedCv">'+(suggested?'HUNT ti consiglia: <strong>'+esc(suggested.name)+'</strong>. Puoi scegliere un altro CV.':'Carica un curriculum dal tuo profilo per personalizzare il testo.')+'</p></div></div></section>'+
-  '<section class="outLetterSection"><div class="outSectionIntro"><span class="outSectionKicker">03 · Pronta da inviare</span><h2>La tua email, già personalizzata</h2>'+
+  '<section class="outLetterSection"><div class="outSectionIntro"><span class="outSectionKicker">03 · Pronta da inviare</span><h2>Email pronta da personalizzare</h2>'+
    '<p>Una proposta concreta per questo brand. Puoi cambiare ogni parola prima di copiarla o salvarla.</p></div>'+
    '<label class="outField">Oggetto<input type="text" id="outSubject" value="'+esc(subject)+'" maxlength="300"></label>'+
    '<label class="outField">Messaggio<textarea id="outBody" rows="12">'+esc(body)+'</textarea></label>'+
@@ -192,7 +193,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}=
    '<button type="button" data-outreach-copy>Copia email</button>'+
    '<button type="button" data-outreach-regenerate>Personalizza con un altro CV</button></div>'+
    '<p class="outSaveState" id="outSaveState" aria-live="polite"></p></section>'+
-  '<section class="outContactSection"><div class="outSectionIntro"><span class="outSectionKicker">04 · Il contatto</span><h2>Dove scrivere al brand</h2></div>'+
+  '<section class="outContactSection"><div class="outSectionIntro"><span class="outSectionKicker">04 · Il contatto</span><h2>Dove contattare il brand</h2></div>'+
    '<div class="outContactLine">'+companyContact+'</div>'+
    (lead.contactEmail&&lead.contactSourceUrl?'<button type="button" class="outMailtoAction" data-outreach-mailto>Prepara in email ↗</button>':"")+
    (lead.careerUrl?'<p><a href="'+esc(lead.careerUrl)+'" target="_blank" rel="noopener noreferrer">Controlla le posizioni ufficiali ↗</a></p>':"")+
