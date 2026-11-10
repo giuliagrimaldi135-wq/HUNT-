@@ -1,6 +1,6 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,safeLink,emailAddress} from "../outreach-intelligence.js";
+import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,safeLink,emailAddress} from "../outreach-intelligence.js";
 const sample={
  key:"label-x",brand:"Label X",score:95,area:"Retail Merchandising",
  why_now:"Il brand ha annunciato un nuovo negozio a Milano.",
@@ -136,4 +136,57 @@ test("Fresh company-profile verification cannot make an old store opening look r
  assert.equal(leads.length,1);
  assert.equal(leads[0].dated,false);
  assert.match(renderOutreachCards(leads),/Segnale da ricontrollare/);
+});
+
+test("Switching between two confirmed CVs changes subject, project evidence and motivation",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const cvs=[
+  {id:"one",name:"fashion management",is_default:true,parsed_profile:{
+   profile_confirmed_by_user:true,education:[{program:"Fashion Management",school:"Scuola Test"}],
+   experience:[{company:"Studio Uno",role:"Showroom Intern"}],projects:[{name:"Brand strategy"}]}},
+  {id:"two",name:"Merchandising",is_default:false,parsed_profile:{
+   profile_confirmed_by_user:true,education:[{program:"Fashion Management",school:"Scuola Test"}],
+   experience:[{company:"Studio Uno",role:"Showroom Intern"}],
+   projects:[{name:"Assortment Gucci",evidence:["Buying plan"]}],tools:["Excel (avanzato)"]}}
+ ];
+ const user={display_name:"Utente Esempio"},personalization={interest_areas:["Retail Merchandising"],communication_style:"naturale"};
+ const a=composeOutreachEmail(lead,cvs[0],user,personalization);
+ const b=composeOutreachEmail(lead,cvs[1],user,personalization);
+ assert.equal(a.verifiedCv,true);
+ assert.equal(b.verifiedCv,true);
+ assert.doesNotMatch(a.subject,/Merchandising e Retail Planning/);
+ assert.match(b.subject,/Merchandising e Retail Planning/);
+ assert.doesNotMatch(a.body,/Assortment Gucci/);
+ assert.match(b.body,/Assortment Gucci/);
+ assert.match(b.body,/Excel/);
+ assert.match(b.body,/Utente Esempio/);
+ assert.match(describeOutreachCv(cvs[1],lead.area).text,/Assortment Gucci/);
+ const html=renderOutreachFolder(lead,{cvs,cvId:"two",person:user,preferences:personalization});
+ assert.match(html,/<option value="two" selected>/);
+ assert.match(html,/id="outCvReason"/);
+ assert.match(html,/Assortment Gucci/);
+});
+test("Each user receives their own confirmed CV facts and signature without cross-user leakage",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const first={id:"1",name:"Merchandising",parsed_profile:{profile_confirmed_by_user:true,experience:[{company:"Azienda Alfa"}]}};
+ const second={id:"2",name:"Merchandising",parsed_profile:{profile_confirmed_by_user:true,experience:[{company:"Azienda Beta"}]}};
+ const a=composeOutreachEmail(lead,first,{display_name:"Utente Alfa"});
+ const b=composeOutreachEmail(lead,second,{display_name:"Utente Beta"});
+ assert.match(a.body,/Azienda Alfa/);
+ assert.doesNotMatch(a.body,/Azienda Beta|Utente Beta/);
+ assert.match(b.body,/Azienda Beta/);
+ assert.doesNotMatch(b.body,/Azienda Alfa|Utente Alfa/);
+});
+test("Real editorial articles are visible as brand news, without empty placeholders",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const withPress=enrichOutreachLeads([lead],{"label-x":{articles:[{
+  title:"Label X apre un nuovo store a Milano",publisher:"Stampa Moda",date:"2026-10-20",url:"https://example.org/new-store"
+ }]}})[0];
+ const html=renderOutreachFolder(withPress);
+ assert.match(html,/News del brand/);
+ assert.match(html,/Stampa Moda/);
+ assert.match(html,/outNewsPreview/);
+ assert.ok(html.indexOf("outNewsPreview")<html.indexOf("outPrepare"));
+ const without=renderOutreachFolder(lead);
+ assert.doesNotMatch(without,/Nessuna news|non risultano altri articoli|outNewsPreview/);
 });
