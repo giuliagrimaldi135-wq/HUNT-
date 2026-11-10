@@ -840,5 +840,47 @@
     "source_name": "Kering Careers / Balenciaga",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "chatgpt-brioni-merchandising-intern-roma-20261110",
+    "brand": "Brioni",
+    "title": "Merchandising Intern",
+    "location": "Roma, Italia",
+    "published_at": "2026-11-10",
+    "detected_at": "2026-11-10T16:09:52+01:00",
+    "priority": "MEDIA",
+    "score": 82,
+    "role_family": "Merchandising",
+    "why_fit": "Stage nel merchandising con analisi sell-in/sell-out, supporto alle sessioni buying e collaborazione Retail/Wholesale; sede Roma anziché Milano.",
+    "reasons": [
+      "Stage accessibile a profilo Fashion Management",
+      "Analisi performance e supporto buying",
+      "Sede Roma: richiede disponibilità al trasferimento"
+    ],
+    "url": "https://www.kering.com/it/talenti/offerte-di-lavoro/europe/brioni-merchandising-intern/",
+    "source_name": "Kering Careers / Brioni",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-bottega-junior-digital-merchandiser-milano-20261110",
+    "brand": "Bottega Veneta",
+    "title": "Junior Digital Merchandiser",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-10",
+    "detected_at": "2026-11-10T16:09:52+01:00",
+    "priority": "MEDIA",
+    "score": 76,
+    "role_family": "E-commerce Merchandising",
+    "why_fit": "Ruolo junior su e-commerce merchandising, buying, allocation, stock e open-to-buy, ma richiede 1-3 anni di esperienza in buying/merchandising.",
+    "reasons": [
+      "Milano e mansioni direttamente allineate al merchandising",
+      "Attività di buying, pre-order e allocation",
+      "Requisito di 1-3 anni di esperienza: candidatura ambiziosa"
+    ],
+    "url": "https://www.kering.cn/it/talenti/offerte-di-lavoro/europe/bottega-veneta-junior-digital-merchandiser/",
+    "source_name": "Kering Careers / Bottega Veneta",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
