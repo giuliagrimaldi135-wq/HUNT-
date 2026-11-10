@@ -741,3 +741,99 @@
 .outPage .outPageHeader h1{letter-spacing:-.055em}
 .outPage .outAbout{font-size:12px;line-height:1.7;color:#728275;padding:13px 0 24px}
 @media(max-width:630px){.outFolderV2 .outNewsLink strong{font-size:12px}.outPage .outPageHeader h1{font-size:34px}.outFolderV2 .outNewsPreview{padding:22px 0 24px}}
+
+
+/* Brand da contattare / V3: same typography and editorial news as approved Opportunities. */
+.outFolderV3{max-width:1130px;margin:0 auto 50px;color:#26372c}
+.outFolderV3 .outTopbar{padding:4px 0 15px;align-items:center}
+.outFolderV3 .outFolderTag{font-size:11px;color:#819085;letter-spacing:.04em}
+.outFolderV3 .outHero{max-width:none;margin:8px 0 14px;padding:37px 41px 35px;border-radius:9px;background:#111;color:#fff}
+.outFolderV3 .outHero .folderLabel{font-size:11px;letter-spacing:.08em;font-weight:740;color:#94b49e;text-transform:uppercase}
+.outFolderV3 .outHero .brandEyebrow{color:#c1cec3;font-size:14px;font-weight:760;letter-spacing:.13em;margin:21px 0 4px}
+.outFolderV3 .outHero h1{font-family:inherit;letter-spacing:-.045em;font-size:clamp(32px,4.2vw,54px);font-weight:735;max-width:930px;line-height:1.09;margin:7px 0 14px;color:#fff}
+.outFolderV3 .outHero .lead{font-size:15px;color:#bdc7be;margin:0;line-height:1.65}
+.outFolderV3 .outHero .heroMeta{margin:24px 0 19px}
+.outFolderV3 .outHero .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
+.outFolderV3 .outHero .btn{min-height:44px;padding:12px 16px;font-weight:740;font-size:12px}
+.outFolderV3 .outSectionNav{border-bottom:1px solid #dce2db;padding:2px 0 0;display:flex;gap:0;margin-bottom:8px}
+.outFolderV3 .outSectionNav .folderTab{background:transparent!important;color:#68746b!important;border-radius:0;border-bottom:2px solid transparent;font-size:13px;padding:14px 23px 15px 2px;margin-right:23px}
+.outFolderV3 .outSectionNav .folderTab.active{color:#215b3f!important;border-bottom-color:#236245;font-weight:770}
+.outFolderV3 .outV3Section{padding:43px 0 46px;border-bottom:1px solid #dce3dc}
+.outFolderV3 .outSectionIntro{max-width:760px}
+.outFolderV3 .outSectionKicker{font-size:10px;font-weight:770;color:#718d77;letter-spacing:.105em}
+.outFolderV3 .outSectionIntro h2{font-size:clamp(25px,2.5vw,33px);line-height:1.15;letter-spacing:-.045em;margin:12px 0 16px;font-weight:740;color:#283b2e}
+.outFolderV3 .outSectionIntro>p{color:#738376;font-size:13px;line-height:1.77;margin:0 0 19px}
+.outFolderV3 .outV3Story{font-size:17px;line-height:1.93;color:#33473a;margin:22px 0 20px;max-width:865px;letter-spacing:-.008em}
+.outFolderV3 .outV3Relevance{max-width:875px;margin-top:25px;padding:22px 0 0;border-top:1px solid #e3eae1}
+.outFolderV3 .outV3Relevance>strong{display:block;font-size:12px;color:#2a6041;font-weight:770;margin-bottom:9px}
+.outFolderV3 .outV3Relevance>p{font-size:14px;line-height:1.84;color:#54685a;margin:0}
+.outFolderV3 .outV3Caution{font-size:11px;line-height:1.7;color:#889589;margin:17px 0 0;max-width:810px}
+.outFolderV3 .outStorySources{display:flex;gap:14px 24px;flex-wrap:wrap;margin:19px 0 0}
+.outFolderV3 .outStorySources a{color:#245e42;font-size:12px;text-decoration:underline;text-underline-offset:4px;font-weight:735}
+.outFolderV3 .outPrepareColumns{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin:27px 0 0}
+.outFolderV3 .outPrepareColumns>div{min-width:0}
+.outFolderV3 .outPrepareColumns>div+div{border-left:1px solid #dce5da;padding-left:31px}
+.outFolderV3 .outMiniTitle{display:block;font-size:11px;font-weight:760;color:#758777;margin:0 0 11px}
+.outFolderV3 .outPrepareColumns strong{display:block;font-size:14px;font-weight:740;color:#314a38;line-height:1.52}
+.outFolderV3 .outRoleAngle{font-size:13px;color:#5c6e60;line-height:1.8;max-width:450px;margin:18px 0 0}
+.outFolderV3 #outCvChoice{width:100%;font:inherit;font-size:13px;border:1px solid #cfddcf;border-radius:5px;padding:12px 13px;background:#fff;max-width:450px;color:#2a4634}
+.outFolderV3 .outSuggestedCv,.outFolderV3 .outCvReason{font-size:11.5px;line-height:1.7;color:#718273;max-width:475px;margin:12px 0 0}
+.outFolderV3 .outSuggestedCv strong{font-size:12px;display:inline;color:#1f6442}
+.outFolderV3 .outCvReason{color:#536b58}
+.outFolderV3 .outLetterSection{background:transparent;margin:0;padding-top:44px;border:0;border-bottom:1px solid #dce3dc;border-radius:0}
+.outFolderV3 .outLetterSection .outField{display:block;margin-top:19px;font-size:12px;font-weight:720;color:#56705e}
+.outFolderV3 .outLetterSection input,.outFolderV3 .outLetterSection textarea{
+ width:100%;display:block;box-sizing:border-box;border:1px solid #d7e0d6;background:#fff;
+ color:#293a2f;font:inherit;font-size:13px;line-height:1.85;letter-spacing:0;
+ border-radius:5px;padding:14px 16px;margin-top:9px;box-shadow:none}
+.outFolderV3 .outLetterSection textarea{min-height:290px;resize:vertical}
+.outFolderV3 .outEmailActions{display:flex;flex-wrap:wrap;gap:11px;margin-top:19px}
+.outFolderV3 .outEmailActions button{cursor:pointer;font:inherit;font-size:12px;font-weight:730;border-radius:4px;border:1px solid #bad0bf;padding:12px 15px;background:transparent;color:#2a6145}
+.outFolderV3 .outEmailActions button:first-child{background:#206247;border-color:#206247;color:#fff}
+.outFolderV3 .outContactLine{display:flex;gap:16px 22px;flex-wrap:wrap;align-items:baseline;line-height:1.5;margin:21px 0 13px}
+.outFolderV3 .outContactEmail{font-size:16px;color:#263b2d}
+.outFolderV3 .outContactLine small{font-size:11px;color:#809084}
+.outFolderV3 .outContactLine a,.outFolderV3 .outV3Contact a{font-size:12px;font-weight:720;color:#1d6142}
+.outFolderV3 .outMailtoAction{border:0;border-bottom:1px solid #387855;padding:9px 0 5px;background:transparent;color:#1d6443;font:inherit;font-weight:720;font-size:12px;cursor:pointer}
+.outFolderV3 .outSmallNote{font-size:11px;color:#8a968c;line-height:1.7}
+.outFolderV3 .outV3News{padding:39px 0 37px;border-bottom:1px solid #dce3dc}
+.outFolderV3 .brandGlobalNewsHead h2{font-size:clamp(24px,2.5vw,32px);font-weight:740;letter-spacing:-.04em;color:#2a3c2f}
+.outFolderV3 .brandNewsSwitch button{border-radius:4px}
+.outFolderV3 .brandNewsItem{box-shadow:none;border:1px solid #dfe6df;border-radius:5px;background:#fff}
+.outFolderV3 .brandNewsItem h3{font-size:16px;font-weight:735}
+.outFolderV3 .brandNewsActions{margin-top:auto}
+.outFolderV3 .outV3Sources{margin-top:29px;padding-top:24px;border-top:1px solid #dce5da}
+.outFolderV3 .outV3Sources>h3{font-size:16px;color:#354c3b;letter-spacing:-.02em;margin:0 0 10px}
+.outFolderV3 .outV3Sources>p{font-size:11px;color:#87948a;margin:14px 0}
+.outFolderV3 .outSocialLinks{display:flex;flex-wrap:wrap;gap:12px 23px;margin:16px 0 11px}
+.outFolderV3 .outSocialLinks a{font-size:12px;color:#2b6546;font-weight:720;text-decoration:underline;text-underline-offset:4px}
+.outFolderV3 .outEvidenceDetails{padding-top:8px;border-top:1px solid #e4ebe4;margin-top:18px}
+.outFolderV3 .outEvidenceDetails summary{display:flex;justify-content:space-between;gap:15px;cursor:pointer;color:#275e43;font-weight:730;padding:15px 0;font-size:12px}
+.outFolderV3 .outEvidenceDetails summary span{font-weight:550;color:#859486}
+.outFolderV3 .outSources{list-style:none;padding:0;margin:0}
+.outFolderV3 .outSourceRow{display:flex;justify-content:space-between;gap:15px;padding:15px 0;border-top:1px solid #edf0eb}
+.outFolderV3 .outSourceRow>div{min-width:0}
+.outFolderV3 .outSourceType{font-size:10px;color:#5d7964;letter-spacing:.04em;display:block;margin-bottom:6px;font-weight:750}
+.outFolderV3 .outSourceRow strong{font-size:12px;font-weight:640;color:#435447;line-height:1.65;display:block}
+.outFolderV3 .outSourceRow small{display:block;font-size:11px;color:#899589;margin-top:5px}
+.outFolderV3 .outSourceRow a{color:#286246;font-size:11px;white-space:nowrap;font-weight:720}
+.outFolderV3 .outFolderFoot{padding:25px 0 43px;display:flex;align-items:center;gap:19px;flex-wrap:wrap}
+.outFolderV3 .outFolderFoot span{font-size:11px;color:#899589}
+.outFolderV3 .outApplied{font:inherit;border:1px solid #b7cbb9;border-radius:4px;padding:12px 15px;background:#fff;color:#27553b;cursor:pointer;font-weight:740;font-size:12px}
+@media(max-width:750px){
+ .outFolderV3 .outHero{padding:25px 23px 24px;border-radius:7px}
+ .outFolderV3 .outHero h1{font-size:clamp(29px,8vw,40px)}
+ .outFolderV3 .outHero .brandEyebrow{margin-top:15px}
+ .outFolderV3 .outV3Section{padding:31px 0 34px}
+ .outFolderV3 .outPrepareColumns{grid-template-columns:1fr;gap:24px}
+ .outFolderV3 .outPrepareColumns>div+div{border-left:0;border-top:1px solid #e2e9e1;padding:21px 0 0}
+ .outFolderV3 .outV3Story{font-size:15px;line-height:1.87}
+ .outFolderV3 .outSectionIntro h2{font-size:26px}
+ .outFolderV3 .outSectionNav .folderTab{font-size:11px;margin-right:8px;padding:12px 12px 12px 0}
+ .outFolderV3 .outEmailActions{display:grid;grid-template-columns:1fr 1fr}
+ .outFolderV3 .outEmailActions button:last-child{grid-column:1 / -1}
+ .outFolderV3 .outSourceRow{display:block}
+ .outFolderV3 .outSourceRow a{display:inline-block;margin-top:9px}
+ .outFolderV3 .outV3News .brandGlobalNewsHead{display:block}
+ .outFolderV3 .outFolderTag{max-width:150px;text-align:right}
+}
