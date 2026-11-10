@@ -721,3 +721,8 @@
  .outFolderV2 .outFolderTop{align-items:center}
  .outFolderV2 .outFolderTag{font-size:9px;max-width:150px}
 }
+
+/* Evidence-led candidature sheet: labels restored from the original successful folder. */
+.outFolderV2 .outPriorityText{margin-top:18px;margin-bottom:5px;color:#647d6b;font-size:11px}
+.outFolderV2 .outAngleLabel{margin-top:22px;margin-bottom:4px;color:#526c59}
+.outFolderV2 .outPrepareColumns .outAngleLabel+p{margin-top:4px;line-height:1.82;color:#506254}
