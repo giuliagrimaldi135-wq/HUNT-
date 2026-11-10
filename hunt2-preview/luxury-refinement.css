@@ -544,3 +544,9 @@
 @media(max-width:1050px){.huntWorkspaceEditorial .hwLayout{grid-template-columns:minmax(0,1fr) 234px;gap:27px}.huntWorkspaceEditorial .hwAside{padding-left:20px}}
 @media(max-width:810px){.huntWorkspaceEditorial .hwLayout{grid-template-columns:1fr;gap:24px}.huntWorkspaceEditorial .hwAside{position:static;display:flex;flex-direction:column;border:0;border-top:1px solid #dce3db;padding:12px 0 0}}
 @media(max-width:600px){.huntWorkspaceEditorial .hwRoleStory{padding-top:23px}.huntWorkspaceEditorial .hwRoleStoryHead h2{font-size:29px}.huntWorkspaceEditorial .hwRoleDescription{font-size:14px;line-height:1.9}.huntWorkspaceEditorial .hwRoleFit p{font-size:12px}.huntWorkspaceEditorial .hwExploreIntro{display:block}.huntWorkspaceEditorial .hwExploreIntro p{margin-top:5px}.huntWorkspaceEditorial .hwExploreChoice{padding:19px 12px 19px 0}.huntWorkspaceEditorial .hwExploreChoice+.hwExploreChoice{padding-left:12px}.huntWorkspaceEditorial .hwExploreChoice strong{font-size:13px}.huntWorkspaceEditorial .hwExploreChoice small{font-size:10.5px}.cvWWorkspaceSimple .cvWReviewSectionTitle{display:flex;flex-direction:column;gap:4px}.cvWWorkspaceSimple .cvWConfirm:not([hidden]){flex-direction:column;align-items:stretch}.cvWWorkspaceSimple .cvWReviewIntro h3{font-size:22px}}
+
+@media(max-width:460px){
+ .huntWorkspaceEditorial .hwExploreChoices{grid-template-columns:1fr}
+ .huntWorkspaceEditorial .hwExploreChoice{padding:17px 0}
+ .huntWorkspaceEditorial .hwExploreChoice+.hwExploreChoice{border-left:0;border-top:1px solid #e2e7e1;padding-left:0}
+}
