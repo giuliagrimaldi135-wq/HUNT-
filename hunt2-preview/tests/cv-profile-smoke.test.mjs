@@ -24,7 +24,7 @@ test("Profile displays principal/secondary/delete, Italian evidence and hides ma
  assert.match(root.innerHTML,/Elimina CV/);
  assert.match(root.innerHTML,/cvWLibrary/);
  assert.match(root.innerHTML,/cvWWorkspace/);
- assert.match(root.innerHTML,/cvWTab/);
+ assert.match(root.innerHTML,/cvWWorkspaceSimple/);
  assert.match(root.innerHTML,/data-cv-panel-target="overview"/);
  assert.match(root.innerHTML,/data-cv-panel-target="projects"/);
  assert.match(root.innerHTML,/data-cv-panel="edit" hidden/);
