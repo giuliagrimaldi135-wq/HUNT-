@@ -27,7 +27,17 @@ test("Per-user personalization and source-backed press appear in folder",()=>{
  assert.match(app,/from\("user_personalization"\)/);
  assert.match(app,/preferences:preferencesRes.data\|\|\{\}/);
  assert.match(app,/composeOutreachEmail\(lead,selectedById\(id\),person,preferences\)/);
- assert.match(outreach,/outNewsPreview/);
- assert.match(outreach,/News del brand/);
+ assert.match(outreach,/brandGlobalNewsList/);
+ assert.match(outreach,/data-outreach-news-filter="press"/);
+ assert.match(outreach,/News & mondo fashion/);
  assert.match(outreach,/Un profilo social ufficiale non significa/);
+});
+
+test("Brand news can be filtered and all Fashion News opened through real actions",()=>{
+ assert.match(app,/data-outreach-news-filter/);
+ assert.match(app,/item.hidden=!match/);
+ assert.match(app,/data-outreach-all-news/);
+ assert.match(app,/renderWorldRadar\(\)/);
+ assert.match(app,/data-outreach-jump/);
+ assert.match(app,/scrollIntoView/);
 });
