@@ -1225,12 +1225,33 @@ function openOutreachFolder(key){
  bindNav();
  const back=app.querySelector("[data-outreach-back]");
  if(back)back.onclick=renderOutreach;
- const targets={reason:"outReason",application:"outApplication",letter:"outLetter",news:"outNews"};
+ const validTabs=["reason","application","news"];
+ const setOutreachTab=name=>{
+   const selected=validTabs.includes(name)?name:"reason";
+   app.querySelectorAll("[data-outreach-panel]").forEach(panel=>{
+     const active=panel.dataset.outreachPanel===selected;
+     panel.hidden=!active;
+     panel.classList.toggle("is-visible",active);
+   });
+   app.querySelectorAll('.outSectionNav [role="tab"]').forEach(tab=>{
+     const active=tab.dataset.outreachJump===selected;
+     tab.classList.toggle("active",active);
+     tab.setAttribute("aria-selected",String(active));
+     tab.tabIndex=active?0:-1;
+   });
+   app.querySelector(".outSectionNav")?.scrollIntoView({behavior:"smooth",block:"start"});
+ };
  app.querySelectorAll("[data-outreach-jump]").forEach(button=>button.onclick=()=>{
-   const target=targets[button.dataset.outreachJump];
-   if(!target)return;
-   app.querySelector("#"+target)?.scrollIntoView({behavior:"smooth",block:"start"});
-   app.querySelectorAll(".outSectionNav [data-outreach-jump]").forEach(x=>x.classList.toggle("active",x.dataset.outreachJump===button.dataset.outreachJump));
+   setOutreachTab(button.dataset.outreachJump);
+ });
+ app.querySelectorAll('.outSectionNav [role="tab"]').forEach((tab,index,tabs)=>{
+   tab.onkeydown=e=>{
+     if(!["ArrowRight","ArrowLeft","Home","End"].includes(e.key))return;
+     e.preventDefault();
+     const next=e.key==="Home"?0:e.key==="End"?tabs.length-1:(index+(e.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;
+     setOutreachTab(tabs[next].dataset.outreachJump);
+     tabs[next].focus();
+   };
  });
  app.querySelectorAll("[data-outreach-news-filter]").forEach(button=>button.onclick=()=>{
    const kind=button.dataset.outreachNewsFilter||"all";
