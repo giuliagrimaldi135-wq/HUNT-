@@ -14,7 +14,7 @@ test("Only sourced, relevant outreach signals enter the feed",()=>{
  assert.equal(a.length,1);
  assert.equal(a[0].brand,"Label X");
  assert.equal(a[0].contactEmail,"info@label-x.example");
- assert.match(renderOutreachCards(a,{}),/Apri il dossier/);
+ assert.match(renderOutreachCards(a,{}),/Esplora il brand/);
  assert.doesNotMatch(renderOutreachCards(a,{}),/95% match/);
 });
 test("Social URLs are not proof of an integrated feed; unrelated corporation news does not create recommendations",()=>{
@@ -135,7 +135,7 @@ test("Fresh company-profile verification cannot make an old store opening look r
  const leads=buildOutreachLeads([item],[],Date.parse("2026-11-10"));
  assert.equal(leads.length,1);
  assert.equal(leads[0].dated,false);
- assert.match(renderOutreachCards(leads),/Segnale da ricontrollare/);
+ assert.match(renderOutreachCards(leads),/DAL BRAND/);
 });
 
 test("Switching between two confirmed CVs changes subject, project evidence and motivation",()=>{
@@ -204,7 +204,8 @@ test("Opportunity-style outreach dossier has the right reading order and source 
  assert.ok(html.indexOf('id="outNews"')>html.indexOf('id="outLetter"'));
  assert.ok(html.indexOf('id="outNews"')>html.indexOf('outV3Contact'));
  assert.match(html,/Il brand ha aperto il primo negozio/);
- assert.match(html,/Nessuna assunzione verificata/);
+ assert.equal(enhanced.outreachCaution,"Nessuna assunzione verificata.");
+ assert.doesNotMatch(html,/Nessuna assunzione verificata/);
 });
 
 test("Three tabs are exclusive panels: brand visible, candidate and news hidden",()=>{
@@ -253,4 +254,40 @@ test("Brand strategy project is never inserted as irrelevant filler in merchandi
  const email=composeOutreachEmail(lead,cv,{display_name:"Candidata"});
  assert.match(email.body,/Marina Rinaldi/);
  assert.doesNotMatch(email.body,/Valentino|Ho sviluppato inoltre un progetto dedicato|lavorando su strategia di brand/);
+});
+
+test("Sourced commercial context remains but unresolved flagship warning is not shown to candidates",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const checked=enrichOutreachLeads([lead],{"label-x":{
+   outreach_story:"Nuova collezione presentata a Milano.",
+   outreach_relevance:"Un contatto in merchandising può essere pertinente.",
+   outreach_caution:"Progetto flagship non verificato: non mostrare come evento avvenuto."
+ }})[0];
+ const html=renderOutreachFolder(checked);
+ assert.match(html,/Nuova collezione presentata a Milano/);
+ assert.doesNotMatch(html,/Progetto flagship non verificato/);
+ assert.match(html,/outEditorialInterpretation/);
+});
+test("Application preserves priority and candidacy status, with a full-width CV section and no repeated area",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const html=renderOutreachFolder(lead,{draft:{status:"preparing",subject:"Oggetto",email_body:"Testo"},cvs:[{id:"cv1",name:"Merchandising",is_default:true}]});
+ assert.match(html,/outCandidateSnapshot/);
+ assert.match(html,/PRIORITÀ/);
+ assert.match(html,/In preparazione/);
+ assert.match(html,/outCvOnly/);
+ assert.doesNotMatch(html,/ANGOLO DEL MESSAGGIO|<span class="outMiniTitle">AREA/);
+});
+test("Luxury brand discovery feed uses concise verified headlines instead of repeating the full analysis",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const enrich=enrichOutreachLeads([lead],{"label-x":{
+  preview_title:"Nuova apertura · Retail",
+  preview_summary:"Una novità commerciale documentata.",
+  outreach_story:"Una lunghissima analisi del contesto commerciale non deve apparire nella lista."
+ }})[0];
+ const html=renderOutreachCards([enrich]);
+ assert.match(html,/outLeadV5/);
+ assert.match(html,/Nuova apertura · Retail/);
+ assert.match(html,/Una novità commerciale documentata/);
+ assert.match(html,/Esplora il brand/);
+ assert.doesNotMatch(html,/Una lunghissima analisi/);
 });
