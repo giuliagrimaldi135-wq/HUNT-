@@ -36,7 +36,7 @@ test("No fabricated recruitment contact or CV experience from unconfirmed extrac
  const folder=renderOutreachFolder(a,{cvs:[{id:"1",name:"General CV",is_default:true,parsed_profile:cv.parsed_profile}],person:{display_name:"Test User"}});
  assert.match(folder,/Email pronta da personalizzare/);
  assert.match(folder,/Perché contattare/);
- assert.match(folder,/Contatta il brand/);
+ assert.match(folder,/Dove contattare il brand/);
  assert.match(folder,/non HR/);
  assert.match(folder,/HUNT non invia email automaticamente/);
 });
@@ -70,7 +70,7 @@ test("World Radar adds only exact-brand recent news and never manufactures a new
  const withNews=attachBrandNews([lead],articles,Date.parse("2026-11-10"));
  assert.equal(withNews.length,1);
  assert.equal(withNews[0].news.length,1);
- assert.match(renderOutreachFolder(withNews[0]),/News & mondo fashion/);
+ assert.match(renderOutreachFolder(withNews[0]),/NOTIZIE E FONTI/);
  assert.match(renderOutreachFolder(withNews[0]),/nuova collezione/);
 });
 
@@ -98,7 +98,7 @@ test("Official social profiles are linked as sources, not presented as scanned p
  assert.match(html,/Instagram/);
  assert.match(html,/TikTok/);
  assert.match(html,/link dal sito ufficiale/);
- assert.match(html,/non un monitoraggio automatico/);
+ assert.match(html,/non post acquisiti automaticamente/);
  assert.match(html,/Fashion Press/);
  assert.match(composeOutreachEmail(richer).body,/Ho seguito l’apertura del nuovo negozio/);
  assert.doesNotMatch(html,/post Instagram acquisiti|post TikTok acquisiti/);
@@ -108,9 +108,9 @@ test("Brand-specific editorial brief replaces generic dashboard empty-news cards
  const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
  const html=renderOutreachFolder(lead);
  assert.match(html,/Perché contattare/);
- assert.match(html,/La tua proposta/);
+ assert.match(html,/Scheda candidatura/);
  assert.match(html,/Email pronta da personalizzare/);
- assert.match(html,/News & mondo fashion/);
+ assert.match(html,/NOTIZIE E FONTI/);
  assert.doesNotMatch(html,/Non risultano altri articoli recenti|Nessun altro segnale recente|News del brand da conoscere/);
 });
 
@@ -119,11 +119,11 @@ test("Original approved folder labels stay clear and message angle is explicit",
  const enhanced=enrichOutreachLeads([lead],{"label-x":{message_angle:"Il nuovo negozio richiede una gestione attenta degli assortimenti."}})[0];
  const html=renderOutreachFolder(enhanced);
  assert.match(html,/Perché contattare/);
- assert.match(html,/La tua proposta/);
+ assert.match(html,/Scheda candidatura/);
  assert.match(html,/Il collegamento con il tuo profilo/);
  assert.match(html,/Email pronta da personalizzare/);
- assert.match(html,/Contatta il brand/);
- assert.match(html,/News & mondo fashion/);
+ assert.match(html,/Dove contattare il brand/);
+ assert.match(html,/NOTIZIE E FONTI/);
 });
 
 
@@ -183,7 +183,7 @@ test("Real editorial articles are visible as brand news, without empty placehold
   title:"Label X apre un nuovo store a Milano",publisher:"Stampa Moda",date:"2026-10-20",url:"https://example.org/new-store"
  }]}})[0];
  const html=renderOutreachFolder(withPress);
- assert.match(html,/nel mondo/);
+ assert.match(html,/News & fonti/);
  assert.match(html,/Stampa Moda/);
  assert.match(html,/brandGlobalNewsList/);
  assert.ok(html.indexOf("brandGlobalNewsList")>html.indexOf("outLetter"));
@@ -195,8 +195,8 @@ test("Opportunity-style outreach dossier has the right reading order and source 
  const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
  const enhanced=enrichOutreachLeads([lead],{"label-x":{outreach_story:"Il brand ha aperto il primo negozio.",outreach_relevance:"Una candidatura commerciale può avere senso.",outreach_caution:"Nessuna assunzione verificata.",articles:[{title:"Il primo negozio",publisher:"Stampa Moda",date:"2026-10-02",url:"https://example.org/store-story"}]}})[0];
  const html=renderOutreachFolder(enhanced);
- assert.match(html,/folderHero section outHero/);
- assert.match(html,/folderTabs section outSectionNav/);
+ assert.match(html,/outBrandHero/);
+ assert.match(html,/class="outSectionNav"/);
  assert.match(html,/brandGlobalNewsList/);
  assert.match(html,/brandNewsItem/);
  assert.match(html,/data-outreach-news-filter="press"/);
@@ -205,4 +205,16 @@ test("Opportunity-style outreach dossier has the right reading order and source 
  assert.ok(html.indexOf('id="outNews"')>html.indexOf('outV3Contact'));
  assert.match(html,/Il brand ha aperto il primo negozio/);
  assert.match(html,/Nessuna assunzione verificata/);
+});
+
+test("Three tabs are exclusive panels: brand visible, candidate and news hidden",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const html=renderOutreachFolder(lead);
+ assert.match(html,/role="tablist"/);
+ assert.match(html,/id="outReason" role="tabpanel"[^>]*data-outreach-panel="reason"/);
+ assert.match(html,/id="outApplication" role="tabpanel"[^>]*data-outreach-panel="application" hidden/);
+ assert.match(html,/id="outNews" role="tabpanel"[^>]*data-outreach-panel="news" hidden/);
+ assert.match(html,/Scheda candidatura/);
+ assert.match(html,/Dove contattare il brand/);
+ assert.ok(html.indexOf('id="outNews"')>html.indexOf('id="outApplication"'));
 });
