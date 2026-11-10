@@ -1,6 +1,6 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {buildOutreachLeads,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,safeLink,emailAddress} from "../outreach-intelligence.js";
+import {buildOutreachLeads,attachBrandNews,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,safeLink,emailAddress} from "../outreach-intelligence.js";
 const sample={
  key:"label-x",brand:"Label X",score:95,area:"Retail Merchandising",
  why_now:"Il brand ha annunciato un nuovo negozio a Milano.",
@@ -57,4 +57,19 @@ test("All external links require http(s) and data is escaped before insertion",(
  const html=renderOutreachFolder(a);
  assert.doesNotMatch(html,/<img src=x/);
  assert.match(html,/&lt;img src=x/);
+});
+
+test("World Radar adds only exact-brand recent news and never manufactures a new lead",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const articles=[
+  {title:"Label X presenta una nuova collezione",summary:"Label X a Milano",published_at:"2026-11-01",url:"https://example.org/collection"},
+  {title:"Label XYZ assume un nuovo manager",summary:"Label XYZ",published_at:"2026-11-02",url:"https://example.org/unrelated"},
+  {title:"Label X, la storia del brand",summary:"Label X",published_at:"2025-01-01",url:"https://example.org/stale"},
+  {title:"Label X annuncia store",summary:"Label X",published_at:"2026-11-01",url:"javascript:alert(1)"}
+ ];
+ const withNews=attachBrandNews([lead],articles,Date.parse("2026-11-10"));
+ assert.equal(withNews.length,1);
+ assert.equal(withNews[0].news.length,1);
+ assert.match(renderOutreachFolder(withNews[0]),/News del brand da conoscere/);
+ assert.match(renderOutreachFolder(withNews[0]),/nuova collezione/);
 });
