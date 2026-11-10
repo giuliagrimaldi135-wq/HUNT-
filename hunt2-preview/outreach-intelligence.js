@@ -232,11 +232,11 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
   '<section class="outStorySection"><div class="outSectionIntro"><span class="outSectionKicker">01 · Il momento</span><h2>Perché candidarti adesso</h2></div>'+
    '<p class="outStory">'+esc(lead.whyNow||lead.evidence[0]?.description||"")+'</p>'+
 
-   '<div class="outStorySources">'+primary.map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' <span>↗</span></a>').join("")+'</div></section>'+
-  (newsHighlights.length?'<section class="outNewsPreview"><div class="outSectionIntro"><span class="outSectionKicker">Dal brand e dalla stampa</span><h2>News del brand</h2></div>'+
+   '<div class="outStorySources">'+primary.map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' <span>↗</span></a>').join("")+'</div>'+
+  (newsHighlights.length?'<div class="outNewsPreview"><div class="outSectionIntro"><span class="outSectionKicker">Dal brand e dalla stampa</span><h2>News del brand</h2></div>'+
     '<div class="outNewsRows">'+newsHighlights.map(item=>'<a class="outNewsLink" href="'+esc(item.url)+'" target="_blank" rel="noopener noreferrer">'+
       '<span><strong>'+esc(item.title)+'</strong><small>'+esc(item.publisher)+(item.date?' · '+esc(dateText(item.date)):'')+'</small></span>'+
-      '<span aria-hidden="true">↗</span></a>').join("")+'</div></section>':"")+
+      '<span aria-hidden="true">↗</span></a>').join("")+'</div></div>':"")+'</section>'+
   '<section class="outPrepare"><div class="outSectionIntro"><span class="outSectionKicker">02 · La candidatura</span><h2>Scheda candidatura</h2></div>'+
    '<div class="outPrepareColumns"><div><span class="outMiniTitle">Area su cui puntare</span><strong>'+esc(lead.area)+'</strong>'+
    (lead.priority?'<span class="outMiniTitle outPriorityText">Priorità di ricerca: '+esc(lead.priority)+'</span>':"")+
