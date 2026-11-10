@@ -3,7 +3,7 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 export const safeLink=value=>{try{const u=new URL(String(value||""));return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return ""}};
 export const emailAddress=value=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value||"").trim())?String(value).trim():"";
 const dateText=value=>{const d=new Date(value||"");return !Number.isNaN(d.getTime())?d.toLocaleDateString("it-IT",{day:"numeric",month:"long",year:"numeric"}):"Data non disponibile"};
-const daysAgo=(value,now)=>{const d=Date.parse(value||"");return Number.isFinite(d)?Math.max(0,Math.floor((now-d)/86400000)):null};
+const daysAgo=(value,now)=>{const d=Date.parse(value||"");return Number.isFinite(d)&&d<=now+86400000?Math.max(0,Math.floor((now-d)/86400000)):null};
 const keyName=value=>String(value||"").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
 const focusType=new Set(["retail_expansion","retail_expansion_announcement","first_permanent_store","first_milan_store","international_pop_up","wholesale_showroom","category_expansion","collection_and_brand_space","shop_in_shop","hiring","investment","showroom_opening","new_market"]);
 function evidenceFor(item){
@@ -17,7 +17,7 @@ export function buildOutreachLeads(curated=[],corporate=[],now=Date.now()){
   const brand=String(item.brand||"").trim(),url=safeLink(item.source_url||item.url);
   const evidence=evidenceFor(item);
   if(!brand||!url||!evidence.length)continue; // No source means no unsolicited outreach recommendation.
-  const recent=evidence.some(x=>{const age=daysAgo(x.date,now);return age!==null&&age<=240});
+  const recent=evidence.some(x=>{const age=daysAgo(x.date,now);return age!==null&&age<=120});
   const focus=evidence.some(x=>focusType.has(x.type));
   if(!focus)continue;
   const email=emailAddress(item.contact);
@@ -28,7 +28,7 @@ export function buildOutreachLeads(curated=[],corporate=[],now=Date.now()){
     evidence,priority:String(item.priority||"").toLowerCase(),
     dated:recent,checkedAt:item.updated_at||null,
     contactEmail:email,contactSourceUrl:safeLink(item.contact_source_url),
-    contactDescription:email?"Email generale pubblica: non necessariamente recruiting":String(item.contact||"").trim(),
+    contactDescription:email?"Email indicata nel dossier: verifica sulla pagina ufficiale, non necessariamente recruiting":String(item.contact||"").trim(),
     careerUrl:safeLink(item.careers_url),signalOrigin:"curated",score:Number(item.score)||0
   });
  }
@@ -98,7 +98,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}=
  const subject=draft?.subject??initial.subject,body=draft?.email_body??initial.body;
  const cvOptions=cvs.map(c=>'<option value="'+esc(c.id)+'" '+(selected?.id===c.id?"selected":"")+'>'+esc(c.name)+(c.is_default?" · principale":"")+'</option>').join("");
  const contact=lead.contactEmail&&lead.contactSourceUrl?
-   '<p><strong>'+esc(lead.contactEmail)+'</strong></p><p>Contatto pubblico generale, non identificato come recruiting.</p>'+
+   '<p><strong>'+esc(lead.contactEmail)+'</strong></p><p>Indirizzo riportato nella ricerca. Verificalo sul sito del brand: non è identificato come recruiting.</p>'+
    '<a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Verifica il contatto sul sito ufficiale ↗</a>':
    '<p>Non è disponibile un indirizzo recruiting verificato. Non useremo email ipotizzate.</p>'+
    (lead.contactDescription?'<p class="outNote">'+esc(lead.contactDescription)+'</p>':"");
