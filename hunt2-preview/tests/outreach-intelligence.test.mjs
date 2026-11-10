@@ -125,3 +125,15 @@ test("Original approved folder labels stay clear and message angle is explicit",
  assert.match(html,/Dove contattare il brand/);
  assert.match(html,/Fonti e segnali/);
 });
+
+
+test("Fresh company-profile verification cannot make an old store opening look recent",()=>{
+ const item={...sample,key:"old-store",brand:"OldStore",signals:[
+  {date:"2026-04-30",type:"first_permanent_store",description:"Inaugurazione del negozio",url:"https://example.org/store"},
+  {date:"2026-11-09",type:"company_profile_verification",description:"Profilo LinkedIn aziendale verificato",url:"https://www.linkedin.com/company/oldstore"}
+ ]};
+ const leads=buildOutreachLeads([item],[],Date.parse("2026-11-10"));
+ assert.equal(leads.length,1);
+ assert.equal(leads[0].dated,false);
+ assert.match(renderOutreachCards(leads),/Segnale da ricontrollare/);
+});
