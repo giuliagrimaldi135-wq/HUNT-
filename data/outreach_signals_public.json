@@ -4,18 +4,24 @@
     "brand": "ARMARIUM",
     "area": "Retail Merchandising / Product / Retail Planning",
     "priority": "alta",
-    "why_now": "La collezione SS27 Control/Release è stata presentata a fine settembre 2026; una fonte di settore segnala il progetto del primo flagship milanese per l'autunno 2026 (apertura effettiva da confermare).",
-    "source_url": "https://modelempire.net/armarium-unveils-spring-2027-control-release-collection-redefining-modern-femininity-and-luxury-tailoring-with-strategic-milan-expansion/",
+    "why_now": "ARMARIUM presenta Control/Release SS27 e sviluppa un posizionamento di prodotto attento alla distribuzione wholesale e internazionale.",
+    "source_url": "https://www.vogue.com/fashion-shows/spring-2027-ready-to-wear/armarium",
     "contact": "marketingcommunication@armariumbrand.com",
     "contact_kind": "Email pubblica marketing/generale, NON recruiting",
     "contact_source_url": "https://www.armariumbrand.com/pages/contact-us",
     "careers_url": "",
     "signals": [
       {
-        "date": "2026-09-29",
-        "type": "retail_expansion_announcement",
-        "description": "Primo flagship a Milano annunciato per autunno 2026; apertura da verificare.",
-        "url": "https://modelempire.net/armarium-unveils-spring-2027-control-release-collection-redefining-modern-femininity-and-luxury-tailoring-with-strategic-milan-expansion/"
+        "date": "2026-09-28",
+        "type": "collection_and_brand_space",
+        "description": "Presentazione di Control/Release SS27 a Milano e sviluppo della proposta di abbigliamento e accessori.",
+        "url": "https://www.vogue.com/fashion-shows/spring-2027-ready-to-wear/armarium"
+      },
+      {
+        "date": "2026-07-28",
+        "type": "wholesale_showroom",
+        "description": "La fondatrice descrive la strategia wholesale e le partnership internazionali del brand.",
+        "url": "https://www.forbes.com/sites/katehardcastle/2026/07/28/armariums-giorgia-gabriele-on-why-luxury-has-a-pricing-problem-and-hospitality-is-winning/"
       }
     ],
     "updated_at": "2026-11-09T08:27:00+01:00",
