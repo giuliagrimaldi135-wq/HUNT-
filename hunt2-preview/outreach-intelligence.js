@@ -86,40 +86,90 @@ export function enrichOutreachLeads(leads=[],registry={}){
   };
  });
 }
+function isConfirmedCv(cv){
+ const p=cv?.parsed_profile||{};
+ return Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
+}
+function cvFocus(cv,area=""){
+ const name=String(cv?.name||"").toLowerCase();
+ const declared=Array.isArray(cv?.target_role_families)?cv.target_role_families.join(" ").toLowerCase():"";
+ const basis=name||declared||String(area||"").toLowerCase();
+ if(/merchandis|buying|allocat|planning/.test(basis))return {
+  kind:"merchandising",label:"Merchandising e Retail Planning",
+  intention:"Vorrei approfondire come vengono costruiti e monitorati gli assortimenti, collegando prodotto, stock e attività retail."};
+ if(/wholesale|showroom|sales/.test(basis))return {
+  kind:"wholesale",label:"Wholesale e Prodotto",
+  intention:"Vorrei contribuire ai processi che collegano le collezioni alla distribuzione e ai rapporti commerciali."};
+ if(/fashion management|brand|marketing|management/.test(basis))return {
+  kind:"management",label:"Fashion Management e Prodotto",
+  intention:"Vorrei crescere nella gestione del prodotto e nel coordinamento tra identità del brand, assortimenti ed esperienza retail."};
+ return {kind:"general",label:String(area||"Merchandising e Prodotto").split("/").map(x=>x.trim()).filter(Boolean).slice(0,2).join(" e "),
+ intention:"Vorrei imparare da vicino come si organizzano le attività di prodotto, retail e commerciali del brand."};
+}
 export function chooseOutreachCv(cvs=[],area=""){
  if(!Array.isArray(cvs)||!cvs.length)return null;
- const topic=String(area||"").toLowerCase();
- const specialist=cvs.find(c=>/merchandis|buying|planning|allocation/i.test(String(c.name||"")));
- if(/merchandis|buying|planning|product|wholesale/i.test(topic)&&specialist)return specialist;
- return cvs.find(c=>c.is_default)||cvs[0];
+ const target=/merchandis|buying|planning|allocation|product|wholesale/i.test(String(area||""));
+ const preferred=cvs.find(c=>target&&/merchandis|buying|planning|allocation/i.test(c.name||"")&&isConfirmedCv(c));
+ return preferred||cvs.find(c=>c.is_default&&isConfirmedCv(c))||cvs.find(isConfirmedCv)||
+   cvs.find(c=>target&&/merchandis|buying|planning|allocation/i.test(c.name||""))||
+   cvs.find(c=>c.is_default)||cvs[0];
 }
 const normalizeContent=text=>String(text||"").replace(/\s+/g," ").trim();
-function profileSentence(cv){
- const p=cv?.parsed_profile||{};
- if(!Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history))return {text:"",verified:false};
- const edu=(p.education||[]).find(x=>x&&((x.program||x.degree)&&x.school));
- const exp=(p.experience||[]).find(x=>x&&(x.company||x.role));
- const program=normalizeContent(edu?.program||edu?.degree),school=normalizeContent(edu?.school);
- const company=normalizeContent(exp?.company),role=normalizeContent(exp?.role);
- const facts=[];
- if(program&&school)facts.push("Ho completato un percorso in "+program+" presso "+school+".");
- if(company)facts.push("Ho svolto un’esperienza "+(role?"come "+role+" ":"professionale ")+"presso "+company+".");
- return {text:facts.join(" "),verified:true};
+function compactEvidence(x,max=135){
+ return normalizeContent(x||"").replace(/[.!?]+$/,"").slice(0,max);
 }
-export function composeOutreachEmail(lead,cv={},person={}){
- const profile=profileSentence(cv);
- const name=normalizeContent(person.display_name||[person.first_name,person.last_name].filter(Boolean).join(" "));
+function confirmedProfile(cv,focus){
+ const p=cv?.parsed_profile||{};
+ if(!isConfirmedCv(cv))return {verified:false,lines:[],proof:[]};
+ const education=Array.isArray(p.education)?p.education.find(x=>x&&(x.school||x.program||x.degree)):null;
+ const experience=Array.isArray(p.experience)?p.experience.find(x=>x&&(x.company||x.role)):null;
+ const projects=Array.isArray(p.projects)?p.projects:[];
+ const relevantWords=focus.kind==="merchandising"?/merchandis|buying|assort|retail|stock|planning|gucci|ala[iï]a/i:
+   focus.kind==="wholesale"?/wholesale|showroom|sales|client|order/i:/brand|strategy|retail|management|marketing/i;
+ const project=projects.find(x=>relevantWords.test([x.name,...(Array.isArray(x.evidence)?x.evidence:[])].join(" ")))||projects[0];
+ const tools=Array.isArray(p.tools)?p.tools.filter(x=>/excel|power bi|tableau|sap/i.test(typeof x==="string"?x:x?.name||"")):[];
+ const program=compactEvidence(education?.program||education?.degree,95),school=compactEvidence(education?.school,95);
+ const company=compactEvidence(experience?.company,95),role=compactEvidence(experience?.role,85);
+ const projectName=compactEvidence(project?.name,105);
+ const lines=[];
+ const proof=[];
+ if(program&&school){lines.push("Ho una formazione in "+program+" presso "+school+".");proof.push(program+" · "+school)}
+ else if(program){lines.push("Ho una formazione in "+program+".");proof.push(program)}
+ if(company){lines.push("Nel mio percorso ho svolto un’esperienza"+(role?" come "+role:"")+" presso "+company+".");proof.push((role?role+" · ":"")+company)}
+ if(projectName){lines.push("Ho lavorato anche sul progetto "+projectName+".");proof.push("Progetto: "+projectName)}
+ const tool=tools[0];if(tool){const t=compactEvidence(typeof tool==="string"?tool:tool.name,45);lines.push("Tra gli strumenti che utilizzo nel mio percorso c’è "+t+".");proof.push(t)}
+ return {verified:true,lines,proof};
+}
+export function describeOutreachCv(cv,area=""){
+ if(!cv)return {verified:false,text:"Nessun CV selezionato. Aggiungi un curriculum e verificane i dati per personalizzare questa candidatura.",focus:"Profilo da aggiungere"};
+ const focus=cvFocus(cv,area);
+ const evidence=confirmedProfile(cv,focus);
+ return {verified:evidence.verified,focus:focus.label,
+  text:evidence.verified?
+   "HUNT usa il CV «"+String(cv.name||"Curriculum")+"» e solo informazioni confermate: "+(evidence.proof.length?evidence.proof.slice(0,3).join(" · "):"profilo verificato, senza ulteriori dettagli dichiarati")+"."
+   :"Il CV «"+String(cv.name||"Curriculum")+"» non contiene ancora informazioni confermate. HUNT non inserirà esperienze o competenze non verificate."};
+}
+export function composeOutreachEmail(lead,cv={},person={},preferences={}){
+ const focus=cvFocus(cv,lead.area||"");
+ const evidence=confirmedProfile(cv,focus);
+ const name=normalizeContent(person?.display_name||[person?.first_name,person?.last_name].filter(Boolean).join(" "));
  const company=String(lead.brand||"il brand").trim();
- const area=String(lead.area||"merchandising e buying");
- const subject="Candidatura spontanea — "+area+" | "+company;
+ const subject="Candidatura spontanea — "+focus.label+" | "+company;
  const hook=normalizeContent(lead.emailHook||
-  "Ho seguito con interesse gli ultimi sviluppi di "+company+", in particolare "+String(lead.whyNow||"le iniziative del brand").replace(/[.!?]+$/,"").replace(/^./,m=>m.toLowerCase())+".");
+  "Ho seguito con interesse gli sviluppi di "+company+", in particolare "+String(lead.whyNow||"le iniziative del brand").replace(/[.!?]+$/,"").replace(/^./,m=>m.toLowerCase())+".");
  const intro=hook.endsWith(".")?hook:hook+".";
- const second="Mi piacerebbe proporre il mio profilo per eventuali opportunità junior legate al merchandising, al prodotto o alle attività commerciali. Mi interessano in particolare la gestione degli assortimenti e la relazione tra prodotto e canali retail/wholesale.";
- const close="Vi allego il mio curriculum e sarei felice di approfondire eventuali possibilità di collaborazione. Se esiste un riferimento più adatto per questo tipo di candidatura, vi ringrazio se potrete indicarmelo.";
- const body="Buongiorno,\n\n"+intro+"\n\n"+(profile.text?profile.text+"\n\n":"")+second+
- "\n\n"+close+"\n\nGrazie per l’attenzione.\n\nCordiali saluti"+(name?",\n"+name:"");
- return {subject,body,verifiedCv:profile.verified};
+ const interests=Array.isArray(preferences?.interest_areas)?preferences.interest_areas.map(normalizeContent).filter(Boolean):[];
+ const interestMatched=interests.find(i=>/merchandis|buying|product|retail|wholesale|planning/i.test(i));
+ const preferenceLine=interestMatched?" Il mio interesse professionale si orienta in particolare verso "+interestMatched+".":"";
+ const profileText=evidence.lines.length?evidence.lines.join(" ")+"\n\n":"";
+ const short=/(brief|sintetic|concise|dirett)/i.test(String(preferences?.communication_style||""));
+ const motivation=focus.intention+preferenceLine;
+ const closing=short?
+  "Se ci fosse la possibilità di una collaborazione junior, sarei felice di approfondirla e condividere il mio CV.":
+  "Per questo vorrei proporre il mio profilo per eventuali opportunità junior nel vostro team. Sarei felice di inviare il curriculum e approfondire eventuali possibilità di collaborazione.";
+ const body="Buongiorno,\n\n"+intro+"\n\n"+profileText+motivation+"\n\n"+closing+
+  "\n\nGrazie per l’attenzione.\n\nCordiali saluti"+(name?",\n"+name:"");
+ return {subject,body,verifiedCv:evidence.verified,cvId:cv?.id||null,focus:focus.label,proof:evidence.proof};
 }
 const sourceHost=url=>{try{return new URL(url).hostname.replace(/^www\./,"")}catch{return "Fonte"}};
 function sourceCatalog(lead){
@@ -150,10 +200,11 @@ export function renderOutreachCards(leads=[],drafts={}){
    '<button type="button" class="outOpen" data-outreach-open="'+esc(x.key)+'">Apri il dossier <span aria-hidden="true">↗</span></button></div></article>';
  }).join("")+'</div>';
 }
-export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}={}){
+export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},preferences={}}={}){
  const suggested=chooseOutreachCv(cvs,lead.area);
  const selected=cvs.find(c=>c.id===cvId)||suggested;
- const email=composeOutreachEmail(lead,selected,person);
+ const email=composeOutreachEmail(lead,selected,person,preferences);
+ const cvExplanation=describeOutreachCv(selected,lead.area);
  const subject=draft?.subject??email.subject,body=draft?.email_body??email.body;
  const cvOptions=cvs.map(c=>'<option value="'+esc(c.id)+'" '+(selected?.id===c.id?"selected":"")+'>'+esc(c.name)+(c.is_default?" · principale":"")+'</option>').join("");
  const sources=sourceCatalog(lead);
@@ -184,14 +235,15 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}=
    (lead.messageAngle?'<span class="outMiniTitle outAngleLabel">Angolo del messaggio</span><p>'+esc(lead.messageAngle)+'</p>':"")+'</div>'+
    '<div><label for="outCvChoice" class="outMiniTitle">CV per questa candidatura</label>'+
    '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
-   '<p class="outSuggestedCv">'+(suggested?'HUNT ti consiglia: <strong>'+esc(suggested.name)+'</strong>. Puoi scegliere un altro CV.':'Carica un curriculum dal tuo profilo per personalizzare il testo.')+'</p></div></div></section>'+
+   '<p class="outSuggestedCv">'+(suggested?'HUNT ti consiglia: <strong>'+esc(suggested.name)+'</strong>. Puoi scegliere un altro CV.':'Carica un curriculum dal tuo profilo per personalizzare il testo.')+'</p>'+
+   '<p class="outCvReason" id="outCvReason">'+esc(cvExplanation.text)+'</p></div></div></section>'+
   '<section class="outLetterSection"><div class="outSectionIntro"><span class="outSectionKicker">03 · Pronta da inviare</span><h2>Email pronta da personalizzare</h2>'+
    '<p>Una proposta concreta per questo brand. Puoi cambiare ogni parola prima di copiarla o salvarla.</p></div>'+
    '<label class="outField">Oggetto<input type="text" id="outSubject" value="'+esc(subject)+'" maxlength="300"></label>'+
    '<label class="outField">Messaggio<textarea id="outBody" rows="12">'+esc(body)+'</textarea></label>'+
    '<div class="outEmailActions"><button type="button" data-outreach-save="preparing">Salva bozza</button>'+
    '<button type="button" data-outreach-copy>Copia email</button>'+
-   '<button type="button" data-outreach-regenerate>Personalizza con un altro CV</button></div>'+
+   '<button type="button" data-outreach-regenerate>Ripristina il testo suggerito</button></div>'+
    '<p class="outSaveState" id="outSaveState" aria-live="polite"></p></section>'+
   '<section class="outContactSection"><div class="outSectionIntro"><span class="outSectionKicker">04 · Il contatto</span><h2>Dove contattare il brand</h2></div>'+
    '<div class="outContactLine">'+companyContact+'</div>'+
