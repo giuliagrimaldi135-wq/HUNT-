@@ -18,6 +18,8 @@ test("Editorial role explanation is the first thing visitors see",()=>{
  const html=renderJobWorkspace(facts);
  assert.match(html,/Dentro la posizione/);
  assert.match(html,/Il ruolo, in sintesi/);
+ assert.match(html,/HUNT propone la versione più pertinente\. La scelta finale è tua\./);
+ assert.match(html,/Curriculum da utilizzare/);
  assert.match(html,/class="hwRoleDescription"/);
  assert.match(html,/In relazione al tuo profilo/);
  assert.match(html,/Il progetto Gucci offre una base formativa/);
@@ -67,5 +69,6 @@ test("Role narrative stays grounded in duties",()=>{
  const text=describePosition(["Supportare pianificazione e monitoraggio dei budget","Monitorare stock e allocazione dei prodotti"]);
  assert.match(text,/pianificazione commerciale/);
  assert.match(text,/controllo dei budget/);
+ assert.ok(text.length>370,"The rich overview should not collapse into a one-sentence list");
  assert.doesNotMatch(describePosition([],"Retail Intern"),/analisi vendite/i);
 });
