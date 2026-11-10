@@ -73,76 +73,135 @@ export function attachBrandNews(leads=[],articles=[],now=Date.now()){
  });
 }
 
-export function composeOutreachEmail(lead,cv={},person={}){
- const p=cv?.parsed_profile||{};
- const confirmed=Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
- const name=String(person.display_name||[person.first_name,person.last_name].filter(Boolean).join(" ")||"").trim();
- const education=confirmed&&Array.isArray(p.education)?p.education[0]:null;
- const experience=confirmed&&Array.isArray(p.experience)?p.experience[0]:null;
- const school=String(education?.school||"").trim(),program=String(education?.program||"").trim();
- const company=String(experience?.company||"").trim();
- const facts=[];
- if(program&&school)facts.push("Ho una formazione in "+program+" presso "+school+".");
- else if(program)facts.push("Ho una formazione in "+program+".");
- if(company)facts.push("Ho maturato un’esperienza professionale presso "+company+".");
- const signal=(lead.evidence||[]).find(x=>x.description);
- const first=signal?"Ho letto la notizia relativa a "+String(signal.description).replace(/[.!?]+$/,"").slice(0,170)+".":"Ho seguito le attività di "+lead.brand+".";
- const area=String(lead.area||"merchandising e buying");
- const subject="Candidatura spontanea | "+area+" — "+lead.brand;
- const body="Buongiorno,\n\n"+first+" Per questo vorrei proporre il mio profilo per eventuali opportunità junior nell’area "+area+".\n\n"+
- (facts.length?facts.join(" ")+"\n\n":"")+
- "Mi piacerebbe contribuire al lavoro del team, imparando da vicino come vengono gestiti prodotti, assortimenti e attività commerciali. Se fosse possibile, sarei felice di inviarvi il mio curriculum e approfondire eventuali possibilità di collaborazione.\n\n"+
- "Vi ringrazio per l’attenzione.\n\nCordiali saluti"+(name?",\n"+name:"");
- return {subject,body,verifiedCv:confirmed};
+
+export function enrichOutreachLeads(leads=[],registry={}){
+ return leads.map(lead=>{
+  const record=registry[lead.key]||{};
+  const editorial=(record.articles||[]).filter(x=>safeLink(x.url)&&x.title).map(x=>({...x,kind:"press",url:safeLink(x.url)}));
+  return {...lead,
+   companyUrl:safeLink(record.company_url||lead.companyUrl),
+   socialProfiles:(record.official_profiles||[]).filter(x=>safeLink(x.url)).map(x=>({...x,url:safeLink(x.url),sourceUrl:safeLink(x.source_url),kind:"official_profile"})),
+   editorial,news:[...(lead.news||[])],messageAngle:String(record.message_angle||""),emailHook:String(record.email_hook||""),
+   contactKind:String(lead.contactKind||record.contact_kind||"")
+  };
+ });
 }
-const sourceLine=e=>'<li class="outSource"><div><strong>'+esc(e.description)+'</strong><small>'+esc(dateText(e.date))+'</small></div><a href="'+esc(e.url)+'" target="_blank" rel="noopener noreferrer">Leggi la fonte ↗</a></li>';
+export function chooseOutreachCv(cvs=[],area=""){
+ if(!Array.isArray(cvs)||!cvs.length)return null;
+ const topic=String(area||"").toLowerCase();
+ const specialist=cvs.find(c=>/merchandis|buying|planning|allocation/i.test(String(c.name||"")));
+ if(/merchandis|buying|planning|product|wholesale/i.test(topic)&&specialist)return specialist;
+ return cvs.find(c=>c.is_default)||cvs[0];
+}
+const normalizeContent=text=>String(text||"").replace(/\s+/g," ").trim();
+function profileSentence(cv){
+ const p=cv?.parsed_profile||{};
+ if(!Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history))return {text:"",verified:false};
+ const edu=(p.education||[]).find(x=>x&&((x.program||x.degree)&&x.school));
+ const exp=(p.experience||[]).find(x=>x&&(x.company||x.role));
+ const program=normalizeContent(edu?.program||edu?.degree),school=normalizeContent(edu?.school);
+ const company=normalizeContent(exp?.company),role=normalizeContent(exp?.role);
+ const facts=[];
+ if(program&&school)facts.push("Ho completato un percorso in "+program+" presso "+school+".");
+ if(company)facts.push("Ho svolto un’esperienza "+(role?"come "+role+" ":"professionale ")+"presso "+company+".");
+ return {text:facts.join(" "),verified:true};
+}
+export function composeOutreachEmail(lead,cv={},person={}){
+ const profile=profileSentence(cv);
+ const name=normalizeContent(person.display_name||[person.first_name,person.last_name].filter(Boolean).join(" "));
+ const company=String(lead.brand||"il brand").trim();
+ const area=String(lead.area||"merchandising e buying");
+ const subject="Candidatura spontanea — "+area+" | "+company;
+ const hook=normalizeContent(lead.emailHook||
+  "Ho seguito con interesse gli ultimi sviluppi di "+company+", in particolare "+String(lead.whyNow||"le iniziative del brand").replace(/[.!?]+$/,"").replace(/^./,m=>m.toLowerCase())+".");
+ const intro=hook.endsWith(".")?hook:hook+".";
+ const second="Mi piacerebbe proporre il mio profilo per eventuali opportunità junior legate al merchandising, al prodotto o alle attività commerciali. Mi interessano in particolare la gestione degli assortimenti e la relazione tra prodotto e canali retail/wholesale.";
+ const close="Vi allego il mio curriculum e sarei felice di approfondire eventuali possibilità di collaborazione. Se esiste un riferimento più adatto per questo tipo di candidatura, vi ringrazio se potrete indicarmelo.";
+ const body="Buongiorno,\n\n"+intro+"\n\n"+(profile.text?profile.text+"\n\n":"")+second+
+ "\n\n"+close+"\n\nGrazie per l’attenzione.\n\nCordiali saluti"+(name?",\n"+name:"");
+ return {subject,body,verifiedCv:profile.verified};
+}
+const sourceHost=url=>{try{return new URL(url).hostname.replace(/^www\./,"")}catch{return "Fonte"}};
+function sourceCatalog(lead){
+ const items=[];
+ const push=(x)=>{
+  const url=safeLink(x.url);
+  if(!url||items.some(e=>e.url===url))return;
+  items.push({...x,url});
+ };
+ (lead.evidence||[]).forEach(x=>push({title:x.description,date:x.date,url:x.url,type:"Segnale",publisher:sourceHost(x.url)}));
+ (lead.editorial||[]).forEach(x=>push({title:x.title,date:x.date,url:x.url,type:"Stampa",publisher:x.publisher||sourceHost(x.url)}));
+ (lead.news||[]).forEach(x=>push({title:x.title,date:x.date,url:x.url,type:"World Radar",publisher:x.publisher||sourceHost(x.url)}));
+ if(lead.companyUrl)push({title:"Sito ufficiale "+lead.brand,url:lead.companyUrl,type:"Brand",publisher:sourceHost(lead.companyUrl)});
+ (lead.socialProfiles||[]).forEach(x=>push({title:lead.brand+" su "+x.platform,url:x.url,type:"Social",publisher:x.platform,verification:x.status||"Link pubblicamente verificato",provenance:x.sourceUrl}));
+ return items;
+}
+const sourceItem=(x)=>'<li class="outSourceRow"><div><span class="outSourceType">'+esc(x.type)+'</span><strong>'+esc(x.title)+'</strong>'+
+  '<small>'+esc(x.publisher)+(x.date?" · "+esc(dateText(x.date)):"")+(x.verification?" · "+esc(x.verification):"")+'</small></div>'+
+  '<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Apri fonte ↗</a></li>';
 export function renderOutreachCards(leads=[],drafts={}){
- if(!leads.length)return '<section class="outEmpty"><h2>Nessun segnale abbastanza solido da proporti adesso.</h2><p>HUNT continua a raccogliere notizie e fonti ufficiali. Una semplice menzione sui social non basta per suggerirti una candidatura.</p></section>';
+ if(!leads.length)return '<section class="outEmpty"><h2>Nessun brand pronto per una proposta documentata.</h2><p>HUNT segnalerà soltanto movimenti commerciali con fonti consultabili.</p></section>';
  return '<div class="outResults">'+leads.map(x=>{
-  const status=drafts[x.key]?.status,when=x.evidence.find(e=>e.date)?.date||x.checkedAt;
-  return '<article class="outLead"><div class="outLeadMain"><span class="outEyebrow">'+esc(x.dated?"Segnale recente":"Segnale storico · da rivalutare")+'</span><h2>'+esc(x.brand)+'</h2>'+
-   '<p class="outLeadWhy">'+esc(x.whyNow||x.evidence[0]?.description||"")+'</p><div class="outLeadMeta">'+
-   '<span>'+esc(x.area)+'</span><span>Fonte: '+esc(new URL(x.sourceUrl).hostname.replace(/^www\./,""))+'</span>'+
-   '<span>'+esc(dateText(when))+'</span></div></div>'+
-   '<div class="outLeadActions">'+(status?'<span class="outStatus">'+esc(status==="applied"?"Indicata come inviata":status==="archived"?"Archiviata":"Bozza salvata")+'</span>':"")+
-   '<button type="button" class="outOpen" data-outreach-open="'+esc(x.key)+'">Apri folder <span aria-hidden="true">↗</span></button></div></article>';
+  const status=drafts[x.key]?.status,first=x.evidence.find(e=>e.date)?.date||x.checkedAt;
+  return '<article class="outLead"><div class="outLeadMain"><span class="outEyebrow">'+esc(x.dated?"Segnale recente":"Segnale da ricontrollare")+'</span><h2>'+esc(x.brand)+'</h2>'+
+   '<p class="outLeadWhy">'+esc(x.whyNow||x.evidence[0]?.description||"")+'</p>'+
+   '<div class="outLeadMeta"><span>'+esc(x.area)+'</span><span>'+esc(dateText(first))+'</span></div></div>'+
+   '<div class="outLeadActions">'+(status?'<span class="outStatus">'+esc(status==="applied"?"Invio registrato":status==="archived"?"Archiviata":"Bozza salvata")+'</span>':"")+
+   '<button type="button" class="outOpen" data-outreach-open="'+esc(x.key)+'">Apri il dossier <span aria-hidden="true">↗</span></button></div></article>';
  }).join("")+'</div>';
 }
 export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}={}){
- const selected=cvs.find(c=>c.id===cvId)||cvs.find(c=>c.is_default)||cvs[0]||null;
- const initial=composeOutreachEmail(lead,selected,person);
- const subject=draft?.subject??initial.subject,body=draft?.email_body??initial.body;
+ const suggested=chooseOutreachCv(cvs,lead.area);
+ const selected=cvs.find(c=>c.id===cvId)||suggested;
+ const email=composeOutreachEmail(lead,selected,person);
+ const subject=draft?.subject??email.subject,body=draft?.email_body??email.body;
  const cvOptions=cvs.map(c=>'<option value="'+esc(c.id)+'" '+(selected?.id===c.id?"selected":"")+'>'+esc(c.name)+(c.is_default?" · principale":"")+'</option>').join("");
- const contact=lead.contactEmail&&lead.contactSourceUrl?
-   '<p><strong>'+esc(lead.contactEmail)+'</strong></p><p>Indirizzo riportato nella ricerca. Verificalo sul sito del brand: non è identificato come recruiting.</p>'+
-   '<a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Verifica il contatto sul sito ufficiale ↗</a>':
-   '<p>Non è disponibile un indirizzo recruiting verificato. Non useremo email ipotizzate.</p>'+
-   (lead.contactDescription?'<p class="outNote">'+esc(lead.contactDescription)+'</p>':"")+
-    (lead.contactSourceUrl?'<p><a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Consulta i contatti pubblicati dal brand ↗</a></p>':"");
- return '<div class="outFolder"><div class="outFolderTop"><button type="button" class="outBack" data-outreach-back>← Tutte le spontanee</button><span class="outEyebrow">HUNT / FOLDER CANDIDATURA</span></div>'+
-  '<header class="outFolderHero"><h1>'+esc(lead.brand)+'</h1><p>'+esc(lead.area)+'</p></header>'+
-  '<section class="outFolderSection"><span class="outSectionKicker">Il momento</span><h2>Perché candidarti adesso</h2><p class="outStory">'+esc(lead.whyNow)+'</p><p class="outEvidenceCaution">È un segnale commerciale, non una conferma di assunzioni. Controlla l’aggiornamento delle fonti prima dell’invio.</p>'+
-   '<ul class="outSources">'+lead.evidence.map(sourceLine).join("")+'</ul></section>'+
-   '<section class="outFolderSection"><span class="outSectionKicker">Contesto</span><h2>News del brand da conoscere</h2>'+
-   ((lead.news||[]).length?'<ul class="outSources">'+lead.news.map(n=>sourceLine({description:n.title,url:n.url,date:n.date})).join("")+'</ul>':
-   '<p>Non risultano altri articoli recenti collegati con sufficiente certezza a questo brand.</p>')+'</section>'+
-  '<section class="outFolderSection"><span class="outSectionKicker">Preparazione</span><h2>Scheda candidatura</h2>'+
-  '<div class="outFacts"><div><span>Area suggerita</span><strong>'+esc(lead.area)+'</strong></div><div><span>CV per questa candidatura</span>'+
-  '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select></div>'+
-  '<div><span>Ultimo aggiornamento segnale</span><strong>'+esc(dateText(lead.checkedAt))+'</strong></div></div>'+
-  '<p class="outNote">Una posizione aperta coerente sul sito del brand ha sempre priorità rispetto alla candidatura spontanea.</p></section>'+
-  '<section class="outFolderSection"><span class="outSectionKicker">Il messaggio</span><h2>Email pronta da personalizzare</h2>'+
-  '<p>Bozza modificabile basata sul segnale pubblicato. Le esperienze nel testo vengono inserite solo se confermate nel CV selezionato.</p>'+
-  '<label class="outField">Oggetto<input type="text" id="outSubject" value="'+esc(subject)+'" maxlength="300"></label>'+
-  '<label class="outField">Testo email<textarea id="outBody" rows="12">'+esc(body)+'</textarea></label>'+
-  '<div class="outEmailActions"><button type="button" data-outreach-save="preparing">Salva la bozza</button>'+
-  '<button type="button" data-outreach-copy>Copia email</button>'+
-  '<button type="button" data-outreach-regenerate>Ricrea dal CV selezionato</button></div>'+
-  '<p class="outNote">Ricreare la bozza sostituisce il testo visibile: salva prima eventuali modifiche che vuoi conservare.</p>'+
-  '<p class="outSaveState" id="outSaveState" aria-live="polite"></p></section>'+
-  '<section class="outFolderSection"><span class="outSectionKicker">Il canale</span><h2>Dove contattare il brand</h2>'+
-  contact+(lead.careerUrl?'<p><a href="'+esc(lead.careerUrl)+'" target="_blank" rel="noopener noreferrer">Controlla prima le posizioni aperte ↗</a></p>':"")+
-  '<p class="outNote">Non inviare candidature a email di customer care o private senza indicazioni pubbliche pertinenti.</p></section>'+
-  '<div class="outFolderFoot"><button type="button" data-outreach-save="applied" class="outApplied">Ho inviato la candidatura</button>'+
-  '<span>Il pulsante registra il tuo invio: HUNT non spedisce email automaticamente.</span></div></div>';
+ const sources=sourceCatalog(lead);
+ const press=sources.filter(s=>s.type==="Segnale"||s.type==="Stampa"||s.type==="World Radar");
+ const socials=sources.filter(s=>s.type==="Social");
+ const socialBar=socials.length?'<div class="outSocialLinks">'+socials.map(s=>'<a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.publisher)+' ↗</a>').join("")+'</div>':"";
+ const primary=press.slice(0,3);
+ const sourceCount=sources.length;
+ const companyContact=lead.contactEmail&&lead.contactSourceUrl?
+   '<strong class="outContactEmail">'+esc(lead.contactEmail)+'</strong><small>'+esc(lead.contactKind||"Contatto generale pubblicato dal brand; non HR")+'</small>'+
+   '<a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Verifica sul sito ↗</a>':
+   '<p>Non risulta un indirizzo recruiting documentato. Puoi consultare la pagina contatti del brand.</p>'+
+   (lead.contactSourceUrl?'<a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Contatti ufficiali ↗</a>':"");
+ const contactNote='HUNT non inventa email di recruiter. Prima dell’invio verifica che il canale sia appropriato.';
+ return '<div class="outFolder outFolderV2"><div class="outFolderTop">'+
+  '<button type="button" class="outBack" data-outreach-back>← Spontanee</button>'+
+  '<span class="outFolderTag">Candidatura spontanea · dossier fonti</span></div>'+
+  '<header class="outFolderHero"><span class="outSectionKicker">Luxury Outreach / '+esc(lead.dated?"Segnale recente":"Segnale da valutare")+'</span>'+
+   '<h1>'+esc(lead.brand)+'</h1><p>'+esc(lead.area)+'</p>'+
+   '<span class="outFolderSub">Un’opportunità di contatto basata su un movimento documentato del brand; non è un annuncio di lavoro.</span></header>'+
+  '<section class="outStorySection"><div class="outSectionIntro"><span class="outSectionKicker">01 · Il momento</span><h2>Perché candidarti adesso</h2></div>'+
+   '<p class="outStory">'+esc(lead.whyNow||lead.evidence[0]?.description||"")+'</p>'+
+   (lead.messageAngle?'<p class="outStoryReason">'+esc(lead.messageAngle)+'</p>':"")+
+   '<div class="outStorySources">'+primary.map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' <span>↗</span></a>').join("")+'</div></section>'+
+  '<section class="outPrepare"><div class="outSectionIntro"><span class="outSectionKicker">02 · La candidatura</span><h2>Come presentarti</h2></div>'+
+   '<div class="outPrepareColumns"><div><span class="outMiniTitle">Area su cui puntare</span><strong>'+esc(lead.area)+'</strong>'+
+   (lead.messageAngle?'<p>'+esc(lead.messageAngle)+'</p>':"")+'</div>'+
+   '<div><label for="outCvChoice" class="outMiniTitle">CV per questa candidatura</label>'+
+   '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
+   '<p class="outSuggestedCv">'+(suggested?'HUNT ti consiglia: <strong>'+esc(suggested.name)+'</strong>. Puoi scegliere un altro CV.':'Carica un curriculum dal tuo profilo per personalizzare il testo.')+'</p></div></div></section>'+
+  '<section class="outLetterSection"><div class="outSectionIntro"><span class="outSectionKicker">03 · Pronta da inviare</span><h2>La tua email, già personalizzata</h2>'+
+   '<p>Una proposta concreta per questo brand. Puoi cambiare ogni parola prima di copiarla o salvarla.</p></div>'+
+   '<label class="outField">Oggetto<input type="text" id="outSubject" value="'+esc(subject)+'" maxlength="300"></label>'+
+   '<label class="outField">Messaggio<textarea id="outBody" rows="12">'+esc(body)+'</textarea></label>'+
+   '<div class="outEmailActions"><button type="button" data-outreach-save="preparing">Salva bozza</button>'+
+   '<button type="button" data-outreach-copy>Copia email</button>'+
+   '<button type="button" data-outreach-regenerate>Personalizza con un altro CV</button></div>'+
+   '<p class="outSaveState" id="outSaveState" aria-live="polite"></p></section>'+
+  '<section class="outContactSection"><div class="outSectionIntro"><span class="outSectionKicker">04 · Il contatto</span><h2>Dove scrivere al brand</h2></div>'+
+   '<div class="outContactLine">'+companyContact+'</div>'+
+   (lead.contactEmail&&lead.contactSourceUrl?'<button type="button" class="outMailtoAction" data-outreach-mailto>Prepara in email ↗</button>':"")+
+   (lead.careerUrl?'<p><a href="'+esc(lead.careerUrl)+'" target="_blank" rel="noopener noreferrer">Controlla le posizioni ufficiali ↗</a></p>':"")+
+   '<p class="outSmallNote">'+esc(contactNote)+'</p></section>'+
+  '<section class="outEvidenceSection"><div class="outSectionIntro"><span class="outSectionKicker">05 · Trasparenza</span><h2>Fonti e segnali</h2>'+
+   '<p>Tutti i collegamenti utilizzati e quelli da consultare per approfondire. Un profilo social ufficiale non significa che HUNT abbia letto tutti i post.</p></div>'+
+   (socialBar||"")+
+   '<details class="outEvidenceDetails"><summary>Esplora tutte le fonti <span>'+sourceCount+' collegamenti</span></summary>'+
+   '<ul class="outSources">'+sources.map(sourceItem).join("")+'</ul></details></section>'+
+  '<footer class="outFolderFoot"><button type="button" data-outreach-save="applied" class="outApplied">Ho inviato la candidatura</button>'+
+   '<span>Registra solo un invio effettuato da te. HUNT non spedisce email automaticamente.</span></footer></div>';
 }
