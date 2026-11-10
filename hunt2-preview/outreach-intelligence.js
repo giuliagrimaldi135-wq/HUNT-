@@ -17,7 +17,7 @@ export function buildOutreachLeads(curated=[],corporate=[],now=Date.now()){
   const brand=String(item.brand||"").trim(),url=safeLink(item.source_url||item.url);
   const evidence=evidenceFor(item);
   if(!brand||!url||!evidence.length)continue; // No source means no unsolicited outreach recommendation.
-  const recent=evidence.some(x=>{const age=daysAgo(x.date,now);return age!==null&&age<=120});
+  const recent=evidence.some(x=>{const age=daysAgo(x.date,now);return focusType.has(x.type)&&age!==null&&age<=120});
   const focus=evidence.some(x=>focusType.has(x.type));
   if(!focus)continue;
   const email=emailAddress(item.contact);
