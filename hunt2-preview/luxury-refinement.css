@@ -639,3 +639,11 @@
  .mobileNav button{font-size:10px;line-height:1.3;min-height:54px;padding:10px 2px;overflow-wrap:anywhere}
 }
 @media(max-width:360px){.mobileNav button{font-size:9px;letter-spacing:-.02em}}
+
+/* Spontanee direct access, visible without changing any approved dossier/profile. */
+.outreachJump{display:inline-flex;align-items:center;gap:12px;min-height:42px;
+ padding:10px 14px;margin:8px 0 2px;border:1px solid #c4d6c7;border-radius:4px;
+ background:#eef4ee;color:#1c5b3d;cursor:pointer;font:inherit;font-size:12px;
+ font-weight:750;letter-spacing:-.01em}
+.outreachJump:hover{background:#e5eee6;border-color:#9ebb9d}
+.outreachJump:focus-visible{outline:2px solid #3d8057;outline-offset:3px}
