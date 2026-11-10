@@ -35,10 +35,10 @@ test("No fabricated recruitment contact or CV experience from unconfirmed extrac
  assert.match(draft.body,/Test User/);
  const folder=renderOutreachFolder(a,{cvs:[{id:"1",name:"General CV",is_default:true,parsed_profile:cv.parsed_profile}],person:{display_name:"Test User"}});
  assert.match(folder,/Email pronta da personalizzare/);
- assert.match(folder,/Perché candidarti adesso/);
- assert.match(folder,/Dove contattare il brand/);
+ assert.match(folder,/Perché contattare/);
+ assert.match(folder,/Contatta il brand/);
  assert.match(folder,/non HR/);
- assert.match(folder,/HUNT non spedisce email automaticamente/);
+ assert.match(folder,/HUNT non invia email automaticamente/);
 });
 test("Confirmed CV evidence may appear in email without inventing achievements",()=>{
  const a=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
@@ -70,7 +70,7 @@ test("World Radar adds only exact-brand recent news and never manufactures a new
  const withNews=attachBrandNews([lead],articles,Date.parse("2026-11-10"));
  assert.equal(withNews.length,1);
  assert.equal(withNews[0].news.length,1);
- assert.match(renderOutreachFolder(withNews[0]),/Fonti e segnali/);
+ assert.match(renderOutreachFolder(withNews[0]),/News & mondo fashion/);
  assert.match(renderOutreachFolder(withNews[0]),/nuova collezione/);
 });
 
@@ -80,7 +80,7 @@ test("A merchandising-oriented spontaneous contact recommends specialist CV over
  const cvs=[{id:"a",name:"fashion management",is_default:true},{id:"b",name:"Merchandising"}];
  assert.equal(chooseOutreachCv(cvs,lead.area).id,"b");
  const html=renderOutreachFolder(lead,{cvs});
- assert.match(html,/HUNT ti consiglia: <strong>Merchandising/);
+ assert.match(html,/HUNT consiglia: <strong>Merchandising/);
  assert.match(html,/<option value="b" selected>/);
 });
 
@@ -98,7 +98,7 @@ test("Official social profiles are linked as sources, not presented as scanned p
  assert.match(html,/Instagram/);
  assert.match(html,/TikTok/);
  assert.match(html,/link dal sito ufficiale/);
- assert.match(html,/Un profilo social ufficiale non significa/);
+ assert.match(html,/non un monitoraggio automatico/);
  assert.match(html,/Fashion Press/);
  assert.match(composeOutreachEmail(richer).body,/Ho seguito l’apertura del nuovo negozio/);
  assert.doesNotMatch(html,/post Instagram acquisiti|post TikTok acquisiti/);
@@ -107,10 +107,10 @@ test("Official social profiles are linked as sources, not presented as scanned p
 test("Brand-specific editorial brief replaces generic dashboard empty-news cards",()=>{
  const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
  const html=renderOutreachFolder(lead);
- assert.match(html,/Perché candidarti adesso/);
- assert.match(html,/Scheda candidatura/);
+ assert.match(html,/Perché contattare/);
+ assert.match(html,/La tua proposta/);
  assert.match(html,/Email pronta da personalizzare/);
- assert.match(html,/Fonti e segnali/);
+ assert.match(html,/News & mondo fashion/);
  assert.doesNotMatch(html,/Non risultano altri articoli recenti|Nessun altro segnale recente|News del brand da conoscere/);
 });
 
@@ -118,12 +118,12 @@ test("Original approved folder labels stay clear and message angle is explicit",
  const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
  const enhanced=enrichOutreachLeads([lead],{"label-x":{message_angle:"Il nuovo negozio richiede una gestione attenta degli assortimenti."}})[0];
  const html=renderOutreachFolder(enhanced);
- assert.match(html,/Perché candidarti adesso/);
- assert.match(html,/Scheda candidatura/);
- assert.match(html,/Angolo del messaggio/);
+ assert.match(html,/Perché contattare/);
+ assert.match(html,/La tua proposta/);
+ assert.match(html,/Il collegamento con il tuo profilo/);
  assert.match(html,/Email pronta da personalizzare/);
- assert.match(html,/Dove contattare il brand/);
- assert.match(html,/Fonti e segnali/);
+ assert.match(html,/Contatta il brand/);
+ assert.match(html,/News & mondo fashion/);
 });
 
 
@@ -158,7 +158,7 @@ test("Switching between two confirmed CVs changes subject, project evidence and 
  assert.match(b.subject,/Merchandising e Retail Planning/);
  assert.doesNotMatch(a.body,/Assortment Gucci/);
  assert.match(b.body,/Assortment Gucci/);
- assert.match(b.body,/Excel/);
+ assert.doesNotMatch(b.body,/Tra gli strumenti|Excel \(avanzato\)/);
  assert.match(b.body,/Utente Esempio/);
  assert.match(describeOutreachCv(cvs[1],lead.area).text,/Assortment Gucci/);
  const html=renderOutreachFolder(lead,{cvs,cvId:"two",person:user,preferences:personalization});
@@ -183,10 +183,26 @@ test("Real editorial articles are visible as brand news, without empty placehold
   title:"Label X apre un nuovo store a Milano",publisher:"Stampa Moda",date:"2026-10-20",url:"https://example.org/new-store"
  }]}})[0];
  const html=renderOutreachFolder(withPress);
- assert.match(html,/News del brand/);
+ assert.match(html,/nel mondo/);
  assert.match(html,/Stampa Moda/);
- assert.match(html,/outNewsPreview/);
- assert.ok(html.indexOf("outNewsPreview")<html.indexOf("outPrepare"));
+ assert.match(html,/brandGlobalNewsList/);
+ assert.ok(html.indexOf("brandGlobalNewsList")>html.indexOf("outLetter"));
  const without=renderOutreachFolder(lead);
  assert.doesNotMatch(without,/Nessuna news|non risultano altri articoli|outNewsPreview/);
+});
+
+test("Opportunity-style outreach dossier has the right reading order and source filters at the end",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const enhanced=enrichOutreachLeads([lead],{"label-x":{outreach_story:"Il brand ha aperto il primo negozio.",outreach_relevance:"Una candidatura commerciale può avere senso.",outreach_caution:"Nessuna assunzione verificata.",articles:[{title:"Il primo negozio",publisher:"Stampa Moda",date:"2026-10-02",url:"https://example.org/store-story"}]}})[0];
+ const html=renderOutreachFolder(enhanced);
+ assert.match(html,/folderHero section outHero/);
+ assert.match(html,/folderTabs section outSectionNav/);
+ assert.match(html,/brandGlobalNewsList/);
+ assert.match(html,/brandNewsItem/);
+ assert.match(html,/data-outreach-news-filter="press"/);
+ assert.match(html,/data-outreach-news-filter="radar"/);
+ assert.ok(html.indexOf('id="outNews"')>html.indexOf('id="outLetter"'));
+ assert.ok(html.indexOf('id="outNews"')>html.indexOf('outV3Contact'));
+ assert.match(html,/Il brand ha aperto il primo negozio/);
+ assert.match(html,/Nessuna assunzione verificata/);
 });
