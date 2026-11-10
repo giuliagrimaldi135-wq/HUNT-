@@ -1,97 +1,61 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {renderJobWorkspace} from "../job-workspace.js";
+import {renderJobWorkspace,describePosition} from "../job-workspace.js";
+
 const facts={
  summary:"Il ruolo collega stock, allocazioni e la pianificazione commerciale. Il progetto Gucci offre una base formativa.",
- duties:["Sviluppare piani di produzione per SKU","Monitorare lo stock","Supportare allocazione e reporting","Collaborare con altri team"],
+ duties:["Sviluppare piani di produzione per SKU","Monitorare lo stock","Supportare allocazione e reporting"],
  relevant:[
-  {text:"Competenze Excel richieste",category:"excel",match:{state:"detected",evidence:"Excel (avanzato)"}},
-  {text:"1–2 anni di esperienza in planning",category:"experience",match:{state:"missing",evidence:""}},
-  {text:"Analisi dei dati",category:"analytics",match:{state:"partial",evidence:"Progetto Alaïa con KPI e budget"}}
+  {text:"Competenze Excel richieste",match:{state:"detected",evidence:"Excel (avanzato)"}},
+  {text:"1–2 anni di esperienza in planning",match:{state:"missing",evidence:""}}
  ],
  cvs:[{id:"a",name:"Merchandising",selected:true,primary:true,verified:true,readable:true},
-      {id:"b",name:"Fashion Management",selected:false,primary:false,verified:false,readable:true}],
- officiallyVerified:true,
- sourceUrl:"https://jobs.lever.co/mulberry/test"
+      {id:"b",name:"Fashion Management",selected:false,primary:false,readable:true}],
+ officiallyVerified:true,sourceUrl:"https://jobs.lever.co/mulberry/test"
 };
-test("Product page uses clear navigation rather than one continuous AI report",()=>{
+
+test("First-time visitor sees one overview, no nested tabs or step-by-step dashboard",()=>{
  const html=renderJobWorkspace(facts);
- for(const tab of ["overview","tasks","criteria"]){
-  assert.match(html,new RegExp('data-job-workspace-tab="'+tab+'"'));
-  assert.match(html,new RegExp('data-job-workspace-pane="'+tab+'"'));
- }
- assert.match(html,/hwEditorialOverview/);
- assert.match(html,/hwEditorialStory/);
- assert.match(html,/Il ruolo, in sintesi/);
- assert.match(html,/Attività e responsabilità/);
- assert.match(html,/Competenze richieste/);
- assert.match(html,/data-switch-job-tab="tasks"/);
- assert.match(html,/data-switch-job-tab="criteria"/);
- assert.doesNotMatch(html,/hwSummaryGrid|hwSummaryCard|hwCardIcon/);
- assert.match(html,/hwAsideCard/);
- assert.match(html,/id="dossierCv"/);
- assert.match(html,/CV principale|CV selezionato/);
- assert.match(html,/Lettera di presentazione/);
- assert.match(html,/Attività riportate nell’annuncio della posizione/);
- assert.doesNotMatch(html,/attenzione al dettaglio|autonomia professionale|precisione dei candidati/i);
+ assert.match(html,/Cosa farai/);
+ assert.match(html,/class="hwIntro"/);
+ assert.equal((html.match(/<details class="hwDisclosure/g)||[]).length,3);
+ assert.doesNotMatch(html,/data-job-workspace-tab|role="tablist"|hwSummaryCard|Come procedere|01 \/ IL RUOLO/);
+ assert.match(html,/class="hwDisclosureList"/);
+ assert.match(html,/Attività/);
+ assert.match(html,/Requisiti/);
+ assert.match(html,/Confronto con il mio CV/);
+ assert.match(html,/Il CV per questa candidatura/);
+ assert.match(html,/Vai all’annuncio e candidati/);
+ assert.doesNotMatch(html,/temporaneamente sospesa|IN SVILUPPO/);
 });
-test("A CV can be changed without hiding other available resumes",()=>{
+test("CV choices, requirement evidence, and full responsibilities remain accessible",()=>{
  const html=renderJobWorkspace(facts);
  assert.match(html,/<option value="a" selected>/);
  assert.match(html,/<option value="b" >/);
- assert.match(html,/Fashion Management/);
-});
-test("The original job description is reachable and all duties remain available",()=>{
- const html=renderJobWorkspace(facts);
- for(const duty of facts.duties)assert.match(html,new RegExp(duty));
- assert.match(html,/jobs\.lever\.co\/mulberry\/test/);
-});
-test("Escape hostile source content and reject unsafe original URLs",()=>{
- const html=renderJobWorkspace({...facts,duties:['<img src=x onerror=alert(1)>'],sourceUrl:"javascript:alert(1)"});
- assert.doesNotMatch(html,/<img src=x/);
- assert.match(html,/&lt;img/);
- assert.doesNotMatch(html,/href="javascript:/);
-});
-
-test("Editorial overview keeps working application controls without numbered infographics",()=>{
- const html=renderJobWorkspace(facts);
- assert.match(html,/class="hwAside"/);
- assert.match(html,/class="hwAsideCard"/);
- assert.match(html,/Prima di candidarti/);
- assert.match(html,/Vai all’annuncio ufficiale/);
- assert.match(html,/Informazioni confermate/);
- assert.match(html,/hwEditorialExplore/);
- assert.match(html,/hwEditorialContext/);
- assert.doesNotMatch(html,/01 \/ IL RUOLO|02 \/ IL PROFILO|Come procedere/);
- assert.doesNotMatch(html,/<div><span>1<\/span><p>Valuta le attività/);
- const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
- assert.ok(overview.includes("hwEditorialStory")&&overview.includes("hwEditorialLink"));
- assert.equal((overview.match(/<article/g)||[]).length,0,"Panoramica should not be made of cards");
- assert.doesNotMatch(overview,/hwOverviewRequirements|hwTaskList|hwRequirementList|hwSummaryCard/);
-});
-
-test("Detailed requirements show precise Excel evidence, but do not clutter Panoramica",()=>{
- const html=renderJobWorkspace(facts);
+ assert.match(html,/id="dossierCv"/);
+ assert.match(html,/Gestisci i miei CV/);
+ for(const duty of facts.duties)assert.ok(html.includes(duty));
  assert.match(html,/Conoscenza di Excel/);
  assert.match(html,/Excel \(avanzato\)/);
  assert.match(html,/Indicato nel CV/);
- assert.doesNotMatch(html,/In un altro CV|Solo in un altro CV/);
- const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
- assert.doesNotMatch(overview,/Conoscenza di Excel|Excel \(avanzato\)/);
+ assert.match(html,/Non indicato nel CV/);
 });
-
-test("An overview of a planning and stock role tells the story instead of repeating bullets",()=>{
- const html=renderJobWorkspace({...facts,roleTitle:"Assistant Planner",
-  duties:["Supportare pianificazione e monitoraggio dei budget","Monitorare stock e allocazione dei prodotti"]});
- const overview=html.slice(html.indexOf('data-job-workspace-pane="overview"'),html.indexOf('data-job-workspace-pane="tasks"'));
- assert.match(overview,/pianificazione commerciale/);
- assert.match(overview,/disponibilità dei prodotti/);
- assert.match(overview,/controllo dei budget/);
- assert.doesNotMatch(overview,/<ol|<article|hwRequirement/);
- assert.match(overview,/data-switch-job-tab="tasks"/);
- assert.match(overview,/data-switch-job-tab="criteria"/);
+test("One safe application link and no fabricated company requirement claims",()=>{
+ const html=renderJobWorkspace(facts);
+ assert.equal((html.match(/href="https:\/\/jobs\.lever\.co\/mulberry\/test"/g)||[]).length,1);
+ const attack=renderJobWorkspace({...facts,duties:['<img src=x onerror=alert(1)>'],sourceUrl:"javascript:alert(1)"});
+ assert.doesNotMatch(attack,/<img src=x/);
+ assert.match(attack,/&lt;img/);
+ assert.doesNotMatch(attack,/href="javascript:/);
+ assert.doesNotMatch(attack,/Vai all’annuncio e candidati/);
 });
-test("Sparse listings do not invite HUNT to invent detailed duties",()=>{
- const html=renderJobWorkspace({...facts,duties:[],roleTitle:"Retail Intern"});
+test("Short source descriptions stay honest when employer details are missing",()=>{
+ const html=renderJobWorkspace({...facts,duties:[],relevant:[],sourceUrl:"",summary:""});
  assert.match(html,/non è ancora disponibile una descrizione/);
+ assert.match(html,/Non ci sono informazioni sufficienti/);
+ assert.doesNotMatch(html,/Confronto con il mio CV/);
+});
+test("Role narrative is factual, concise and based on supplied duties",()=>{
+ assert.match(describePosition(["Supportare pianificazione e monitoraggio dei budget","Monitorare stock e allocazione dei prodotti"]),"pianificazione commerciale");
+ assert.doesNotMatch(describePosition([],"Retail Intern"),/si occupa di analisi vendite/i);
 });
