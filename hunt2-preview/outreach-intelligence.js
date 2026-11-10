@@ -201,6 +201,88 @@ export function composeOutreachEmail(lead,cv={},person={},preferences={}){
   "\n\nGrazie per il tempo dedicato.\nCordiali saluti"+(name?",\n"+name:"");
  return {subject,body,verifiedCv:evidence.verified,cvId:cv?.id||null,focus:focus.label,proof:evidence.proof};
 }
+
+// Source-traceable relevance, not a fabricated hiring or compatibility score.
+const outreachTopics=[
+ {key:"merchandising",name:"Assortimenti e pianificazione",pattern:/merchandis|buying|assort|allocat|stock|inventory|otb|open.to.buy|budget|planning|forecast|sell.through|product mix/i},
+ {key:"wholesale",name:"Showroom e attività commerciali",pattern:/showroom|wholesale|campagna vendit|sales campaign|ordini|order|client|customer|distribuzion|commerciale|sales/i},
+ {key:"product",name:"Prodotto e collezioni",pattern:/prodot|product|collezion|collection|capsule|costing|campionario|sample|brand strateg/i},
+ {key:"retail",name:"Retail e canali digitali",pattern:/retail|negoz|boutique|store|e.commerce|ecommerce|online|digital|omnichannel/i}
+];
+const outreachLabel=(cv)=>String(cv?.name||"Curriculum");
+const snippet=(s,max=170)=>normalizeContent(s).slice(0,max).replace(/\s+\S*$/,"").trim()||normalizeContent(s).slice(0,max);
+function evidenceFromCv(cv){
+ if(!isConfirmedCv(cv))return [];
+ const p=cv.parsed_profile||{},out=[];
+ for(const item of Array.isArray(p.experience)?p.experience:[]){
+  const owner=normalizeContent([item.role,item.company].filter(Boolean).join(" · "))||"Esperienza";
+  const evidence=Array.isArray(item.evidence)?item.evidence.filter(x=>typeof x==="string"&&x.trim()):[];
+  if(evidence.length)for(const line of evidence)out.push({kind:"Esperienza",source:owner,text:snippet(line,210),isDetail:true});
+  else if(item.role||item.company)out.push({kind:"Esperienza",source:owner,text:owner,isDetail:false});
+ }
+ for(const item of Array.isArray(p.projects)?p.projects:[]){
+  const owner=normalizeContent(item.name)||"Progetto";
+  for(const line of Array.isArray(item.evidence)?item.evidence:[]){
+   if(typeof line!=="string"||!line.trim())continue;
+   out.push({kind:"Progetto",source:owner,text:snippet(line,210),isDetail:true});
+  }
+ }
+ return out;
+}
+const focusOrder=lead=>{
+ const words=[lead?.area,lead?.previewTitle,lead?.outreachStory].join(" ").toLowerCase();
+ const preferred=[];
+ if(/wholesale|showroom|distribuzion|commercial/.test(words))preferred.push("wholesale");
+ if(/merchandis|buying|planning|stock|assort/.test(words))preferred.push("merchandising");
+ if(/product|prodot|collezion|collection/.test(words))preferred.push("product");
+ if(/retail|negoz|e.commerce|ecommerce|boutique/.test(words))preferred.push("retail");
+ return [...new Set([...preferred,"merchandising","wholesale","product","retail"])];
+};
+export function analyzeOutreachCv(lead,cv){
+ if(!cv)return {confirmed:false,score:0,highlights:[],focus:"",notDocumented:"",reason:"Carica un curriculum e conferma i suoi dati per confrontarlo con questo brand."};
+ if(!isConfirmedCv(cv))return {confirmed:false,score:0,highlights:[],focus:"",notDocumented:"",reason:"Conferma le informazioni di questo CV nel Profilo: senza verifica HUNT non attribuisce esperienze o competenze."};
+ const order=focusOrder(lead),items=evidenceFromCv(cv);
+ const ranked=items.map(e=>{
+  const matched=outreachTopics.filter(topic=>topic.pattern.test(e.text+" "+(e.isDetail?"":e.source))).map(topic=>topic.key);
+  const weight=matched.reduce((n,key)=>n+Math.max(1,5-order.indexOf(key)),0);
+  return {...e,topics:matched,weight:weight+(e.isDetail?3:0)};
+ }).filter(e=>e.topics.length).sort((a,b)=>b.weight-a.weight);
+ const highlights=[],used=new Set();
+ for(const item of ranked){
+  if(highlights.length>=3)break;
+  const unique=normalizeContent(item.source+" "+item.text).toLowerCase();
+  if(used.has(unique))continue;
+  used.add(unique);
+  const chosen=item.topics.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b))[0];
+  highlights.push({...item,topic:outreachTopics.find(t=>t.key===chosen)?.name||"Esperienza rilevante"});
+ }
+ const covered=new Set(highlights.flatMap(x=>x.topics));
+ const missing=order.filter(x=>!covered.has(x));
+ const missingTitle=missing.length?outreachTopics.find(x=>x.key===missing[0])?.name:"";
+ const supported=highlights.filter(x=>x.isDetail).length;
+ const score=highlights.reduce((n,h)=>n+h.weight,0);
+ const reason=highlights.length?
+  "Questo CV documenta "+[...new Set(highlights.map(x=>x.topic.toLowerCase()))].slice(0,2).join(" e ")+
+  ". HUNT usa le attività effettivamente descritte, senza attribuire competenze non presenti.":
+  "Il CV è confermato, ma non contiene attività descritte sufficientemente pertinenti a questo segnale commerciale.";
+ return {confirmed:true,score,highlights,focus:highlights[0]?.topic||"",notDocumented:missingTitle,
+  reason,detailCount:supported};
+}
+export function renderOutreachCvInsight(lead,cv,cvs=[]){
+ const insight=analyzeOutreachCv(lead,cv);
+ if(!insight.confirmed)return '<div class="outCvEmpty"><p>'+esc(insight.reason)+'</p></div>';
+ const rows=insight.highlights.map(item=>
+  '<article class="outCvProof"><div class="outProofTag">'+esc(item.topic)+' · '+esc(item.kind)+'</div>'+
+   '<strong>'+esc(item.text)+'</strong><small>'+esc(item.source)+'</small></article>').join("");
+ return '<div class="outCvAnalysis">'+
+  '<div class="outCvAnalysisHead"><div><span class="outInsightEyebrow">CONFRONTO CON IL TUO CV</span><h3>Che cosa valorizzare</h3></div>'+
+  '<p>'+esc(insight.reason)+'</p></div>'+
+  (rows?'<div class="outCvProofs">'+rows+'</div>':'<p class="outProofEmpty">Non risultano attività pertinenti descritte nel CV selezionato.</p>')+
+  (insight.notDocumented?'<div class="outCvCheck"><strong>Da approfondire prima di scrivere</strong><p>'+esc(insight.notDocumented)+
+   ' non è documentato nelle attività del CV. Se hai esperienze concrete in quest’area, aggiungile al tuo Profilo prima di usarle nella candidatura.</p></div>':"")+
+  '</div>';
+}
+
 const sourceHost=url=>{try{return new URL(url).hostname.replace(/^www\./,"")}catch{return "Fonte"}};
 function sourceCatalog(lead){
  const items=[];
