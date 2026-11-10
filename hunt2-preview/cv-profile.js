@@ -2,7 +2,7 @@
 import {extractCvText} from "./cv-reader.js?v=20261109-60";
 import {interpretCvText} from "./cv-interpreter.js?v=20261109-60";
 import {evidenceForDisplay,projectNameForDisplay,cvProfessionalCategories,cvReviewSummary} from "./cv-display.js?v=20261109-145";
-import {renderCvLibrary,renderCvWorkspace} from "./cv-workspace.js?v=20261110-152";
+import {renderCvLibrary,renderCvWorkspace} from "./cv-workspace.js?v=20261110-154";
 const esc=(s="")=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,50);
 const mime={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",txt:"text/plain",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
@@ -12,6 +12,11 @@ let editingDirty=false;
 let autoReading=false;
 const failedReadIds=new Set();
 const appliedDrafts=new Map();
+export function requestCvVerification(cvId){
+ if(!cvId)return;
+ selectedId=cvId;
+ selectedPaneByCv.set(cvId,"edit");
+}
 const input=(label,key,value)=>'<label class="cvField">'+esc(label)+'<input data-field="'+key+'" value="'+esc(value||"")+'"></label>';
 const area=(label,key,value)=>'<label class="cvField">'+esc(label)+'<textarea data-field="'+key+'" rows="3">'+esc((value||[]).map(x=>evidenceForDisplay(x,"it").text).join("\n"))+'</textarea></label>';
 function entry(type,p={}){
