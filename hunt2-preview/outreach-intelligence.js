@@ -280,8 +280,8 @@ export function renderOutreachCvInsight(lead,cv,cvs=[]){
   '<div class="outCvAnalysisHead"><div><span class="outInsightEyebrow">CONFRONTO CON IL TUO CV</span><h3>Che cosa valorizzare</h3></div>'+
   '<p>'+esc(insight.reason)+'</p></div>'+
   (rows?'<div class="outCvProofs">'+rows+'</div>':'<p class="outProofEmpty">Non risultano attività pertinenti descritte nel CV selezionato.</p>')+
-  (insight.notDocumented?'<div class="outCvCheck"><strong>Da approfondire prima di scrivere</strong><p>'+esc(insight.notDocumented)+
-   ' non è documentato nelle attività del CV. Se hai esperienze concrete in quest’area, aggiungile al tuo Profilo prima di usarle nella candidatura.</p></div>':"")+
+  (insight.notDocumented?'<div class="outCvCheck"><strong>Da approfondire, non un requisito del brand</strong><p>'+esc(insight.notDocumented)+
+   ' non compare nelle attività descritte nel CV selezionato. Se hai svolto attività in quest’area, puoi aggiungerle al Profilo prima di citarle nella candidatura.</p></div>':"")+
   '</div>';
 }
 
