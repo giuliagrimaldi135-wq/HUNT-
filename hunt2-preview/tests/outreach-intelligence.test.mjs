@@ -37,7 +37,7 @@ test("No fabricated recruitment contact or CV experience from unconfirmed extrac
  assert.match(folder,/Email pronta da personalizzare/);
  assert.match(folder,/Perché candidarti adesso/);
  assert.match(folder,/Dove contattare il brand/);
- assert.match(folder,/Contatto pubblico generale, non identificato come recruiting/);
+ assert.match(folder,/non è identificato come recruiting/);
  assert.match(folder,/HUNT non spedisce email automaticamente/);
 });
 test("Confirmed CV evidence may appear in email without inventing achievements",()=>{
