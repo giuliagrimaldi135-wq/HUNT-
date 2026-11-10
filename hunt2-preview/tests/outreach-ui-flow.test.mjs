@@ -29,8 +29,8 @@ test("Per-user personalization and source-backed press appear in folder",()=>{
  assert.match(app,/composeOutreachEmail\(lead,selectedById\(id\),person,preferences\)/);
  assert.match(outreach,/brandGlobalNewsList/);
  assert.match(outreach,/data-outreach-news-filter="press"/);
- assert.match(outreach,/News & mondo fashion/);
- assert.match(outreach,/non un monitoraggio automatico di tutti i loro post/);
+ assert.match(outreach,/NOTIZIE E FONTI/);
+ assert.match(outreach,/non post acquisiti automaticamente/);
 });
 
 test("Brand news can be filtered and all Fashion News opened through real actions",()=>{
@@ -40,4 +40,14 @@ test("Brand news can be filtered and all Fashion News opened through real action
  assert.match(app,/renderWorldRadar\(\)/);
  assert.match(app,/data-outreach-jump/);
  assert.match(app,/scrollIntoView/);
+});
+
+test("Tab controls reveal exactly one panel, not scroll through repeated content",()=>{
+ assert.match(app,/setOutreachTab=name=>/);
+ assert.match(app,/panel.hidden=!active/);
+ assert.match(app,/tab.setAttribute\("aria-selected",String\(active\)\)/);
+ assert.match(outreach,/data-outreach-panel="reason"/);
+ assert.match(outreach,/data-outreach-panel="application" hidden/);
+ assert.match(outreach,/data-outreach-panel="news" hidden/);
+ assert.doesNotMatch(app,/scrollIntoView\(\{behavior:"smooth",block:"start"\}\);\s*app.querySelectorAll\("\.outSectionNav/);
 });
