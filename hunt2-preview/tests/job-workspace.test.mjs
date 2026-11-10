@@ -56,6 +56,6 @@ test("Short source descriptions stay honest when employer details are missing",(
  assert.doesNotMatch(html,/Confronto con il mio CV/);
 });
 test("Role narrative is factual, concise and based on supplied duties",()=>{
- assert.match(describePosition(["Supportare pianificazione e monitoraggio dei budget","Monitorare stock e allocazione dei prodotti"]),"pianificazione commerciale");
+ assert.match(describePosition(["Supportare pianificazione e monitoraggio dei budget","Monitorare stock e allocazione dei prodotti"]),/pianificazione commerciale/);
  assert.doesNotMatch(describePosition([],"Retail Intern"),/si occupa di analisi vendite/i);
 });
