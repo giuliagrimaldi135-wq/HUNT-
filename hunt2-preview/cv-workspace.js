@@ -54,7 +54,7 @@ export function renderCvLibrary({cvs=[],selectedId=null,statusFor}){
     '<div class="cvWUploadFields"><label>Nome del CV<input id="cvUploadName" placeholder="Es. Planning"></label>'+
      '<label>Documento<input id="cvUploadFile" type="file" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"></label>'+
      '<button class="btn primary" type="button" data-cv-action="upload">Carica e analizza</button></div></details>'+
-   '<p class="cvWLibraryFoot">Ogni CV rimane privato. Puoi usarne uno diverso per ogni candidatura.</p>'+
+    '<p class="cvWLibraryFoot">I CV restano privati. Quello principale viene proposto per primo, ma puoi sceglierne un altro per ogni candidatura.</p>'+
    '</aside>';
 }
 export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel="overview",corrections=""}){
@@ -111,7 +111,7 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
    '<details class="cvWAllAreas"><summary>Esplora tutte le '+areas.length+' categorie professionali <span aria-hidden="true">⌄</span></summary>'+
     '<p>Le categorie non evidenziate non hanno collegamenti riconosciuti in questo documento.</p>'+
     '<div class="cvWAllAreasGrid">'+areas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details>';
- const edit='<div class="cvWPanelHeader"><h3>Modifica informazioni</h3><p>Correggi o completa i dati estratti, poi salva le modifiche. I dati aggiunti saranno attribuiti a questa versione del CV.</p></div>'+
+ const edit='<div class="cvWPanelHeader"><h3>'+(confirmed?"Modifica i dati":"Controlla i dati del CV")+'</h3><p>Controlla le informazioni lette dal documento, correggi eventuali errori e salva.</p></div>'+
    '<div id="cvCorrectionDetails" class="cvWEditFields">'+corrections+'</div>';
  const detailsPane=(id,html)=>pane(id,a,
   '<button type="button" class="cvWBack" data-cv-panel-target="overview">← Torna al riepilogo</button>'+html);
