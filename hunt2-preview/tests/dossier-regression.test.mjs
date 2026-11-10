@@ -49,7 +49,7 @@ test("Job dossier is a navigable product workspace, not a wall of personality ra
  assert.match(jobWorkspace,/HUNT propone la versione più pertinente/);
  assert.match(folder,/dossierCvChoices\.set\(jobId,next\)/);
  assert.doesNotMatch(folder,/jobWorkspaceTabs\.set\(jobId,tab\)/);
- assert.match(folder,/data-hunt-explore/);
+ assert.match(jobWorkspace,/data-hunt-explore/);
  assert.doesNotMatch(folder,/data-fact-display="en"|id="dossierLang"|data-decision-lang=/);
  assert.doesNotMatch(folder,/relevant_years_experience/);
 });
