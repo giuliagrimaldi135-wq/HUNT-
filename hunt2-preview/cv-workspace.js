@@ -39,7 +39,7 @@ export function renderCvLibrary({cvs=[],selectedId=null,statusFor}){
    return '<div class="cvWFile '+(selected?"is-selected":"")+'">'+
     '<button type="button" class="cvWFileSelect" data-cv-action="select" data-cv-id="'+esc(x.id)+'" aria-current="'+(selected?"true":"false")+'">'+
      '<span class="cvWFileIcon">'+fileIcon()+'</span>'+
-     '<span class="cvWFileText"><strong>'+esc(x.name||"Curriculum")+'</strong><small>'+esc(x.is_default?"CV principale":statusFor(x))+'</small></span>'+
+     '<span class="cvWFileText"><strong>'+esc(x.name||"Curriculum")+'</strong><small>'+esc(x.is_default?"Principale · "+statusFor(x):statusFor(x))+'</small></span>'+
      '</button>'+
     '<details class="cvWFileMenu"><summary aria-label="Opzioni per '+esc(x.name||"CV")+'" title="Gestisci CV">•••</summary>'+
      '<div class="cvWFileMenuItems">'+(!x.is_default?'<button type="button" data-cv-action="default" data-cv-id="'+esc(x.id)+'">Imposta come principale</button>':
@@ -63,7 +63,7 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
  const exp=info.experience||[],projects=info.projects||[],edu=info.education||[],tools=info.tools||[],languages=info.languages||[];
  const related=areas.filter(x=>x.related);
  const overview=
-  '<div class="cvWPanelHeader"><h3>Il tuo CV, in breve</h3><p>Qui trovi le informazioni lette dal documento. Apri i dettagli quando ti servono.</p></div>'+
+  '<div class="cvWPanelHeader"><h3>Il tuo CV, in breve</h3><p>HUNT ha raccolto qui le informazioni del documento. Puoi consultarle e correggerle senza modificare il file originale.</p></div>'+
   '<div class="cvWSnapshot cvWSnapshotEditorial cvWSimpleSummary">'+
    '<section class="cvWSnapshotMain"><div class="cvWSnapshotTitle"><h4>Esperienza</h4></div>'+
      (exp.length?'<strong>'+esc(exp[0].company||exp[0].role||"Esperienza")+'</strong>'+
@@ -111,21 +111,21 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
    '<details class="cvWAllAreas"><summary>Esplora tutte le '+areas.length+' categorie professionali <span aria-hidden="true">⌄</span></summary>'+
     '<p>Le categorie non evidenziate non hanno collegamenti riconosciuti in questo documento.</p>'+
     '<div class="cvWAllAreasGrid">'+areas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details>';
- const edit='<div class="cvWPanelHeader"><h3>'+(confirmed?"Modifica i dati":"Controlla i dati del CV")+'</h3><p>Controlla le informazioni lette dal documento, correggi eventuali errori e salva.</p></div>'+
+ const edit='<div class="cvWPanelHeader cvWReviewIntro"><span class="cvWReviewKicker">'+(confirmed?"AGGIORNA IL PROFILO":"VERIFICA DEL CV")+'</span><h3>'+(confirmed?"Aggiorna le informazioni":"Verifica le informazioni del CV")+'</h3><p>Abbiamo organizzato le informazioni trovate nel documento. Apri le sezioni, controlla i dati e correggi solo ciò che non è esatto. Il file originale non verrà modificato.</p></div>'+
    '<div id="cvCorrectionDetails" class="cvWEditFields">'+corrections+'</div>';
  const detailsPane=(id,html)=>pane(id,a,
   '<button type="button" class="cvWBack" data-cv-panel-target="overview">← Torna al riepilogo</button>'+html);
  const skillsAndAreas=skills+'<button type="button" class="cvWDetailsLink cvWAreasLink" data-cv-panel-target="areas">Ambiti professionali collegati <span aria-hidden="true">↗</span></button>';
  return '<section class="cvWWorkspace cvWWorkspaceSimple" aria-label="Curriculum selezionato">'+
-  '<header class="cvWWorkspaceHead"><div><div class="cvWEyebrow">Il CV che stai visualizzando</div>'+
+  '<header class="cvWWorkspaceHead"><div><div class="cvWEyebrow">Il tuo curriculum</div>'+
    '<div class="cvWTitle"><h2>'+esc(cv.name||"Curriculum")+'</h2>'+(cv.is_default?'<span class="cvWPrimaryText">Principale</span>':"")+'</div>'+
-   '<p>'+esc(confirmed?"Dati confermati. HUNT può usarli per confrontare questo CV con le offerte.":"Dati letti dal documento, non ancora confermati. Controllali prima di usarli per le candidature.")+'</p></div>'+
-   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton">'+(confirmed?"Modifica i dati":"Controlla e conferma")+' <span aria-hidden="true">↗</span></button></header>'+
+   '<p>'+esc(confirmed?"Informazioni verificate. HUNT può usarle per confrontare il tuo profilo con gli annunci.":"HUNT ha letto questo CV. Verifica che esperienze, progetti e competenze siano corretti prima di usarli nel confronto con le offerte.")+'</p></div>'+
+   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton">'+(confirmed?"Modifica le informazioni":"Verifica le informazioni")+' <span aria-hidden="true">↗</span></button></header>'+
   '<form id="cvFactsForm">'+
    pane("overview",a,overview)+detailsPane("experience",experience)+detailsPane("projects",projectPanel)+
    detailsPane("skills",skillsAndAreas)+detailsPane("areas",categories)+detailsPane("edit",edit)+
-   '<div class="cvWConfirm" '+(a==="edit"?"":"hidden")+'><div><strong>'+esc(confirmed?"Salva le modifiche":"Conferma i dati del CV")+'</strong>'+
-    '<p>'+esc(confirmed?"Le modifiche aggiornano solo questo curriculum.":"Verifica che i dati siano fedeli al documento prima di confermare.")+'</p></div>'+
-    '<button type="submit" class="btn primary">'+(confirmed?"Salva modifiche":"Conferma informazioni")+'</button></div>'+
+   '<div class="cvWConfirm" '+(a==="edit"?"":"hidden")+'><div><strong>'+esc(confirmed?"Salva le modifiche":"Dati verificati?")+'</strong>'+
+    '<p>'+esc(confirmed?"Le modifiche aggiornano il profilo associato a questo CV.":"Confermando, HUNT utilizzerà questi dati per valutare i requisiti delle offerte. Il PDF originale resta invariato.")+'</p></div>'+
+    '<button type="submit" class="btn primary">'+(confirmed?"Salva modifiche":"Conferma e salva")+'</button></div>'+
   '</form></section>';
 }
