@@ -4,7 +4,7 @@ import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
-import {renderJobWorkspace} from "./job-workspace.js?v=20261110-154";
+import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -1128,7 +1128,7 @@ async function renderOpportunityFolder(jobId){
    if(profileButton.textContent.includes("Verifica")){
      const cvId=dossierCvSelector?.value;
      if(cvId){
-       const {requestCvVerification}=await import("./cv-profile.js?v=20261110-154");
+       const {requestCvVerification}=await import("./cv-profile.js?v=20261110-155");
        requestCvVerification(cvId);
      }
    }
@@ -1291,7 +1291,7 @@ async function renderProfile(fromJobId=null){
  const backToJob=document.getElementById("profileBackToJob");
  if(backToJob&&fromJobId)backToJob.onclick=()=>openOpportunityFolder(fromJobId,false);
  try{
-   const {mountCvManager}=await import("./cv-profile.js?v=20261110-154");
+   const {mountCvManager}=await import("./cv-profile.js?v=20261110-155");
    const root=document.getElementById("cvManagerRoot");
    if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:()=>renderProfile(fromJobId),roleFamilies:macroAreas});
  }catch(e){
