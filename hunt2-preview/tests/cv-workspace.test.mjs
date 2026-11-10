@@ -9,76 +9,57 @@ const info={
  education:[{school:"Istituto Marangoni Milano",program:"Fashion Management"}],
  tools:["Excel (avanzato)","PowerPoint (avanzato)"],languages:["English B2"]
 };
-test("File library has recognizable CV entries, contextual actions, a focused upload flow",()=>{
+test("CV library keeps private file management and no new complexity",()=>{
  const html=renderCvLibrary({cvs:rows,selectedId:"1",statusFor:()=>"Da confermare"});
- assert.match(html,/class="cvWLibrary"/);
+ assert.match(html,/I tuoi CV/);
  assert.match(html,/aria-current="true"/);
  assert.match(html,/Imposta come principale/);
  assert.match(html,/Rendi secondario/);
  assert.match(html,/Elimina CV/);
  assert.match(html,/Aggiungi un CV/);
  assert.match(html,/data-cv-action="upload"/);
- assert.doesNotMatch(html,/data-cv-action="read"/);
 });
-test("Tabbed CV workspace keeps experience, projects and software accessible without a long list",()=>{
- const html=renderCvWorkspace({cv:rows[0],info,areas:[{name:"Merchandising",related:true,basis:"Progetto Gucci"}],
- confirmed:true,activePanel:"overview",corrections:'<input id="cvTools">'});
- for(const pane of ["overview","experience","projects","skills","areas","edit"])
-  assert.match(html,new RegExp('data-cv-panel="'+pane+'"'));
- assert.match(html,/data-cv-panel="experience" hidden/);
- assert.match(html,/data-cv-panel="overview" /);
- assert.match(html,/Accoglienza clienti e presentazione dei capi durante la campagna vendite/);
- assert.match(html,/Progetto accademico Gucci/);
- assert.match(html,/PowerPoint \(avanzato\)/);
- assert.match(html,/id="cvCorrectionDetails"/);
- assert.match(html,/Salva modifiche/);
-});
-test("Editing shows only the edit pane; no source file changes are implied",()=>{
- const html=renderCvWorkspace({cv:rows[1],info,areas:[],confirmed:false,activePanel:"edit",corrections:'<textarea id="cvTools">Excel</textarea>'});
- assert.match(html,/data-cv-panel="edit" >/);
- assert.match(html,/data-cv-panel="overview" hidden/);
- assert.match(html,/Conferma informazioni/);
- assert.match(html,/CV.*Riepilogo/s);
-});
-
-test("Right-side CV summary and categories have clear grouping, not full-width source labels",()=>{
- const areas=[
-  {name:"Merchandising",related:true,basis:"Progetto · Gucci academic project"},
-  {name:"Buying",related:true,basis:"Progetto · Alaïa academic project"},
-  {name:"Wholesale & Commercial",related:true,basis:"Esperienza · Marina Rinaldi"},
-  {name:"Technology",related:false,basis:""}
- ];
- const html=renderCvWorkspace({cv:rows[0],info,areas,confirmed:true,activePanel:"areas",corrections:""});
- assert.match(html,/cvWAreaEntries/);
- assert.match(html,/cvWAreaEntry/);
- assert.match(html,/cvWAreaCount/);
- assert.match(html,/3<\/strong><span>aree collegate/);
- assert.match(html,/Gucci/);
+test("CV opens with a clear summary rather than five equal-priority tabs",()=>{
+ const html=renderCvWorkspace({cv:rows[0],info,areas:[{name:"Merchandising",related:true,basis:"Progetto · Gucci"}],confirmed:true,corrections:""});
+ assert.match(html,/Il tuo CV, in breve/);
+ assert.match(html,/cvWSimpleSummary/);
+ assert.match(html,/Esperienza/);
+ assert.match(html,/Progetti/);
+ assert.match(html,/Formazione e competenze/);
  assert.match(html,/Marina Rinaldi/);
- assert.match(html,/data-cv-panel-target="projects"/);
- assert.match(html,/data-cv-panel-target="experience"/);
- assert.doesNotMatch(html,/cvWAreaRow|cvWAreaCard|cvWOverviewGrid/);
- assert.match(html,/cvWSnapshotEditorial/);
- assert.match(html,/cvWInlineTools/);
- const overviewOnly=html.slice(html.indexOf('data-cv-panel="overview"'),html.indexOf('data-cv-panel="experience"'));
- assert.doesNotMatch(overviewOnly,/cvWOverviewCard|cvWChips|cvWChip/);
- assert.match(html,/Visualizza tutte|Esplora tutte le 4 categorie/);
- assert.match(html,/Conferma informazioni|Salva modifiche/);
+ assert.match(html,/Progetto accademico Gucci/);
+ assert.match(html,/Excel \(avanzato\)/);
+ assert.doesNotMatch(html,/cvWTabs|role="tablist"|cvWOverviewCard/);
+ assert.match(html,/Vedi le esperienze/);
+ assert.match(html,/Vedi i progetti/);
+ assert.match(html,/Vedi le competenze/);
 });
-
-test("CV Riepilogo keeps the accepted two-column structure but avoids internal cards and software badges",()=>{
- const html=renderCvWorkspace({cv:rows[0],info,areas:[{name:"Merchandising",related:true,basis:"Progetto · Gucci"}],
-  confirmed:true,activePanel:"overview",corrections:""});
- const summary=html.slice(html.indexOf('data-cv-panel="overview"'),html.indexOf('data-cv-panel="experience"'));
- assert.match(summary,/cvWSnapshotEditorial/);
- assert.match(summary,/cvWSnapshotMain/);
- assert.match(summary,/cvWSnapshotSide/);
- assert.match(summary,/cvWInlineTools/);
- assert.match(summary,/Excel \(avanzato\)/);
- assert.match(summary,/PowerPoint \(avanzato\)/);
- assert.doesNotMatch(summary,/cvWChip|cvWOverviewCard|cvWSnapshotCard/);
- assert.match(summary,/data-cv-panel-target="experience"/);
- assert.match(summary,/data-cv-panel-target="projects"/);
- assert.match(summary,/data-cv-panel-target="skills"/);
- assert.match(summary,/data-cv-panel-target="areas"/);
+test("All six detail and edit panels remain reachable with a back link",()=>{
+ const html=renderCvWorkspace({cv:rows[0],info,areas:[{name:"Merchandising",related:true,basis:"Progetto Gucci"}],confirmed:true});
+ for(const id of ["overview","experience","projects","skills","areas","edit"])assert.match(html,new RegExp('data-cv-panel="'+id+'"'));
+ for(const id of ["experience","projects","skills","areas","edit"])assert.match(html,new RegExp('data-cv-panel="'+id+'" hidden'));
+ assert.equal((html.match(/data-cv-panel-target="overview"/g)||[]).length,5);
+ assert.match(html,/data-cv-panel-target="areas"/);
+ assert.match(html,/id="cvCorrectionDetails"/);
+});
+test("CV verification is explicit; save button is shown only in edit mode",()=>{
+ const summary=renderCvWorkspace({cv:rows[1],info,confirmed:false,activePanel:"overview",corrections:'<textarea id="cvTools">Excel</textarea>'});
+ assert.match(summary,/Controlla e conferma/);
+ assert.match(summary,/non ancora confermati/);
+ assert.match(summary,/class="cvWConfirm" hidden/);
+ const edit=renderCvWorkspace({cv:rows[1],info,confirmed:false,activePanel:"edit",corrections:'<textarea id="cvTools">Excel</textarea>'});
+ assert.match(edit,/data-cv-panel="edit" >/);
+ assert.match(edit,/data-cv-panel="overview" hidden/);
+ assert.match(edit,/class="cvWConfirm" >/);
+ assert.match(edit,/Conferma informazioni/);
+ assert.match(edit,/Torna al riepilogo/);
+});
+test("Professional categories are optional and maintain their evidence provenance",()=>{
+ const areas=[{name:"Merchandising",related:true,basis:"Progetto · Gucci academic project"},{name:"Technology",related:false,basis:""}];
+ const html=renderCvWorkspace({cv:rows[0],info,areas,activePanel:"areas",confirmed:true});
+ assert.match(html,/cvWAreaEntries/);
+ assert.match(html,/Gucci/);
+ assert.match(html,/Esplora tutte le 2 categorie/);
+ assert.match(html,/data-cv-panel-target="areas"/);
+ assert.doesNotMatch(html,/cvWOverviewCard|cvWAreaCard/);
 });
