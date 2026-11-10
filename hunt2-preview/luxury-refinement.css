@@ -837,3 +837,6 @@
  .outFolderV3 .outV3News .brandGlobalNewsHead{display:block}
  .outFolderV3 .outFolderTag{max-width:150px;text-align:right}
 }
+
+/* Author styles must respect the native hidden attribute when changing news filters. */
+.outFolderV3 .brandNewsItem[hidden]{display:none!important}
