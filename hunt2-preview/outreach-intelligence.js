@@ -82,7 +82,7 @@ export function enrichOutreachLeads(leads=[],registry={}){
    companyUrl:safeLink(record.company_url||lead.companyUrl),
    socialProfiles:(record.official_profiles||[]).filter(x=>safeLink(x.url)).map(x=>({...x,url:safeLink(x.url),sourceUrl:safeLink(x.source_url),kind:"official_profile"})),
    editorial,news:[...(lead.news||[])],messageAngle:String(record.message_angle||""),emailHook:String(record.email_hook||""),
-   outreachStory:String(record.outreach_story||""),outreachRelevance:String(record.outreach_relevance||""),outreachCaution:String(record.outreach_caution||""),
+   outreachStory:String(record.outreach_story||""),outreachRelevance:String(record.outreach_relevance||""),outreachCaution:String(record.outreach_caution||""),emailBridge:String(record.email_bridge||""),
    contactKind:String(lead.contactKind||record.contact_kind||"")
   };
  });
@@ -164,7 +164,13 @@ export function composeOutreachEmail(lead,cv={},person={},preferences={}){
  else if(course)facts.push("Ho una formazione in "+course);
  if(employer)facts.push("ho maturato un'esperienza presso "+employer+(role?", nel ruolo di "+role:""));
  const actualFacts=facts.length?facts.map((x,i)=>i?x.charAt(0).toLowerCase()+x.slice(1):x).join(" e ")+".":"";
- const projectLine=project?(actualFacts?" Un progetto che ritengo pertinente a questa candidatura è «"+project+"».":"Nel mio percorso ho sviluppato il progetto «"+project+"»."):"";
+ const projectEvidence=Array.isArray(proj.evidence)?proj.evidence.join(" ").toLowerCase():"";
+ const projectTopic=/otb|open.to.buy|buying plan|acquist/.test(projectEvidence)?"pianificazione degli acquisti":
+  /assort|product mix|merchandis/.test(projectEvidence)?"studio degli assortimenti":
+  /allocation|stock|retail planning/.test(projectEvidence)?"pianificazione retail":
+  /brand strateg|posizionamento/.test(projectEvidence)?"strategia di brand":"";
+ const projectLine=project?
+  " Ho sviluppato inoltre un progetto dedicato a «"+project+"»"+(projectTopic?", lavorando su "+projectTopic:"")+".":"";
  const interests=Array.isArray(preferences?.interest_areas)?preferences.interest_areas.map(normalizeContent).filter(Boolean):[];
  const userInterest=interests.find(x=>/merchandis|buying|product|retail|wholesale|planning/i.test(x));
  const goal=userInterest?userInterest:focus.label;
@@ -173,15 +179,15 @@ export function composeOutreachEmail(lead,cv={},person={},preferences={}){
    focus.kind==="merchandising"?"merchandising, buying e pianificazione retail":
    "prodotto e sviluppo commerciale";
  const brandAngle=normalizeContent(lead.messageAngle||lead.outreachRelevance||"");
- const why=focus.kind==="wholesale"?
-  "Mi interessa in particolare il lavoro che collega la presentazione delle collezioni alle attività commerciali e ai canali distributivi.":
+ const why=normalizeContent(lead.emailBridge)||(focus.kind==="wholesale"?
+  "Mi interessa il lavoro che collega la presentazione delle collezioni alle attività commerciali e ai canali distributivi.":
   focus.kind==="management"?
-  "Mi interessa capire come l'identità del brand si traduca in scelte di prodotto e nell'esperienza in negozio.":
-  "Mi interessa il rapporto tra prodotto, assortimento e risultati commerciali, soprattutto nei momenti in cui un brand sviluppa nuovi canali o categorie.";
+  "Mi interessa il modo in cui l'identità del brand si traduce in scelte di prodotto e nell'esperienza in negozio.":
+  "Mi interessa il rapporto tra prodotto, assortimento e attività retail, anche quando un brand sviluppa nuovi canali o categorie.");
  const short=/(brief|sintetic|concise|dirett)/i.test(String(preferences?.communication_style||""));
  const paragraph=(actualFacts?actualFacts+projectLine:"")||
    "Il mio interesse professionale è rivolto alle attività di "+goal+".";
- const offer="Vorrei quindi sottoporvi il mio profilo per eventuali opportunità junior nelle aree "+roleLabel+". "+why;
+ const offer=why+" Per questo vorrei sottoporvi il mio profilo per eventuali opportunità junior nelle aree "+roleLabel+".";
  const end=short?"Se il mio percorso fosse di interesse, potrei inviare il CV e approfondire una possibile collaborazione.":
   "Se riteneste il mio percorso in linea con future esigenze del team, sarei felice di inviarvi il CV e di approfondire un possibile confronto.";
  const body="Buongiorno,\n\n"+intro+"\n\n"+paragraph+"\n\n"+offer+"\n\n"+end+
