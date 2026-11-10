@@ -4,7 +4,7 @@ import { interpretCvText } from "./cv-interpreter.js?v=20261109-63";
 import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109-70";
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
-import {renderJobWorkspace} from "./job-workspace.js?v=20261109-151";
+import {renderJobWorkspace} from "./job-workspace.js?v=20261110-152";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -15,7 +15,6 @@ let currentView="opportunities";
 let selectedJobId=null;
 let selectedDossierCvId=null;
 const dossierCvChoices=new Map();
-const jobWorkspaceTabs=new Map();
 let opportunitySort="priority";
 let radarSignalFilter="all";
 let radarCompanyFilter="all";
@@ -964,8 +963,7 @@ async function renderOpportunityFolder(jobId){
      relevant:keyRequirements,
      cvs:(row.cvs||[]).map(x=>({id:x.id,name:x.name||"Curriculum",primary:!!x.is_default,selected:x.id===selectedCv?.id,verified:verifiedCv(x),readable:readableCv(x)})),
      officiallyVerified:haveVerifiedSections,
-     sourceUrl:safeRadarUrl(job.primary_apply_url)?job.primary_apply_url:"",
-     activeTab:jobWorkspaceTabs.get(jobId)||"overview"
+     sourceUrl:safeRadarUrl(job.primary_apply_url)?job.primary_apply_url:""
    })}
 
  </div>
@@ -1100,19 +1098,6 @@ async function renderOpportunityFolder(jobId){
  });
  const openBrand=document.getElementById("openCompanyTab");
  if(openBrand)openBrand.onclick=()=>document.querySelector('[data-folder-tab="company"]')?.click();
- const activateJobTab=tab=>{
-   if(!["overview","tasks","criteria"].includes(tab))return;
-   jobWorkspaceTabs.set(jobId,tab);
-   document.querySelectorAll("[data-job-workspace-tab]").forEach(button=>{
-     const active=button.dataset.jobWorkspaceTab===tab;
-     button.classList.toggle("is-active",active);
-     button.setAttribute("aria-selected",String(active));
-   });
-   document.querySelectorAll("[data-job-workspace-pane]").forEach(panel=>{panel.hidden=panel.dataset.jobWorkspacePane!==tab});
- };
- document.querySelectorAll("[data-job-workspace-tab],[data-switch-job-tab]").forEach(button=>{
-   button.onclick=()=>activateJobTab(button.dataset.jobWorkspaceTab||button.dataset.switchJobTab);
- });
  const dossierCvSelector=document.getElementById("dossierCv");
  if(dossierCvSelector)dossierCvSelector.onchange=async()=>{
    const next=dossierCvSelector.value;
@@ -1281,7 +1266,7 @@ async function renderProfile(fromJobId=null){
  const backToJob=document.getElementById("profileBackToJob");
  if(backToJob&&fromJobId)backToJob.onclick=()=>openOpportunityFolder(fromJobId,false);
  try{
-   const {mountCvManager}=await import("./cv-profile.js?v=20261109-133");
+   const {mountCvManager}=await import("./cv-profile.js?v=20261110-152");
    const root=document.getElementById("cvManagerRoot");
    if(currentView==="profile"&&root)await mountCvManager(root,{supabase,user:currentUser,refresh:()=>renderProfile(fromJobId),roleFamilies:macroAreas});
  }catch(e){
