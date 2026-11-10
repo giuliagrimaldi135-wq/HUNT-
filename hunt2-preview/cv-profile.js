@@ -37,16 +37,19 @@ function editor(cv,roleFamilies=[]){
  const p=cv.parsed_profile||{};
  const d=p.draft_profile?.extracted_chars?p.draft_profile:(p.raw_text?interpretCvText(p.raw_text):{});
  const info=cvReviewSummary({...p,draft_profile:d});
- const sections=(name,container,type,data)=>'<div class="cvWEditGroup">'+
-   '<div class="cvGroupHeading"><h4>'+name+'</h4><button type="button" class="cvTextButton" data-cv-action="add-'+type+'">+ Aggiungi</button></div>'+
-   '<div id="'+container+'">'+(data.length?data:[{}]).map(x=>entry(type,x)).join("")+'</div></div>';
+ const sections=(name,container,type,data,expanded=false)=>'<details class="cvWReviewSection" '+(expanded?"open":"")+'>'+
+   '<summary><span class="cvWReviewSectionTitle"><strong>'+name+'</strong><small>'+(data.length?data.length+" "+(data.length===1?"voce trovata":"voci trovate"):"Nessuna voce riconosciuta")+'</small></span><span class="cvWReviewIndicator" aria-hidden="true">⌄</span></summary>'+
+   '<div class="cvWReviewSectionBody"><div class="cvGroupHeading"><span>Informazioni riportate nel CV</span><button type="button" class="cvTextButton" data-cv-action="add-'+type+'">+ Aggiungi</button></div>'+
+   '<div id="'+container+'">'+(data.length?data:[{}]).map(x=>entry(type,x)).join("")+'</div></div></details>';
  const changes=
-   sections("Esperienze","cvExperiences","experience",info.experience)+
+   '<p class="cvWReviewLead">Se le informazioni sono corrette, puoi lasciarle così. Apri ogni sezione soltanto se vuoi verificare o correggere i dettagli.</p>'+
+   sections("Esperienze lavorative","cvExperiences","experience",info.experience,true)+
    sections("Progetti","cvProjects","project",info.projects)+
    sections("Formazione","cvEducation","education",info.education)+
-   '<div class="cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(info.tools.join("\n"))+'</textarea></label>'+
-   '<label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(info.languages.join("\n"))+'</textarea></label></div>'+
-   (p.raw_text?'<details class="cvRawText"><summary>Consulta il testo originale estratto</summary><textarea readonly rows="8">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"");
+   '<details class="cvWReviewSection"><summary><span class="cvWReviewSectionTitle"><strong>Software e lingue</strong><small>Competenze riportate nel CV</small></span><span class="cvWReviewIndicator" aria-hidden="true">⌄</span></summary>'+
+   '<div class="cvWReviewSectionBody cvFieldsTwo"><label class="cvField">Software e livelli dichiarati<textarea id="cvTools" rows="4">'+esc(info.tools.join("\n"))+'</textarea></label>'+
+   '<label class="cvField">Lingue dichiarate<textarea id="cvLanguages" rows="4">'+esc(info.languages.join("\n"))+'</textarea></label></div></details>'+
+   (p.raw_text?'<details class="cvRawText"><summary>Leggi il testo originale estratto</summary><textarea readonly rows="8">'+esc(p.raw_text.slice(0,40000))+'</textarea></details>':"");
  return renderCvWorkspace({
    cv,info,areas:cvProfessionalCategories({...p,draft_profile:d},roleFamilies),
    confirmed:info.confirmed,activePanel:selectedPaneByCv.get(cv.id)||"overview",
