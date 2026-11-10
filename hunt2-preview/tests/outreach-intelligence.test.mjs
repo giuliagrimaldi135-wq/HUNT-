@@ -34,9 +34,9 @@ test("No fabricated recruitment contact or CV experience from unconfirmed extrac
  assert.doesNotMatch(draft.body,/FamousBrand|Famous School/);
  assert.match(draft.body,/Test User/);
  const folder=renderOutreachFolder(a,{cvs:[{id:"1",name:"General CV",is_default:true,parsed_profile:cv.parsed_profile}],person:{display_name:"Test User"}});
- assert.match(folder,/La tua email, già personalizzata/);
+ assert.match(folder,/Email pronta da personalizzare/);
  assert.match(folder,/Perché candidarti adesso/);
- assert.match(folder,/Dove scrivere al brand/);
+ assert.match(folder,/Dove contattare il brand/);
  assert.match(folder,/non HR/);
  assert.match(folder,/HUNT non spedisce email automaticamente/);
 });
@@ -108,8 +108,20 @@ test("Brand-specific editorial brief replaces generic dashboard empty-news cards
  const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
  const html=renderOutreachFolder(lead);
  assert.match(html,/Perché candidarti adesso/);
- assert.match(html,/Come presentarti/);
- assert.match(html,/La tua email, già personalizzata/);
+ assert.match(html,/Scheda candidatura/);
+ assert.match(html,/Email pronta da personalizzare/);
  assert.match(html,/Fonti e segnali/);
  assert.doesNotMatch(html,/Non risultano altri articoli recenti|Nessun altro segnale recente|News del brand da conoscere/);
+});
+
+test("Original approved folder labels stay clear and message angle is explicit",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const enhanced=enrichOutreachLeads([lead],{"label-x":{message_angle:"Il nuovo negozio richiede una gestione attenta degli assortimenti."}})[0];
+ const html=renderOutreachFolder(enhanced);
+ assert.match(html,/Perché candidarti adesso/);
+ assert.match(html,/Scheda candidatura/);
+ assert.match(html,/Angolo del messaggio/);
+ assert.match(html,/Email pronta da personalizzare/);
+ assert.match(html,/Dove contattare il brand/);
+ assert.match(html,/Fonti e segnali/);
 });
