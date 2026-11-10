@@ -1145,26 +1145,35 @@ function statusLabel(status){
 
 async function renderApplications(){
  currentView="applications";
- const {data:applications,error}=await supabase.from("applications").select("*").eq("user_id",currentUser.id).in("status",["applied","interview","offer","accepted","rejected","withdrawn","declined"]).order("updated_at",{ascending:false});
+ const [{data:applications,error},{data:sentOutreach,error:outreachError}]=await Promise.all([
+  supabase.from("applications").select("*").eq("user_id",currentUser.id).in("status",["applied","interview","offer","accepted","rejected","withdrawn","declined"]).order("updated_at",{ascending:false}),
+  supabase.from("user_outreach_drafts").select("outreach_key,brand_name,status,updated_at").eq("user_id",currentUser.id).eq("status","applied")
+ ]);
  const ids=(applications||[]).map(x=>x.job_id).filter(Boolean);
  let jobs=[];
  if(ids.length){
-   const res=await supabase.from("jobs").select("id,canonical_title,city,companies(name)").in("id",ids);
-   jobs=res.data||[];
+  const res=await supabase.from("jobs").select("id,canonical_title,city,companies(name)").in("id",ids);
+  jobs=res.data||[];
  }
  const byId=new Map(jobs.map(x=>[x.id,x]));
- const cards=(applications||[]).map(item=>{
-   const job=byId.get(item.job_id);
-   return `<article class="card applicationCard"><div><div class="eyebrow">${esc(job?.companies?.name||"Candidatura")}</div><h3>${esc(job?.canonical_title||"Opportunità")}</h3><div class="jobMeta">${esc(job?.city||"")} · ${esc(statusLabel(item.status))}</div></div><div class="actions">${item.job_id?`<button class="btn primary" data-app-folder="${item.job_id}">Apri folder</button>`:""}</div></article>`;
+ const jobCards=(applications||[]).map(item=>{
+  const job=byId.get(item.job_id);
+  return '<article class="card applicationCard"><div><div class="eyebrow">'+esc(job?.companies?.name||"Candidatura")+'</div><h3>'+esc(job?.canonical_title||"Opportunità")+'</h3><div class="jobMeta">'+esc(job?.city||"")+' · '+esc(statusLabel(item.status))+'</div></div><div class="actions">'+(item.job_id?'<button class="btn primary" data-app-folder="'+esc(item.job_id)+'">Apri folder</button>':"")+'</div></article>';
  }).join("");
- app.innerHTML=shell(`<div class="eyebrow">Il tuo percorso</div><h1>Candidature</h1>
- <p class="lead">Qui trovi soltanto le posizioni per cui hai indicato di esserti candidata. I dossier in preparazione restano in Opportunità.</p>
- <section class="section stack">${error?`<div class="msg bad">${esc(error.message)}</div>`:(cards||'<div class="card">Nessuna candidatura ancora.</div>')}</section>`);
+ const spontaneousCards=(sentOutreach||[]).map(item=>
+  '<article class="card applicationCard"><div><div class="eyebrow">Candidatura spontanea</div><h3>'+esc(item.brand_name)+'</h3>'+
+  '<div class="jobMeta">Invio registrato · '+esc(new Date(item.updated_at).toLocaleDateString("it-IT"))+'</div></div>'+
+  '<div class="actions"><button class="btn primary" data-outreach-folder="'+esc(item.outreach_key)+'">Apri folder</button></div></article>'
+ ).join("");
+ app.innerHTML=shell('<div class="eyebrow">Il tuo percorso</div><h1>Candidature</h1>'+
+  '<p class="lead">Le candidature che hai dichiarato di aver inviato, comprese le spontanee. Le bozze restano nelle rispettive sezioni.</p>'+
+  '<section class="section stack">'+(error?'<div class="msg bad">'+esc(error.message)+'</div>':(jobCards+spontaneousCards||'<div class="card">Nessuna candidatura ancora.</div>'))+
+  (outreachError?'<div class="msg bad">Non riesco a leggere le spontanee: '+esc(outreachError.message)+'</div>':"")+
+  '</section>');
  bindNav();
  document.querySelectorAll("[data-app-folder]").forEach(b=>b.onclick=()=>renderOpportunityFolder(b.dataset.appFolder));
+ document.querySelectorAll("[data-outreach-folder]").forEach(b=>b.onclick=async()=>{await renderOutreach();openOutreachFolder(b.dataset.outreachFolder)});
 }
-
-
 
 /* Spontanee: rebuild the original HUNT folder using public evidence and private drafts. */
 let outreachCache={leads:[],drafts:{},cvs:[],person:{},selectedCv:{}};
