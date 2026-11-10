@@ -5,7 +5,7 @@ import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
 import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
-import {buildOutreachLeads,attachBrandNews,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261110-159";
+import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261110-161";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -1180,21 +1180,34 @@ async function renderApplications(){
 let outreachCache={leads:[],drafts:{},cvs:[],person:{},selectedCv:{}};
 async function renderOutreach(){
  currentView="outreach";
- const [curatedRes,signalsRes,draftsRes,cvsRes,personRes,newsRes]=await Promise.all([
+ const [curatedRes,brandSourcesRes,signalsRes,draftsRes,cvsRes,personRes]=await Promise.all([
    fetch("../data/outreach_signals_public.json?v=20261110-158",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
+   fetch("../data/outreach_brand_sources.json?v=20261110-161",{cache:"no-store"}).then(async r=>r.ok?await r.json():{}).catch(()=>({})),
    supabase.from("company_signals").select("id,signal_type,title,summary,source_url,published_at,detected_at,companies(name,is_independent,size_band,careers_url)").order("published_at",{ascending:false,nullsFirst:false}).limit(200),
    supabase.from("user_outreach_drafts").select("outreach_key,brand_name,subject,email_body,status,updated_at").eq("user_id",currentUser.id),
    supabase.from("user_cvs").select("id,name,is_default,parsed_profile").eq("user_id",currentUser.id).eq("active",true),
-   supabase.from("profiles").select("display_name,first_name,last_name").eq("user_id",currentUser.id).maybeSingle(),
-   supabase.from("world_news_items").select("title,summary,url,published_at").order("published_at",{ascending:false,nullsFirst:false}).limit(400)
+   supabase.from("profiles").select("display_name,first_name,last_name").eq("user_id",currentUser.id).maybeSingle()
  ]);
- const leads=attachBrandNews(buildOutreachLeads(curatedRes,signalsRes.data||[]),newsRes.data||[]);
+ const baseLeads=buildOutreachLeads(curatedRes,signalsRes.data||[]);
+ // A small brand can be buried among thousands of general news results. Search for each named brand.
+ const newsMatches=await Promise.all(baseLeads.map(async lead=>{
+   const term=String(lead.brand||"").replace(/[%_,().]/g," ").trim().slice(0,80);
+   if(!term)return {key:lead.key,data:[]};
+   try{
+     const result=await supabase.from("world_news_items").select("title,summary,url,published_at").or("title.ilike.%"+term+"%,summary.ilike.%"+term+"%").order("published_at",{ascending:false,nullsFirst:false}).limit(20);
+     return {key:lead.key,data:result.data||[],error:result.error};
+   }catch(e){return {key:lead.key,data:[],error:e}}
+ }));
+ const leads=enrichOutreachLeads(baseLeads.map(lead=>{
+   const match=newsMatches.find(x=>x.key===lead.key);
+   return attachBrandNews([lead],match?.data||[])[0];
+ }),brandSourcesRes||{});
  const drafts=Object.fromEntries((draftsRes.data||[]).map(d=>[d.outreach_key,d]));
  outreachCache={leads,drafts,cvs:cvsRes.data||[],person:personRes.data||{},selectedCv:{}};
- const errors=[signalsRes.error,draftsRes.error,cvsRes.error,newsRes.error].filter(Boolean).map(e=>e.message);
+ const errors=[signalsRes.error,draftsRes.error,cvsRes.error].filter(Boolean).map(e=>e.message);
  app.innerHTML=shell('<div class="outPage"><div class="eyebrow">HUNT / Luxury Outreach</div>'+
  '<header class="outPageHeader"><h1>Spontanee</h1><p>Brand indipendenti, movimenti commerciali e segnali da non perdere. Ogni suggerimento ha una fonte da leggere prima di scrivere.</p></header>'+
- '<div class="outAbout"><strong>Non sono annunci di lavoro.</strong> Sono opportunità di contatto: HUNT distingue una notizia pubblica da una ricerca di personale effettivamente aperta.</div>'+
+ '<div class="outAbout"><strong>Un passo prima degli annunci.</strong> Quando un brand apre un negozio, amplia l’assortimento o si muove su nuovi mercati, può essere un momento interessante per presentarti. HUNT ti mostra perché e da quali fonti arriva il segnale.</div>'+
  (errors.length?'<div class="msg bad">Alcuni dati non sono disponibili: '+esc(errors.join(" · "))+'</div>':"")+
  renderOutreachCards(leads,drafts)+'</div>');
  bindNav();
@@ -1206,7 +1219,7 @@ function openOutreachFolder(key){
  if(!lead)return renderOutreach();
  const draft=outreachCache.drafts[key]||null;
  const cvs=outreachCache.cvs,person=outreachCache.person;
- const cvId=outreachCache.selectedCv[key]||cvs.find(c=>c.is_default)?.id||cvs[0]?.id||"";
+ const cvId=outreachCache.selectedCv[key]||chooseOutreachCv(cvs,lead.area)?.id||"";
  app.innerHTML=shell(renderOutreachFolder(lead,{cvs,cvId,draft,person}));
  bindNav();
  const back=app.querySelector("[data-outreach-back]");
@@ -1221,6 +1234,12 @@ function openOutreachFolder(key){
    const next=composeOutreachEmail(lead,selected,person);
    subject.value=next.subject;body.value=next.body;
    say(next.verifiedCv?"Bozza aggiornata con le informazioni confermate del CV. Salvala se ti piace.":"Bozza aggiornata. Il CV scelto non ha ancora dati confermati, quindi HUNT non ha aggiunto esperienze o qualifiche.");
+ };
+ const mailto=app.querySelector("[data-outreach-mailto]");
+ if(mailto)mailto.onclick=()=>{
+   if(!lead.contactEmail)return;
+   const url="mailto:"+encodeURIComponent(lead.contactEmail)+"?subject="+encodeURIComponent(subject.value)+"&body="+encodeURIComponent(body.value);
+   window.location.href=url; // Opens the user's mail app: it does not send.
  };
  const copy=app.querySelector("[data-outreach-copy]");
  if(copy)copy.onclick=async()=>{
