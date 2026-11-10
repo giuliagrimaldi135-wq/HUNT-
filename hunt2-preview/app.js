@@ -1220,7 +1220,7 @@ function openOutreachFolder(key){
  if(!lead)return renderOutreach();
  const draft=outreachCache.drafts[key]||null;
  const cvs=outreachCache.cvs,person=outreachCache.person,preferences=outreachCache.preferences;
- const cvId=outreachCache.selectedCv[key]||(draft?.cv_id&&cvs.some(c=>c.id===draft.cv_id)?draft.cv_id:null)||chooseOutreachCv(cvs,lead.area)?.id||"";
+ const cvId=outreachCache.selectedCv[key]||(draft?.cv_id&&cvs.some(c=>c.id===draft.cv_id)?draft.cv_id:null)||chooseOutreachCv(cvs,lead.area,lead)?.id||"";
  app.innerHTML=shell(renderOutreachFolder(lead,{cvs,cvId,draft,person,preferences}));
  bindNav();
  const back=app.querySelector("[data-outreach-back]");
@@ -1269,12 +1269,16 @@ function openOutreachFolder(key){
  if(allNews)allNews.onclick=()=>{currentView="radar";renderWorldRadar()};
  const cv=app.querySelector("#outCvChoice"),subject=app.querySelector("#outSubject"),body=app.querySelector("#outBody"),notice=app.querySelector("#outSaveState");
  const cvExplanation=app.querySelector("#outCvReason");
+ const cvEvidence=app.querySelector("#outCvEvidence"),brandEvidence=app.querySelector("#outBrandEvidence");
  const say=(message,bad=false)=>{if(!notice)return;notice.textContent=message;notice.classList.toggle("is-error",bad)};
  let activeCvId=cv?.value||"";
  const selectedById=id=>cvs.find(x=>x.id===id)||null;
  const draftFor=id=>composeOutreachEmail(lead,selectedById(id),person,preferences);
  const refreshCvExplanation=id=>{
-   if(cvExplanation)cvExplanation.textContent=describeOutreachCv(selectedById(id),lead.area).text;
+   const selected=selectedById(id);
+   if(cvExplanation)cvExplanation.textContent=describeOutreachCv(selected,lead.area).text;
+   if(cvEvidence)cvEvidence.innerHTML=renderOutreachCvInsight(lead,selected,cvs);
+   if(brandEvidence)brandEvidence.innerHTML=renderOutreachBrandEvidence(lead,selected);
  };
  const replaceWithCv=id=>{
    const next=draftFor(id);
