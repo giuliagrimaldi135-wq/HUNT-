@@ -40,8 +40,8 @@ test("Job dossier is a navigable product workspace, not a wall of personality ra
  assert.match(folder,/renderJobWorkspace\(/);
  assert.match(jobWorkspace,/Il ruolo, in sintesi/);
  assert.match(jobWorkspace,/hwRoleDescription/);
- assert.match(jobWorkspace,/data-hunt-explore="tasks"/);
- assert.match(jobWorkspace,/data-hunt-explore="criteria"/);
+ assert.match(jobWorkspace,/explore\("tasks"/);
+ assert.match(jobWorkspace,/explore\("criteria"/);
  assert.doesNotMatch(jobWorkspace,/role="tablist"/);
  assert.match(jobWorkspace,/hwAsideCard/);
  assert.match(jobWorkspace,/id="dossierCv"/);
