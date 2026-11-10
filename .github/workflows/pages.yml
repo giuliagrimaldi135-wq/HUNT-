@@ -20,7 +20,8 @@ permissions:
   id-token: write
 concurrency:
   group: pages
-  cancel-in-progress: false
+  # Publish the latest interface rather than queuing every intermediate UI commit.
+  cancel-in-progress: true
 jobs:
   deploy:
     environment:
