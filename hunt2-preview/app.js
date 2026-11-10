@@ -5,7 +5,7 @@ import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
 import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
-import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261110-167";
+import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261110-168";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -1181,8 +1181,8 @@ let outreachCache={leads:[],drafts:{},cvs:[],person:{},preferences:{},selectedCv
 async function renderOutreach(){
  currentView="outreach";
  const [curatedRes,brandSourcesRes,signalsRes,draftsRes,cvsRes,personRes,preferencesRes]=await Promise.all([
-   fetch("../data/outreach_signals_public.json?v=20261110-158",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
-   fetch("../data/outreach_brand_sources.json?v=20261110-166",{cache:"no-store"}).then(async r=>r.ok?await r.json():{}).catch(()=>({})),
+   fetch("../data/outreach_signals_public.json?v=20261110-168",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
+   fetch("../data/outreach_brand_sources.json?v=20261110-168",{cache:"no-store"}).then(async r=>r.ok?await r.json():{}).catch(()=>({})),
    supabase.from("company_signals").select("id,signal_type,title,summary,source_url,published_at,detected_at,companies(name,is_independent,size_band,careers_url)").order("published_at",{ascending:false,nullsFirst:false}).limit(200),
    supabase.from("user_outreach_drafts").select("outreach_key,brand_name,subject,email_body,status,updated_at,cv_id").eq("user_id",currentUser.id),
    supabase.from("user_cvs").select("id,name,is_default,parsed_profile,target_role_families").eq("user_id",currentUser.id).eq("active",true),
