@@ -117,7 +117,8 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}=
    '<p><strong>'+esc(lead.contactEmail)+'</strong></p><p>Indirizzo riportato nella ricerca. Verificalo sul sito del brand: non è identificato come recruiting.</p>'+
    '<a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Verifica il contatto sul sito ufficiale ↗</a>':
    '<p>Non è disponibile un indirizzo recruiting verificato. Non useremo email ipotizzate.</p>'+
-   (lead.contactDescription?'<p class="outNote">'+esc(lead.contactDescription)+'</p>':"");
+   (lead.contactDescription?'<p class="outNote">'+esc(lead.contactDescription)+'</p>':"")+
+    (lead.contactSourceUrl?'<p><a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Consulta i contatti pubblicati dal brand ↗</a></p>':"");
  return '<div class="outFolder"><div class="outFolderTop"><button type="button" class="outBack" data-outreach-back>← Tutte le spontanee</button><span class="outEyebrow">HUNT / FOLDER CANDIDATURA</span></div>'+
   '<header class="outFolderHero"><h1>'+esc(lead.brand)+'</h1><p>'+esc(lead.area)+'</p></header>'+
   '<section class="outFolderSection"><span class="outSectionKicker">Il momento</span><h2>Perché candidarti adesso</h2><p class="outStory">'+esc(lead.whyNow)+'</p><p class="outEvidenceCaution">È un segnale commerciale, non una conferma di assunzioni. Controlla l’aggiornamento delle fonti prima dell’invio.</p>'+
