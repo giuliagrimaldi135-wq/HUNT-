@@ -1,6 +1,6 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,safeLink,emailAddress} from "../outreach-intelligence.js";
+import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,analyzeOutreachCv,renderOutreachCvInsight,safeLink,emailAddress} from "../outreach-intelligence.js";
 const sample={
  key:"label-x",brand:"Label X",score:95,area:"Retail Merchandising",
  why_now:"Il brand ha annunciato un nuovo negozio a Milano.",
@@ -14,7 +14,7 @@ test("Only sourced, relevant outreach signals enter the feed",()=>{
  assert.equal(a.length,1);
  assert.equal(a[0].brand,"Label X");
  assert.equal(a[0].contactEmail,"info@label-x.example");
- assert.match(renderOutreachCards(a,{}),/Esplora il brand/);
+ assert.match(renderOutreachCards(a,{}),/Apri analisi/);
  assert.doesNotMatch(renderOutreachCards(a,{}),/95% match/);
 });
 test("Social URLs are not proof of an integrated feed; unrelated corporation news does not create recommendations",()=>{
@@ -80,7 +80,7 @@ test("A merchandising-oriented spontaneous contact recommends specialist CV over
  const cvs=[{id:"a",name:"fashion management",is_default:true},{id:"b",name:"Merchandising"}];
  assert.equal(chooseOutreachCv(cvs,lead.area).id,"b");
  const html=renderOutreachFolder(lead,{cvs});
- assert.match(html,/HUNT consiglia: <strong>Merchandising/);
+ assert.match(html,/HUNT sceglierebbe <strong>Merchandising/);
  assert.match(html,/<option value="b" selected>/);
 });
 
@@ -135,7 +135,7 @@ test("Fresh company-profile verification cannot make an old store opening look r
  const leads=buildOutreachLeads([item],[],Date.parse("2026-11-10"));
  assert.equal(leads.length,1);
  assert.equal(leads[0].dated,false);
- assert.match(renderOutreachCards(leads),/DAL BRAND/);
+ assert.match(renderOutreachCards(leads),/DAL MONDO DEL BRAND/);
 });
 
 test("Switching between two confirmed CVs changes subject, project evidence and motivation",()=>{
@@ -238,9 +238,9 @@ test("Brand overview uses editorial evidence and interpretation, not the previou
 test("Candidate section is only full-width CV selector, without redundant area and message-angle fields",()=>{
  const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
  const html=renderOutreachFolder(lead,{cvs:[{id:"x",name:"fashion management",is_default:true}]});
- assert.match(html,/outCvOnly/);
- assert.match(html,/CV da utilizzare/);
- assert.match(html,/HUNT consiglia/);
+ assert.match(html,/outCandidateDecision/);
+ assert.match(html,/Curriculum per questo brand/);
+ assert.match(html,/HUNT sceglierebbe/);
  assert.doesNotMatch(html,/ANGOLO DEL MESSAGGIO|outPrepareColumns|<span class="outMiniTitle">AREA<\/span>/);
 });
 test("Brand strategy project is never inserted as irrelevant filler in merchandising outreach",()=>{
@@ -271,10 +271,10 @@ test("Sourced commercial context remains but unresolved flagship warning is not 
 test("Application preserves priority and candidacy status, with a full-width CV section and no repeated area",()=>{
  const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
  const html=renderOutreachFolder(lead,{draft:{status:"preparing",subject:"Oggetto",email_body:"Testo"},cvs:[{id:"cv1",name:"Merchandising",is_default:true}]});
- assert.match(html,/outCandidateSnapshot/);
- assert.match(html,/PRIORITÀ/);
+ assert.match(html,/outCandidateDecision/);
+ assert.match(html,/CONTATTO MIRATO/);
  assert.match(html,/In preparazione/);
- assert.match(html,/outCvOnly/);
+ assert.match(html,/outCandidateDecision/);
  assert.doesNotMatch(html,/ANGOLO DEL MESSAGGIO|<span class="outMiniTitle">AREA/);
 });
 test("Luxury brand discovery feed uses concise verified headlines instead of repeating the full analysis",()=>{
@@ -285,9 +285,49 @@ test("Luxury brand discovery feed uses concise verified headlines instead of rep
   outreach_story:"Una lunghissima analisi del contesto commerciale non deve apparire nella lista."
  }})[0];
  const html=renderOutreachCards([enrich]);
- assert.match(html,/outLeadV5/);
+ assert.match(html,/outEditorialRow/);
  assert.match(html,/Nuova apertura · Retail/);
  assert.match(html,/Una novità commerciale documentata/);
- assert.match(html,/Esplora il brand/);
+ assert.match(html,/Apri analisi/);
  assert.doesNotMatch(html,/Una lunghissima analisi/);
+});
+
+test("User-confirmed experience and project evidence determine CV recommendation beyond filename",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const first={id:"generic",name:"fashion management",is_default:true,parsed_profile:{
+  profile_confirmed_by_user:true,experience:[{company:"Azienda Uno",role:"Brand assistant",evidence:["Assistenza agli eventi"]}],
+  projects:[{name:"Valentino Brand Strategy",evidence:["Analisi del posizionamento"]}]}};
+ const specialist={id:"specific",name:"Merchandising",parsed_profile:{
+  profile_confirmed_by_user:true,
+  experience:[{company:"Azienda Due",role:"Showroom Intern",evidence:["Gestione ordini durante campagna vendite"]}],
+  projects:[{name:"Gucci",evidence:["Pianificazione assortimenti e buying plan"]}]}};
+ const picked=chooseOutreachCv([first,specialist],lead.area,lead);
+ assert.equal(picked.id,"specific");
+ const report=analyzeOutreachCv(lead,specialist);
+ assert.ok(report.highlights.length>=2);
+ assert.match(renderOutreachCvInsight(lead,specialist),/Gestione ordini durante campagna vendite/);
+ assert.match(renderOutreachCvInsight(lead,specialist),/Pianificazione assortimenti e buying plan/);
+ const html=renderOutreachFolder(lead,{cvs:[first,specialist]});
+ assert.match(html,/<option value="specific" selected>/);
+ assert.match(html,/outCvEvidence/);
+ assert.match(html,/DAL TUO CV CONFERMATO/);
+});
+test("Unverified CVs do not surface names or invented evidence in the comparison",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const unconfirmed={id:"bad",name:"Merchandising",parsed_profile:{experience:[
+  {company:"Unverified Famous Studio",evidence:["I raised revenue by 800%"]}]}};
+ const analysis=analyzeOutreachCv(lead,unconfirmed);
+ assert.equal(analysis.confirmed,false);
+ const html=renderOutreachCvInsight(lead,unconfirmed);
+ assert.doesNotMatch(html,/Unverified Famous Studio|800%/);
+ assert.match(html,/Conferma le informazioni/);
+});
+test("Brand discovery list has a distinct compact, source-linked editorial presentation",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const html=renderOutreachCards([lead]);
+ assert.match(html,/outResultsV6/);
+ assert.match(html,/outEditorialRow/);
+ assert.match(html,/DAL MONDO DEL BRAND/);
+ assert.match(html,/https:\/\/example.org\/real-story/);
+ assert.doesNotMatch(html,/Dossier disponibile|outLeadV5|Apri il dossier/);
 });
