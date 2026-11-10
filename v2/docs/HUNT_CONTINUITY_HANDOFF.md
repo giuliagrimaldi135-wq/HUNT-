@@ -277,3 +277,21 @@ The first simplification (rev 152–153) went too far: user said the vacancy loo
 - Design instruction: high-end career-product visual hierarchy, not bare lists or repeated cards. Keep editorial storytelling at the top; make the purpose and consequence of every action obvious. Review patterns from established career software without imitating clutter.
 
 - Additional verification after the revision: **13/13** targeted vacancy/CV render tests and **2/2** CV-manager smoke tests passed in sequential in-memory execution, including opening the specifically selected CV directly in edit/review mode. These tests do not replace a deployed authenticated browser test. Public GitHub Pages availability could not be independently confirmed from this session.
+
+
+## 10 November 2026 — HUNT v155: preserve approved copy, restore richer story; release diagnosis
+User screenshots at ~13:13 CET still showed the OLD `Cosa farai` and `Controlla e conferma` UI even though GitHub `main` already contained the newer v154 code. Therefore **GitHub source and user-visible GitHub Pages were out of sync**; the precise reason could be a deployment queue/failure or client cache, and it has **not been independently verified** from this session.
+
+User explicitly approved and requires preservation:
+- Vacancy heading **`Il ruolo, in sintesi`** with a substantial, natural, source-grounded explanation, not a one-sentence list. For budget/stock/allocation the current narrative is ~90 words. Never add fabricated duties.
+- In the application sidebar restore exactly **`Il tuo dossier / Curriculum da utilizzare`** and **`HUNT propone la versione più pertinente. La scelta finale è tua.`** Do NOT remove or rename these approved elements in later refinements.
+- Preserve CV library and overview structure the user already liked; only clarify the confusing CV-verification action.
+
+Changes merged to `main`:
+- `hunt2-preview/job-workspace.js`: restored the exact approved sidebar text, richer editorial role explanation. The two contextual activities/requirements reveal controls remain.
+- `hunt2-preview/cv-workspace.js`: unverified CVs now have a prominent, real CTA `Verifica i dati estratti`, with explicit consequences; verified CVs retain discreet `Modifica i dati del CV`. Summary content and existing edit/save logic preserved.
+- `hunt2-preview/luxury-refinement.css`: make the unverified CV verification action a recognisable green button without introducing more cards. Role text typography refined.
+- `app.js`, `cv-profile.js`, `index.html`: bust import/stylesheet caches to `20261110-155`.
+- `job-workspace.test.mjs`, `cv-workspace.test.mjs`: regression tests lock in the approved recommendation and new action language. Targeted JS rendering tests passed 13/13; **not proof of deployed browser behaviour**.
+- `.github/workflows/pages.yml`: changed `cancel-in-progress` from `false` to `true` to avoid queuing many obsolete preview deployments from rapid UI commits. The commit itself triggers a new Pages build. Actions run status is not available through the current GitHub connector; the reported Vercel build-rate-limit status is separate from GitHub Pages.
+- Next step: verify the live GitHub Pages HTML references `app.js?v=20261110-155`, and inspect whether `job-workspace.js?v=20261110-155` is loaded in a fresh browser session. Confirm successful GitHub Pages Actions run before stating the live change is delivered. A direct cache-busted preview URL is `https://giuliagrimaldi135-wq.github.io/HUNT-/hunt2-preview/?v=20261110-155`. If still stale, investigate workflow failures and actual Pages deployment, not keep redesigning approved sections.
