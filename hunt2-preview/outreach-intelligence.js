@@ -209,6 +209,10 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
  const cvOptions=cvs.map(c=>'<option value="'+esc(c.id)+'" '+(selected?.id===c.id?"selected":"")+'>'+esc(c.name)+(c.is_default?" · principale":"")+'</option>').join("");
  const sources=sourceCatalog(lead);
  const press=sources.filter(s=>s.type==="Segnale"||s.type==="Stampa"||s.type==="World Radar");
+ const newsHighlights=[
+  ...(lead.editorial||[]).map(x=>({title:x.title,publisher:x.publisher||sourceHost(x.url),url:safeLink(x.url),date:x.date||null})),
+  ...(lead.news||[]).filter(x=>!/(?:20(?:1[0-9]|2[0-4]))\s*[/\-]\s*20(?:1[0-9]|2[0-5])/.test(String(x.title||""))).map(x=>({title:x.title,publisher:x.publisher||sourceHost(x.url),url:safeLink(x.url),date:x.date||null}))
+ ].filter(x=>x.title&&x.url).filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i).slice(0,3);
  const socials=sources.filter(s=>s.type==="Social");
  const socialBar=socials.length?'<div class="outSocialLinks">'+socials.map(s=>'<a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.publisher)+' ↗</a>').join("")+'</div>':"";
  const primary=press.slice(0,3);
@@ -220,7 +224,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
    (lead.contactSourceUrl?'<a href="'+esc(lead.contactSourceUrl)+'" target="_blank" rel="noopener noreferrer">Contatti ufficiali ↗</a>':"");
  const contactNote='HUNT non inventa email di recruiter. Prima dell’invio verifica che il canale sia appropriato.';
  return '<div class="outFolder outFolderV2"><div class="outFolderTop">'+
-  '<button type="button" class="outBack" data-outreach-back>← Spontanee</button>'+
+  '<button type="button" class="outBack" data-outreach-back>← Brand da contattare</button>'+
   '<span class="outFolderTag">Candidatura spontanea · dossier fonti</span></div>'+
   '<header class="outFolderHero"><span class="outSectionKicker">Luxury Outreach / '+esc(lead.dated?"Segnale recente":"Segnale da valutare")+'</span>'+
    '<h1>'+esc(lead.brand)+'</h1><p>'+esc(lead.area)+'</p>'+
@@ -229,6 +233,10 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
    '<p class="outStory">'+esc(lead.whyNow||lead.evidence[0]?.description||"")+'</p>'+
 
    '<div class="outStorySources">'+primary.map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' <span>↗</span></a>').join("")+'</div></section>'+
+  (newsHighlights.length?'<section class="outNewsPreview"><div class="outSectionIntro"><span class="outSectionKicker">Dal brand e dalla stampa</span><h2>News del brand</h2></div>'+
+    '<div class="outNewsRows">'+newsHighlights.map(item=>'<a class="outNewsLink" href="'+esc(item.url)+'" target="_blank" rel="noopener noreferrer">'+
+      '<span><strong>'+esc(item.title)+'</strong><small>'+esc(item.publisher)+(item.date?' · '+esc(dateText(item.date)):'')+'</small></span>'+
+      '<span aria-hidden="true">↗</span></a>').join("")+'</div></section>':"")+
   '<section class="outPrepare"><div class="outSectionIntro"><span class="outSectionKicker">02 · La candidatura</span><h2>Scheda candidatura</h2></div>'+
    '<div class="outPrepareColumns"><div><span class="outMiniTitle">Area su cui puntare</span><strong>'+esc(lead.area)+'</strong>'+
    (lead.priority?'<span class="outMiniTitle outPriorityText">Priorità di ricerca: '+esc(lead.priority)+'</span>':"")+
