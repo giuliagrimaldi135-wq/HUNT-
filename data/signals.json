@@ -1,42 +1,16 @@
 [
   {
-    "key": "f7a8e0384a30a823c618",
-    "brand": "Diesel",
-    "headline": "Accordi di licenza: Diesel rinnova con Fossil, Douuod Kids con Simonetta - FashionNetwork Italia",
+    "key": "983fa1813f5bdf959dd1",
+    "brand": "Pinko",
+    "headline": "Pinko, no al Black Friday in sostegno al wholesale - Milano Finanza",
     "signal_type": "industry_news",
-    "score": 68,
+    "score": 78,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T19:25:52.017093+00:00",
-    "published_at": "2026-11-10T10:11:59+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPRW9PM0lXUklpME1aQnluWTBXQ19ZYVpMUjVlM1gzTXdOQnhyZElUM2s0VzVRRWVBbzAxZzVVb2V2RWNMd1NkVzdzUHBfckxieDhKSGZFU2J2d1hTUHBObDFSOWlYTjhna3haTmVpWmJCdWRYcWRrWEowWXJJZXczV3RwVlZHS09udzZnOWlxZ1BDZlp0WW5ILVBRVjVkczh1RTVBY3RhQ1hUQl9zczRxN1p5b2lUaENFYXc?oc=5"
-  },
-  {
-    "key": "df13ecd02ac7edc638b3",
-    "brand": "Max Mara",
-    "headline": "Max Mara Fashion group lancia il marchio M-M For Mondays and More - FashionUnited",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T19:25:52.017093+00:00",
-    "published_at": "2026-11-09T10:37:24+00:00",
-    "source": "FashionUnited",
-    "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPVzBwN1VvdnZvSDMzLWMyX1A3cVhCclNsWHdYelNnQWNFTVY2NlRKU3lYNXdFelF4TFJKeE5CYWM4d2d6YWNidXl5Qzdjd3Q3ZjNzNnVONG1PbkVfSUtLRHBoWHVDdmhUMVRhYmZYcDl0WHVJOGJyTWZVQXdlSVJPLXF4dlFyVVJWRXZ5MTJjb3FQOUdyZGNjaTlFZmZULWl2X1QxZGdnd1o2SVNo?oc=5"
-  },
-  {
-    "key": "c5281e83363f366069ea",
-    "brand": "Max Mara",
-    "headline": "Max Mara Fashion Group lancia il brand M-M For Mondays and More - Pambianconews",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T19:25:52.017093+00:00",
-    "published_at": "2026-11-09T08:26:33+00:00",
-    "source": "Pambianconews",
-    "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPOWhqM1QwSTN1QVFndEZXU2JpdHZnVl9OMzV1SmpwN01KOXJVTE1UWWtreG1NemNDOEk5VS1ubnNua2traWRyam1IOUNYdzBOWUlxZFJUMjk4LUhNYy1uMFlPVnFadERWR1hGMlpkeFRMQTdzUHYyYkdZMldIOUxsTFZhRHd5U191d1hHWld6b0dualUtVklnaHJra1Jnb0E4b0FVZWlxaFoxOEFGeEMweG1R?oc=5"
+    "detected_at": "2026-11-10T20:15:38.564161+00:00",
+    "published_at": "2026-11-09T17:39:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPeDUtNTJWX2JIQkt5VTBBc1JDWHVWY09JNVhKeHhKTmt2UU1PWEM2NXViVFk2cFNjSTBlQ1FUX2ltbFRVRWVwLVlRQmJicUJudm1sX2xPWDFPbkViLThVZk1JTFM0RFdBWWhvSkp3YUs5RVFRX1JXUmpGS0ttRXhvYmotY3dseUMxbWg3VE54NURKM0phaG9yWmxPNlBBb05wT2hKUGhzUHA?oc=5"
   },
   {
     "key": "7a803ce0b7ac885dda19",
@@ -50,6 +24,19 @@
     "published_at": "2026-11-09T08:25:12+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPV2ZxSGZUN2Z3dFZfUE5pdWRrbnZFaVRzdG9yZTVPOTR4RmUwelo2RDMxWnNIY2JQRlFqSlBRZXJ3ckhBNUUxRGRQYXNlel9iQ3NreDJaUXFXWUNHdkZ1bDlYMy1pWGVLUFN4MXZscGJyX19MeTFyMDdKUkVTMlhtY1ptQVk3SHRpbmxNYkk5N2N3ajhsalJzUkdZY1VhTktyc1JFVW5rWmRnS2NZSmhRTm9fSjdMa210V3lTQldZM0UyVXRBc3loZXcxMA?oc=5"
+  },
+  {
+    "key": "c7c992517deaa237524b",
+    "brand": "Elisabetta Franchi",
+    "headline": "Elisabetta Franchi - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T20:15:38.564161+00:00",
+    "published_at": "2026-11-08T15:23:48+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNLWNicEVaT2lDemlPczNiTk9YVjNTV21KRzByRGY2OVhJRjZ5dU1ZVTB0TGwteEp1ZEdoRG1nd2RzekFnbTV0Y2tLbi0xMEFvclg4THp4SjVBVUsxQ2hteEl0TFAtOG8tNWFRTVBDNDlJZlpuNjNlWi0xb2dKTm1XY3g0TFFrZw?oc=5"
   },
   {
     "key": "57d78b9d507a5fc58ee1",
@@ -403,6 +390,19 @@
     "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE52X0ZpNEwwc0VyWDdLRnhxWGNhYnR1Nm41S2F5U2NuNlNGV0ppTDBOV0xBU1ZmMkZlWTJCenN2NC1Jak9oNHEySWRTcTU3S3JZUm8tQjJiUjBLSVJOdGdEUnhNSWlYNW1NRlNLUFRWSU44VVRV?oc=5"
   },
   {
+    "key": "105ef7c720225e413037",
+    "brand": "Giorgio Armani",
+    "headline": "Gli eredi di Giorgio Armani preferirebbero l'Ipo alla vendita a una big company - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T20:15:38.564161+00:00",
+    "published_at": "2026-11-05T14:47:19+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQVGNuU3BYYTFjTUJBbXh0RGc5NmVNaFdIVFZfSUZvOFNrWnFUYTJzQmV6M1oyRnBSUjFkRVFzYnpMT0d6b3JQR0IzUjlSTEJ5ek5fWHVvUkpCaXJDZVlnLUZZOUhuVmVyd1NuVm1fQ0xESDFLSW9tSXBCLU9PajlEQjRIYUM3SXdsV0RUc0NfSXF6T3FJdjBzcmtiamNkaHN5UHdGd2hJMFA1WDBSX21OSVlfVl9Cdm5TeWkwVFNBSUVpYnN0Y0E?oc=5"
+  },
+  {
     "key": "758ab0b0e85cfa6bf822",
     "brand": "Magliano",
     "headline": "Magliano - FashionNetwork Italia",
@@ -570,6 +570,19 @@
     "published_at": "2026-11-03T19:39:42+00:00",
     "source": "Fashion Times",
     "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNaFltZjZlZ25SWk9LaWQ1dzBONDd6bHFSWVZDN0dtQ2VGcjE5RWhWWTR2RmVXdTdiUHJTdjMzMUlSbUNNVVdoWHExak1udkl0V0Jvek9JQjJVVndic0dYME1DaDU0OE5QNDJFVERjYno5M0JNXzVVYkJscGwxSVJBTEtYZlJ4WDM1cFg5VmduUVUxN1k?oc=5"
+  },
+  {
+    "key": "72680eeb639a14169bca",
+    "brand": "Kering",
+    "headline": "Kering promuove il Water Resilience Lab per salvare il Bacino dell’Arno - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T20:15:38.564161+00:00",
+    "published_at": "2026-11-02T18:30:06+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPSjE1Zk44ek9waUVPY2pvLURlTkpCTFgzbGpzVmhGUkdlZG95R0o1ODVoSW16ZzhNZ1JOczZIUFBXc2JnbmkyZDJZR05EeGo1amZOVkZTVGhoSk9NOWs4WG5vZjlWSWk0TnZWbmhLRFdrbmI5cXhjMDgwamthdXczODRvdUJJdHEzcnkzdk1DZWJBdkJ2N3E2UnBwWDdHY2dBdkdzSXhrVzdKN0Z2M1hFd0EtSVhkRkV6RFJz?oc=5"
   },
   {
     "key": "b138c1fa8926ffbe5323",
@@ -765,6 +778,19 @@
     "published_at": "2026-10-26T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPdjJLZUtGX0FRX0RuNTNRNVNrdkpiR25IRDI1YVQ5NU1KY1d6aHZpQ3duVU5RQVJNdWoxZXRRMHB4ZzdOX1VwUTZOUVBzekNhV0tzWTRhVzUxc1B0a2UyZnMwcVQ0VVFGZ1U4NkFpTlZyUUlXTlhlQmdUQTI5OU9oX0RaV1NxWWVPVUZLcTRjSlZ1d3g0b0IzcmJJbnplb0RndTU3amtGNWI?oc=5"
+  },
+  {
+    "key": "c94795bb3e31cbd47ad6",
+    "brand": "Louis Vuitton",
+    "headline": "Ma cos’è che fa il Chief Brand Creative Officer di Louis Vuitton? - nss magazine",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T20:15:38.564161+00:00",
+    "published_at": "2026-10-26T07:00:00+00:00",
+    "source": "nss magazine",
+    "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNeTh2YV9ITmFjeHF6eTRVdDdUaXM2eE9zTU96N2hOWm1lVzFoVjlpVF9wNm9iQUNlMTcwVk5IazNhVGZZNUV1V0ZsMUVYZHNEQ1c3bHVTdmx2VE11cTBHNGFPaFdEUlk1RHRlQWFIVWM5ZmxDNktLLW45dWRiY0xja05lMlhPdU1EY0NVOGZOMHhZaFVhVHZTcVh1VE4?oc=5"
   },
   {
     "key": "ae214a3d2bf4937d9cc8",
