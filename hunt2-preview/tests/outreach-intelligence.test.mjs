@@ -120,7 +120,7 @@ test("Original approved folder labels stay clear and message angle is explicit",
  const html=renderOutreachFolder(enhanced);
  assert.match(html,/Perché contattare/);
  assert.match(html,/Scheda candidatura/);
- assert.match(html,/Il collegamento con il tuo profilo/);
+ assert.match(html,/PERCHÉ PUÒ ESSERE INTERESSANTE/);
  assert.match(html,/Email pronta da personalizzare/);
  assert.match(html,/Dove contattare il brand/);
  assert.match(html,/NOTIZIE E FONTI/);
@@ -160,7 +160,7 @@ test("Switching between two confirmed CVs changes subject, project evidence and 
  assert.match(b.body,/Assortment Gucci/);
  assert.doesNotMatch(b.body,/Tra gli strumenti|Excel \(avanzato\)/);
  assert.match(b.body,/Utente Esempio/);
- assert.match(describeOutreachCv(cvs[1],lead.area).text,/Assortment Gucci/);
+ assert.match(describeOutreachCv(cvs[1],lead.area).text,/Email adattata alle informazioni confermate/);
  const html=renderOutreachFolder(lead,{cvs,cvId:"two",person:user,preferences:personalization});
  assert.match(html,/<option value="two" selected>/);
  assert.match(html,/id="outCvReason"/);
@@ -217,4 +217,40 @@ test("Three tabs are exclusive panels: brand visible, candidate and news hidden"
  assert.match(html,/Scheda candidatura/);
  assert.match(html,/Dove contattare il brand/);
  assert.ok(html.indexOf('id="outNews"')>html.indexOf('id="outApplication"'));
+});
+
+test("Brand overview uses editorial evidence and interpretation, not the previous green summary box",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const detailed=enrichOutreachLeads([lead],{"label-x":{
+  outreach_story:"Il brand ha aperto un negozio documentato.",
+  outreach_relevance:"Un contatto junior nel merchandising può essere pertinente.",
+  outreach_caution:"Non è un annuncio di assunzione."
+ }})[0];
+ const html=renderOutreachFolder(detailed);
+ assert.match(html,/outBrandInsightGrid/);
+ assert.match(html,/outSignalNarrative/);
+ assert.match(html,/outEditorialInterpretation/);
+ assert.match(html,/IL MOVIMENTO DOCUMENTATO/);
+ assert.match(html,/PERCHÉ PUÒ ESSERE INTERESSANTE/);
+ assert.doesNotMatch(html,/outV3Relevance/);
+});
+test("Candidate section is only full-width CV selector, without redundant area and message-angle fields",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const html=renderOutreachFolder(lead,{cvs:[{id:"x",name:"fashion management",is_default:true}]});
+ assert.match(html,/outCvOnly/);
+ assert.match(html,/CV da utilizzare/);
+ assert.match(html,/HUNT consiglia/);
+ assert.doesNotMatch(html,/ANGOLO DEL MESSAGGIO|outPrepareColumns|<span class="outMiniTitle">AREA<\/span>/);
+});
+test("Brand strategy project is never inserted as irrelevant filler in merchandising outreach",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const cv={id:"brand",name:"fashion management",parsed_profile:{
+  profile_confirmed_by_user:true,
+  education:[{program:"Fashion Management",school:"Istituto Marangoni"}],
+  experience:[{company:"Marina Rinaldi",role:"Showroom Intern"}],
+  projects:[{name:"Valentino - Brand strategy",evidence:["Brand strategy"]}]
+ }};
+ const email=composeOutreachEmail(lead,cv,{display_name:"Candidata"});
+ assert.match(email.body,/Marina Rinaldi/);
+ assert.doesNotMatch(email.body,/Valentino|Ho sviluppato inoltre un progetto dedicato|lavorando su strategia di brand/);
 });
