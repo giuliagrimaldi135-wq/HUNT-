@@ -144,7 +144,7 @@ export function describeOutreachCv(cv,area=""){
  const evidence=confirmedProfile(cv,focus);
  return {verified:evidence.verified,focus:focus.label,
   text:evidence.verified?
-   "HUNT usa il CV «"+String(cv.name||"Curriculum")+"» e solo informazioni confermate: "+(evidence.proof.length?evidence.proof.slice(0,3).join(" · "):"profilo verificato, senza ulteriori dettagli dichiarati")+"."
+   "Email adattata alle informazioni confermate di questo CV."
    :"Il CV «"+String(cv.name||"Curriculum")+"» non contiene ancora informazioni confermate. HUNT non inserirà esperienze o competenze non verificate."};
 }
 export function composeOutreachEmail(lead,cv={},person={},preferences={}){
@@ -169,8 +169,14 @@ export function composeOutreachEmail(lead,cv={},person={},preferences={}){
   /assort|product mix|merchandis/.test(projectEvidence)?"studio degli assortimenti":
   /allocation|stock|retail planning/.test(projectEvidence)?"pianificazione retail":
   /brand strateg|posizionamento/.test(projectEvidence)?"strategia di brand":"";
- const projectLine=project?
-  " Ho sviluppato inoltre un progetto dedicato a «"+project+"»"+(projectTopic?", lavorando su "+projectTopic:"")+".":"";
+ const relevantProject=focus.kind==="merchandising"&&/otb|open.to.buy|buying plan|assort|product mix|merchandis|allocation|stock|retail planning/.test(projectEvidence);
+ const projectDetail=/otb|open.to.buy|buying plan|acquist/.test(projectEvidence)?"pianificazione degli acquisti":
+   /assort|product mix|merchandis/.test(projectEvidence)?"analisi degli assortimenti":
+   /allocation|stock|retail planning/.test(projectEvidence)?"pianificazione retail":"";
+ // Only mention an actual CV project when its confirmed description establishes a relevant task.
+ // Generic brand-strategy projects are not inserted as filler in commercial outreach emails.
+ const projectLine=project&&relevantProject&&projectDetail?
+   " Durante un progetto su "+project.replace(/\s*[-–—]\s*.*$/,"")+" ho approfondito la "+projectDetail+".":"";
  const interests=Array.isArray(preferences?.interest_areas)?preferences.interest_areas.map(normalizeContent).filter(Boolean):[];
  const userInterest=interests.find(x=>/merchandis|buying|product|retail|wholesale|planning/i.test(x));
  const goal=userInterest?userInterest:focus.label;
@@ -281,22 +287,24 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
    '<button type="button" class="folderTab active" role="tab" id="outTabReason" aria-selected="true" aria-controls="outReason" data-outreach-jump="reason">Il brand</button>'+
    '<button type="button" class="folderTab" role="tab" id="outTabApplication" aria-selected="false" aria-controls="outApplication" data-outreach-jump="application">La candidatura</button>'+
    '<button type="button" class="folderTab" role="tab" id="outTabNews" aria-selected="false" aria-controls="outNews" data-outreach-jump="news">News & fonti</button></nav>'+
-  '<section class="outV3Section outReason outTabPanel" id="outReason" role="tabpanel" aria-labelledby="outTabReason" data-outreach-panel="reason"><div class="outSectionIntro"><span class="outSectionKicker">IL MOTIVO DEL CONTATTO</span>'+
-   '<h2>Perché contattare '+esc(lead.brand)+' adesso</h2></div>'+
-   '<p class="outV3Story">'+esc(factsText)+'</p>'+
-   (relevanceText?'<div class="outV3Relevance"><strong>Il collegamento con il tuo profilo</strong><p>'+esc(relevanceText)+'</p></div>':"")+
-   '<p class="outV3Caution">'+esc(caveatText)+'</p>'+
-   '<div class="outStorySources">'+press.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.source)+' ↗</a>').join("")+'</div></section>'+
+  '<section class="outV3Section outReason outTabPanel" id="outReason" role="tabpanel" aria-labelledby="outTabReason" data-outreach-panel="reason">'+
+    '<div class="outSectionIntro"><span class="outSectionKicker">IL BRAND, OGGI</span>'+
+    '<h2>Perché contattare '+esc(lead.brand)+' adesso</h2></div>'+
+    '<div class="outBrandInsightGrid">'+
+      '<article class="outSignalNarrative"><span class="outInsightEyebrow">IL MOVIMENTO DOCUMENTATO</span>'+
+        '<p class="outV3Story">'+esc(factsText)+'</p>'+
+        '<div class="outSignalSources">'+press.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+
+          esc(x.kind==="radar"?"World Radar":x.source)+' ↗</a>').join("")+'</div></article>'+
+      (relevanceText?'<aside class="outEditorialInterpretation"><span class="outInsightEyebrow">PERCHÉ PUÒ ESSERE INTERESSANTE</span>'+
+        '<p>'+esc(relevanceText)+'</p></aside>':"")+
+    '</div><p class="outV3Caution">'+esc(caveatText)+'</p></section>'+ 
   '<div class="outTabPanel outApplicationPane" id="outApplication" role="tabpanel" aria-labelledby="outTabApplication" data-outreach-panel="application" hidden><section class="outV3Section outV3Application"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO PERCORSO</span><h2>Scheda candidatura</h2>'+
    '<p>HUNT parte dal tuo curriculum verificato e dalle esigenze che emergono dal brand.</p></div>'+
-   '<div class="outPrepareColumns"><div>'+
-    '<span class="outMiniTitle">PRIORITÀ</span><strong>'+esc(priority||"Da valutare")+'</strong><span class="outMiniTitle">AREA</span><strong>'+esc(lead.area)+'</strong>'+
-    (lead.messageAngle?'<span class="outMiniTitle">ANGOLO DEL MESSAGGIO</span><p class="outRoleAngle">'+esc(lead.messageAngle)+'</p>':"")+
-    '</div><div><label for="outCvChoice" class="outMiniTitle">CV da utilizzare</label>'+
-    '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
-    '<p class="outSuggestedCv">'+(suggestion?'HUNT consiglia: <strong>'+esc(suggestion.name)+'</strong>':'Carica e conferma un CV dal profilo per personalizzare la candidatura.')+'</p>'+
-    '<p class="outCvReason" id="outCvReason">'+esc(cvExplanation.text)+'</p></div></div></section>'+
+   '<div class="outCvOnly"><label for="outCvChoice" class="outMiniTitle">CV da utilizzare</label>'+
+     '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
+     '<p class="outSuggestedCv">'+(suggestion?'HUNT consiglia: <strong>'+esc(suggestion.name)+'</strong>':'Carica e conferma un CV dal tuo profilo.')+'</p>'+
+     '<p class="outCvReason" id="outCvReason">'+esc(cvExplanation.text)+'</p></div></section>'+
   '<section class="outV3Section outLetterSection" id="outLetter"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO MESSAGGIO</span><h2>Email pronta da personalizzare</h2>'+
    '<p>Un messaggio professionale costruito sul brand e sulle tue esperienze verificate. Ogni parola è modificabile.</p></div>'+
