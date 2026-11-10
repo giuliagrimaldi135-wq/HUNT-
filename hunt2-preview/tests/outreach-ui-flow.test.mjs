@@ -30,7 +30,7 @@ test("Per-user personalization and source-backed press appear in folder",()=>{
  assert.match(outreach,/brandGlobalNewsList/);
  assert.match(outreach,/data-outreach-news-filter="press"/);
  assert.match(outreach,/News & mondo fashion/);
- assert.match(outreach,/Un profilo social ufficiale non significa/);
+ assert.match(outreach,/non un monitoraggio automatico di tutti i loro post/);
 });
 
 test("Brand news can be filtered and all Fashion News opened through real actions",()=>{
