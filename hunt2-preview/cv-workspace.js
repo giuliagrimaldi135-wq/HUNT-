@@ -63,22 +63,22 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
  const exp=info.experience||[],projects=info.projects||[],edu=info.education||[],tools=info.tools||[],languages=info.languages||[];
  const related=areas.filter(x=>x.related);
  const overview=
-  '<div class="cvWPanelHeader"><h3>Il tuo percorso</h3><p>Esperienze e competenze presenti in questo curriculum.</p></div>'+
-  '<div class="cvWSnapshot cvWSnapshotEditorial">'+
-    '<section class="cvWSnapshotMain"><div class="cvWSnapshotTitle"><h4>Esperienza professionale</h4>'+
-      '<button type="button" data-cv-panel-target="experience">Tutte le esperienze ↗</button></div>'+
-      (exp.length?'<strong>'+esc(exp[0].company||exp[0].role||"Esperienza")+'</strong>'+
-        '<p class="cvWSnapshotRole">'+esc(exp[0].role||"")+'</p>'+activities(exp[0].evidence,2):
-        '<p class="cvWEmpty">Non risultano esperienze dettagliate.</p>')+'</section>'+
-    '<div class="cvWSnapshotSide">'+
-     '<section><div class="cvWSnapshotTitle"><h4>Progetti</h4><button type="button" data-cv-panel-target="projects">Esplora ↗</button></div>'+
-       (projects.length?projects.slice(0,3).map(x=>'<p class="cvWSnapshotItem">'+esc(projectNameForDisplay(x.name,"it"))+'</p>').join(""):'<p class="cvWEmpty">Nessun progetto rilevato.</p>')+'</section>'+
-     '<section><div class="cvWSnapshotTitle"><h4>Strumenti</h4><button type="button" data-cv-panel-target="skills">Tutti ↗</button></div>'+
-       '<p class="cvWInlineTools">'+(tools.length?tools.slice(0,5).map(esc).join('<span aria-hidden="true"> · </span>'):'Nessuno strumento rilevato')+'</p></section>'+
-     '<section><div class="cvWSnapshotTitle"><h4>Ambiti collegati</h4><button type="button" data-cv-panel-target="areas">Esplora ↗</button></div>'+
-       '<p class="cvWSnapshotItem">'+(related.length?esc(related.slice(0,3).map(x=>x.name).join(" · ")):"Nessun ambito riconosciuto")+'</p></section>'+
-    '</div>'+
-   '</div>';
+  '<div class="cvWPanelHeader"><h3>Il tuo CV, in breve</h3><p>Qui trovi le informazioni lette dal documento. Apri i dettagli quando ti servono.</p></div>'+
+  '<div class="cvWSnapshot cvWSnapshotEditorial cvWSimpleSummary">'+
+   '<section class="cvWSnapshotMain"><div class="cvWSnapshotTitle"><h4>Esperienza</h4></div>'+
+     (exp.length?'<strong>'+esc(exp[0].company||exp[0].role||"Esperienza")+'</strong>'+
+       '<p class="cvWSnapshotRole">'+esc(exp[0].role||"")+'</p>'+activities(exp[0].evidence,1):
+       '<p class="cvWEmpty">Nessuna esperienza riconosciuta in questo CV.</p>')+
+     '<button class="cvWDetailsLink" type="button" data-cv-panel-target="experience">Vedi le esperienze <span aria-hidden="true">↗</span></button></section>'+
+   '<div class="cvWSnapshotSide">'+
+    '<section><div class="cvWSnapshotTitle"><h4>Progetti</h4></div>'+
+      (projects.length?projects.slice(0,2).map(x=>'<p class="cvWSnapshotItem">'+esc(projectNameForDisplay(x.name,"it"))+'</p>').join(""):'<p class="cvWEmpty">Nessun progetto riconosciuto.</p>')+
+      '<button class="cvWDetailsLink" type="button" data-cv-panel-target="projects">Vedi i progetti <span aria-hidden="true">↗</span></button></section>'+
+    '<section><div class="cvWSnapshotTitle"><h4>Formazione e competenze</h4></div>'+
+      (edu.length?'<p class="cvWSnapshotItem">'+esc([edu[0].program,edu[0].school].filter(Boolean).join(" · "))+'</p>':"")+
+      '<p class="cvWInlineTools">'+(tools.length?tools.slice(0,3).map(esc).join('<span aria-hidden="true"> · </span>'):'Strumenti non ancora riconosciuti')+'</p>'+
+      '<button class="cvWDetailsLink" type="button" data-cv-panel-target="skills">Vedi le competenze <span aria-hidden="true">↗</span></button></section>'+
+   '</div></div>';
  const list=(items,type,empty)=>'<div class="cvWRecords">'+(items.length?items.map(x=>record(x,type)).join(""):'<p class="cvWEmpty">'+empty+'</p>')+'</div>';
  const experience='<div class="cvWPanelHeader"><h3>Esperienze professionali</h3><p>Posizioni e responsabilità riportate nel curriculum.</p></div>'+
    list(exp,"experience","Nessuna esperienza riconosciuta in questo documento.");
@@ -113,19 +113,19 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
     '<div class="cvWAllAreasGrid">'+areas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details>';
  const edit='<div class="cvWPanelHeader"><h3>Modifica informazioni</h3><p>Correggi o completa i dati estratti, poi salva le modifiche. I dati aggiunti saranno attribuiti a questa versione del CV.</p></div>'+
    '<div id="cvCorrectionDetails" class="cvWEditFields">'+corrections+'</div>';
- return '<section class="cvWWorkspace" aria-label="Curriculum selezionato">'+
-  '<header class="cvWWorkspaceHead"><div><div class="cvWEyebrow">CURRICULUM SELEZIONATO</div>'+
-   '<div class="cvWTitle"><h2>'+esc(cv.name||"Curriculum")+'</h2>'+(cv.is_default?'<span class="cvWPrimaryText">CV principale</span>':"")+'</div>'+
-   '<p>'+esc(confirmed?"Informazioni confermate e utilizzabili nei confronti con gli annunci.":"Informazioni estratte: controlla il contenuto e conferma ciò che è corretto.")+'</p></div>'+
-   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton">Modifica dati <span aria-hidden="true">↗</span></button></header>'+
-  '<nav class="cvWTabs" role="tablist" aria-label="Esplora il CV">'+
-   tab("overview","Riepilogo",a)+tab("experience","Esperienze",a)+tab("projects","Progetti",a)+
-   tab("skills","Competenze",a)+tab("areas","Ambiti",a)+'</nav>'+
+ const detailsPane=(id,html)=>pane(id,a,
+  '<button type="button" class="cvWBack" data-cv-panel-target="overview">← Torna al riepilogo</button>'+html);
+ const skillsAndAreas=skills+'<button type="button" class="cvWDetailsLink cvWAreasLink" data-cv-panel-target="areas">Ambiti professionali collegati <span aria-hidden="true">↗</span></button>';
+ return '<section class="cvWWorkspace cvWWorkspaceSimple" aria-label="Curriculum selezionato">'+
+  '<header class="cvWWorkspaceHead"><div><div class="cvWEyebrow">Il CV che stai visualizzando</div>'+
+   '<div class="cvWTitle"><h2>'+esc(cv.name||"Curriculum")+'</h2>'+(cv.is_default?'<span class="cvWPrimaryText">Principale</span>':"")+'</div>'+
+   '<p>'+esc(confirmed?"Dati confermati. HUNT può usarli per confrontare questo CV con le offerte.":"Dati letti dal documento, non ancora confermati. Controllali prima di usarli per le candidature.")+'</p></div>'+
+   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton">'+(confirmed?"Modifica i dati":"Controlla e conferma")+' <span aria-hidden="true">↗</span></button></header>'+
   '<form id="cvFactsForm">'+
-   pane("overview",a,overview)+pane("experience",a,experience)+pane("projects",a,projectPanel)+
-   pane("skills",a,skills)+pane("areas",a,categories)+pane("edit",a,edit)+
-   '<div class="cvWConfirm"><div><strong>'+esc(confirmed?"Profilo confermato":"Conferma questo curriculum")+'</strong>'+
-    '<p>'+esc(confirmed?"Puoi modificare e salvare le informazioni quando vuoi.":"Verifica che il riepilogo sia fedele al CV prima di usarlo nelle candidature.")+'</p></div>'+
+   pane("overview",a,overview)+detailsPane("experience",experience)+detailsPane("projects",projectPanel)+
+   detailsPane("skills",skillsAndAreas)+detailsPane("areas",categories)+detailsPane("edit",edit)+
+   '<div class="cvWConfirm" '+(a==="edit"?"":"hidden")+'><div><strong>'+esc(confirmed?"Salva le modifiche":"Conferma i dati del CV")+'</strong>'+
+    '<p>'+esc(confirmed?"Le modifiche aggiornano solo questo curriculum.":"Verifica che i dati siano fedeli al documento prima di confermare.")+'</p></div>'+
     '<button type="submit" class="btn primary">'+(confirmed?"Salva modifiche":"Conferma informazioni")+'</button></div>'+
   '</form></section>';
 }
