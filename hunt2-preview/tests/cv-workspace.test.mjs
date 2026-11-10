@@ -44,14 +44,14 @@ test("All six detail and edit panels remain reachable with a back link",()=>{
 });
 test("CV verification is explicit; save button is shown only in edit mode",()=>{
  const summary=renderCvWorkspace({cv:rows[1],info,confirmed:false,activePanel:"overview",corrections:'<textarea id="cvTools">Excel</textarea>'});
- assert.match(summary,/Controlla e conferma/);
- assert.match(summary,/non ancora confermati/);
+ assert.match(summary,/Verifica le informazioni/);
+ assert.match(summary,/Verifica che esperienze, progetti e competenze siano corretti/);
  assert.match(summary,/class="cvWConfirm" hidden/);
  const edit=renderCvWorkspace({cv:rows[1],info,confirmed:false,activePanel:"edit",corrections:'<textarea id="cvTools">Excel</textarea>'});
  assert.match(edit,/data-cv-panel="edit" >/);
  assert.match(edit,/data-cv-panel="overview" hidden/);
  assert.match(edit,/class="cvWConfirm" >/);
- assert.match(edit,/Conferma informazioni/);
+ assert.match(edit,/Conferma e salva/);
  assert.match(edit,/Torna al riepilogo/);
 });
 test("Professional categories are optional and maintain their evidence provenance",()=>{
@@ -62,4 +62,15 @@ test("Professional categories are optional and maintain their evidence provenanc
  assert.match(html,/Esplora tutte le 2 categorie/);
  assert.match(html,/data-cv-panel-target="areas"/);
  assert.doesNotMatch(html,/cvWOverviewCard|cvWAreaCard/);
+});
+
+test("Principal CV and verified information remain distinct states",()=>{
+ const lib=renderCvLibrary({cvs:rows,selectedId:"1",statusFor:()=>"Da verificare"});
+ assert.match(lib,/Principale · Da verificare/);
+ const html=renderCvWorkspace({cv:rows[1],info,confirmed:false,corrections:""});
+ assert.match(html,/Il file originale non verrà modificato/);
+ assert.match(html,/Confermando, HUNT utilizzerà questi dati/);
+ const verified=renderCvWorkspace({cv:rows[0],info,confirmed:true,corrections:""});
+ assert.match(verified,/Modifica le informazioni/);
+ assert.match(verified,/Salva modifiche/);
 });
