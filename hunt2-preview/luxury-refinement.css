@@ -550,3 +550,28 @@
  .huntWorkspaceEditorial .hwExploreChoice{padding:17px 0}
  .huntWorkspaceEditorial .hwExploreChoice+.hwExploreChoice{border-left:0;border-top:1px solid #e2e7e1;padding-left:0}
 }
+
+
+/* HUNT 155 — unmistakable CV verification CTA; no extra decorative cards */
+.cvWWorkspaceSimple .cvWWorkspaceHead .cvWEditButton.cvWVerifyPrimary{
+ display:inline-flex;align-items:center;justify-content:center;gap:12px;
+ padding:14px 19px;border:1px solid #1c6047;border-radius:4px;
+ background:#1c6047;color:#fff;font-size:12px;font-weight:740;
+ text-decoration:none;white-space:nowrap;min-height:47px;
+ box-shadow:none;transition:background .18s ease,border-color .18s ease;
+}
+.cvWWorkspaceSimple .cvWWorkspaceHead .cvWEditButton.cvWVerifyPrimary:hover{
+ background:#164d39;border-color:#164d39;color:#fff;
+}
+.cvWWorkspaceSimple .cvWWorkspaceHead .cvWEditButton.cvWVerifyPrimary:focus-visible{
+ outline:2px solid #7baa8a;outline-offset:3px;
+}
+.cvWWorkspaceSimple .cvWWorkspaceHead .cvWEditButton.cvWEditSecondary{
+ font-size:12px;font-weight:710;white-space:normal;
+}
+.cvWWorkspaceSimple .cvWWorkspaceHead>div>p{max-width:640px;line-height:1.8;color:#57665a;font-size:12.5px}
+.huntWorkspaceEditorial .hwRoleDescription{max-width:755px;line-height:1.89;font-size:15px}
+@media(max-width:680px){
+ .cvWWorkspaceSimple .cvWWorkspaceHead .cvWEditButton.cvWVerifyPrimary{width:100%;white-space:normal}
+ .cvWWorkspaceSimple .cvWWorkspaceHead{align-items:stretch}
+}
