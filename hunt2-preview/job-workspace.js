@@ -64,69 +64,44 @@ export function describePosition(duties=[],title=""){
  return "Per questa posizione non è ancora disponibile una descrizione delle responsabilità sufficientemente dettagliata. Puoi consultare l'annuncio originale per verificare mansioni e perimetro del ruolo.";
 }
 
-function tab(name,label,active){
- return '<button type="button" role="tab" class="hwTab '+(active===name?"is-active":"")+'" data-job-workspace-tab="'+name+'" aria-selected="'+(active===name?"true":"false")+'" aria-controls="hw-pane-'+name+'">'+label+'</button>';
-}
-function panel(name,active,content){
- return '<section role="tabpanel" id="hw-pane-'+name+'" class="hwPane" data-job-workspace-pane="'+name+'" '+(name===active?"":"hidden")+'>'+content+'</section>';
-}
 export function renderJobWorkspace(data={}){
  const summary=String(data.summary||"").trim();
  const duties=Array.isArray(data.duties)?data.duties:[];
  const relevant=Array.isArray(data.relevant)?data.relevant:[];
  const cvs=Array.isArray(data.cvs)?data.cvs:[];
- const active=["overview","tasks","criteria"].includes(data.activeTab)?data.activeTab:"overview";
  const source=safeSource(data.sourceUrl);
  const chosen=cvs.find(x=>x.selected)||null;
  const cvOpts=cvs.map(cv=>'<option value="'+esc(cv.id)+'" '+(cv.selected?"selected":"")+'>'+esc(cv.name)+(cv.primary?" · principale":"")+'</option>').join("");
- const roleDescription=describePosition(duties,data.roleTitle||"");
- const overview=panel("overview",active,
-  '<div class="hwEditorialOverview">'+
-   '<div class="hwEditorialHeadline"><span class="hwEyebrow">Dentro la posizione</span>'+
-    '<h3>Il ruolo, in sintesi</h3></div>'+
-   '<p class="hwEditorialStory">'+esc(roleDescription)+'</p>'+
-   (summary?'<div class="hwEditorialContext"><span>In relazione al tuo profilo</span><p>'+esc(summary)+'</p></div>':"")+
-   '<div class="hwEditorialExplore">'+
-    '<button type="button" class="hwEditorialLink" data-switch-job-tab="tasks">'+
-      '<span class="hwEditorialLinkBody">'+
-        '<strong>Attività e responsabilità</strong>'+
-        '<small>Scopri le mansioni descritte nell’annuncio</small></span>'+
-      '<span class="hwEditorialArrow" aria-hidden="true">↗</span></button>'+
-    '<button type="button" class="hwEditorialLink" data-switch-job-tab="criteria">'+
-      '<span class="hwEditorialLinkBody">'+
-        '<strong>Competenze richieste</strong>'+
-        '<small>Confronta i requisiti con il tuo curriculum</small></span>'+
-      '<span class="hwEditorialArrow" aria-hidden="true">↗</span></button>'+
-   '</div>'+
-  '</div>');
- const tasks=panel("tasks",active,
-  '<div class="hwPanelHeading"><h3>Attività e responsabilità</h3><span>La descrizione del lavoro</span></div>'+
-  '<p class="hwPanelSubhead">Attività riportate nell’annuncio della posizione.</p>'+
-  responsibilities(duties));
- const criteria=panel("criteria",active,
-  '<div class="hwPanelHeading"><h3>Requisiti professionali</h3><span>Confronto con il CV selezionato</span></div>'+
-  '<p class="hwPanelSubhead">Il confronto mette in evidenza le competenze professionali più importanti per questo ruolo.</p>'+
-  (relevant.length?'<div class="hwRequirementList is-full">'+relevant.map(r=>req(r,false)).join("")+'</div>':
-  '<p class="hwEmpty">Non sono disponibili requisiti tecnici sufficienti per un confronto documentato.</p>'));
- return '<section class="section huntWorkspace" aria-label="Analisi della candidatura">'+
-
-   '<div class="hwLayout"><div class="hwMain">'+
-   '<nav class="hwTabs" role="tablist" aria-label="Sezioni della posizione">'+
-   tab("overview","Panoramica",active)+tab("tasks","Attività",active)+tab("criteria","Requisiti",active)+'</nav>'+
-   '<div class="hwContent">'+overview+tasks+criteria+'</div>'+
-   '<footer class="hwSource">'+
-   '<span>'+(data.officiallyVerified?"Contenuto verificato sull’annuncio aziendale":"Informazioni ricavate dal testo disponibile")+'</span>'+
-   (source?'<a href="'+esc(source)+'" target="_blank" rel="noopener noreferrer">Leggi l’annuncio completo ↗</a>':"")+
-   '</footer></div>'+
-   '<aside class="hwAside" aria-label="La tua candidatura">'+
-   '<section class="hwAsideCard"><span class="hwEyebrow">Il tuo dossier</span><h3>Curriculum da utilizzare</h3>'+
-   '<p>HUNT propone la versione più pertinente. La scelta finale è tua.</p>'+
-   '<label for="dossierCv" class="hwCvLabel">CV selezionato</label>'+
-   '<select id="dossierCv" aria-label="CV per il confronto">'+(cvOpts||'<option value="">Nessun curriculum</option>')+'</select>'+
-   '<div class="hwCvState"><span class="hwCvStateDot"></span><span>'+esc(!chosen?"Aggiungi un CV nel Profilo":chosen.verified?"Informazioni confermate":chosen.readable?"Da confermare nel Profilo":"Lettura del CV non completata")+'</span></div>'+
-   '<button class="hwAsideTextAction" type="button" id="reviewRequirementsProfile">Apri il Profilo <span aria-hidden="true">↗</span></button></section>'+
-   '<section class="hwNextSteps"><h3>Prima di candidarti</h3><p>Rileggi i requisiti e scegli la versione del CV che racconta meglio la tua esperienza. Per la candidatura usa il portale del brand.</p>'+
-   (source?'<a href="'+esc(source)+'" target="_blank" rel="noopener noreferrer" class="hwOpenSource">Vai all’annuncio ufficiale <span aria-hidden="true">↗</span></a>':"")+'</section>'+
-   '<div class="hwUpcoming"><strong>Lettera di presentazione</strong><small>La generazione automatica è temporaneamente sospesa. Nessuna lettera viene rigenerata aprendo questa pagina.</small></div>'+
-   '</aside></div></section>';
+ const description=describePosition(duties,data.roleTitle||"");
+ const disclosure=(title,hint,body,extraClass="")=>
+  '<details class="hwDisclosure '+extraClass+'"><summary><span class="hwDisclosureHeading"><strong>'+title+'</strong><small>'+hint+'</small></span><span class="hwChevron" aria-hidden="true"></span></summary><div class="hwDisclosureContent">'+body+'</div></details>';
+ const dutiesPanel=disclosure(
+  "Attività","Le responsabilità riportate nell’annuncio",
+  responsibilities(duties),"hwDutiesDetail"
+ );
+ const requirementsPanel=disclosure(
+  "Requisiti","Confronta le richieste del brand con il CV selezionato",
+  relevant.length?'<div class="hwRequirementList is-full">'+relevant.map(r=>req(r,false)).join("")+'</div>':
+  '<p class="hwEmpty">Non ci sono informazioni sufficienti per verificare i requisiti. Consulta l’annuncio originale.</p>',"hwRequirementsDetail"
+ );
+ const profilePanel=summary?disclosure(
+  "Confronto con il mio CV","Punti pertinenti e aspetti da verificare",
+  '<p class="hwProfileExplanation">'+esc(summary)+'</p>',"hwProfileDetail"
+ ):"";
+ const verification=!chosen?"Non hai ancora scelto un CV":chosen.verified?"Dati del CV confermati":chosen.readable?"Dati del CV da verificare":"Lettura del CV da completare";
+ return '<section class="section huntWorkspace huntWorkspaceSimplified" aria-label="Dettaglio della posizione">'+
+  '<div class="hwLayout"><div class="hwMain">'+
+  '<header class="hwIntro"><span class="hwEyebrow">La posizione</span><h2>Cosa farai</h2>'+
+  '<p class="hwEditorialStory">'+esc(description)+'</p></header>'+
+  '<div class="hwDisclosureList">'+dutiesPanel+requirementsPanel+profilePanel+'</div>'+
+  '<footer class="hwSource"><span>'+(data.officiallyVerified?"Informazioni verificate sull’annuncio aziendale":"Sintesi basata sul testo disponibile dell’annuncio")+'</span></footer>'+
+  '</div><aside class="hwAside" aria-label="Prepara la candidatura">'+
+  '<section class="hwAsideCard"><h3>Il CV per questa candidatura</h3>'+
+  '<p>Scegli il documento da usare e confrontare con i requisiti.</p>'+
+  '<label for="dossierCv" class="hwCvLabel">Curriculum</label>'+
+  '<select id="dossierCv" aria-label="CV da utilizzare">'+(cvOpts||'<option value="">Nessun CV caricato</option>')+'</select>'+
+  '<p class="hwCvState"><span class="hwCvStateDot" aria-hidden="true"></span><span>'+esc(verification)+'</span></p>'+
+  '<button class="hwAsideTextAction" type="button" id="reviewRequirementsProfile">Gestisci i miei CV <span aria-hidden="true">↗</span></button></section>'+
+  (source?'<a href="'+esc(source)+'" target="_blank" rel="noopener noreferrer" class="hwOpenSource">Vai all’annuncio e candidati <span aria-hidden="true">↗</span></a>':"")+
+  '</aside></div></section>';
 }
