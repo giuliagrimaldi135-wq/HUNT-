@@ -89,7 +89,7 @@ export function renderJobWorkspace(data={}){
   '<p class="hwProfileExplanation">'+esc(summary)+'</p>',"hwProfileDetail"
  ):"";
  const verification=!chosen?"Non hai ancora scelto un CV":chosen.verified?"Dati del CV confermati":chosen.readable?"Dati del CV da verificare":"Lettura del CV da completare";
- return '<section class="section huntWorkspace huntWorkspaceSimplified" aria-label="Dettaglio della posizione">'+
+ return '<section id="huntJobPreparation" class="section huntWorkspace huntWorkspaceSimplified" aria-label="Dettaglio della posizione">'+
   '<div class="hwLayout"><div class="hwMain">'+
   '<header class="hwIntro"><span class="hwEyebrow">La posizione</span><h2>Cosa farai</h2>'+
   '<p class="hwEditorialStory">'+esc(description)+'</p></header>'+
