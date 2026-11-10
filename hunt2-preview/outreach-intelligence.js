@@ -82,6 +82,7 @@ export function enrichOutreachLeads(leads=[],registry={}){
    companyUrl:safeLink(record.company_url||lead.companyUrl),
    socialProfiles:(record.official_profiles||[]).filter(x=>safeLink(x.url)).map(x=>({...x,url:safeLink(x.url),sourceUrl:safeLink(x.source_url),kind:"official_profile"})),
    editorial,news:[...(lead.news||[])],messageAngle:String(record.message_angle||""),emailHook:String(record.email_hook||""),
+   outreachStory:String(record.outreach_story||""),outreachRelevance:String(record.outreach_relevance||""),outreachCaution:String(record.outreach_caution||""),
    contactKind:String(lead.contactKind||record.contact_kind||"")
   };
  });
@@ -120,25 +121,22 @@ function compactEvidence(x,max=135){
 }
 function confirmedProfile(cv,focus){
  const p=cv?.parsed_profile||{};
- if(!isConfirmedCv(cv))return {verified:false,lines:[],proof:[]};
+ if(!isConfirmedCv(cv))return {verified:false,proof:[],education:null,experience:null,project:null};
  const education=Array.isArray(p.education)?p.education.find(x=>x&&(x.school||x.program||x.degree)):null;
  const experience=Array.isArray(p.experience)?p.experience.find(x=>x&&(x.company||x.role)):null;
  const projects=Array.isArray(p.projects)?p.projects:[];
  const relevantWords=focus.kind==="merchandising"?/merchandis|buying|assort|retail|stock|planning|gucci|ala[iï]a/i:
    focus.kind==="wholesale"?/wholesale|showroom|sales|client|order/i:/brand|strategy|retail|management|marketing/i;
- const project=projects.find(x=>relevantWords.test([x.name,...(Array.isArray(x.evidence)?x.evidence:[])].join(" ")))||projects[0];
- const tools=Array.isArray(p.tools)?p.tools.filter(x=>/excel|power bi|tableau|sap/i.test(typeof x==="string"?x:x?.name||"")):[];
- const program=compactEvidence(education?.program||education?.degree,95),school=compactEvidence(education?.school,95);
- const company=compactEvidence(experience?.company,95),role=compactEvidence(experience?.role,85);
- const projectName=compactEvidence(project?.name,105);
- const lines=[];
+ const project=projects.find(x=>relevantWords.test([x.name,...(Array.isArray(x.evidence)?x.evidence:[])].join(" ")))||projects[0]||null;
  const proof=[];
- if(program&&school){lines.push("Ho una formazione in "+program+" presso "+school+".");proof.push(program+" · "+school)}
- else if(program){lines.push("Ho una formazione in "+program+".");proof.push(program)}
- if(company){lines.push("Nel mio percorso ho svolto un’esperienza"+(role?" come "+role:"")+" presso "+company+".");proof.push((role?role+" · ":"")+company)}
- if(projectName){lines.push("Ho lavorato anche sul progetto "+projectName+".");proof.push("Progetto: "+projectName)}
- const tool=tools[0];if(tool){const t=compactEvidence(typeof tool==="string"?tool:tool.name,45);lines.push("Tra gli strumenti che utilizzo nel mio percorso c’è "+t+".");proof.push(t)}
- return {verified:true,lines,proof};
+ const program=compactEvidence(education?.program||education?.degree,85),school=compactEvidence(education?.school,85);
+ const company=compactEvidence(experience?.company,90),role=compactEvidence(experience?.role,80),projectName=compactEvidence(project?.name,90);
+ if(program)proof.push(school?program+" · "+school:program);
+ if(company)proof.push((role?role+" · ":"")+company);
+ if(projectName)proof.push("Progetto: "+projectName);
+ const software=Array.isArray(p.tools)?p.tools.filter(x=>/excel|power bi|tableau|sap/i.test(typeof x==="string"?x:x?.name||"")):[];
+ if(software.length)proof.push("Strumento documentato: "+compactEvidence(typeof software[0]==="string"?software[0]:software[0].name,75));
+ return {verified:true,proof,education,experience,project};
 }
 export function describeOutreachCv(cv,area=""){
  if(!cv)return {verified:false,text:"Nessun CV selezionato. Aggiungi un curriculum e verificane i dati per personalizzare questa candidatura.",focus:"Profilo da aggiungere"};
@@ -154,21 +152,40 @@ export function composeOutreachEmail(lead,cv={},person={},preferences={}){
  const evidence=confirmedProfile(cv,focus);
  const name=normalizeContent(person?.display_name||[person?.first_name,person?.last_name].filter(Boolean).join(" "));
  const company=String(lead.brand||"il brand").trim();
- const subject="Candidatura spontanea — "+focus.label+" | "+company;
- const hook=normalizeContent(lead.emailHook||
-  "Ho seguito con interesse gli sviluppi di "+company+", in particolare "+String(lead.whyNow||"le iniziative del brand").replace(/[.!?]+$/,"").replace(/^./,m=>m.toLowerCase())+".");
+ const subject="Candidatura spontanea | "+focus.label+" — "+company;
+ const hook=normalizeContent(lead.emailHook||"Ho seguito con interesse un recente sviluppo commerciale di "+company+".");
  const intro=hook.endsWith(".")?hook:hook+".";
+ const edu=evidence.education||{},exp=evidence.experience||{},proj=evidence.project||{};
+ const school=compactEvidence(edu.school,90),course=compactEvidence(edu.program||edu.degree,90);
+ const employer=compactEvidence(exp.company,95),role=compactEvidence(exp.role,85);
+ const project=compactEvidence(proj.name,110);
+ const facts=[];
+ if(course&&school)facts.push("Ho completato un percorso in "+course+" presso "+school);
+ else if(course)facts.push("Ho una formazione in "+course);
+ if(employer)facts.push("ho maturato un'esperienza presso "+employer+(role?", nel ruolo di "+role:""));
+ const actualFacts=facts.length?facts.map((x,i)=>i?x.charAt(0).toLowerCase()+x.slice(1):x).join(" e ")+".":"";
+ const projectLine=project?(actualFacts?" Un progetto che ritengo pertinente a questa candidatura è «"+project+"».":"Nel mio percorso ho sviluppato il progetto «"+project+"»."):"";
  const interests=Array.isArray(preferences?.interest_areas)?preferences.interest_areas.map(normalizeContent).filter(Boolean):[];
- const interestMatched=interests.find(i=>/merchandis|buying|product|retail|wholesale|planning/i.test(i));
- const preferenceLine=interestMatched?" Il mio interesse professionale si orienta in particolare verso "+interestMatched+".":"";
- const profileText=evidence.lines.length?evidence.lines.join(" ")+"\n\n":"";
+ const userInterest=interests.find(x=>/merchandis|buying|product|retail|wholesale|planning/i.test(x));
+ const goal=userInterest?userInterest:focus.label;
+ const roleLabel=focus.kind==="wholesale"?"wholesale e supporto alle attività commerciali":
+   focus.kind==="management"?"prodotto, merchandising e coordinamento retail":
+   focus.kind==="merchandising"?"merchandising, buying e pianificazione retail":
+   "prodotto e sviluppo commerciale";
+ const brandAngle=normalizeContent(lead.messageAngle||lead.outreachRelevance||"");
+ const why=focus.kind==="wholesale"?
+  "Mi interessa in particolare il lavoro che collega la presentazione delle collezioni alle attività commerciali e ai canali distributivi.":
+  focus.kind==="management"?
+  "Mi interessa capire come l'identità del brand si traduca in scelte di prodotto e nell'esperienza in negozio.":
+  "Mi interessa il rapporto tra prodotto, assortimento e risultati commerciali, soprattutto nei momenti in cui un brand sviluppa nuovi canali o categorie.";
  const short=/(brief|sintetic|concise|dirett)/i.test(String(preferences?.communication_style||""));
- const motivation=focus.intention+preferenceLine;
- const closing=short?
-  "Se ci fosse la possibilità di una collaborazione junior, sarei felice di approfondirla e condividere il mio CV.":
-  "Per questo vorrei proporre il mio profilo per eventuali opportunità junior nel vostro team. Sarei felice di inviare il curriculum e approfondire eventuali possibilità di collaborazione.";
- const body="Buongiorno,\n\n"+intro+"\n\n"+profileText+motivation+"\n\n"+closing+
-  "\n\nGrazie per l’attenzione.\n\nCordiali saluti"+(name?",\n"+name:"");
+ const paragraph=(actualFacts?actualFacts+projectLine:"")||
+   "Il mio interesse professionale è rivolto alle attività di "+goal+".";
+ const offer="Vorrei quindi sottoporvi il mio profilo per eventuali opportunità junior nelle aree "+roleLabel+". "+why;
+ const end=short?"Se il mio percorso fosse di interesse, sarei lieto/a di inviare il CV e approfondire una possibile collaborazione.":
+  "Se riteneste il mio percorso in linea con future esigenze del team, sarei felice di inviarvi il CV e di approfondire un possibile confronto.";
+ const body="Buongiorno,\n\n"+intro+"\n\n"+paragraph+"\n\n"+offer+"\n\n"+end+
+  "\n\nGrazie per il tempo dedicato.\nCordiali saluti"+(name?",\n"+name:"");
  return {subject,body,verifiedCv:evidence.verified,cvId:cv?.id||null,focus:focus.label,proof:evidence.proof};
 }
 const sourceHost=url=>{try{return new URL(url).hostname.replace(/^www\./,"")}catch{return "Fonte"}};
