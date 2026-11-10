@@ -925,3 +925,41 @@
  .outFolderV4 .outEditorialInterpretation{border-left:0;border-top:1px solid #dbe4d9;padding:21px 0 0}
  .outFolderV4 .outCvOnly{max-width:none}
 }
+
+/* HUNT 168 — Brand intelligence: compact editorial cards, no fake vacancy layout. */
+.outResultsV5{border:0;display:grid;grid-template-columns:1fr;gap:15px;margin-top:20px}
+.outResultsV5 .outLeadV5{display:grid;grid-template-columns:minmax(0,1fr) minmax(138px,178px);gap:34px;align-items:center;
+ padding:27px 29px 25px;border:1px solid #dfe6de;border-radius:10px;background:#fff;box-shadow:0 3px 14px rgba(29,54,35,.025);
+ transition:box-shadow .16s ease,border-color .16s ease}
+.outResultsV5 .outLeadV5:hover{border-color:#c8d8cc;box-shadow:0 8px 25px rgba(29,54,35,.055)}
+.outResultsV5 .outLeadTopline{display:flex;align-items:center;justify-content:space-between;gap:15px;max-width:750px}
+.outResultsV5 .outEyebrow{font-size:10px;letter-spacing:.1em;color:#688371}
+.outResultsV5 .outLeadDate{font-size:11px;color:#8a978d;white-space:nowrap}
+.outResultsV5 .outLead h2{font-family:inherit;font-size:clamp(24px,2.9vw,32px);line-height:1.12;letter-spacing:-.045em;margin:13px 0 17px;color:#24392d;font-weight:765}
+.outResultsV5 .outLeadEditorial{max-width:740px}
+.outResultsV5 .outLeadEditorial strong{font-size:14px;line-height:1.5;color:#395441;font-weight:740;display:block}
+.outResultsV5 .outLeadEditorial p{font-size:12.5px;line-height:1.75;color:#647367;margin:6px 0 0;max-width:690px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.outResultsV5 .outLeadMeta{font-size:11px;color:#7b8d7e;margin-top:19px;display:flex;gap:8px 18px;flex-wrap:wrap}
+.outResultsV5 .outLeadActions{align-items:flex-end;gap:13px}
+.outResultsV5 .outStatus{font-size:11px;color:#8a9a8c}
+.outResultsV5 .outOpen{display:flex;justify-content:space-between;gap:20px;align-items:center;width:100%;font-size:12px;
+ color:#20583c;background:#f2f6f0;border:1px solid #d2e1d2;border-radius:5px;padding:14px 15px;min-height:44px;font-weight:770}
+.outResultsV5 .outOpen:hover{color:#fff;background:#225b40;border-color:#225b40}
+.outFolderV4 .outEditorialInterpretation{background:#f2f6ef;border:1px solid #dfe9dd;border-left:3px solid #7fa68a;
+ border-radius:8px;padding:23px 26px 23px 25px;box-shadow:0 5px 14px rgba(24,51,32,.025)}
+.outFolderV4 .outEditorialInterpretation .outInsightEyebrow{color:#55785e;margin-bottom:12px}
+.outFolderV4 .outEditorialInterpretation p{font-size:13px;color:#4c6251;line-height:1.78}
+.outFolderV4 .outCandidateSnapshot{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:710px;
+ margin:22px 0 25px;padding:17px 20px;border-radius:6px;background:#f0f3ec}
+.outFolderV4 .outCandidateSnapshot div{min-width:0}
+.outFolderV4 .outCandidateSnapshot span{display:block;font-size:10px;letter-spacing:.07em;font-weight:740;color:#758878;margin-bottom:8px}
+.outFolderV4 .outCandidateSnapshot strong{font-size:14px;font-weight:735;line-height:1.4;color:#2e4b38}
+.outFolderV4 .outCandidateSnapshot+ .outCvOnly{margin-top:2px}
+@media(max-width:760px){
+ .outResultsV5 .outLeadV5{grid-template-columns:1fr;gap:19px;padding:22px 20px}
+ .outResultsV5 .outLeadActions{align-items:stretch;gap:9px}
+ .outResultsV5 .outOpen{width:100%;max-width:280px}
+ .outResultsV5 .outLeadTopline{flex-wrap:wrap;gap:6px}
+ .outFolderV4 .outEditorialInterpretation{padding:19px 20px;border-left:1px solid #dfe9dd;border-top:3px solid #7fa68a}
+ .outFolderV4 .outCandidateSnapshot{max-width:none;gap:15px}
+}
