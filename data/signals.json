@@ -1,16 +1,68 @@
 [
   {
-    "key": "18dfd3dd67258e58edc6",
-    "brand": "Dolce & Gabbana",
-    "headline": "Dolce & Gabbana - FashionNetwork Italia",
+    "key": "f7a8e0384a30a823c618",
+    "brand": "Diesel",
+    "headline": "Accordi di licenza: Diesel rinnova con Fossil, Douuod Kids con Simonetta - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T08:53:33.209240+00:00",
-    "published_at": "2026-11-08T10:39:29+00:00",
+    "detected_at": "2026-11-10T16:57:09.265617+00:00",
+    "published_at": "2026-11-10T10:11:59+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBSUE9xZFlJLXpNQkFxR1Y3VzVWLUF5NDIxZ3FQaUlESmJzSGQ1R3JCS1VSSG9Wa09OdWswR1RjN2ZCVEgyTDdId0o3OVMtLWNSVGR0REYycG9zOFpScGhRZ19CS3dyUWl3RERiTzBtdENyWHM2X205MVpyRnFuX0k?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPRW9PM0lXUklpME1aQnluWTBXQ19ZYVpMUjVlM1gzTXdOQnhyZElUM2s0VzVRRWVBbzAxZzVVb2V2RWNMd1NkVzdzUHBfckxieDhKSGZFU2J2d1hTUHBObDFSOWlYTjhna3haTmVpWmJCdWRYcWRrWEowWXJJZXczV3RwVlZHS09udzZnOWlxZ1BDZlp0WW5ILVBRVjVkczh1RTVBY3RhQ1hUQl9zczRxN1p5b2lUaENFYXc?oc=5"
+  },
+  {
+    "key": "df13ecd02ac7edc638b3",
+    "brand": "Max Mara",
+    "headline": "Max Mara Fashion group lancia il marchio M-M For Mondays and More - FashionUnited",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T16:57:09.265617+00:00",
+    "published_at": "2026-11-09T10:37:24+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPVzBwN1VvdnZvSDMzLWMyX1A3cVhCclNsWHdYelNnQWNFTVY2NlRKU3lYNXdFelF4TFJKeE5CYWM4d2d6YWNidXl5Qzdjd3Q3ZjNzNnVONG1PbkVfSUtLRHBoWHVDdmhUMVRhYmZYcDl0WHVJOGJyTWZVQXdlSVJPLXF4dlFyVVJWRXZ5MTJjb3FQOUdyZGNjaTlFZmZULWl2X1QxZGdnd1o2SVNo?oc=5"
+  },
+  {
+    "key": "c5281e83363f366069ea",
+    "brand": "Max Mara",
+    "headline": "Max Mara Fashion Group lancia il brand M-M For Mondays and More - Pambianconews",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T16:57:09.265617+00:00",
+    "published_at": "2026-11-09T08:26:33+00:00",
+    "source": "Pambianconews",
+    "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPOWhqM1QwSTN1QVFndEZXU2JpdHZnVl9OMzV1SmpwN01KOXJVTE1UWWtreG1NemNDOEk5VS1ubnNua2traWRyam1IOUNYdzBOWUlxZFJUMjk4LUhNYy1uMFlPVnFadERWR1hGMlpkeFRMQTdzUHYyYkdZMldIOUxsTFZhRHd5U191d1hHWld6b0dualUtVklnaHJra1Jnb0E4b0FVZWlxaFoxOEFGeEMweG1R?oc=5"
+  },
+  {
+    "key": "7a803ce0b7ac885dda19",
+    "brand": "Max Mara",
+    "headline": "M-M For Mondays and More: Max Mara Fashion Group lancia un nuovo brand di womenswear - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T16:57:09.265617+00:00",
+    "published_at": "2026-11-09T08:25:12+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPV2ZxSGZUN2Z3dFZfUE5pdWRrbnZFaVRzdG9yZTVPOTR4RmUwelo2RDMxWnNIY2JQRlFqSlBRZXJ3ckhBNUUxRGRQYXNlel9iQ3NreDJaUXFXWUNHdkZ1bDlYMy1pWGVLUFN4MXZscGJyX19MeTFyMDdKUkVTMlhtY1ptQVk3SHRpbmxNYkk5N2N3ajhsalJzUkdZY1VhTktyc1JFVW5rWmRnS2NZSmhRTm9fSjdMa210V3lTQldZM0UyVXRBc3loZXcxMA?oc=5"
+  },
+  {
+    "key": "57d78b9d507a5fc58ee1",
+    "brand": "SUNNEI",
+    "headline": "Sunnei - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T16:57:09.265617+00:00",
+    "published_at": "2026-11-08T13:02:33+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBzU3ZlcnRFTXFKdVQ0SXByZzFNVG1VN3hvX2Q1aTZDOW5zX2xiakU0Y1Y1MFJlMm5EOWdRSW9hS1RzYzY1WTl5SXQxSDZXazFKZ19XazBwTEFHQ05IQUh3NG02RFc3Q3BzT3BLM3JLM0VVdmFKX2c?oc=5"
   },
   {
     "key": "c0a9d723fc4ae5f12e0b",
@@ -2598,18 +2650,5 @@
     "published_at": "2026-09-26T17:35:53+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE8zNUhhVmktNE1jYmV4WXpMMUdLZ2xDZTJvdnJXU2kzOXpSN1k0NHBBQkh4Q1l5NWF0aU9uZ0J4c1FSbGhDM3RZYWd3VVRkeHZBQjVQendHNlpiTjNzek9QUUh6dDdnOFR2SC1KWVN6OFFvQQ?oc=5"
-  },
-  {
-    "key": "cbd5ff045b4359fd7b3e",
-    "brand": "Marco Rambaldi",
-    "headline": "Marco Rambaldi - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T16:07:43.559160+00:00",
-    "published_at": "2026-09-26T16:56:33+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE95UFE0R05uUHRUOWIxZ2lOdkJaUEJiR0UwNGF2M3JTUWx5VTJad0R1aERyZDJVYkdET2dWNW5HaHBwZGxScks1WUZQb0R2VzZfYUtIYzQtN3VELVMzanM4cEYtaExieWh5NXVEeDFtZWlsWnNadlo0cWxoZw?oc=5"
   }
 ]
