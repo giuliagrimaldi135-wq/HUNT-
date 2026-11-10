@@ -12,7 +12,7 @@ const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
 const app=document.getElementById("app");
 let currentUser=null;
-let currentView="opportunities";
+let currentView=new URLSearchParams(window.location.search).get("view")==="outreach"?"outreach":"opportunities";
 let selectedJobId=null;
 let selectedDossierCvId=null;
 const dossierCvChoices=new Map();
@@ -613,6 +613,7 @@ async function renderOpportunities(){
  app.innerHTML=shell(`<div class="opportunitiesPage">
  <div class="eyebrow">Il tuo radar</div><h1>Opportunità</h1>
  <p class="lead">HUNT esplora il mercato in profondità e qui mostra solo le posizioni fresche che vale la pena guardare.</p>
+  <button type="button" class="outreachJump" data-view="outreach">Esplora le candidature spontanee <span aria-hidden="true">↗</span></button>
  <div class="feedToolbar section">
    <strong>${rows.length} posizioni</strong>
    <label class="sortControl"><span>Ordina per</span>
