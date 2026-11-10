@@ -726,3 +726,18 @@
 .outFolderV2 .outPriorityText{margin-top:18px;margin-bottom:5px;color:#647d6b;font-size:11px}
 .outFolderV2 .outAngleLabel{margin-top:22px;margin-bottom:4px;color:#526c59}
 .outFolderV2 .outPrepareColumns .outAngleLabel+p{margin-top:4px;line-height:1.82;color:#506254}
+
+/* Brand da contattare: distinct news, CV relevance, compact prose hierarchy */
+.outFolderV2 .outNewsPreview{padding:28px 0 30px;border-bottom:1px solid #dae3d9}
+.outFolderV2 .outNewsPreview .outSectionIntro h2{font-size:22px;letter-spacing:-.03em;margin-bottom:11px}
+.outFolderV2 .outNewsRows{display:grid;grid-template-columns:1fr;gap:0}
+.outFolderV2 .outNewsLink{display:flex;align-items:center;justify-content:space-between;gap:19px;text-decoration:none;padding:16px 1px;border-top:1px solid #e5ebe3;color:#304838}
+.outFolderV2 .outNewsLink strong{display:block;font-size:13px;font-weight:690;line-height:1.5}
+.outFolderV2 .outNewsLink small{display:block;color:#8a978b;font-size:11px;line-height:1.5;margin-top:5px}
+.outFolderV2 .outNewsLink>span:last-child{font-size:15px;color:#38634b}
+.outFolderV2 .outNewsLink:hover strong{color:#1a6441}
+.outFolderV2 .outCvReason{padding:13px 0 0;font-size:11px!important;line-height:1.7!important;color:#5b7160!important}
+.outFolderV2 .outSuggestedCv{padding-top:2px}
+.outPage .outPageHeader h1{letter-spacing:-.055em}
+.outPage .outAbout{font-size:12px;line-height:1.7;color:#728275;padding:13px 0 24px}
+@media(max-width:630px){.outFolderV2 .outNewsLink strong{font-size:12px}.outPage .outPageHeader h1{font-size:34px}.outFolderV2 .outNewsPreview{padding:22px 0 24px}}
