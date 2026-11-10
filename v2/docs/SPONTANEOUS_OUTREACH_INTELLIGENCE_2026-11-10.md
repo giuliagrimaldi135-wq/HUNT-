@@ -43,3 +43,9 @@ Read-only audit of Hunt 2 at 2026-11-10 found ~155 companies, ~264 intelligence-
 
 ## Priority
 Keep the already-approved role dossier and verified-CV UI unchanged. Next invest in the **small-brand discovery + dated public evidence scanner**, ATS cross-check, contact verification, and permissioned social integrations. The first working Spontanee folder is a foundation, not the finished autonomous cross-platform intelligence network.
+
+## 10 November 2026 — Brand da contattare: real per-user personalization, news visibility, and social access
+- Renamed the public user-facing section to **Brand da contattare** (mobile nav **Brand**), retaining stable internal route view=outreach.
+- User-confirmed CVs are read from user_cvs, user-specific career preferences from user_personalization, and signatures from profiles. No cross-account templates or hard-coded Giulia experience. CV switching updates generated subject/body and evidence explanation immediately; prompts before overwriting edits. Save persists cv_id to a private RLS-protected draft.
+- New visible **News del brand** nested under the editorial "Perché candidarti adesso" story; linked title, publisher and original event date, not generic duplicate empty modules. All eight first-launch brand folders have at least one dated sourced press article; World Radar may add relevant articles when available.
+- Source setup/permission details in HUNT_SOCIAL_MONITORING_SETUP_2026-11-10.md. Actual automated third-party social post monitoring remains unconfigured without approved API permissions or lawful licensed datasets.
