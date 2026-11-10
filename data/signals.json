@@ -7,23 +7,10 @@
     "score": 78,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T20:15:38.564161+00:00",
+    "detected_at": "2026-11-10T21:00:36.418895+00:00",
     "published_at": "2026-11-09T17:39:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPeDUtNTJWX2JIQkt5VTBBc1JDWHVWY09JNVhKeHhKTmt2UU1PWEM2NXViVFk2cFNjSTBlQ1FUX2ltbFRVRWVwLVlRQmJicUJudm1sX2xPWDFPbkViLThVZk1JTFM0RFdBWWhvSkp3YUs5RVFRX1JXUmpGS0ttRXhvYmotY3dseUMxbWg3VE54NURKM0phaG9yWmxPNlBBb05wT2hKUGhzUHA?oc=5"
-  },
-  {
-    "key": "7a803ce0b7ac885dda19",
-    "brand": "Max Mara",
-    "headline": "M-M For Mondays and More: Max Mara Fashion Group lancia un nuovo brand di womenswear - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T17:41:32.110192+00:00",
-    "published_at": "2026-11-09T08:25:12+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPV2ZxSGZUN2Z3dFZfUE5pdWRrbnZFaVRzdG9yZTVPOTR4RmUwelo2RDMxWnNIY2JQRlFqSlBRZXJ3ckhBNUUxRGRQYXNlel9iQ3NreDJaUXFXWUNHdkZ1bDlYMy1pWGVLUFN4MXZscGJyX19MeTFyMDdKUkVTMlhtY1ptQVk3SHRpbmxNYkk5N2N3ajhsalJzUkdZY1VhTktyc1JFVW5rWmRnS2NZSmhRTm9fSjdMa210V3lTQldZM0UyVXRBc3loZXcxMA?oc=5"
   },
   {
     "key": "c7c992517deaa237524b",
@@ -33,36 +20,10 @@
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T20:15:38.564161+00:00",
+    "detected_at": "2026-11-10T21:00:36.418895+00:00",
     "published_at": "2026-11-08T15:23:48+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNLWNicEVaT2lDemlPczNiTk9YVjNTV21KRzByRGY2OVhJRjZ5dU1ZVTB0TGwteEp1ZEdoRG1nd2RzekFnbTV0Y2tLbi0xMEFvclg4THp4SjVBVUsxQ2hteEl0TFAtOG8tNWFRTVBDNDlJZlpuNjNlWi0xb2dKTm1XY3g0TFFrZw?oc=5"
-  },
-  {
-    "key": "57d78b9d507a5fc58ee1",
-    "brand": "SUNNEI",
-    "headline": "Sunnei - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T16:57:09.265617+00:00",
-    "published_at": "2026-11-08T13:02:33+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBzU3ZlcnRFTXFKdVQ0SXByZzFNVG1VN3hvX2Q1aTZDOW5zX2xiakU0Y1Y1MFJlMm5EOWdRSW9hS1RzYzY1WTl5SXQxSDZXazFKZ19XazBwTEFHQ05IQUh3NG02RFc3Q3BzT3BLM3JLM0VVdmFKX2c?oc=5"
-  },
-  {
-    "key": "c0a9d723fc4ae5f12e0b",
-    "brand": "Marni",
-    "headline": "Marni - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T07:58:42.103471+00:00",
-    "published_at": "2026-11-08T09:26:05+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFB1ZVhvOFFfT0o3VTNER3MxNElJYld1VXRMcjJ1ekZUSE0wUlZ5c1JPM3NMb2p0Zm5TMkE3bGNXVl8wZENkcmF4THlzNk1XZk54Z0RBbnVEbDdaM2d3ZUtiOW52MWRTZGNnQW5ZYmoydG9NN053?oc=5"
   },
   {
     "key": "ef0ed8e11227edc6e715",
@@ -2650,18 +2611,5 @@
     "published_at": "2026-09-26T22:16:53+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE94NXVUX0ZoMWNpSUxjT3B5eTVrbkNEZzlKODdQUWRydjNhb3FndVhtempFWDkwaVVMN1JvcWNIYnRDcWVZZzZnWTNGV0dqdTNCMFgtYmpvZURFbEpJdkR4RUQyZTRJZ3JuaDNCRXFWaGNlMjlfVXZqNG5odW5pUQ?oc=5"
-  },
-  {
-    "key": "bf85db7c61c95b4c15db",
-    "brand": "Bottega Veneta",
-    "headline": "Bottega Veneta - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-03T12:05:03.605211+00:00",
-    "published_at": "2026-09-26T20:30:33+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBIdXBpYWV0TU0xdllsdHhSR2JkTUpnY2hveFJwRWxnZWR0cHY5NVR5VW52d3hpU21iTElGb0JwMU5fM1otQTNSZUJTRVRxRE9KZ2JQZkpEYVptZHh6R2dGTUx3VTFPdmR0Vmhpdy0tRjRKRDdScm1UX0NTWQ?oc=5"
   }
 ]
