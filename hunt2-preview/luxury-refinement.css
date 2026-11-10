@@ -472,3 +472,75 @@
 @media(max-width:1100px){.huntWorkspaceSimplified .hwLayout{grid-template-columns:minmax(0,1fr) 244px;gap:30px}.cvWWorkspaceSimple .cvWSimpleSummary{gap:22px}}
 @media(max-width:810px){.huntWorkspaceSimplified .hwLayout{grid-template-columns:1fr;gap:14px}.huntWorkspaceSimplified .hwAside{border:0;border-top:1px solid #dce3db;padding:22px 0 0;display:flex}.huntWorkspaceSimplified .hwOpenSource{margin:11px 0 5px}.cvWWorkspaceSimple .cvWSimpleSummary{grid-template-columns:1fr}.cvWWorkspaceSimple .cvWSimpleSummary .cvWSnapshotMain{padding:0 0 22px;border-right:0;border-bottom:1px solid #e2e8e1}}
 @media(max-width:540px){.huntWorkspaceSimplified .hwIntro{padding-top:0}.huntWorkspaceSimplified .hwIntro .hwEditorialStory{font-size:14px}.huntWorkspaceSimplified .hwDisclosure summary{padding:18px 0}.huntWorkspaceSimplified .hwRequirementList.is-full .hwRequirement{grid-template-columns:20px minmax(0,1fr)}.huntWorkspaceSimplified .hwRequirementStatus{grid-column:2;text-align:left}.cvWWorkspaceSimple .cvWWorkspaceHead{padding:24px 18px;align-items:flex-start}.cvWWorkspaceSimple .cvWPane{padding:24px 18px}.cvWWorkspaceSimple .cvWConfirm{padding:18px}.cvWWorkspaceSimple .cvWEditButton{white-space:normal}}
+
+
+/* HUNT 154 — editorial vacancy story restored, with two deliberate product actions */
+.huntWorkspaceEditorial .hwLayout{grid-template-columns:minmax(0,1fr) 258px;gap:46px}
+.huntWorkspaceEditorial .hwMain{background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible;min-width:0}
+.huntWorkspaceEditorial .hwRoleStory{padding:31px 0 9px;border-top:1px solid #dce3db}
+.huntWorkspaceEditorial .hwRoleStoryHead .hwEyebrow{font-size:10px;letter-spacing:.105em;color:#728173;font-weight:725}
+.huntWorkspaceEditorial .hwRoleStoryHead h2{font-size:clamp(28px,2.75vw,37px);line-height:1.16;letter-spacing:-.045em;color:#263129;margin:14px 0 25px;font-weight:730}
+.huntWorkspaceEditorial .hwRoleDescription{color:#3f4b42;font-size:15.5px;line-height:1.98;max-width:750px;margin:0 0 32px;font-weight:430;text-wrap:pretty}
+.huntWorkspaceEditorial .hwRoleFit{border-top:1px solid #dfe5dd;padding:23px 0 16px;max-width:760px}
+.huntWorkspaceEditorial .hwRoleFitLabel{display:block;color:#59725f;font-size:11px;font-weight:720;margin:0 0 11px}
+.huntWorkspaceEditorial .hwRoleFit p{font-size:13px;line-height:1.85;color:#626e64;margin:0;max-width:720px}
+.huntWorkspaceEditorial .hwExploreIntro{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:29px 0 14px}
+.huntWorkspaceEditorial .hwExploreIntro>span{color:#2f3d33;font-size:13px;font-weight:750}
+.huntWorkspaceEditorial .hwExploreIntro p{margin:0;color:#8a948b;font-size:11.5px}
+.huntWorkspaceEditorial .hwExploreChoices{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #dce3db;border-bottom:1px solid #dce3db}
+.huntWorkspaceEditorial .hwExploreChoice{display:flex;justify-content:space-between;align-items:center;gap:15px;text-align:left;border:0;background:transparent;font:inherit;cursor:pointer;padding:23px 20px 23px 0;min-width:0}
+.huntWorkspaceEditorial .hwExploreChoice+.hwExploreChoice{border-left:1px solid #e2e7e1;padding-left:23px}
+.huntWorkspaceEditorial .hwExploreChoice strong{font-size:15px;color:#29372d;font-weight:720;display:block;letter-spacing:-.01em;line-height:1.3}
+.huntWorkspaceEditorial .hwExploreChoice small{display:block;margin-top:7px;font-size:11px;line-height:1.5;color:#899589}
+.huntWorkspaceEditorial .hwExplorePlus{font-size:22px;font-weight:300;color:#65816c;line-height:1;transition:transform .18s}
+.huntWorkspaceEditorial .hwExploreChoice:hover,.huntWorkspaceEditorial .hwExploreChoice.is-selected{background:#f6f8f4}
+.huntWorkspaceEditorial .hwExploreChoice[aria-expanded="true"] .hwExplorePlus{transform:rotate(45deg)}
+.huntWorkspaceEditorial .hwExploreChoice:focus-visible,.huntWorkspaceEditorial .hwExploreClose:focus-visible{outline:2px solid #628870;outline-offset:3px}
+.huntWorkspaceEditorial .hwExplorePanels{max-width:900px}
+.huntWorkspaceEditorial .hwExplorePanel{border-bottom:1px solid #dce3db;padding:24px 2px 30px}
+.huntWorkspaceEditorial .hwExplorePanel[hidden]{display:none!important}
+.huntWorkspaceEditorial .hwExplorePanel h4{font-size:20px;font-weight:710;margin:4px 0 15px;letter-spacing:-.03em;color:#2e3c31}
+.huntWorkspaceEditorial .hwExplorePanel .hwPanelSubhead{font-size:12px;margin:0 0 13px}
+.huntWorkspaceEditorial .hwExploreClose{float:right;background:transparent;border:0;color:#477255;cursor:pointer;padding:4px 0 9px 10px;font:inherit;font-size:11px;font-weight:680}
+.huntWorkspaceEditorial .hwTaskList li{padding:14px 0}
+.huntWorkspaceEditorial .hwTaskList li p{font-size:13px;line-height:1.75}
+.huntWorkspaceEditorial .hwSource{background:transparent;border:0;padding:16px 0}
+.huntWorkspaceEditorial .hwAside{border-left:1px solid #dce3db;padding:0 0 0 28px;gap:0}
+.huntWorkspaceEditorial .hwAsideCard{padding:22px 0 15px;border:0;border-radius:0;background:transparent;box-shadow:none}
+.huntWorkspaceEditorial .hwAsideCard .hwEyebrow{font-size:10px;font-weight:720;color:#849287}
+.huntWorkspaceEditorial .hwAsideCard h3{font-size:17px;letter-spacing:-.025em;font-weight:720;margin:13px 0}
+.huntWorkspaceEditorial .hwAsideCard p{font-size:12px;line-height:1.7}
+.huntWorkspaceEditorial .hwCvState{font-size:11px}
+.huntWorkspaceEditorial .hwOpenSource{border-radius:3px;margin:18px 0;font-size:12px}
+.huntWorkspaceEditorial .hwRequirementList.is-full .hwRequirement{padding:17px 0}
+
+/* CV verification: explain the purpose before showing editable fields */
+.cvWWorkspaceSimple .cvWReviewIntro{max-width:760px;margin-bottom:20px}
+.cvWWorkspaceSimple .cvWReviewKicker{font-size:10px;letter-spacing:.1em;color:#748577;font-weight:700;display:block;margin-bottom:13px}
+.cvWWorkspaceSimple .cvWReviewIntro h3{font-size:25px;line-height:1.2;letter-spacing:-.035em;margin:0 0 12px}
+.cvWWorkspaceSimple .cvWReviewIntro p{font-size:13px;line-height:1.85;color:#606e63;max-width:720px}
+.cvWWorkspaceSimple .cvWReviewLead{font-size:12px;color:#68786c;line-height:1.7;margin:0 0 25px}
+.cvWWorkspaceSimple .cvWReviewSection{border-top:1px solid #dfe6de}
+.cvWWorkspaceSimple .cvWReviewSection:last-of-type{border-bottom:1px solid #dfe6de}
+.cvWWorkspaceSimple .cvWReviewSection>summary{padding:20px 3px;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:18px;cursor:pointer}
+.cvWWorkspaceSimple .cvWReviewSection>summary::-webkit-details-marker{display:none}
+.cvWWorkspaceSimple .cvWReviewSection>summary:focus-visible{outline:2px solid #769b7b;outline-offset:2px}
+.cvWWorkspaceSimple .cvWReviewSectionTitle{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px}
+.cvWWorkspaceSimple .cvWReviewSectionTitle strong{font-size:14px;letter-spacing:-.01em;color:#2d3c30;font-weight:710}
+.cvWWorkspaceSimple .cvWReviewSectionTitle small{font-size:11px;color:#879388}
+.cvWWorkspaceSimple .cvWReviewIndicator{font-size:16px;color:#577c5e;transition:transform .2s}
+.cvWWorkspaceSimple .cvWReviewSection[open] .cvWReviewIndicator{transform:rotate(180deg)}
+.cvWWorkspaceSimple .cvWReviewSectionBody{padding:1px 0 24px}
+.cvWWorkspaceSimple .cvWReviewSectionBody .cvGroupHeading{margin:0 0 13px}
+.cvWWorkspaceSimple .cvWReviewSectionBody .cvGroupHeading span{font-size:11px;color:#829085}
+.cvWWorkspaceSimple .cvWReviewSectionBody .cvEvidenceCard{border:0;background:transparent;box-shadow:none;border-radius:0;padding:15px 0;border-bottom:1px solid #edf0ec}
+.cvWWorkspaceSimple .cvWReviewSectionBody .cvEvidenceCard:last-child{border-bottom:0}
+.cvWWorkspaceSimple .cvWReviewSectionBody .cvField{font-size:11px;color:#546a59}
+.cvWWorkspaceSimple .cvWReviewSectionBody input,.cvWWorkspaceSimple .cvWReviewSectionBody textarea{background:#fff;border:1px solid #d8e0d7;border-radius:4px}
+.cvWWorkspaceSimple .cvWConfirm:not([hidden]){background:#f6f8f4;border-top:1px solid #dfe7de}
+.cvWWorkspaceSimple .cvWConfirm strong{font-size:14px;color:#293f2f}
+.cvWWorkspaceSimple .cvWConfirm p{font-size:11.5px;max-width:520px;line-height:1.7}
+.cvWWorkspaceSimple .cvWConfirm .btn{font-size:12px;padding:13px 17px}
+@media(max-width:1050px){.huntWorkspaceEditorial .hwLayout{grid-template-columns:minmax(0,1fr) 234px;gap:27px}.huntWorkspaceEditorial .hwAside{padding-left:20px}}
+@media(max-width:810px){.huntWorkspaceEditorial .hwLayout{grid-template-columns:1fr;gap:24px}.huntWorkspaceEditorial .hwAside{position:static;display:flex;flex-direction:column;border:0;border-top:1px solid #dce3db;padding:12px 0 0}}
+@media(max-width:600px){.huntWorkspaceEditorial .hwRoleStory{padding-top:23px}.huntWorkspaceEditorial .hwRoleStoryHead h2{font-size:29px}.huntWorkspaceEditorial .hwRoleDescription{font-size:14px;line-height:1.9}.huntWorkspaceEditorial .hwRoleFit p{font-size:12px}.huntWorkspaceEditorial .hwExploreIntro{display:block}.huntWorkspaceEditorial .hwExploreIntro p{margin-top:5px}.huntWorkspaceEditorial .hwExploreChoice{padding:19px 12px 19px 0}.huntWorkspaceEditorial .hwExploreChoice+.hwExploreChoice{padding-left:12px}.huntWorkspaceEditorial .hwExploreChoice strong{font-size:13px}.huntWorkspaceEditorial .hwExploreChoice small{font-size:10.5px}.cvWWorkspaceSimple .cvWReviewSectionTitle{display:flex;flex-direction:column;gap:4px}.cvWWorkspaceSimple .cvWConfirm:not([hidden]){flex-direction:column;align-items:stretch}.cvWWorkspaceSimple .cvWReviewIntro h3{font-size:22px}}
