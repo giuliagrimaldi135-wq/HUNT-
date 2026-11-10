@@ -1,55 +1,42 @@
 [
   {
-    "key": "f7a8e0384a30a823c618",
-    "brand": "Diesel",
-    "headline": "Accordi di licenza: Diesel rinnova con Fossil, Douuod Kids con Simonetta - FashionNetwork Italia",
+    "key": "983fa1813f5bdf959dd1",
+    "brand": "Pinko",
+    "headline": "Pinko, no al Black Friday in sostegno al wholesale - Milano Finanza",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T15:16:33.631316+00:00",
+    "published_at": "2026-11-09T17:39:00+00:00",
+    "source": "Milano Finanza",
+    "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPeDUtNTJWX2JIQkt5VTBBc1JDWHVWY09JNVhKeHhKTmt2UU1PWEM2NXViVFk2cFNjSTBlQ1FUX2ltbFRVRWVwLVlRQmJicUJudm1sX2xPWDFPbkViLThVZk1JTFM0RFdBWWhvSkp3YUs5RVFRX1JXUmpGS0ttRXhvYmotY3dseUMxbWg3VE54NURKM0phaG9yWmxPNlBBb05wT2hKUGhzUHA?oc=5"
+  },
+  {
+    "key": "4f2dc2a2da68d2bbb2f7",
+    "brand": "Loewe",
+    "headline": "Loewe - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T14:29:26.970707+00:00",
-    "published_at": "2026-11-10T10:11:59+00:00",
+    "detected_at": "2026-11-10T15:16:33.631316+00:00",
+    "published_at": "2026-11-09T09:43:17+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPRW9PM0lXUklpME1aQnluWTBXQ19ZYVpMUjVlM1gzTXdOQnhyZElUM2s0VzVRRWVBbzAxZzVVb2V2RWNMd1NkVzdzUHBfckxieDhKSGZFU2J2d1hTUHBObDFSOWlYTjhna3haTmVpWmJCdWRYcWRrWEowWXJJZXczV3RwVlZHS09udzZnOWlxZ1BDZlp0WW5ILVBRVjVkczh1RTVBY3RhQ1hUQl9zczRxN1p5b2lUaENFYXc?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5UOTFTOWs0NWd6ZnFoYlpQYm9ITjZ5NjFhSVVDV2syX2NXV3VfUlZrR042WXpnQ3dId2Y5UXhPRmVCeTFpVnB0RWkzbm8zWXdrTFpCa2JKV0xVMjNZSUJBSHlKazBfU0NuSjNpOGNyYVlJOGtG?oc=5"
   },
   {
-    "key": "df13ecd02ac7edc638b3",
-    "brand": "Max Mara",
-    "headline": "Max Mara Fashion group lancia il marchio M-M For Mondays and More - FashionUnited",
+    "key": "c7c992517deaa237524b",
+    "brand": "Elisabetta Franchi",
+    "headline": "Elisabetta Franchi - FashionNetwork Italia",
     "signal_type": "industry_news",
     "score": 68,
     "confidence": "public-signal correlation",
     "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T14:29:26.970707+00:00",
-    "published_at": "2026-11-09T10:37:24+00:00",
-    "source": "FashionUnited",
-    "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPVzBwN1VvdnZvSDMzLWMyX1A3cVhCclNsWHdYelNnQWNFTVY2NlRKU3lYNXdFelF4TFJKeE5CYWM4d2d6YWNidXl5Qzdjd3Q3ZjNzNnVONG1PbkVfSUtLRHBoWHVDdmhUMVRhYmZYcDl0WHVJOGJyTWZVQXdlSVJPLXF4dlFyVVJWRXZ5MTJjb3FQOUdyZGNjaTlFZmZULWl2X1QxZGdnd1o2SVNo?oc=5"
-  },
-  {
-    "key": "c5281e83363f366069ea",
-    "brand": "Max Mara",
-    "headline": "Max Mara Fashion Group lancia il brand M-M For Mondays and More - Pambianconews",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T14:29:26.970707+00:00",
-    "published_at": "2026-11-09T08:26:33+00:00",
-    "source": "Pambianconews",
-    "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPOWhqM1QwSTN1QVFndEZXU2JpdHZnVl9OMzV1SmpwN01KOXJVTE1UWWtreG1NemNDOEk5VS1ubnNua2traWRyam1IOUNYdzBOWUlxZFJUMjk4LUhNYy1uMFlPVnFadERWR1hGMlpkeFRMQTdzUHYyYkdZMldIOUxsTFZhRHd5U191d1hHWld6b0dualUtVklnaHJra1Jnb0E4b0FVZWlxaFoxOEFGeEMweG1R?oc=5"
-  },
-  {
-    "key": "7a803ce0b7ac885dda19",
-    "brand": "Max Mara",
-    "headline": "M-M For Mondays and More: Max Mara Fashion Group lancia un nuovo brand di womenswear - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-10T14:29:26.970707+00:00",
-    "published_at": "2026-11-09T08:25:12+00:00",
+    "detected_at": "2026-11-10T15:16:33.631316+00:00",
+    "published_at": "2026-11-08T15:23:48+00:00",
     "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPV2ZxSGZUN2Z3dFZfUE5pdWRrbnZFaVRzdG9yZTVPOTR4RmUwelo2RDMxWnNIY2JQRlFqSlBRZXJ3ckhBNUUxRGRQYXNlel9iQ3NreDJaUXFXWUNHdkZ1bDlYMy1pWGVLUFN4MXZscGJyX19MeTFyMDdKUkVTMlhtY1ptQVk3SHRpbmxNYkk5N2N3ajhsalJzUkdZY1VhTktyc1JFVW5rWmRnS2NZSmhRTm9fSjdMa210V3lTQldZM0UyVXRBc3loZXcxMA?oc=5"
+    "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNLWNicEVaT2lDemlPczNiTk9YVjNTV21KRzByRGY2OVhJRjZ5dU1ZVTB0TGwteEp1ZEdoRG1nd2RzekFnbTV0Y2tLbi0xMEFvclg4THp4SjVBVUsxQ2hteEl0TFAtOG8tNWFRTVBDNDlJZlpuNjNlWi0xb2dKTm1XY3g0TFFrZw?oc=5"
   },
   {
     "key": "57d78b9d507a5fc58ee1",
@@ -193,6 +180,19 @@
     "published_at": "2026-11-07T21:42:12+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBsSmVGR18wYncyZzNpZmNjOE5VeUozSTVuT3Y1S194SVZ2cWY1ZS1mNFdrYTBySTBhS2ZTNmF0RjFLQUNKVEk4WlREVC02V0xwOEIxRzNLeGxpSFJZcFF5c3lOX05VLWhpdlBaQ05tZ1llS1ZRaGxyMEZ5b09kZw?oc=5"
+  },
+  {
+    "key": "13fe22fbebb3eb0216de",
+    "brand": "Loewe",
+    "headline": "Loewe - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-10T15:16:33.631316+00:00",
+    "published_at": "2026-11-07T19:30:10+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFA0YTd0TlA3RE5YWVJGV3JTM0tISnZvU0dYX3l3OHBDUExNVi1MNm9TVGZ6dERSOHBLM2lIMkQtNlEwamxwbWE0cEM5YnZWZUE2T3liX3JoN0lRRmVvMXExT0ppNnhBeTRLOTdRWXBudWIzYmpW?oc=5"
   },
   {
     "key": "eeb1d7c9ec3095504477",
