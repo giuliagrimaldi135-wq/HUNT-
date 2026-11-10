@@ -57,6 +57,22 @@ export function buildOutreachLeads(curated=[],corporate=[],now=Date.now()){
  }
  return [...byKey.values()].sort((a,b)=>(Number(b.dated)-Number(a.dated))||(b.score-a.score)).slice(0,35);
 }
+
+/* World Radar is supplementary reading, never a substitute for evidence of hiring. */
+const folded=value=>String(value||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+export function attachBrandNews(leads=[],articles=[],now=Date.now()){
+ return leads.map(lead=>{
+  const name=folded(lead.brand),prior=new Set((lead.evidence||[]).map(s=>s.url));
+  const related=(Array.isArray(articles)?articles:[]).filter(article=>{
+   const url=safeLink(article.url),age=daysAgo(article.published_at,now);
+   if(!url||prior.has(url)||age===null||age>180||!name)return false;
+   const title=folded(article.title),summary=folded(article.summary);
+   return (" "+title+" ").includes(" "+name+" ")&&(name.length>=8||(" "+summary+" ").includes(" "+name+" "));
+  }).slice(0,5).map(article=>({title:String(article.title),summary:String(article.summary||""),url:safeLink(article.url),date:article.published_at}));
+  return {...lead,news:related};
+ });
+}
+
 export function composeOutreachEmail(lead,cv={},person={}){
  const p=cv?.parsed_profile||{};
  const confirmed=Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
@@ -106,6 +122,9 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={}}=
   '<header class="outFolderHero"><h1>'+esc(lead.brand)+'</h1><p>'+esc(lead.area)+'</p></header>'+
   '<section class="outFolderSection"><span class="outSectionKicker">Il momento</span><h2>Perché candidarti adesso</h2><p class="outStory">'+esc(lead.whyNow)+'</p><p class="outEvidenceCaution">È un segnale commerciale, non una conferma di assunzioni. Controlla l’aggiornamento delle fonti prima dell’invio.</p>'+
    '<ul class="outSources">'+lead.evidence.map(sourceLine).join("")+'</ul></section>'+
+   '<section class="outFolderSection"><span class="outSectionKicker">Contesto</span><h2>News del brand da conoscere</h2>'+
+   ((lead.news||[]).length?'<ul class="outSources">'+lead.news.map(n=>sourceLine({description:n.title,url:n.url,date:n.date})).join("")+'</ul>':
+   '<p>Non risultano altri articoli recenti collegati con sufficiente certezza a questo brand.</p>')+'</section>'+
   '<section class="outFolderSection"><span class="outSectionKicker">Preparazione</span><h2>Scheda candidatura</h2>'+
   '<div class="outFacts"><div><span>Area suggerita</span><strong>'+esc(lead.area)+'</strong></div><div><span>CV per questa candidatura</span>'+
   '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select></div>'+
