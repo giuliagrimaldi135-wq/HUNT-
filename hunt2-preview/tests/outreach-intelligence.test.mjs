@@ -1,6 +1,6 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {buildOutreachLeads,attachBrandNews,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,safeLink,emailAddress} from "../outreach-intelligence.js";
+import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder,safeLink,emailAddress} from "../outreach-intelligence.js";
 const sample={
  key:"label-x",brand:"Label X",score:95,area:"Retail Merchandising",
  why_now:"Il brand ha annunciato un nuovo negozio a Milano.",
@@ -14,7 +14,7 @@ test("Only sourced, relevant outreach signals enter the feed",()=>{
  assert.equal(a.length,1);
  assert.equal(a[0].brand,"Label X");
  assert.equal(a[0].contactEmail,"info@label-x.example");
- assert.match(renderOutreachCards(a,{}),/Apri folder/);
+ assert.match(renderOutreachCards(a,{}),/Apri il dossier/);
  assert.doesNotMatch(renderOutreachCards(a,{}),/95% match/);
 });
 test("Social URLs are not proof of an integrated feed; unrelated corporation news does not create recommendations",()=>{
@@ -34,10 +34,10 @@ test("No fabricated recruitment contact or CV experience from unconfirmed extrac
  assert.doesNotMatch(draft.body,/FamousBrand|Famous School/);
  assert.match(draft.body,/Test User/);
  const folder=renderOutreachFolder(a,{cvs:[{id:"1",name:"General CV",is_default:true,parsed_profile:cv.parsed_profile}],person:{display_name:"Test User"}});
- assert.match(folder,/Email pronta da personalizzare/);
+ assert.match(folder,/La tua email, già personalizzata/);
  assert.match(folder,/Perché candidarti adesso/);
- assert.match(folder,/Dove contattare il brand/);
- assert.match(folder,/non è identificato come recruiting/);
+ assert.match(folder,/Dove scrivere al brand/);
+ assert.match(folder,/non HR/);
  assert.match(folder,/HUNT non spedisce email automaticamente/);
 });
 test("Confirmed CV evidence may appear in email without inventing achievements",()=>{
@@ -70,6 +70,46 @@ test("World Radar adds only exact-brand recent news and never manufactures a new
  const withNews=attachBrandNews([lead],articles,Date.parse("2026-11-10"));
  assert.equal(withNews.length,1);
  assert.equal(withNews[0].news.length,1);
- assert.match(renderOutreachFolder(withNews[0]),/News del brand da conoscere/);
+ assert.match(renderOutreachFolder(withNews[0]),/Fonti e segnali/);
  assert.match(renderOutreachFolder(withNews[0]),/nuova collezione/);
+});
+
+
+test("A merchandising-oriented spontaneous contact recommends specialist CV over principal generic CV",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const cvs=[{id:"a",name:"fashion management",is_default:true},{id:"b",name:"Merchandising"}];
+ assert.equal(chooseOutreachCv(cvs,lead.area).id,"b");
+ const html=renderOutreachFolder(lead,{cvs});
+ assert.match(html,/HUNT ti consiglia: <strong>Merchandising/);
+ assert.match(html,/<option value="b" selected>/);
+});
+
+test("Official social profiles are linked as sources, not presented as scanned posts",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const richer=enrichOutreachLeads([lead],{"label-x":{
+  company_url:"https://label-x.example",
+  official_profiles:[{platform:"Instagram",url:"https://www.instagram.com/labelx",source_url:"https://label-x.example",status:"link dal sito ufficiale"},
+   {platform:"TikTok",url:"https://www.tiktok.com/@labelx",source_url:"https://label-x.example",status:"link dal sito ufficiale"}],
+  articles:[{title:"New flagship",publisher:"Fashion Press",date:"2026-09-25",url:"https://example.org/flagship"}],
+  email_hook:"Ho seguito l’apertura del nuovo negozio milanese.",
+  message_angle:"La nuova presenza retail rende rilevanti assortimenti e merchandising."
+ }})[0];
+ const html=renderOutreachFolder(richer);
+ assert.match(html,/Instagram/);
+ assert.match(html,/TikTok/);
+ assert.match(html,/link dal sito ufficiale/);
+ assert.match(html,/Un profilo social ufficiale non significa/);
+ assert.match(html,/Fashion Press/);
+ assert.match(composeOutreachEmail(richer).body,/Ho seguito l’apertura del nuovo negozio/);
+ assert.doesNotMatch(html,/post Instagram acquisiti|post TikTok acquisiti/);
+});
+
+test("Brand-specific editorial brief replaces generic dashboard empty-news cards",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const html=renderOutreachFolder(lead);
+ assert.match(html,/Perché candidarti adesso/);
+ assert.match(html,/Come presentarti/);
+ assert.match(html,/La tua email, già personalizzata/);
+ assert.match(html,/Fonti e segnali/);
+ assert.doesNotMatch(html,/Non risultano altri articoli recenti|Nessun altro segnale recente|News del brand da conoscere/);
 });
