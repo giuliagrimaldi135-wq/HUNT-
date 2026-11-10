@@ -344,6 +344,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
  const roleTitle=String(lead.area||"Merchandising / Prodotto").split("/").map(x=>x.trim()).filter(Boolean).slice(0,3).join(" & ");
  const factsText=String(lead.outreachStory||lead.whyNow||lead.evidence[0]?.description||"");
  const relevanceText=String(lead.outreachRelevance||lead.messageAngle||"");
+ const personalBrandEvidence=renderOutreachBrandEvidence(lead,selected);
  const caveatText=String(lead.outreachCaution||"Non è stato verificato un annuncio di assunzione collegato a questo segnale.");
  const news=[];
  const pushNews=(x)=>{
@@ -396,9 +397,9 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
         '<p class="outV3Story">'+esc(factsText)+'</p>'+
         '<div class="outSignalSources">'+press.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+
           esc(x.kind==="radar"?"World Radar":x.source)+' ↗</a>').join("")+'</div></article>'+
-      (relevanceText?'<aside class="outEditorialInterpretation"><span class="outInsightEyebrow">PERCHÉ PUÒ ESSERE INTERESSANTE</span>'+
-        '<p>'+esc(relevanceText.split(/(?<=\.)\s+/).slice(0,2).join(" "))+'</p>'+
-         '<div id="outBrandEvidence">'+renderOutreachBrandEvidence(lead,selected)+'</div></aside>':"")+
+      (relevanceText||personalBrandEvidence?'<aside class="outEditorialInterpretation"><span class="outInsightEyebrow">PERCHÉ PUÒ ESSERE INTERESSANTE</span>'+
+        (relevanceText?'<p>'+esc(relevanceText.split(/(?<=\.)\s+/).slice(0,2).join(" "))+'</p>':"")+
+         '<div id="outBrandEvidence">'+personalBrandEvidence+'</div></aside>':"")+
     '</div></section>'+ 
   '<div class="outTabPanel outApplicationPane" id="outApplication" role="tabpanel" aria-labelledby="outTabApplication" data-outreach-panel="application" hidden><section class="outV3Section outV3Application"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO PERCORSO</span><h2>Scheda candidatura</h2>'+
