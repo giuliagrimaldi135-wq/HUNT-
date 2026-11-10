@@ -108,9 +108,11 @@ function cvFocus(cv,area=""){
  return {kind:"general",label:String(area||"Merchandising e Prodotto").split("/").map(x=>x.trim()).filter(Boolean).slice(0,2).join(" e "),
  intention:"Vorrei imparare da vicino come si organizzano le attività di prodotto, retail e commerciali del brand."};
 }
-export function chooseOutreachCv(cvs=[],area=""){
+export function chooseOutreachCv(cvs=[],area="",lead=null){
  if(!Array.isArray(cvs)||!cvs.length)return null;
  const target=/merchandis|buying|planning|allocation|product|wholesale/i.test(String(area||""));
+ const ranked=lead&&cvs.filter(isConfirmedCv).map(c=>({c,insight:analyzeOutreachCv(lead,c)})).sort((a,b)=>b.insight.score-a.insight.score);
+ if(ranked?.length&&ranked[0].insight.highlights.length&&ranked[0].insight.score>0)return ranked[0].c;
  const preferred=cvs.find(c=>target&&/merchandis|buying|planning|allocation/i.test(c.name||"")&&isConfirmedCv(c));
  return preferred||cvs.find(c=>c.is_default&&isConfirmedCv(c))||cvs.find(isConfirmedCv)||
    cvs.find(c=>target&&/merchandis|buying|planning|allocation/i.test(c.name||""))||
@@ -210,7 +212,7 @@ const outreachTopics=[
  {key:"retail",name:"Retail e canali digitali",pattern:/retail|negoz|boutique|store|e.commerce|ecommerce|online|digital|omnichannel/i}
 ];
 const outreachLabel=(cv)=>String(cv?.name||"Curriculum");
-const snippet=(s,max=170)=>normalizeContent(s).slice(0,max).replace(/\s+\S*$/,"").trim()||normalizeContent(s).slice(0,max);
+const snippet=(value,max=170)=>{const original=normalizeContent(value);if(original.length<=max)return original;return original.slice(0,max).replace(/\s+\S*$/,"").trim()+"…";};
 function evidenceFromCv(cv){
  if(!isConfirmedCv(cv))return [];
  const p=cv.parsed_profile||{},out=[];
@@ -302,28 +304,32 @@ const sourceItem=(x)=>'<li class="outSourceRow"><div><span class="outSourceType"
   '<small>'+esc(x.publisher)+(x.date?" · "+esc(dateText(x.date)):"")+(x.verification?" · "+esc(x.verification):"")+'</small></div>'+
   '<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Apri fonte ↗</a></li>';
 export function renderOutreachCards(leads=[],drafts={}){
- if(!leads.length)return '<section class="outEmpty"><h2>Ancora nessun brand da proporre.</h2><p>HUNT mostra soltanto opportunità di contatto sostenute da fonti consultabili.</p></section>';
- return '<div class="outResults outResultsV5">'+leads.map(lead=>{
-  const status=drafts[lead.key]?.status||"";
-  const first=(lead.evidence||[]).find(e=>e.date)?.date||lead.checkedAt;
-  const summary=String(lead.previewSummary||lead.whyNow||lead.evidence?.[0]?.description||"");
-  const title=String(lead.previewTitle||"Un movimento commerciale da conoscere");
-  const sources=new Set([...(lead.evidence||[]),...(lead.editorial||[]),...(lead.news||[])].map(e=>safeLink(e.url)).filter(Boolean)).size;
-  const stage=status==="applied"?"Candidatura inviata":status==="preparing"?"Bozza salvata":status==="archived"?"Archiviata":"Dossier disponibile";
-  return '<article class="outLead outLeadV5">'+
-   '<div class="outLeadContent"><div class="outLeadTopline"><span class="outEyebrow">'+esc(lead.dated?"DAL MERCATO":"DAL BRAND")+'</span>'+
-   '<span class="outLeadDate">'+esc(dateText(first))+'</span></div>'+
-   '<h2>'+esc(lead.brand)+'</h2>'+
-   '<div class="outLeadEditorial"><strong>'+esc(title)+'</strong><p>'+esc(summary)+'</p></div>'+
-   '<div class="outLeadMeta"><span>'+esc(lead.area)+'</span>'+
-   '<span>'+sources+' '+(sources===1?"fonte":"fonti")+'</span>'+
-   (lead.priority?'<span>Priorità '+esc(lead.priority)+'</span>':"")+'</div></div>'+
-   '<div class="outLeadActions"><span class="outStatus">'+esc(stage)+'</span>'+
-   '<button type="button" class="outOpen" data-outreach-open="'+esc(lead.key)+'">Esplora il brand <span aria-hidden="true">↗</span></button></div></article>';
+ if(!leads.length)return '<section class="outEmpty"><h2>Nessun brand da segnalare per ora.</h2><p>Mostreremo i brand con sviluppi commerciali sostenuti da fonti consultabili.</p></section>';
+ return '<div class="outResultsV6">'+leads.map(lead=>{
+  const date=(lead.evidence||[]).find(x=>x.date)?.date||lead.checkedAt;
+  const headline=String(lead.previewTitle||"Uno sviluppo da conoscere");
+  const summary=String(lead.previewSummary||lead.whyNow||"");
+  const status=drafts[lead.key]?.status;
+  const allSources=[...(lead.editorial||[]),...(lead.evidence||[])].filter(x=>safeLink(x.url));
+  const unique=[];
+  for(const x of allSources)if(!unique.some(a=>a.url===x.url))unique.push({url:x.url,publisher:x.publisher||sourceHost(x.url)});
+  return '<article class="outEditorialRow"><div class="outEditorialIdentity">'+
+   '<span class="outEditorialKicker">BRAND DA CONTATTARE</span><h2>'+esc(lead.brand)+'</h2>'+
+   (status?'<span class="outDraftStatus">'+esc(status==="applied"?"Contattato":status==="preparing"?"In preparazione":"Archiviato")+'</span>':"")+'</div>'+
+   '<div class="outEditorialSignal"><span class="outEditorialKicker">DAL MONDO DEL BRAND · '+esc(dateText(date))+'</span>'+
+   '<h3>'+esc(headline)+'</h3><p>'+esc(summary)+'</p>'+
+   '<div class="outEditorialSources">'+unique.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' ↗</a>').join("")+'</div></div>'+
+   '<div class="outEditorialAction"><button type="button" data-outreach-open="'+esc(lead.key)+'">Apri analisi <span aria-hidden="true">↗</span></button></div></article>';
  }).join("")+'</div>';
 }
+export function renderOutreachBrandEvidence(lead,cv){
+ const a=analyzeOutreachCv(lead,cv);
+ if(!a.confirmed||!a.highlights.length)return "";
+ const item=a.highlights[0];
+ return '<div class="outBrandPersonalEvidence"><span>DAL TUO CV CONFERMATO</span><strong>'+esc(item.topic)+'</strong><small>'+esc(item.source)+'</small></div>';
+}
 export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},preferences={}}={}){
- const suggestion=chooseOutreachCv(cvs,lead.area);
+ const suggestion=chooseOutreachCv(cvs,lead.area,lead);
  const selected=cvs.find(c=>c.id===cvId)||suggestion;
  const email=composeOutreachEmail(lead,selected,person,preferences);
  const cvExplanation=describeOutreachCv(selected,lead.area);
