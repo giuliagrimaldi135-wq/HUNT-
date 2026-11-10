@@ -312,5 +312,22 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
    (lead.contactEmail&&lead.contactSourceUrl?'<button type="button" class="outMailtoAction" data-outreach-mailto>Apri nel programma email ↗</button>':"")+
    (lead.careerUrl?'<p><a href="'+esc(lead.careerUrl)+'" target="_blank" rel="noopener noreferrer">Controlla prima le posizioni ufficiali ↗</a></p>':"")+
    '<p class="outSmallNote">Un indirizzo generale non è un indirizzo HR. HUNT non invia email automaticamente.</p></section>'+
-  '</div>';
+  '<footer class="outFolderFoot"><button type="button" data-outreach-save="applied" class="outApplied">Ho già inviato la candidatura</button>'+
+   '<span>La registrazione non invia alcun messaggio.</span></footer></div>'+
+  '<section class="outV3Section brandGlobalNews outV3News outTabPanel" id="outNews" role="tabpanel" aria-labelledby="outTabNews" data-outreach-panel="news" hidden>'+
+   '<div class="brandGlobalNewsHead"><div><div class="eyebrow">NOTIZIE E FONTI</div>'+
+   '<h2>'+esc(lead.brand)+' · News & fonti</h2><p>Articoli e segnali pubblici con fonte e data. Non sono annunci di lavoro.</p></div></div>'+
+   '<div class="brandNewsSwitch" role="group" aria-label="Filtra le notizie">'+
+    '<button type="button" class="active" data-outreach-news-filter="all">Tutte</button>'+
+    '<button type="button" data-outreach-news-filter="press">Stampa</button>'+
+    '<button type="button" data-outreach-news-filter="radar">World Radar</button>'+
+    '<button type="button" data-outreach-news-filter="signal">Segnali</button></div>'+
+   '<p class="brandNewsCounter" id="outNewsCounter">'+news.length+' notizie e segnali documentati</p>'+
+   '<div class="brandGlobalNewsList" id="outNewsList">'+newsCards+'</div>'+
+   (news.length?'':'<p class="outV3Caution">Non sono disponibili altre notizie verificate per questo brand.</p>')+
+   '<div class="outV3Sources"><h3>Fonti ufficiali e social</h3>'+
+    (socialLinks?'<div class="outSocialLinks">'+socialLinks+'</div>':"")+
+    '<p>I profili social sono collegamenti pubblici, non post acquisiti automaticamente.</p>'+
+    '<details class="outEvidenceDetails"><summary>Tutte le fonti utilizzate <span>'+sourceCount+' collegamenti</span></summary>'+
+    '<ul class="outSources">'+sourceRows+'</ul></details></div></section></div>';
 }
