@@ -53,13 +53,13 @@ export function describePosition(duties=[],title=""){
  ];
  const matched=topics.filter(([re])=>re.test(text)).map(x=>x[1]);
  if(/budget/.test(text)&&/stock|giacenz|allocaz/.test(text)){
-  return "La posizione si concentra sulla pianificazione commerciale e sulla disponibilità dei prodotti. Il lavoro comprende il controllo dei budget e il monitoraggio dello stock e delle allocazioni: attività che mettono in relazione analisi e gestione operativa del prodotto.";
+  return "Il ruolo riguarda la pianificazione commerciale: controllo dei budget, disponibilità dei prodotti e monitoraggio di stock e allocazioni.";
  }
- if(matched.length>=2)return "Dalle responsabilità pubblicate emerge un ruolo che combina "+naturalJoin(matched.slice(0,3))+". Le attività spaziano quindi tra queste aree, con un equilibrio che dipende dall'organizzazione del team e dalle priorità dell'azienda.";
- if(matched.length===1)return "Il focus della posizione, per quanto emerge dalla descrizione disponibile, è "+matched[0]+". La scheda Attività riporta le responsabilità acquisite dall'annuncio, senza aggiungere mansioni ipotizzate.";
+ if(matched.length>=2)return "Le attività indicate nell'annuncio riguardano "+naturalJoin(matched.slice(0,3))+".";
+ if(matched.length===1)return "L'annuncio mette al centro "+matched[0]+".";
  const role=String(title||"").trim();
  if((Array.isArray(duties)?duties:[]).filter(Boolean).length){
-  return "L'annuncio descrive un ruolo"+(role?" di "+role:"")+" attraverso le sue responsabilità operative. Per comprendere il lavoro quotidiano, consulta le attività riportate dall'azienda nella scheda dedicata.";
+  return "Per il ruolo"+(role?" di "+role:"")+" sono disponibili alcune attività nell'annuncio originale. Apri «Attività» per leggerle.";
  }
  return "Per questa posizione non è ancora disponibile una descrizione delle responsabilità sufficientemente dettagliata. Puoi consultare l'annuncio originale per verificare mansioni e perimetro del ruolo.";
 }
