@@ -1225,6 +1225,27 @@ function openOutreachFolder(key){
  bindNav();
  const back=app.querySelector("[data-outreach-back]");
  if(back)back.onclick=renderOutreach;
+ const targets={reason:"outReason",application:"outApplication",letter:"outLetter",news:"outNews"};
+ app.querySelectorAll("[data-outreach-jump]").forEach(button=>button.onclick=()=>{
+   const target=targets[button.dataset.outreachJump];
+   if(!target)return;
+   app.querySelector("#"+target)?.scrollIntoView({behavior:"smooth",block:"start"});
+   app.querySelectorAll(".outSectionNav [data-outreach-jump]").forEach(x=>x.classList.toggle("active",x.dataset.outreachJump===button.dataset.outreachJump));
+ });
+ app.querySelectorAll("[data-outreach-news-filter]").forEach(button=>button.onclick=()=>{
+   const kind=button.dataset.outreachNewsFilter||"all";
+   let visible=0;
+   app.querySelectorAll("[data-outreach-news-kind]").forEach(item=>{
+     const match=kind==="all"||item.dataset.outreachNewsKind===kind;
+     item.hidden=!match;
+     if(match)visible++;
+   });
+   app.querySelectorAll("[data-outreach-news-filter]").forEach(x=>x.classList.toggle("active",x===button));
+   const count=app.querySelector("#outNewsCounter");
+   if(count)count.textContent=visible+" notizie e segnali mostrati"+(kind==="all"?"":" · "+button.textContent.trim());
+ });
+ const allNews=app.querySelector("[data-outreach-all-news]");
+ if(allNews)allNews.onclick=()=>{currentView="radar";renderWorldRadar()};
  const cv=app.querySelector("#outCvChoice"),subject=app.querySelector("#outSubject"),body=app.querySelector("#outBody"),notice=app.querySelector("#outSaveState");
  const cvExplanation=app.querySelector("#outCvReason");
  const say=(message,bad=false)=>{if(!notice)return;notice.textContent=message;notice.classList.toggle("is-error",bad)};
