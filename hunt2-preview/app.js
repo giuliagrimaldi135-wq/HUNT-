@@ -5,6 +5,7 @@ import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
 import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
+import {buildOutreachLeads,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261110-156";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -369,14 +370,15 @@ async function savePersonalization(e){
 
 function shell(inner){
  return `<div class="shell"><aside class="side"><div class="logo">HUNT<span>.</span></div><div class="sub">Fashion & Luxury Career Intelligence</div>
- <div class="nav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}" class="${currentView===v?"active":""}">${({opportunities:"Opportunità",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</div>
+ <div class="nav">${["opportunities","outreach","radar","applications","profile"].map(v=>`<button data-view="${v}" class="${currentView===v?"active":""}">${({opportunities:"Opportunità",outreach:"Spontanee",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</div>
  <div class="sideFoot">Beta connected · Supabase</div></aside><main class="main">${inner}</main></div>
- <nav class="mobileNav">${["opportunities","radar","applications","profile"].map(v=>`<button data-view="${v}">${({opportunities:"Opportunità",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</nav>`;
+ <nav class="mobileNav">${["opportunities","outreach","radar","applications","profile"].map(v=>`<button data-view="${v}">${({opportunities:"Opportunità",outreach:"Spontanee",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</nav>`;
 }
 
 async function renderShell(){
  if(currentView==="opportunities") return renderOpportunities();
  if(currentView==="applications") return renderApplications();
+ if(currentView==="outreach") return renderOutreach();
   if(currentView==="radar") return renderWorldRadar();
  return renderProfile();
 }
@@ -1162,6 +1164,70 @@ async function renderApplications(){
  document.querySelectorAll("[data-app-folder]").forEach(b=>b.onclick=()=>renderOpportunityFolder(b.dataset.appFolder));
 }
 
+
+
+/* Spontanee: rebuild the original HUNT folder using public evidence and private drafts. */
+let outreachCache={leads:[],drafts:{},cvs:[],person:{},selectedCv:{}};
+async function renderOutreach(){
+ currentView="outreach";
+ const [curatedRes,signalsRes,draftsRes,cvsRes,personRes]=await Promise.all([
+   fetch("../data/chatgpt_outreach.json?v=20261110-156",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
+   supabase.from("company_signals").select("id,signal_type,title,summary,source_url,published_at,detected_at,companies(name,is_independent,size_band,careers_url)").order("published_at",{ascending:false,nullsFirst:false}).limit(200),
+   supabase.from("user_outreach_drafts").select("outreach_key,brand_name,subject,email_body,status,updated_at").eq("user_id",currentUser.id),
+   supabase.from("user_cvs").select("id,name,is_default,parsed_profile").eq("user_id",currentUser.id).eq("active",true),
+   supabase.from("profiles").select("display_name,first_name,last_name").eq("user_id",currentUser.id).maybeSingle()
+ ]);
+ const leads=buildOutreachLeads(curatedRes,signalsRes.data||[]);
+ const drafts=Object.fromEntries((draftsRes.data||[]).map(d=>[d.outreach_key,d]));
+ outreachCache={leads,drafts,cvs:cvsRes.data||[],person:personRes.data||{},selectedCv:{}};
+ const errors=[signalsRes.error,draftsRes.error,cvsRes.error].filter(Boolean).map(e=>e.message);
+ app.innerHTML=shell('<div class="outPage"><div class="eyebrow">HUNT / Luxury Outreach</div>'+
+ '<header class="outPageHeader"><h1>Spontanee</h1><p>Brand indipendenti, movimenti commerciali e segnali da non perdere. Ogni suggerimento ha una fonte da leggere prima di scrivere.</p></header>'+
+ '<div class="outAbout"><strong>Non sono annunci di lavoro.</strong> Sono opportunità di contatto: HUNT distingue una notizia pubblica da una ricerca di personale effettivamente aperta.</div>'+
+ (errors.length?'<div class="msg bad">Alcuni dati non sono disponibili: '+esc(errors.join(" · "))+'</div>':"")+
+ renderOutreachCards(leads,drafts)+'</div>');
+ bindNav();
+ document.querySelectorAll("[data-outreach-open]").forEach(button=>button.onclick=()=>openOutreachFolder(button.dataset.outreachOpen));
+}
+function openOutreachFolder(key){
+ currentView="outreach";
+ const lead=outreachCache.leads.find(item=>item.key===key);
+ if(!lead)return renderOutreach();
+ const draft=outreachCache.drafts[key]||null;
+ const cvs=outreachCache.cvs,person=outreachCache.person;
+ const cvId=outreachCache.selectedCv[key]||cvs.find(c=>c.is_default)?.id||cvs[0]?.id||"";
+ app.innerHTML=shell(renderOutreachFolder(lead,{cvs,cvId,draft,person}));
+ bindNav();
+ const back=app.querySelector("[data-outreach-back]");
+ if(back)back.onclick=renderOutreach;
+ const cv=app.querySelector("#outCvChoice"),subject=app.querySelector("#outSubject"),body=app.querySelector("#outBody"),notice=app.querySelector("#outSaveState");
+ const say=(message,bad=false)=>{notice.textContent=message;notice.classList.toggle("is-error",bad)};
+ if(cv)cv.onchange=()=>{outreachCache.selectedCv[key]=cv.value;say("CV selezionato. Per aggiornare l’email scegli «Ricrea dal CV selezionato».")};
+ const regenerate=app.querySelector("[data-outreach-regenerate]");
+ if(regenerate)regenerate.onclick=()=>{
+   if(!window.confirm("Ricreare la bozza con il CV scelto? Il testo visualizzato sarà sostituito."))return;
+   const selected=cvs.find(c=>c.id===cv?.value);
+   const next=composeOutreachEmail(lead,selected,person);
+   subject.value=next.subject;body.value=next.body;
+   say(next.verifiedCv?"Bozza aggiornata con le informazioni confermate del CV. Salvala se ti piace.":"Bozza aggiornata. Il CV scelto non ha ancora dati confermati, quindi HUNT non ha aggiunto esperienze o qualifiche.");
+ };
+ const copy=app.querySelector("[data-outreach-copy]");
+ if(copy)copy.onclick=async()=>{
+   try{await navigator.clipboard.writeText("Oggetto: "+subject.value+"\n\n"+body.value);say("Oggetto e testo copiati. HUNT non ha inviato nessuna email.")}
+   catch(e){say("Copia non disponibile: seleziona il testo e copialo manualmente.",true)}
+ };
+ app.querySelectorAll("[data-outreach-save]").forEach(button=>button.onclick=async()=>{
+   const status=button.dataset.outreachSave;
+   if(status==="applied"&&!window.confirm("Confermi di aver già inviato personalmente questa candidatura? HUNT non invia messaggi."))return;
+   const payload={user_id:currentUser.id,outreach_key:lead.key,brand_name:lead.brand,subject:subject.value.trim(),email_body:body.value.trim(),status,updated_at:new Date().toISOString()};
+   button.disabled=true;
+   const {error}=await supabase.from("user_outreach_drafts").upsert(payload,{onConflict:"user_id,outreach_key"});
+   button.disabled=false;
+   if(error){say("Non è stato possibile salvare: "+error.message,true);return}
+   outreachCache.drafts[key]=payload;
+   say(status==="applied"?"Candidatura registrata come inviata. La ritrovi in Candidature.":"Bozza salvata nel tuo account HUNT.");
+ });
+}
 
 const RADAR_TYPES={
   retail_expansion:["Retail & aperture","Espansione o presenza commerciale"],
