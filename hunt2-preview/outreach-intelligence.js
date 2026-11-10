@@ -58,7 +58,7 @@ export function buildOutreachLeads(curated=[],corporate=[],now=Date.now()){
  return [...byKey.values()].sort((a,b)=>(Number(b.dated)-Number(a.dated))||(b.score-a.score)).slice(0,35);
 }
 export function composeOutreachEmail(lead,cv={},person={}){
- const p=cv.parsed_profile||{};
+ const p=cv?.parsed_profile||{};
  const confirmed=Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
  const name=String(person.display_name||[person.first_name,person.last_name].filter(Boolean).join(" ")||"").trim();
  const education=confirmed&&Array.isArray(p.education)?p.education[0]:null;
