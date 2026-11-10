@@ -125,21 +125,42 @@
   "giuseppe-di-morabito": {
     "company_url": "https://www.giuseppedimorabito.com/",
     "official_profiles": [],
-    "articles": [],
+    "articles": [
+      {
+        "title": "Giuseppe Di Morabito nella campagna wholesale RG Showroom",
+        "publisher": "Modem",
+        "date": "2026-06-16",
+        "url": "https://www.modemonline.com/img/_upload/newsletter/newsletter-1917-en.html"
+      }
+    ],
     "message_angle": "La presenza in showroom multibrand è pertinente a una candidatura junior nell'area wholesale e prodotto.",
     "email_hook": "Ho seguito la presenza del brand nelle campagne showroom tra Milano e Parigi."
   },
   "francesco-russo": {
     "company_url": "https://francescorusso.fr/",
     "official_profiles": [],
-    "articles": [],
+    "articles": [
+      {
+        "title": "Francesco Russo apre la prima boutique milanese in via Bagutta",
+        "publisher": "Pambianconews",
+        "date": "2026-04-15",
+        "url": "https://www.pambianconews.com/2026/04/15/poker-di-aperture-nel-quadrilatero-agnona-rimowa-moynat-e-francesco-russo-480621/"
+      }
+    ],
     "email_hook": "Ho seguito l'apertura della prima boutique milanese in via Bagutta, un passaggio interessante per lo sviluppo del retail diretto del brand.",
     "message_angle": "Il nuovo spazio retail rende pertinente un contatto mirato su merchandising, supporto prodotto e coordinamento commerciale."
   },
   "aliita": {
     "company_url": "https://aliita.com/",
     "official_profiles": [],
-    "articles": [],
+    "articles": [
+      {
+        "title": "ALIITA protagonista di un pop-up a Tokyo",
+        "publisher": "PR Times",
+        "date": "2026-04-07",
+        "url": "https://prtimes.jp/main/html/rd/p/000000891.000050309.html"
+      }
+    ],
     "email_hook": "Ho seguito le iniziative retail di ALIITA, fra cui il progetto shop-in-shop a Milano e il pop-up internazionale a Tokyo.",
     "message_angle": "Questi formati commerciali richiamano competenze di prodotto e gestione degli assortimenti fra canali retail e wholesale."
   }
