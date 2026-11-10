@@ -1,5 +1,5 @@
 import {test} from "node:test";import assert from "node:assert/strict";
-import {mountCvManager} from "../cv-profile.js";
+import {mountCvManager,requestCvVerification} from "../cv-profile.js";
 const rows=[
  {id:"main",name:"Merchandising",is_default:true,storage_path:"fake.pdf",parsed_profile:{
   profile_verified_from_user_history:true,raw_text:"A complete private curriculum text was read by HUNT. ".repeat(3),
@@ -32,4 +32,18 @@ test("Profile displays principal/secondary/delete, Italian evidence and hides ma
  assert.match(root.innerHTML,/Raccolta degli ordini tramite l&#39;applicazione Max Mara/);
  assert.match(root.innerHTML,/Conferma e salva|Salva modifiche/);
  assert.doesNotMatch(root.innerHTML,/Anni pertinenti|Salva destinazioni CV|data-cv-action="read"/);
+});
+
+test("From a vacancy, verify the selected CV directly without an unexplained intermediate page",async()=>{
+ requestCvVerification("other");
+ const root={innerHTML:"",querySelector:()=>null,onclick:null};
+ const chain={select(){return this},eq(){return this},order(){return Promise.resolve({data:rows,error:null})}};
+ const supabase={from(){return chain}};
+ await mountCvManager(root,{supabase,user:{id:"test-user"},refresh:async()=>{},roleFamilies:["Merchandising"]});
+ assert.match(root.innerHTML,/Fashion Management/);
+ assert.match(root.innerHTML,/data-cv-panel="edit" >/);
+ assert.match(root.innerHTML,/data-cv-panel="overview" hidden/);
+ assert.match(root.innerHTML,/Verifica le informazioni del CV/);
+ assert.match(root.innerHTML,/cvWReviewSection/);
+ assert.match(root.innerHTML,/Conferma e salva/);
 });
