@@ -63,7 +63,7 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
  const exp=info.experience||[],projects=info.projects||[],edu=info.education||[],tools=info.tools||[],languages=info.languages||[];
  const related=areas.filter(x=>x.related);
  const overview=
-  '<div class="cvWPanelHeader"><h3>Il tuo CV, in breve</h3><p>HUNT ha raccolto qui le informazioni del documento. Puoi consultarle e correggerle senza modificare il file originale.</p></div>'+
+  '<div class="cvWPanelHeader"><h3>Il tuo CV, in breve</h3><p>Queste sono le informazioni ricavate da HUNT. Esplora il tuo percorso e, quando serve, correggi i dati riconosciuti dal documento.</p></div>'+
   '<div class="cvWSnapshot cvWSnapshotEditorial cvWSimpleSummary">'+
    '<section class="cvWSnapshotMain"><div class="cvWSnapshotTitle"><h4>Esperienza</h4></div>'+
      (exp.length?'<strong>'+esc(exp[0].company||exp[0].role||"Esperienza")+'</strong>'+
@@ -111,7 +111,7 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
    '<details class="cvWAllAreas"><summary>Esplora tutte le '+areas.length+' categorie professionali <span aria-hidden="true">⌄</span></summary>'+
     '<p>Le categorie non evidenziate non hanno collegamenti riconosciuti in questo documento.</p>'+
     '<div class="cvWAllAreasGrid">'+areas.map(x=>'<span class="'+(x.related?"is-related":"")+'">'+esc(x.name)+'</span>').join("")+'</div></details>';
- const edit='<div class="cvWPanelHeader cvWReviewIntro"><span class="cvWReviewKicker">'+(confirmed?"AGGIORNA IL PROFILO":"VERIFICA DEL CV")+'</span><h3>'+(confirmed?"Aggiorna le informazioni":"Verifica le informazioni del CV")+'</h3><p>Abbiamo organizzato le informazioni trovate nel documento. Apri le sezioni, controlla i dati e correggi solo ciò che non è esatto. Il file originale non verrà modificato.</p></div>'+
+ const edit='<div class="cvWPanelHeader cvWReviewIntro"><span class="cvWReviewKicker">'+(confirmed?"AGGIORNA IL PROFILO":"VERIFICA DEL CV")+'</span><h3>'+(confirmed?"Aggiorna le informazioni":"Verifica le informazioni del CV")+'</h3><p>Qui puoi verificare ciò che HUNT ha letto dal CV: esperienze, progetti, formazione, software e lingue. Apri le sezioni e correggi solo eventuali errori. Il file originale rimane invariato.</p></div>'+
    '<div id="cvCorrectionDetails" class="cvWEditFields">'+corrections+'</div>';
  const detailsPane=(id,html)=>pane(id,a,
   '<button type="button" class="cvWBack" data-cv-panel-target="overview">← Torna al riepilogo</button>'+html);
@@ -119,8 +119,8 @@ export function renderCvWorkspace({cv,info,areas=[],confirmed=false,activePanel=
  return '<section class="cvWWorkspace cvWWorkspaceSimple" aria-label="Curriculum selezionato">'+
   '<header class="cvWWorkspaceHead"><div><div class="cvWEyebrow">Il tuo curriculum</div>'+
    '<div class="cvWTitle"><h2>'+esc(cv.name||"Curriculum")+'</h2>'+(cv.is_default?'<span class="cvWPrimaryText">Principale</span>':"")+'</div>'+
-   '<p>'+esc(confirmed?"Informazioni verificate. HUNT può usarle per confrontare il tuo profilo con gli annunci.":"HUNT ha letto questo CV. Verifica che esperienze, progetti e competenze siano corretti prima di usarli nel confronto con le offerte.")+'</p></div>'+
-   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton">'+(confirmed?"Modifica le informazioni":"Verifica le informazioni")+' <span aria-hidden="true">↗</span></button></header>'+
+   '<p>'+esc(confirmed?"Informazioni verificate. HUNT può usarle per confrontare il tuo profilo con gli annunci.":"HUNT ha già letto questo CV. Ora verifica esperienze, progetti, formazione e competenze: saranno i dati usati per valutare le offerte. Il documento originale non cambia.")+'</p></div>'+
+   '<button type="button" data-cv-action="edit-profile" class="cvWEditButton '+(confirmed?'cvWEditSecondary':'cvWVerifyPrimary')+'">'+(confirmed?"Modifica i dati del CV":"Verifica i dati estratti")+' <span aria-hidden="true">↗</span></button></header>'+
   '<form id="cvFactsForm">'+
    pane("overview",a,overview)+detailsPane("experience",experience)+detailsPane("projects",projectPanel)+
    detailsPane("skills",skillsAndAreas)+detailsPane("areas",categories)+detailsPane("edit",edit)+
