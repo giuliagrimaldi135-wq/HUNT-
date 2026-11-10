@@ -728,7 +728,7 @@
 .outFolderV2 .outPrepareColumns .outAngleLabel+p{margin-top:4px;line-height:1.82;color:#506254}
 
 /* Brand da contattare: distinct news, CV relevance, compact prose hierarchy */
-.outFolderV2 .outNewsPreview{padding:28px 0 30px;border-bottom:1px solid #dae3d9}
+.outFolderV2 .outNewsPreview{margin-top:28px;padding:24px 0 0;border-top:1px solid #dae3d9;border-bottom:0}
 .outFolderV2 .outNewsPreview .outSectionIntro h2{font-size:22px;letter-spacing:-.03em;margin-bottom:11px}
 .outFolderV2 .outNewsRows{display:grid;grid-template-columns:1fr;gap:0}
 .outFolderV2 .outNewsLink{display:flex;align-items:center;justify-content:space-between;gap:19px;text-decoration:none;padding:16px 1px;border-top:1px solid #e5ebe3;color:#304838}
