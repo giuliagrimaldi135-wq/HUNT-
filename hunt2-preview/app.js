@@ -5,7 +5,7 @@ import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
 import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
-import {buildOutreachLeads,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261110-156";
+import {buildOutreachLeads,attachBrandNews,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261110-157";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -1179,17 +1179,18 @@ async function renderApplications(){
 let outreachCache={leads:[],drafts:{},cvs:[],person:{},selectedCv:{}};
 async function renderOutreach(){
  currentView="outreach";
- const [curatedRes,signalsRes,draftsRes,cvsRes,personRes]=await Promise.all([
+ const [curatedRes,signalsRes,draftsRes,cvsRes,personRes,newsRes]=await Promise.all([
    fetch("../data/chatgpt_outreach.json?v=20261110-156",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
    supabase.from("company_signals").select("id,signal_type,title,summary,source_url,published_at,detected_at,companies(name,is_independent,size_band,careers_url)").order("published_at",{ascending:false,nullsFirst:false}).limit(200),
    supabase.from("user_outreach_drafts").select("outreach_key,brand_name,subject,email_body,status,updated_at").eq("user_id",currentUser.id),
    supabase.from("user_cvs").select("id,name,is_default,parsed_profile").eq("user_id",currentUser.id).eq("active",true),
-   supabase.from("profiles").select("display_name,first_name,last_name").eq("user_id",currentUser.id).maybeSingle()
+   supabase.from("profiles").select("display_name,first_name,last_name").eq("user_id",currentUser.id).maybeSingle(),
+   supabase.from("world_news_items").select("title,summary,url,published_at").order("published_at",{ascending:false,nullsFirst:false}).limit(400)
  ]);
- const leads=buildOutreachLeads(curatedRes,signalsRes.data||[]);
+ const leads=attachBrandNews(buildOutreachLeads(curatedRes,signalsRes.data||[]),newsRes.data||[]);
  const drafts=Object.fromEntries((draftsRes.data||[]).map(d=>[d.outreach_key,d]));
  outreachCache={leads,drafts,cvs:cvsRes.data||[],person:personRes.data||{},selectedCv:{}};
- const errors=[signalsRes.error,draftsRes.error,cvsRes.error].filter(Boolean).map(e=>e.message);
+ const errors=[signalsRes.error,draftsRes.error,cvsRes.error,newsRes.error].filter(Boolean).map(e=>e.message);
  app.innerHTML=shell('<div class="outPage"><div class="eyebrow">HUNT / Luxury Outreach</div>'+
  '<header class="outPageHeader"><h1>Spontanee</h1><p>Brand indipendenti, movimenti commerciali e segnali da non perdere. Ogni suggerimento ha una fonte da leggere prima di scrivere.</p></header>'+
  '<div class="outAbout"><strong>Non sono annunci di lavoro.</strong> Sono opportunità di contatto: HUNT distingue una notizia pubblica da una ricerca di personale effettivamente aperta.</div>'+
