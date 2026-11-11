@@ -208,7 +208,7 @@ export function composeOutreachEmail(lead,cv={},person={},preferences={}){
 const outreachTopics=[
  {key:"merchandising",name:"Assortimenti e pianificazione",pattern:/merchandis|buying|acquist|assort|allocat|stock|inventory|otb|open.to.buy|budget|planning|pianificazion|forecast|sell.through|product mix/i},
  {key:"wholesale",name:"Showroom e attività commerciali",pattern:/showroom|wholesale|campagna vendit|sales campaign|ordini|order|client|customer|distribuzion|commerciale|sales/i},
- {key:"product",name:"Prodotto e collezioni",pattern:/prodot|product|collezion|collection|capsule|costing|campionario|sample|brand strateg/i},
+ {key:"product",name:"Prodotto e collezioni",pattern:/prodot|product|collezion|collection|capsule|costing|campionario|sample|prototip/i},
  {key:"retail",name:"Retail e canali digitali",pattern:/retail|negoz|boutique|store|e.commerce|ecommerce|online|digital|omnichannel/i}
 ];
 const outreachLabel=(cv)=>String(cv?.name||"Curriculum");
@@ -248,8 +248,11 @@ export function analyzeOutreachCv(lead,cv){
   const matches=outreachTopics.filter(topic=>topic.pattern.test(e.text+(e.isDetail?"":" "+e.source))).map(topic=>topic.key);
   // A concrete planning activity stays in merchandising even if the text also mentions orders.
   // This distinguishes a buying/assortment project from repeated showroom order-taking bullets.
-  const primary=matches.includes("merchandising")&&/assort|buying plan|otb|open.to.buy|pianificazion|planning|allocat|stock|forecast/i.test(e.text)?
-   "merchandising":matches.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b))[0];
+  const planning=/assort|buying plan|otb|open.to.buy|pianificazion|planning|allocat|stock|forecast/i.test(e.text);
+  const salesWork=/ordini|order|showroom|campagna vendit|sales campaign/i.test(e.text);
+  const primary=matches.includes("merchandising")&&planning?"merchandising":
+   (matches.includes("wholesale")&&salesWork?"wholesale":
+    matches.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b))[0]);
   return {...e,topics:matches,primary,weight:primary?Math.max(1,5-order.indexOf(primary))+(e.isDetail?2:0):0};
  }).filter(x=>x.weight>0).sort((a,b)=>b.weight-a.weight);
  // Repeated mentions of the same activity or topic must not inflate a CV recommendation.
