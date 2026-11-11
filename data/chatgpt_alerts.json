@@ -882,5 +882,28 @@
     "source_name": "Kering Careers / Bottega Veneta",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-rossignol-merchandising-intern-milano-84bc73",
+    "brand": "Rossignol Group",
+    "title": "Merchandising Intern (M/W)",
+    "location": "Milano, Italia",
+    "published_at": "2026-07-10",
+    "detected_at": "2026-11-11T15:47:52+01:00",
+    "priority": "ALTA",
+    "score": 88,
+    "role_family": "Merchandising / Product Planning",
+    "why_fit": "Stage in merchandising e pianificazione assortimenti, con analisi sell-in/sell-through, PLM, lanci di collezione e collaborazione con product e sales; formazione Fashion Management e competenze Excel/PowerPoint pertinenti.",
+    "reasons": [
+      "Assortment planning e forecasting",
+      "Analisi sell-in e sell-through",
+      "Gestione dati prodotto PLM",
+      "Stage presso ufficio Milano",
+      "Richiesta formazione Fashion Management"
+    ],
+    "url": "https://groupe-rossignol.layan.eu/en/offer-merchandising-intern-m-w-84bc73",
+    "source_name": "Groupe Rossignol Careers (pagina ufficiale); Cercolavoro per data pubblicazione",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
