@@ -572,6 +572,19 @@
     "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE55OTZGTkFnVmEzZmVQRlhISFI5cWhhTzA3LUxKaUNjWFZVUzQzWXVDTEFKc01ldjQtVmdrejFiOVNyUVdRNl9XaVBMNFdwZnVRUGhDeWI0LXFTaUpFMXg5QUFJUjEwUHdCUlFFN0NnQ2w3MVdieERaaw?oc=5"
   },
   {
+    "key": "1e52797e4eb3019b09f3",
+    "brand": "Dior",
+    "headline": "Dior Homme - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-11T13:52:06.218409+00:00",
+    "published_at": "2026-11-04T13:57:42+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE9hMldLZTNjc1dYSVAwVVBSSUdWaVlfTVppYXRHQXMxUlh6dmtOWW9iallwUklGTS1HQmNiLVJoaEtJVVBwOE1YY3ZBSlhoVEJhUmpWR0F2Z1AyMFZZOFZFV1pudnV6WTF4UHpiV1BERlBSV1JWNm15c3VpYw?oc=5"
+  },
+  {
     "key": "df14ecab300c58759db5",
     "brand": "MSGM",
     "headline": "Msgm - FashionNetwork Italia",
