@@ -357,7 +357,7 @@ test("Two confirmed CVs with the same showroom history are compared on distinct 
  assert.match(html,/Gucci academic project/);
  assert.doesNotMatch(html,/Da approfondire, non un requisito|non compare nelle attività descritte/);
  const evidence=renderOutreachCvInsight(lead,specialist,[general,specialist]);
- assert.match(evidence,/outEvidenceLines/);
+ assert.match(evidence,/outEvidenceCollections/);
  assert.doesNotMatch(evidence,/outCvProof|outCvCheck|Da approfondire/);
 });
 test("Repeating showroom bullets does not make one CV more suitable or create artificial strengths",()=>{
@@ -378,4 +378,26 @@ test("Equal documented experiences do not justify inventing a decisive CV advant
  assert.equal(chosen.id,"general");
  const markup=renderOutreachFolder(lead,{cvs:[other,main]});
  assert.match(markup,/Non emerge una differenza decisiva/);
+});
+
+test("CV strengths are grouped by actual employer or project instead of repeated source rows",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const cv={id:"grouped",name:"Merchandising",parsed_profile:{
+  profile_confirmed_by_user:true,
+  experience:[{company:"Marina Rinaldi",role:"Showroom Intern",evidence:[
+   "Gestione ordini commerciali durante la campagna vendite"
+  ]}],
+  projects:[{name:"Gucci academic project",evidence:[
+   "Analisi del merchandising mix e pianificazione di una capsule collection",
+   "Analisi dei costi di prodotto e codifica dei prodotti"
+  ]}]
+ }};
+ const html=renderOutreachCvInsight(lead,cv);
+ assert.equal((html.match(/class="outEvidenceCollection"/g)||[]).length,2);
+ assert.equal((html.match(/<h4>Gucci academic project<\/h4>/g)||[]).length,1);
+ assert.equal((html.match(/<h4>Showroom Intern · Marina Rinaldi<\/h4>/g)||[]).length,1);
+ assert.match(html,/Analisi del merchandising mix/);
+ assert.match(html,/Analisi dei costi di prodotto/);
+ assert.match(html,/Gestione ordini commerciali/);
+ assert.doesNotMatch(html,/outEvidenceLine"|outCvCheck|Da approfondire/);
 });
