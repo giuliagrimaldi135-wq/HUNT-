@@ -428,3 +428,13 @@ Completed in `main`, asset version **20261111-170**:
 - Existing CV change handler already re-renders the email, brand personalization, and selected CV analysis. Old sourceCatalog and renderOutreachCards are preserved (had to restore them during refactor). Remaining: confirmed 8 brand seeds, approved vacancy dossier/Profile CV, email, contacts, tabs, news, source counts untouched.
 - Expanded regression tests for shared showroom experience, a distinct verified Gucci planning project, repeated showroom bullet non-inflation, equal-CV truthful ties, and no unsupported gaps. 34/34 focused JS tests passed, app JS syntax valid and CSS braces balanced, correct release references in index/app; GitHub Pages authenticated visual QA/deploy unverified.
 - Preview: https://giuliagrimaldi135-wq.github.io/HUNT-/hunt2-preview/?view=outreach&v=20261111-170
+
+
+## 11 November 2026 — HUNT 171: ONLY layout "Che cosa valorizzare"
+User shared screenshot of HUNT 170's CV evidence three long rows and requested: "tutto il resto top non cambaire niente solo questo non mi piace nacora il layout". The brief was STRICT: change the layout of the highlighted CV strengths only, preserving all text/evidence, ranking, CV choice, email, source/news, tabs, profile, and opportunities.
+- In `hunt2-preview/outreach-intelligence.js`, `renderOutreachCvInsight` now groups already-selected CV evidence by the actual `kind+source` combination. Thus a showroom experience is one editorial collection and two distinct activities from "Gucci academic project" appear together under **one** project heading rather than repeating the project name in each horizontal row. No analysis scoring or recommendation changes.
+- In `hunt2-preview/luxury-refinement.css`, scoped `outEvidenceCollections` two-column editorial layout with small source hierarchy, compact descriptions, single fine top rule, responsive one-column mobile. No repeated green cards, 01/02/03 labels, or vacancy-style list.
+- Regression test added to `hunt2-preview/tests/outreach-intelligence.test.mjs` for 3 facts from 2 sources, asserting two grouped collections, source printed once, and all facts preserved.
+- **35/35 in-memory focused tests passed**, app syntax valid, CSS braces balanced; index/app cache refs updated to `20261111-171`; authenticated browser/Pages deploy unverified.
+- Link: https://giuliagrimaldi135-wq.github.io/HUNT-/hunt2-preview/?view=outreach&v=20261111-171
+- **Do not change any other HUNT UI** without new user direction.
