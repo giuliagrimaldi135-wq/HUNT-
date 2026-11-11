@@ -292,26 +292,33 @@ export function explainOutreachCvChoice(lead,cvs=[],recommended=null){
 export function renderOutreachCvInsight(lead,cv,cvs=[]){
  const insight=analyzeOutreachCv(lead,cv);
  if(!insight.confirmed)return '<div class="outCvEmpty"><p>'+esc(insight.reason)+'</p></div>';
- // A source appears only once: related activities from the same employer or project stay together.
  const groups=[];
  for(const item of insight.highlights){
   let group=groups.find(x=>x.kind===item.kind&&x.source===item.source);
   if(!group){group={kind:item.kind,source:item.source,items:[]};groups.push(group)}
   group.items.push(item);
  }
- const panels=groups.map(group=>
-  '<section class="outEvidenceCollection"><div class="outEvidenceCollectionHead">'+
-   '<span class="outEvidenceSourceType">'+esc(uniqueEvidenceLabel(group.items[0]))+'</span>'+
-   '<h4>'+esc(group.source)+'</h4></div>'+
-   '<div class="outEvidenceActivities">'+group.items.map(item=>
-     '<div class="outEvidenceActivity"><span>'+esc(item.topic)+'</span>'+
-     '<p>'+esc(item.text)+'</p></div>').join("")+'</div></section>').join("");
- return '<section class="outCvAnalysis"><div class="outCvAnalysisHead">'+
+ const cleanText=value=>String(value||"").trim().replace(/[.!?]\s*$/,"");
+ const lowerFirst=value=>value?value[0].toLocaleLowerCase("it-IT")+value.slice(1):"";
+ const joinActivities=items=>items.map(item=>lowerFirst(cleanText(item.text))).join(items.length>1?"; ":"");
+ const narrative=groups.map((group,i)=>{
+  const company=group.kind==="Esperienza"?group.source.split(" · ").slice(-1)[0].trim():group.source;
+  const leadIn=group.kind==="Progetto"?"Nel progetto ":"Nell’esperienza presso ";
+  const verb=group.kind==="Progetto"?" il CV descrive ":" il CV documenta ";
+  return leadIn+'<strong>'+esc(company)+'</strong>'+verb+
+   '<span>'+esc(joinActivities(group.items))+'</span>.';
+ }).join(" ");
+ const details=groups.map(group=>
+  '<div class="outCvSource"><strong>'+esc(group.source)+'</strong>'+
+   '<span>'+esc(uniqueEvidenceLabel(group.items[0]))+'</span>'+
+   '<ul>'+group.items.map(item=>'<li>'+esc(item.text)+'</li>').join("")+'</ul></div>').join("");
+ return '<section class="outCvAnalysis outCvEditorialBrief">'+
   '<span class="outInsightEyebrow">DAL CURRICULUM SELEZIONATO</span>'+
   '<h3>Che cosa valorizzare</h3>'+
-  '<p>Gli elementi concreti del tuo percorso da cui partire per presentarti a questo brand.</p></div>'+
-  (panels?'<div class="outEvidenceCollections'+(groups.length===1?' is-single':'')+'">'+panels+'</div>':
+  (narrative?'<p class="outCvStory">'+narrative+'</p>':
     '<p class="outProofEmpty">'+esc(insight.reason)+'</p>')+
+  (details?'<details class="outCvEvidenceDisclosure"><summary>Da quali esperienze e progetti deriva <span aria-hidden="true">↗</span></summary>'+
+   '<div class="outCvEvidenceSources">'+details+'</div></details>':"")+
   '</section>';
 }
 const sourceHost=url=>{try{return new URL(url).hostname.replace(/^www\./,"")}catch{return "Fonte"}};
