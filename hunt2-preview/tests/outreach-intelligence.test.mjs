@@ -394,7 +394,7 @@ test("CV strengths are grouped by actual employer or project instead of repeated
  }};
  const html=renderOutreachCvInsight(lead,cv);
  assert.equal((html.match(/class="outCvSource"/g)||[]).length,2);
- assert.equal((html.match(/<strong>Gucci academic project<\/strong>/g)||[]).length,1);
+ assert.equal((html.match(/<strong>Gucci academic project<\/strong>/g)||[]).length,2); // narrative plus collapsed source detail
  assert.equal((html.match(/<strong>Showroom Intern · Marina Rinaldi<\/strong>/g)||[]).length,1);
  assert.match(html,/Analisi del merchandising mix/);
  assert.match(html,/Analisi dei costi di prodotto/);
