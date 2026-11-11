@@ -357,7 +357,7 @@ test("Two confirmed CVs with the same showroom history are compared on distinct 
  assert.match(html,/Gucci academic project/);
  assert.doesNotMatch(html,/Da approfondire, non un requisito|non compare nelle attività descritte/);
  const evidence=renderOutreachCvInsight(lead,specialist,[general,specialist]);
- assert.match(evidence,/outEvidenceCollections/);
+ assert.match(evidence,/outCvStory/);
  assert.doesNotMatch(evidence,/outCvProof|outCvCheck|Da approfondire/);
 });
 test("Repeating showroom bullets does not make one CV more suitable or create artificial strengths",()=>{
@@ -393,11 +393,31 @@ test("CV strengths are grouped by actual employer or project instead of repeated
   ]}]
  }};
  const html=renderOutreachCvInsight(lead,cv);
- assert.equal((html.match(/class="outEvidenceCollection"/g)||[]).length,2);
- assert.equal((html.match(/<h4>Gucci academic project<\/h4>/g)||[]).length,1);
- assert.equal((html.match(/<h4>Showroom Intern · Marina Rinaldi<\/h4>/g)||[]).length,1);
+ assert.equal((html.match(/class="outCvSource"/g)||[]).length,2);
+ assert.equal((html.match(/<strong>Gucci academic project<\/strong>/g)||[]).length,1);
+ assert.equal((html.match(/<strong>Showroom Intern · Marina Rinaldi<\/strong>/g)||[]).length,1);
  assert.match(html,/Analisi del merchandising mix/);
  assert.match(html,/Analisi dei costi di prodotto/);
  assert.match(html,/Gestione ordini commerciali/);
- assert.doesNotMatch(html,/outEvidenceLine"|outCvCheck|Da approfondire/);
+ assert.doesNotMatch(html,/outEvidenceLine"|outEvidenceCollections|outCvCheck|Da approfondire/);
+});
+
+test("CV value proposition is one narrative before an optional source disclosure, not stacked cards or two columns",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const cv={id:"editorial",name:"Merchandising",parsed_profile:{
+  profile_confirmed_by_user:true,
+  experience:[{role:"Showroom Sales Intern",company:"Marina Rinaldi",evidence:["Accoglienza clienti e presentazione dei capi durante la campagna vendite"]}],
+  projects:[{name:"Gucci academic project",evidence:["Analisi del merchandising mix e pianificazione di una capsule collection","Analisi dei costi di prodotto (costing) e codifica dei prodotti"]}]
+ }};
+ const html=renderOutreachCvInsight(lead,cv);
+ assert.match(html,/class="outCvAnalysis outCvEditorialBrief"/);
+ assert.match(html,/class="outCvStory"/);
+ assert.match(html,/class="outCvEvidenceDisclosure"/);
+ assert.match(html,/<details class="outCvEvidenceDisclosure"><summary>/);
+ assert.ok(html.indexOf("outCvStory")<html.indexOf("outCvEvidenceDisclosure"));
+ assert.match(html,/Nell’esperienza presso <strong>Marina Rinaldi<\/strong>/);
+ assert.match(html,/Nel progetto <strong>Gucci academic project<\/strong>/);
+ assert.match(html,/accoglienza clienti e presentazione dei capi/);
+ assert.match(html,/analisi dei costi di prodotto/);
+ assert.doesNotMatch(html,/outEvidenceCollection|outEvidenceLine|outCvProof|Da approfondire/);
 });
