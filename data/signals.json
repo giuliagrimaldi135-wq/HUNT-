@@ -1,5 +1,18 @@
 [
   {
+    "key": "aaa40eff5fe1c3df2b8a",
+    "brand": "Tod's",
+    "headline": "Tod’s: Matteo Tamburini lascia la direzione creativa - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-11T11:38:35.634298+00:00",
+    "published_at": "2026-11-10T18:20:30+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNeExkd3pKaG5HVE5PdVl2cUNDNGdrUVo1RzB2Q1ZLbm1UY0cwV3RZWUZyQVI3Zlh2cjF6N2s3bW9ESTlSYzEwalJmTURrUXBaQnBnY05sZXgzX3lVR1poOGF3cldmVHJNZkc3UWc3amRNS2UyRER4TW0yaUNkTzVaZEJ6SXotQVN0aW4ydDFHMHp5RUJFSzZ5bkpobmVuSnpo?oc=5"
+  },
+  {
     "key": "f7a8e0384a30a823c618",
     "brand": "Diesel",
     "headline": "Accordi di licenza: Diesel rinnova con Fossil, Douuod Kids con Simonetta - FashionNetwork Italia",
@@ -583,6 +596,19 @@
     "published_at": "2026-11-04T11:35:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNSmdfSTBXcEtkOXZzZXN2T1lNaTFlNXBGU0c5Vi05dHJGR2x4bTJUajM5cUU1NnZUaGNyNWYtNk9NeGd0NllYVDE4T0FzRjRyelhOb2VEOFM4cWktTzlFQWJDUm5WQkhrQ2JLNTFIQzV2dURIWVdlV0xfQnJFQkZWdmMzcEI0dE94eGI3WFR6YnlWSHZqVlNPT2tTVGptdzdMOG5LNFg0ek9xTUpHUmQtT2ZHMUx6a05qWFVVaFBaeHhiR3J1clRTMkZQd3U?oc=5"
+  },
+  {
+    "key": "a2c157f60de60aa22085",
+    "brand": "Dolce & Gabbana",
+    "headline": "Dolce&Gabbana e il glamour cinematografico per la campagna Holiday - Fashion Times",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-11T11:38:35.634298+00:00",
+    "published_at": "2026-11-04T10:52:34+00:00",
+    "source": "Fashion Times",
+    "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOcjJQUlN0NTVxbXBETi13SHZ0SmNTdXBhSk9hYXBFc0RKeTc3UnZpOTJaSzNJbzJtM2VxSHB1ZnRUNTRVaDhmSGJZeFdmUnItY3dmSE1tb1JjalVaSFZGZDlIb1Rzb3VOTTgxZmQ2dTNHU3ZQSDZSbHVIYkg2X0Y4eXNQbE5Qd19BaEs0MVh5Z3JnYnpC?oc=5"
   },
   {
     "key": "19761e76a73257943ed7",
@@ -2455,18 +2481,5 @@
     "published_at": "2026-09-28T01:58:59+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE9QMXV0TTlKVlZSZ2tEV0RHTjlTUUZqUFF3alpOV01MN1k5NGZZN2FVOHl3QUhoNTdiR3JBQU16NThRRjVmbFdJNmx1b1k4bEU3LTA0WEd1dGR3cmhJZ2NWajZ3VVR3SURtQXdCNVBfV01acFhId2xQbU5HVQ?oc=5"
-  },
-  {
-    "key": "81fa537f3d3708ffeb44",
-    "brand": "Giorgio Armani",
-    "headline": "Giorgio Armani - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-07T02:17:13.383294+00:00",
-    "published_at": "2026-09-27T11:04:16+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE5NVlM2SXBqNzJNRTNKdmFnQUFtRnduVklranJXbDF5cjFrTGRRVDY3UUxHTnhFZTFsOEF3SnNXZUJTN2FCa25LVDFMbnNETU1fcU5qVmhzY2k2dGQzZ3BYOW5fWEgwdmk0VVgtRnAtcWNLVkJDVXY2U1k0TQ?oc=5"
   }
 ]
