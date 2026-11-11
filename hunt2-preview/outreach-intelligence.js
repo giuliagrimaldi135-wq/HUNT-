@@ -301,6 +301,39 @@ export function renderOutreachCvInsight(lead,cv,cvs=[]){
     '<p class="outProofEmpty">'+esc(insight.reason)+'</p>')+
   '</section>';
 }
+const sourceHost=url=>{try{return new URL(url).hostname.replace(/^www\./,"")}catch{return "Fonte"}};
+function sourceCatalog(lead){
+ const items=[];
+ const push=x=>{const url=safeLink(x.url);if(!url||items.some(e=>e.url===url))return;items.push({...x,url});};
+ (lead.evidence||[]).forEach(x=>push({title:x.description,date:x.date,url:x.url,type:"Segnale",publisher:sourceHost(x.url)}));
+ (lead.editorial||[]).forEach(x=>push({title:x.title,date:x.date,url:x.url,type:"Stampa",publisher:x.publisher||sourceHost(x.url)}));
+ (lead.news||[]).forEach(x=>push({title:x.title,date:x.date,url:x.url,type:"World Radar",publisher:x.publisher||sourceHost(x.url)}));
+ if(lead.companyUrl)push({title:"Sito ufficiale "+lead.brand,url:lead.companyUrl,type:"Brand",publisher:sourceHost(lead.companyUrl)});
+ (lead.socialProfiles||[]).forEach(x=>push({title:lead.brand+" su "+x.platform,url:x.url,type:"Social",publisher:x.platform,verification:x.status||"Link pubblicamente verificato",provenance:x.sourceUrl}));
+ return items;
+}
+const sourceItem=x=>'<li class="outSourceRow"><div><span class="outSourceType">'+esc(x.type)+'</span><strong>'+esc(x.title)+'</strong>'+
+ '<small>'+esc(x.publisher)+(x.date?" · "+esc(dateText(x.date)):"")+(x.verification?" · "+esc(x.verification):"")+'</small></div>'+
+ '<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Apri fonte ↗</a></li>';
+export function renderOutreachCards(leads=[],drafts={}){
+ if(!leads.length)return '<section class="outEmpty"><h2>Nessun brand da segnalare per ora.</h2><p>Mostreremo i brand con sviluppi commerciali sostenuti da fonti consultabili.</p></section>';
+ return '<div class="outResultsV6">'+leads.map(lead=>{
+  const date=(lead.evidence||[]).find(x=>x.date)?.date||lead.checkedAt;
+  const headline=String(lead.previewTitle||"Uno sviluppo da conoscere");
+  const summary=String(lead.previewSummary||lead.whyNow||"");
+  const status=drafts[lead.key]?.status;
+  const sources=[...(lead.editorial||[]),...(lead.evidence||[])].filter(x=>safeLink(x.url));
+  const unique=[];
+  for(const x of sources)if(!unique.some(a=>a.url===x.url))unique.push({url:x.url,publisher:x.publisher||sourceHost(x.url)});
+  return '<article class="outEditorialRow"><div class="outEditorialIdentity">'+
+   '<span class="outEditorialKicker">BRAND DA CONTATTARE</span><h2>'+esc(lead.brand)+'</h2>'+
+   (status?'<span class="outDraftStatus">'+esc(status==="applied"?"Contattato":status==="preparing"?"In preparazione":"Archiviato")+'</span>':"")+'</div>'+
+   '<div class="outEditorialSignal"><span class="outEditorialKicker">DAL MONDO DEL BRAND · '+esc(dateText(date))+'</span>'+
+   '<h3>'+esc(headline)+'</h3><p>'+esc(summary)+'</p>'+
+   '<div class="outEditorialSources">'+unique.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' ↗</a>').join("")+'</div></div>'+
+   '<div class="outEditorialAction"><button type="button" data-outreach-open="'+esc(lead.key)+'">Apri analisi <span aria-hidden="true">↗</span></button></div></article>';
+ }).join("")+'</div>';
+}
 export function renderOutreachBrandEvidence(lead,cv){
  const a=analyzeOutreachCv(lead,cv);
  if(!a.confirmed||!a.highlights.length)return "";
