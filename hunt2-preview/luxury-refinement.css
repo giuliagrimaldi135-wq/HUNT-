@@ -1038,3 +1038,26 @@
  .outFolderV4 .outEvidenceDetails p{font-size:13px}
  .outFolderV4 .outCvAnalysisHead h3{font-size:26px}
 }
+
+
+/* v171: A single editorial CV-strengths composition, grouped by actual source. */
+.outFolderV4 .outCvAnalysis{max-width:970px;padding-top:27px}
+.outFolderV4 .outCvAnalysisHead{margin-bottom:29px}
+.outFolderV4 .outEvidenceCollections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:38px;row-gap:34px;align-items:start}
+.outFolderV4 .outEvidenceCollections.is-single{grid-template-columns:minmax(0,680px)}
+.outFolderV4 .outEvidenceCollection{min-width:0;border:0;border-top:2px solid #a6bda8;background:transparent;border-radius:0;padding:20px 1px 0}
+.outFolderV4 .outEvidenceCollectionHead{min-height:68px;margin-bottom:11px}
+.outFolderV4 .outEvidenceSourceType{display:block;font-size:10px;letter-spacing:.09em;line-height:1.5;font-weight:760;color:#6c8972;margin-bottom:10px}
+.outFolderV4 .outEvidenceCollectionHead h4{font-size:15px;line-height:1.55;letter-spacing:-.012em;color:#304b38;font-weight:715;margin:0;overflow-wrap:break-word}
+.outFolderV4 .outEvidenceActivities{display:flex;flex-direction:column;gap:19px}
+.outFolderV4 .outEvidenceActivity{display:block}
+.outFolderV4 .outEvidenceActivity span{display:block;font-size:11px;font-weight:725;color:#2d7450;margin-bottom:6px;line-height:1.5}
+.outFolderV4 .outEvidenceActivity p{font-size:13.5px;line-height:1.77;font-weight:540;color:#3d4f42;margin:0;max-width:520px}
+@media(max-width:690px){
+ .outFolderV4 .outEvidenceCollections{grid-template-columns:1fr;gap:24px}
+ .outFolderV4 .outEvidenceCollections.is-single{grid-template-columns:1fr}
+ .outFolderV4 .outEvidenceCollection{padding-top:16px}
+ .outFolderV4 .outEvidenceCollectionHead{min-height:0;margin-bottom:14px}
+ .outFolderV4 .outEvidenceActivities{gap:17px}
+ .outFolderV4 .outEvidenceActivity p{font-size:13px}
+}
