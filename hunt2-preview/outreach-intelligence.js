@@ -292,15 +292,25 @@ export function explainOutreachCvChoice(lead,cvs=[],recommended=null){
 export function renderOutreachCvInsight(lead,cv,cvs=[]){
  const insight=analyzeOutreachCv(lead,cv);
  if(!insight.confirmed)return '<div class="outCvEmpty"><p>'+esc(insight.reason)+'</p></div>';
- const rows=insight.highlights.map(item=>
-  '<div class="outEvidenceLine"><div class="outEvidenceLabel">'+esc(item.topic)+'</div>'+
-    '<div class="outEvidenceDetails"><p>'+esc(item.text)+'</p>'+
-    '<small>'+esc(uniqueEvidenceLabel(item))+' · '+esc(item.source)+'</small></div></div>').join("");
+ // A source appears only once: related activities from the same employer or project stay together.
+ const groups=[];
+ for(const item of insight.highlights){
+  let group=groups.find(x=>x.kind===item.kind&&x.source===item.source);
+  if(!group){group={kind:item.kind,source:item.source,items:[]};groups.push(group)}
+  group.items.push(item);
+ }
+ const panels=groups.map(group=>
+  '<section class="outEvidenceCollection"><div class="outEvidenceCollectionHead">'+
+   '<span class="outEvidenceSourceType">'+esc(uniqueEvidenceLabel(group.items[0]))+'</span>'+
+   '<h4>'+esc(group.source)+'</h4></div>'+
+   '<div class="outEvidenceActivities">'+group.items.map(item=>
+     '<div class="outEvidenceActivity"><span>'+esc(item.topic)+'</span>'+
+     '<p>'+esc(item.text)+'</p></div>').join("")+'</div></section>').join("");
  return '<section class="outCvAnalysis"><div class="outCvAnalysisHead">'+
   '<span class="outInsightEyebrow">DAL CURRICULUM SELEZIONATO</span>'+
   '<h3>Che cosa valorizzare</h3>'+
   '<p>Gli elementi concreti del tuo percorso da cui partire per presentarti a questo brand.</p></div>'+
-  (rows?'<div class="outEvidenceLines">'+rows+'</div>':
+  (panels?'<div class="outEvidenceCollections'+(groups.length===1?' is-single':'')+'">'+panels+'</div>':
     '<p class="outProofEmpty">'+esc(insight.reason)+'</p>')+
   '</section>';
 }
