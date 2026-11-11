@@ -1061,3 +1061,28 @@
  .outFolderV4 .outEvidenceActivities{gap:17px}
  .outFolderV4 .outEvidenceActivity p{font-size:13px}
 }
+
+
+/* HUNT 172 — CV strengths: one intentional editorial story, sources on demand.
+   Scoped to this one section; approved opportunity dossier and other screens untouched. */
+.outFolderV4 .outCvEditorialBrief{max-width:880px;padding-top:27px;margin-top:2px}
+.outFolderV4 .outCvEditorialBrief>.outInsightEyebrow{display:block;font-size:10px;font-weight:760;letter-spacing:.095em;color:#708d76;margin-bottom:10px}
+.outFolderV4 .outCvEditorialBrief>h3{font-family:Georgia,serif;font-size:clamp(25px,2.7vw,32px);font-weight:500;line-height:1.2;letter-spacing:-.025em;color:#263a2b;margin:0 0 21px}
+.outFolderV4 .outCvEditorialBrief>.outCvStory{font-size:16px;line-height:1.94;font-weight:430;color:#475d4a;max-width:815px;letter-spacing:-.008em;margin:0}
+.outFolderV4 .outCvEditorialBrief>.outCvStory strong{font-weight:750;color:#244b33}
+.outFolderV4 .outCvEditorialBrief>.outCvStory span{font-weight:470}
+.outFolderV4 .outCvEvidenceDisclosure{display:block;max-width:815px;border:0;padding:0;margin:25px 0 0}
+.outFolderV4 .outCvEvidenceDisclosure>summary{display:inline-flex;align-items:center;gap:11px;cursor:pointer;color:#225a3e;font-size:12px;font-weight:720;line-height:1.6;padding:4px 0 8px;border-bottom:1px solid #a3c0ab;list-style:none}
+.outFolderV4 .outCvEvidenceDisclosure>summary::-webkit-details-marker{display:none}
+.outFolderV4 .outCvEvidenceDisclosure>summary span{font-size:12px;transition:transform .15s ease}
+.outFolderV4 .outCvEvidenceDisclosure[open]>summary span{transform:rotate(90deg)}
+.outFolderV4 .outCvEvidenceSources{display:grid;grid-template-columns:1fr;gap:20px;padding:23px 0 3px}
+.outFolderV4 .outCvSource{max-width:810px;padding-left:18px;border-left:2px solid #c5d8c7}
+.outFolderV4 .outCvSource>strong{display:block;font-size:12px;color:#2b5537;font-weight:710;line-height:1.55}
+.outFolderV4 .outCvSource>span{display:block;font-size:10px;color:#829486;margin-top:4px}
+.outFolderV4 .outCvSource>ul{list-style:none;padding:0;margin:10px 0 0}
+.outFolderV4 .outCvSource li{font-size:12px;color:#607266;line-height:1.7;margin:6px 0}
+@media(max-width:700px){
+ .outFolderV4 .outCvEditorialBrief>.outCvStory{font-size:14px;line-height:1.86}
+ .outFolderV4 .outCvEditorialBrief>h3{font-size:27px;margin-bottom:17px}
+}
