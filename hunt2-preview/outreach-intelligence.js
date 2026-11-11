@@ -111,7 +111,7 @@ function cvFocus(cv,area=""){
 export function chooseOutreachCv(cvs=[],area="",lead=null){
  if(!Array.isArray(cvs)||!cvs.length)return null;
  const target=/merchandis|buying|planning|allocation|product|wholesale/i.test(String(area||""));
- const ranked=lead&&cvs.filter(isConfirmedCv).map(c=>({c,insight:analyzeOutreachCv(lead,c)})).sort((a,b)=>b.insight.score-a.insight.score);
+ const ranked=lead&&cvs.filter(isConfirmedCv).map(c=>({c,insight:analyzeOutreachCv(lead,c)})).sort((a,b)=>b.insight.score-a.insight.score||(Number(b.c.is_default)-Number(a.c.is_default)));
  if(ranked?.length&&ranked[0].insight.highlights.length&&ranked[0].insight.score>0)return ranked[0].c;
  const preferred=cvs.find(c=>target&&/merchandis|buying|planning|allocation/i.test(c.name||"")&&isConfirmedCv(c));
  return preferred||cvs.find(c=>c.is_default&&isConfirmedCv(c))||cvs.find(isConfirmedCv)||
@@ -241,86 +241,62 @@ const focusOrder=lead=>{
  return [...new Set([...preferred,"merchandising","wholesale","product","retail"])];
 };
 export function analyzeOutreachCv(lead,cv){
- if(!cv)return {confirmed:false,score:0,highlights:[],focus:"",notDocumented:"",reason:"Carica un curriculum e conferma i suoi dati per confrontarlo con questo brand."};
- if(!isConfirmedCv(cv))return {confirmed:false,score:0,highlights:[],focus:"",notDocumented:"",reason:"Conferma le informazioni di questo CV nel Profilo: senza verifica HUNT non attribuisce esperienze o competenze."};
- const order=focusOrder(lead),items=evidenceFromCv(cv);
- const ranked=items.map(e=>{
-  const matched=outreachTopics.filter(topic=>topic.pattern.test(e.text+" "+(e.isDetail?"":e.source))).map(topic=>topic.key);
-  const weight=matched.reduce((n,key)=>n+Math.max(1,5-order.indexOf(key)),0);
-  return {...e,topics:matched,weight:weight+(e.isDetail?3:0)};
- }).filter(e=>e.topics.length).sort((a,b)=>b.weight-a.weight);
- const highlights=[],used=new Set();
+ if(!cv)return {confirmed:false,score:0,highlights:[],coverage:[],reason:"Carica un CV e conferma i dati del tuo percorso per ottenere un confronto concreto."};
+ if(!isConfirmedCv(cv))return {confirmed:false,score:0,highlights:[],coverage:[],reason:"Conferma le informazioni di questo CV nel Profilo: HUNT non utilizza esperienze non verificate."};
+ const order=focusOrder(lead);
+ const ranked=evidenceFromCv(cv).map(e=>{
+  const matches=outreachTopics.filter(topic=>topic.pattern.test(e.text+(e.isDetail?"":" "+e.source))).map(topic=>topic.key);
+  const primary=matches.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b))[0];
+  return {...e,topics:matches,primary,weight:primary?Math.max(1,5-order.indexOf(primary))+(e.isDetail?2:0):0};
+ }).filter(x=>x.weight>0).sort((a,b)=>b.weight-a.weight);
+ // Repeated mentions of the same activity or topic must not inflate a CV recommendation.
+ const selected=[],usedTopics=new Set(),usedTexts=new Set();
  for(const item of ranked){
-  if(highlights.length>=3)break;
-  const unique=normalizeContent(item.source+" "+item.text).toLowerCase();
-  if(used.has(unique))continue;
-  used.add(unique);
-  const chosen=item.topics.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b))[0];
-  highlights.push({...item,topic:outreachTopics.find(t=>t.key===chosen)?.name||"Esperienza rilevante"});
+  if(selected.length>=3)break;
+  const fingerprint=folded(item.text);
+  if(usedTopics.has(item.primary)||usedTexts.has(fingerprint))continue;
+  usedTopics.add(item.primary);usedTexts.add(fingerprint);
+  selected.push({...item,topic:outreachTopics.find(t=>t.key===item.primary)?.name||"Attività pertinenti"});
  }
- const covered=new Set(highlights.flatMap(x=>x.topics));
- const missing=order.filter(x=>!covered.has(x));
- const missingTitle=missing.length?outreachTopics.find(x=>x.key===missing[0])?.name:"";
- const supported=highlights.filter(x=>x.isDetail).length;
- const score=highlights.reduce((n,h)=>n+h.weight,0);
- const reason=highlights.length?
-  "Questo CV documenta "+[...new Set(highlights.map(x=>x.topic.toLowerCase()))].slice(0,2).join(" e ")+
-  ". HUNT usa le attività effettivamente descritte, senza attribuire competenze non presenti.":
-  "Il CV è confermato, ma non contiene attività descritte sufficientemente pertinenti a questo segnale commerciale.";
- return {confirmed:true,score,highlights,focus:highlights[0]?.topic||"",notDocumented:missingTitle,
-  reason,detailCount:supported};
+ const coverage=[...usedTopics],score=selected.reduce((n,x)=>n+x.weight,0);
+ const reason=selected.length?
+  "Le attività riportate sotto sono presenti nel CV confermato e collegate ai segnali commerciali del brand.":
+  "Questo CV è stato confermato, ma non contiene dettagli sufficienti per suggerire esperienze specifiche da raccontare.";
+ return {confirmed:true,score,highlights:selected,coverage,focus:selected[0]?.topic||"",reason};
+}
+const uniqueEvidenceLabel=(item)=>item?.kind==="Progetto"?"Progetto documentato":"Esperienza professionale";
+export function explainOutreachCvChoice(lead,cvs=[],recommended=null){
+ const valid=(Array.isArray(cvs)?cvs:[]).filter(isConfirmedCv);
+ const best=recommended||chooseOutreachCv(valid,lead?.area,lead);
+ if(!best)return "Conferma i dati di un CV per ottenere un consiglio basato sulle esperienze.";
+ const chosen=analyzeOutreachCv(lead,best);
+ if(!chosen.highlights.length)return "HUNT propone il CV disponibile, ma non ha ancora elementi sufficienti per motivare una preferenza.";
+ const other=valid.filter(x=>x.id!==best.id).map(cv=>({cv,insight:analyzeOutreachCv(lead,cv)}));
+ const shared=other.length?chosen.coverage.filter(t=>other.some(x=>x.insight.coverage.includes(t))):[];
+ const exclusive=chosen.highlights.find(h=>!other.some(x=>x.insight.coverage.includes(h.primary)));
+ const sharedLabel=shared.length?outreachTopics.find(t=>t.key===shared[0])?.name.toLowerCase():"";
+ if(other.length&&exclusive){
+  const basis=exclusive.kind==="Progetto"?"il progetto «"+exclusive.source+"»":"l'esperienza «"+exclusive.source+"»";
+  return (sharedLabel?"Entrambi i CV raccontano "+sharedLabel+". ":"")+
+   "Qui HUNT privilegia "+outreachLabel(best)+" perché documenta anche "+exclusive.topic.toLowerCase()+" attraverso "+basis+".";
+ }
+ if(other.length&&sharedLabel)return "I CV documentano entrambi "+sharedLabel+". Non emerge una differenza decisiva dalle attività confermate: puoi scegliere quello che rappresenta meglio il tuo percorso.";
+ return "HUNT propone "+outreachLabel(best)+" perché documenta "+chosen.highlights.map(x=>x.topic.toLowerCase()).slice(0,2).join(" e ")+".";
 }
 export function renderOutreachCvInsight(lead,cv,cvs=[]){
  const insight=analyzeOutreachCv(lead,cv);
  if(!insight.confirmed)return '<div class="outCvEmpty"><p>'+esc(insight.reason)+'</p></div>';
  const rows=insight.highlights.map(item=>
-  '<article class="outCvProof"><div class="outProofTag">'+esc(item.topic)+' · '+esc(item.kind)+'</div>'+
-   '<strong>'+esc(item.text)+'</strong><small>'+esc(item.source)+'</small></article>').join("");
- return '<div class="outCvAnalysis">'+
-  '<div class="outCvAnalysisHead"><div><span class="outInsightEyebrow">CONFRONTO CON IL TUO CV</span><h3>Che cosa valorizzare</h3></div>'+
-  '<p>'+esc(insight.reason)+'</p></div>'+
-  (rows?'<div class="outCvProofs">'+rows+'</div>':'<p class="outProofEmpty">Non risultano attività pertinenti descritte nel CV selezionato.</p>')+
-  (insight.notDocumented?'<div class="outCvCheck"><strong>Da approfondire, non un requisito del brand</strong><p>'+esc(insight.notDocumented)+
-   ' non compare nelle attività descritte nel CV selezionato. Se hai svolto attività in quest’area, puoi aggiungerle al Profilo prima di citarle nella candidatura.</p></div>':"")+
-  '</div>';
-}
-
-const sourceHost=url=>{try{return new URL(url).hostname.replace(/^www\./,"")}catch{return "Fonte"}};
-function sourceCatalog(lead){
- const items=[];
- const push=(x)=>{
-  const url=safeLink(x.url);
-  if(!url||items.some(e=>e.url===url))return;
-  items.push({...x,url});
- };
- (lead.evidence||[]).forEach(x=>push({title:x.description,date:x.date,url:x.url,type:"Segnale",publisher:sourceHost(x.url)}));
- (lead.editorial||[]).forEach(x=>push({title:x.title,date:x.date,url:x.url,type:"Stampa",publisher:x.publisher||sourceHost(x.url)}));
- (lead.news||[]).forEach(x=>push({title:x.title,date:x.date,url:x.url,type:"World Radar",publisher:x.publisher||sourceHost(x.url)}));
- if(lead.companyUrl)push({title:"Sito ufficiale "+lead.brand,url:lead.companyUrl,type:"Brand",publisher:sourceHost(lead.companyUrl)});
- (lead.socialProfiles||[]).forEach(x=>push({title:lead.brand+" su "+x.platform,url:x.url,type:"Social",publisher:x.platform,verification:x.status||"Link pubblicamente verificato",provenance:x.sourceUrl}));
- return items;
-}
-const sourceItem=(x)=>'<li class="outSourceRow"><div><span class="outSourceType">'+esc(x.type)+'</span><strong>'+esc(x.title)+'</strong>'+
-  '<small>'+esc(x.publisher)+(x.date?" · "+esc(dateText(x.date)):"")+(x.verification?" · "+esc(x.verification):"")+'</small></div>'+
-  '<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Apri fonte ↗</a></li>';
-export function renderOutreachCards(leads=[],drafts={}){
- if(!leads.length)return '<section class="outEmpty"><h2>Nessun brand da segnalare per ora.</h2><p>Mostreremo i brand con sviluppi commerciali sostenuti da fonti consultabili.</p></section>';
- return '<div class="outResultsV6">'+leads.map(lead=>{
-  const date=(lead.evidence||[]).find(x=>x.date)?.date||lead.checkedAt;
-  const headline=String(lead.previewTitle||"Uno sviluppo da conoscere");
-  const summary=String(lead.previewSummary||lead.whyNow||"");
-  const status=drafts[lead.key]?.status;
-  const allSources=[...(lead.editorial||[]),...(lead.evidence||[])].filter(x=>safeLink(x.url));
-  const unique=[];
-  for(const x of allSources)if(!unique.some(a=>a.url===x.url))unique.push({url:x.url,publisher:x.publisher||sourceHost(x.url)});
-  return '<article class="outEditorialRow"><div class="outEditorialIdentity">'+
-   '<span class="outEditorialKicker">BRAND DA CONTATTARE</span><h2>'+esc(lead.brand)+'</h2>'+
-   (status?'<span class="outDraftStatus">'+esc(status==="applied"?"Contattato":status==="preparing"?"In preparazione":"Archiviato")+'</span>':"")+'</div>'+
-   '<div class="outEditorialSignal"><span class="outEditorialKicker">DAL MONDO DEL BRAND · '+esc(dateText(date))+'</span>'+
-   '<h3>'+esc(headline)+'</h3><p>'+esc(summary)+'</p>'+
-   '<div class="outEditorialSources">'+unique.slice(0,2).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.publisher)+' ↗</a>').join("")+'</div></div>'+
-   '<div class="outEditorialAction"><button type="button" data-outreach-open="'+esc(lead.key)+'">Apri analisi <span aria-hidden="true">↗</span></button></div></article>';
- }).join("")+'</div>';
+  '<div class="outEvidenceLine"><div class="outEvidenceLabel">'+esc(item.topic)+'</div>'+
+    '<div class="outEvidenceDetails"><p>'+esc(item.text)+'</p>'+
+    '<small>'+esc(uniqueEvidenceLabel(item))+' · '+esc(item.source)+'</small></div></div>').join("");
+ return '<section class="outCvAnalysis"><div class="outCvAnalysisHead">'+
+  '<span class="outInsightEyebrow">DAL CURRICULUM SELEZIONATO</span>'+
+  '<h3>Che cosa valorizzare</h3>'+
+  '<p>Gli elementi concreti del tuo percorso da cui partire per presentarti a questo brand.</p></div>'+
+  (rows?'<div class="outEvidenceLines">'+rows+'</div>':
+    '<p class="outProofEmpty">'+esc(insight.reason)+'</p>')+
+  '</section>';
 }
 export function renderOutreachBrandEvidence(lead,cv){
  const a=analyzeOutreachCv(lead,cv);
@@ -410,9 +386,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
     '<label for="outCvChoice" class="outMiniTitle">Curriculum per questo brand</label>'+
     '<select id="outCvChoice" aria-label="Seleziona il CV">'+(cvOptions||'<option value="">Nessun CV caricato</option>')+'</select>'+
     '<p class="outSuggestedCv" id="outSuggestedCv">'+(suggestion?
-      'HUNT sceglierebbe <strong>'+esc(suggestion.name)+'</strong> '+(suggestedAnalysis.highlights.length?
-      'per le attività documentate in '+esc(suggestedAnalysis.highlights[0].topic.toLowerCase())+'.':
-      'in base al profilo disponibile.'):'Carica e conferma un CV dal tuo Profilo.')+'</p>'+
+      'HUNT consiglia <strong>'+esc(suggestion.name)+'</strong>. '+esc(explainOutreachCvChoice(lead,cvs,suggestion)):'Carica e conferma un CV dal tuo Profilo.')+'</p>'+
     '<p class="outCvReason" id="outCvReason">'+esc(cvExplanation.text)+'</p></div>'+
     '<div id="outCvEvidence">'+renderOutreachCvInsight(lead,selected,cvs)+'</div></section>'+
   '<section class="outV3Section outLetterSection" id="outLetter"><div class="outSectionIntro">'+
