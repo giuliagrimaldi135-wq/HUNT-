@@ -80,7 +80,7 @@ test("A merchandising-oriented spontaneous contact recommends specialist CV over
  const cvs=[{id:"a",name:"fashion management",is_default:true},{id:"b",name:"Merchandising"}];
  assert.equal(chooseOutreachCv(cvs,lead.area).id,"b");
  const html=renderOutreachFolder(lead,{cvs});
- assert.match(html,/HUNT sceglierebbe <strong>Merchandising/);
+ assert.match(html,/HUNT consiglia <strong>Merchandising/);
  assert.match(html,/<option value="b" selected>/);
 });
 
@@ -240,7 +240,7 @@ test("Candidate section is only full-width CV selector, without redundant area a
  const html=renderOutreachFolder(lead,{cvs:[{id:"x",name:"fashion management",is_default:true}]});
  assert.match(html,/outCandidateDecision/);
  assert.match(html,/Curriculum per questo brand/);
- assert.match(html,/HUNT sceglierebbe/);
+ assert.match(html,/HUNT consiglia/);
  assert.doesNotMatch(html,/ANGOLO DEL MESSAGGIO|outPrepareColumns|<span class="outMiniTitle">AREA<\/span>/);
 });
 test("Brand strategy project is never inserted as irrelevant filler in merchandising outreach",()=>{
@@ -330,4 +330,52 @@ test("Brand discovery list has a distinct compact, source-linked editorial prese
  assert.match(html,/DAL MONDO DEL BRAND/);
  assert.match(html,/https:\/\/example.org\/real-story/);
  assert.doesNotMatch(html,/Dossier disponibile|outLeadV5|Apri il dossier/);
+});
+
+test("Two confirmed CVs with the same showroom history are compared on distinct documented activities",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const sharedExperience={company:"Marina Rinaldi",role:"Showroom Intern",evidence:[
+   "Inserimento ordini e supporto ai budget dei clienti",
+   "Raccolta ordini tramite applicazione aziendale",
+   "Organizzazione delle richieste degli ordini per la campagna vendite"
+ ]};
+ const general={id:"general",name:"fashion management",is_default:true,parsed_profile:{
+   profile_confirmed_by_user:true,experience:[sharedExperience],
+   projects:[{name:"Valentino - Brand strategy",evidence:["Studio del posizionamento del brand"]}]
+ }};
+ const specialist={id:"specialist",name:"Merchandising",parsed_profile:{
+   profile_confirmed_by_user:true,experience:[sharedExperience],
+   projects:[{name:"Gucci academic project",evidence:["Pianificazione delle fasi dalla creazione della collezione agli ordini e alla distribuzione"]}]
+ }};
+ const a=analyzeOutreachCv(lead,general),b=analyzeOutreachCv(lead,specialist);
+ assert.equal(a.highlights.filter(x=>x.primary==="wholesale").length,1);
+ assert.equal(b.highlights.filter(x=>x.primary==="wholesale").length,1);
+ assert.ok(b.highlights.some(x=>x.kind==="Progetto"&&/Pianificazione delle fasi/.test(x.text)));
+ assert.equal(chooseOutreachCv([general,specialist],lead.area,lead).id,"specialist");
+ const html=renderOutreachFolder(lead,{cvs:[general,specialist]});
+ assert.match(html,/Entrambi i CV raccontano showroom/);
+ assert.match(html,/Gucci academic project/);
+ assert.doesNotMatch(html,/Da approfondire, non un requisito|non compare nelle attività descritte/);
+ const evidence=renderOutreachCvInsight(lead,specialist,[general,specialist]);
+ assert.match(evidence,/outEvidenceLines/);
+ assert.doesNotMatch(evidence,/outCvProof|outCvCheck|Da approfondire/);
+});
+test("Repeating showroom bullets does not make one CV more suitable or create artificial strengths",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const cv=(id,repeat)=>({id,name:id,parsed_profile:{profile_confirmed_by_user:true,
+  experience:[{company:"Showroom Test",role:"Intern",evidence:Array(repeat).fill("Raccolta ordini durante la campagna vendite")}] }});
+ const few=cv("few",1),many=cv("many",12);
+ assert.equal(analyzeOutreachCv(lead,few).score,analyzeOutreachCv(lead,many).score);
+ assert.equal(analyzeOutreachCv(lead,many).highlights.length,1);
+ assert.doesNotMatch(renderOutreachCvInsight(lead,many),/outCvCheck|Da approfondire|requisito del brand/);
+});
+test("Equal documented experiences do not justify inventing a decisive CV advantage",()=>{
+ const lead=buildOutreachLeads([sample],[],Date.parse("2026-11-10"))[0];
+ const cv=(id,main)=>({id,name:id,is_default:main,parsed_profile:{profile_confirmed_by_user:true,
+  experience:[{company:"Company A",role:"Showroom",evidence:["Gestione ordini per la campagna vendite"]}]}});
+ const main=cv("general",true),other=cv("specialist",false);
+ const chosen=chooseOutreachCv([other,main],lead.area,lead);
+ assert.equal(chosen.id,"general");
+ const markup=renderOutreachFolder(lead,{cvs:[other,main]});
+ assert.match(markup,/Non emerge una differenza decisiva/);
 });
