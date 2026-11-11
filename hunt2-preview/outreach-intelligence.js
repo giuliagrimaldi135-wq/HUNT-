@@ -206,7 +206,7 @@ export function composeOutreachEmail(lead,cv={},person={},preferences={}){
 
 // Source-traceable relevance, not a fabricated hiring or compatibility score.
 const outreachTopics=[
- {key:"merchandising",name:"Assortimenti e pianificazione",pattern:/merchandis|buying|assort|allocat|stock|inventory|otb|open.to.buy|budget|planning|forecast|sell.through|product mix/i},
+ {key:"merchandising",name:"Assortimenti e pianificazione",pattern:/merchandis|buying|acquist|assort|allocat|stock|inventory|otb|open.to.buy|budget|planning|pianificazion|forecast|sell.through|product mix/i},
  {key:"wholesale",name:"Showroom e attività commerciali",pattern:/showroom|wholesale|campagna vendit|sales campaign|ordini|order|client|customer|distribuzion|commerciale|sales/i},
  {key:"product",name:"Prodotto e collezioni",pattern:/prodot|product|collezion|collection|capsule|costing|campionario|sample|brand strateg/i},
  {key:"retail",name:"Retail e canali digitali",pattern:/retail|negoz|boutique|store|e.commerce|ecommerce|online|digital|omnichannel/i}
@@ -246,7 +246,10 @@ export function analyzeOutreachCv(lead,cv){
  const order=focusOrder(lead);
  const ranked=evidenceFromCv(cv).map(e=>{
   const matches=outreachTopics.filter(topic=>topic.pattern.test(e.text+(e.isDetail?"":" "+e.source))).map(topic=>topic.key);
-  const primary=matches.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b))[0];
+  // A concrete planning activity stays in merchandising even if the text also mentions orders.
+  // This distinguishes a buying/assortment project from repeated showroom order-taking bullets.
+  const primary=matches.includes("merchandising")&&/assort|buying plan|otb|open.to.buy|pianificazion|planning|allocat|stock|forecast/i.test(e.text)?
+   "merchandising":matches.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b))[0];
   return {...e,topics:matches,primary,weight:primary?Math.max(1,5-order.indexOf(primary))+(e.isDetail?2:0):0};
  }).filter(x=>x.weight>0).sort((a,b)=>b.weight-a.weight);
  // Repeated mentions of the same activity or topic must not inflate a CV recommendation.
