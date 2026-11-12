@@ -23,7 +23,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-10T11:28:43.501200+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
+    "last_seen_at": "2026-11-12T10:42:15.036116+00:00"
   },
   {
     "key": "f698eac7d1c3ce140a65",
@@ -48,7 +48,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-10T11:28:43.501200+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
+    "last_seen_at": "2026-11-12T10:42:15.036116+00:00"
   },
   {
     "key": "4450b91259c69e552232",
@@ -74,7 +74,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-07T10:24:34.504438+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
+    "last_seen_at": "2026-11-12T10:42:15.036116+00:00"
   },
   {
     "key": "b0cb1c8d0110374cf3e9",
@@ -100,7 +100,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-05T18:23:32.619739+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
+    "last_seen_at": "2026-11-12T10:42:15.036116+00:00"
   },
   {
     "key": "a457cc063cb8288560d0",
@@ -126,33 +126,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-01T19:05:59.550269+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
-  },
-  {
-    "key": "87ad6510dd6b0946c03c",
-    "brand": "Zegna",
-    "title": "Retail Operations Intern Milano , Italy",
-    "location": "Milano",
-    "score": 88,
-    "reasons": [
-      "Ruolo adiacente coerente",
-      "Seniority junior/intern",
-      "Località target coerente",
-      "Competenze: excel, retail",
-      "Priorità Milano"
-    ],
-    "role_family": "Adjacent",
-    "decision": "adjacent",
-    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
-    "recommended_cv": "merch_buying",
-    "url": "https://careers.zegnagroup.com/jobs/job-details?JobID=278965322&Team=231361271",
-    "source_name": "Zegna careers",
-    "provider": "career_page",
-    "published_at": null,
-    "years_required": null,
-    "junior_fit": true,
-    "first_seen_at": "2026-11-02T15:32:50.971442+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
+    "last_seen_at": "2026-11-12T10:42:15.036116+00:00"
   },
   {
     "key": "a7e40bdb494d4030815c",
@@ -176,7 +150,7 @@
     "years_required": null,
     "junior_fit": false,
     "first_seen_at": "2026-11-12T09:42:16.518945+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
+    "last_seen_at": "2026-11-12T10:42:15.036116+00:00"
   },
   {
     "key": "b9145e91275901c9339c",
@@ -202,6 +176,6 @@
     "years_required": 1,
     "junior_fit": false,
     "first_seen_at": "2026-11-11T14:39:31.778589+00:00",
-    "last_seen_at": "2026-11-12T09:42:16.518945+00:00"
+    "last_seen_at": "2026-11-12T10:42:15.036116+00:00"
   }
 ]
