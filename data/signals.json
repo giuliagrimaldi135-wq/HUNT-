@@ -2299,18 +2299,5 @@
     "published_at": "2026-09-30T03:29:59+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE11ajIxYWIyZElBbWZPb0N6Q3FGaWVrQkdnc0hGMFdabkZRbVdfcXA2WWxldDc2eDZ4MWM2eGNVUnQwUDV4TVpNQ084VnNPLTZLdGpVYnRPMHZJLTBFSmJQRXQxbGc0MmFUb2hDZWhNaU5JTlFFb29RRlBpQQ?oc=5"
-  },
-  {
-    "key": "c2e108e9a8848d7294aa",
-    "brand": "Saint Laurent",
-    "headline": "Saint Laurent - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:43:16.398768+00:00",
-    "published_at": "2026-09-29T21:21:03+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5WMVNEejBNVEJEMU5BUGlEWlBGSUFhb1psMk9ZX0tlRGZkUnlhT3dDblJpNmxZY2VuT1lja2hmU3A1YVFkdXl5MlJIcDBtUkpzOUZ1N2FaUTlYTFpfSWV5WDhtM0tOY0xaRWpVM1p1Rmh0eUI2bWZKaklR?oc=5"
   }
 ]
