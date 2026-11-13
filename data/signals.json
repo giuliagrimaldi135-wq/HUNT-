@@ -2299,18 +2299,5 @@
     "published_at": "2026-09-29T17:37:48+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTFBKZ1BzS3JIY3hLTFlYbjF2UUp0T1l3Sy1QbXpfZUFYWTJQSHhDQWhEOE9PQzF6QWJ4b0FzRW9talUwU3lSN3FsX29ZMnVtR2lTTm1OaXVzUU8xTWhVTFVBSnlsaFhSWlFfVDdzS3dicWtocG1iS0JBSGwybWg?oc=5"
-  },
-  {
-    "key": "6d9f07ef15093d69107f",
-    "brand": "Dior",
-    "headline": "Christian Dior - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-03T23:37:39.745983+00:00",
-    "published_at": "2026-09-29T14:32:56+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE91Mlc2Yzl2UTF2UHVubjZsNWtDc0FFWkhJNUNtbXV2MmdsdnozV0JWR1BudU1oYmd3eHExZWUwR1daWDdyVVRtRmdKeXpBNzBSMXdtdVM2TkFDT1VOZlNveE5VX2xGUmdzeGp6UkdodGpOZ0t0cFlRRUFsVQ?oc=5"
   }
 ]
