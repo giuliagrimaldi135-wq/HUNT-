@@ -23,7 +23,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-07T10:24:34.504438+00:00",
-    "last_seen_at": "2026-11-14T02:18:35.395685+00:00"
+    "last_seen_at": "2026-11-14T03:09:43.059000+00:00"
   },
   {
     "key": "b0cb1c8d0110374cf3e9",
@@ -49,7 +49,35 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-05T18:23:32.619739+00:00",
-    "last_seen_at": "2026-11-14T02:18:35.395685+00:00"
+    "last_seen_at": "2026-11-14T03:09:43.059000+00:00"
+  },
+  {
+    "key": "63e17f41124651610dfe",
+    "brand": "Diesel",
+    "title": "Europe Junior Buyer",
+    "location": "Milano",
+    "score": 79,
+    "reasons": [
+      "Ruolo coerente dal titolo",
+      "Seniority junior/intern",
+      "Località target coerente",
+      "Competenze: excel, assortment, otb, retail",
+      "Priorità Milano",
+      "Esperienza richiesta rilevata: 2+ anni",
+      "Stretch sensato: 2 anni richiesti, ma ruolo junior/assistant e funzione core"
+    ],
+    "role_family": "Buying",
+    "decision": "stretch_apply",
+    "fit_explanation": "Candidatura comunque sensata: chiede 2 anni, ma il titolo è junior/assistant e il lavoro è molto vicino a merchandising, buying, planning, product o wholesale.",
+    "recommended_cv": "merch_buying",
+    "url": "https://careers.otb.net/job/Milano-Europe-Junior-Buyer/1375114257/",
+    "source_name": "Diesel careers",
+    "provider": "career_page",
+    "published_at": null,
+    "years_required": 2,
+    "junior_fit": false,
+    "first_seen_at": "2026-11-14T03:09:43.059000+00:00",
+    "last_seen_at": "2026-11-14T03:09:43.059000+00:00"
   },
   {
     "key": "a7e40bdb494d4030815c",
@@ -73,6 +101,6 @@
     "years_required": null,
     "junior_fit": false,
     "first_seen_at": "2026-11-12T09:42:16.518945+00:00",
-    "last_seen_at": "2026-11-14T02:18:35.395685+00:00"
+    "last_seen_at": "2026-11-14T03:09:43.059000+00:00"
   }
 ]
