@@ -1,57 +1,5 @@
 [
   {
-    "key": "95f862d1d88219d8bae1",
-    "brand": "Valentino",
-    "title": "Store Planning Intern",
-    "location": "Milano",
-    "score": 100,
-    "reasons": [
-      "Ruolo coerente dal titolo",
-      "Seniority junior/intern",
-      "Località target coerente",
-      "Competenze: retail",
-      "Priorità Milano"
-    ],
-    "role_family": "Planning/Allocation",
-    "decision": "strong",
-    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
-    "recommended_cv": "merch_buying",
-    "url": "https://jobs.valentino.com/job/Milano-Store-Planning-Intern/1448037433/",
-    "source_name": "Valentino careers",
-    "provider": "career_page",
-    "published_at": null,
-    "years_required": null,
-    "junior_fit": true,
-    "first_seen_at": "2026-11-14T03:57:28.386158+00:00",
-    "last_seen_at": "2026-11-14T11:57:01.968572+00:00"
-  },
-  {
-    "key": "a457cc063cb8288560d0",
-    "brand": "Valentino",
-    "title": "Retail Planning Intern",
-    "location": "Milano",
-    "score": 100,
-    "reasons": [
-      "Ruolo coerente dal titolo",
-      "Seniority junior/intern",
-      "Località target coerente",
-      "Competenze: excel, retail, merchandising",
-      "Priorità Milano"
-    ],
-    "role_family": "Planning/Allocation",
-    "decision": "strong",
-    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
-    "recommended_cv": "merch_buying",
-    "url": "https://jobs.valentino.com/job/Milano-Retail-Planning-Intern/1441047933/",
-    "source_name": "Valentino careers",
-    "provider": "career_page",
-    "published_at": null,
-    "years_required": null,
-    "junior_fit": true,
-    "first_seen_at": "2026-11-14T03:57:28.386158+00:00",
-    "last_seen_at": "2026-11-14T11:57:01.968572+00:00"
-  },
-  {
     "key": "4450b91259c69e552232",
     "brand": "Bottega Veneta",
     "title": "BOTTEGA VENETA Jewellery Product Development Intern",
@@ -75,7 +23,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-07T10:24:34.504438+00:00",
-    "last_seen_at": "2026-11-14T11:57:01.968572+00:00"
+    "last_seen_at": "2026-11-14T12:38:06.238302+00:00"
   },
   {
     "key": "b0cb1c8d0110374cf3e9",
@@ -101,7 +49,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-05T18:23:32.619739+00:00",
-    "last_seen_at": "2026-11-14T11:57:01.968572+00:00"
+    "last_seen_at": "2026-11-14T12:38:06.238302+00:00"
   },
   {
     "key": "63e17f41124651610dfe",
@@ -129,7 +77,7 @@
     "years_required": 2,
     "junior_fit": false,
     "first_seen_at": "2026-11-14T03:09:43.059000+00:00",
-    "last_seen_at": "2026-11-14T11:57:01.968572+00:00"
+    "last_seen_at": "2026-11-14T12:38:06.238302+00:00"
   },
   {
     "key": "a7e40bdb494d4030815c",
@@ -153,6 +101,6 @@
     "years_required": null,
     "junior_fit": false,
     "first_seen_at": "2026-11-12T09:42:16.518945+00:00",
-    "last_seen_at": "2026-11-14T11:57:01.968572+00:00"
+    "last_seen_at": "2026-11-14T12:38:06.238302+00:00"
   }
 ]
