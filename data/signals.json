@@ -78,6 +78,32 @@
     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQaXhjamVPOUYxSTlNQS1Iek1KeEZBZ0JRRkVtVi02Ml9FY3FmZUJxVTRiZlh3X3JiVUdOZjdBX29nZVdFcUxlbXNIWDdQTHcyUklDZWZhZlpMZ2E5d01RSWJ4eDZOT2djZHFuaDhEaVhLRHc1MWF5S0pLV0huMl8xSm9LYWtZTFJ0Y24yY2V3VWJENVVLREVUMV9mTUVsLVRUUW15SkY2WlhoVWhH?oc=5"
   },
   {
+    "key": "34df5cb9a28c341294c5",
+    "brand": "Max Mara",
+    "headline": "Max Mara ha un nuovo brand: si chiama M-M For Mondays and More - Amica.it",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-14T21:57:25.814851+00:00",
+    "published_at": "2026-11-11T08:30:03+00:00",
+    "source": "Amica.it",
+    "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQSjlpc1JzaDZ1d3lkOVZ4YnJ6TGRDeG40ZkpLYThPWUxlQ2Q2TkdSWVJEcEtWWmZubDZPMUlfOEpwQlA4UDRZeHNjTTBOOVo1NnBkRFlqa0pERVdZb2hDcjZkMllqTWNoR3NSaHpiWWpuYW56R3lETFdWMjVsNl9MVnY5UHk2UGJWS1hqODln?oc=5"
+  },
+  {
+    "key": "7b7139825e0ae40d17f4",
+    "brand": "Fendi",
+    "headline": "FENDI: Lusso Romano e Stile Classico nella Holiday Collection - Tatler Asia",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-14T21:57:25.814851+00:00",
+    "published_at": "2026-11-11T08:00:00+00:00",
+    "source": "Tatler Asia",
+    "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9Xbm5tZmo0QXlUb09jcklUUDhxX2I1dDgzMTlKOHJieUVYWWFVeEoxSmVjTmNBN0JzOGg5U1pPcG5aRVVmbGROVlhoMDlvNFRwU2dLazAweHhJR2NFTU5jTU92aktBSHBDZWhXenNfNVN4bzdxam1z?oc=5"
+  },
+  {
     "key": "aaa40eff5fe1c3df2b8a",
     "brand": "Tod's",
     "headline": "Tod’s: Matteo Tamburini lascia la direzione creativa - FashionNetwork Italia",
