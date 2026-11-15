@@ -905,5 +905,50 @@
     "source_name": "Groupe Rossignol Careers (pagina ufficiale); Cercolavoro per data pubblicazione",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-rituals-wholesale-support-4490550662",
+    "brand": "Rituals Cosmetics Italia",
+    "title": "Wholesale Support Intern – Head Office Italy | 0-40h",
+    "location": "Milano, Italia",
+    "published_at": null,
+    "detected_at": "2026-11-15T15:47:05+01:00",
+    "priority": "ALTA",
+    "score": 90,
+    "role_family": "Wholesale / Trade Marketing",
+    "why_fit": "Stage HQ nel wholesale: assortimenti, online merchandising, sell-in/sell-out e trade marketing; forte affinità con Fashion Management e lavoro su prodotto e canali.",
+    "reasons": [
+      "Analisi sell-in/sell-out",
+      "Merchandising online e benchmarking",
+      "Assortimenti e categorie prodotto",
+      "Trade marketing partner retail",
+      "Supporto wholesale da head office"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/wholesale-support-intern-%E2%80%93-head-office-italy-0-40h-at-rituals-cosmetics-italia-b-corp%E2%84%A2-4490550662",
+    "source_name": "Rituals Cosmetics Italia – LinkedIn Jobs (ID 4490550662)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-acqua-di-parma-sellout-4487490394",
+    "brand": "Acqua di Parma",
+    "title": "Sell Out Support (INTERNSHIP)",
+    "location": "Milano, Italia",
+    "published_at": null,
+    "detected_at": "2026-11-15T15:47:05+01:00",
+    "priority": "MEDIA",
+    "score": 83,
+    "role_family": "Retail Performance / Trade Marketing",
+    "why_fit": "Stage nella maison luxury beauty: report sell-out, performance retail, coordinamento visibilità in-store e merchandising. Meno focalizzato sul buying.",
+    "reasons": [
+      "Report sell-out settimanali e mensili",
+      "Monitoraggio performance e concorrenti",
+      "Previsioni materiali merchandising e POSM",
+      "Coordinamento attività in-store"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/sell-out-support-internship-at-acqua-di-parma-4487490394",
+    "source_name": "Acqua di Parma – LinkedIn Jobs (ID 4487490394)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
