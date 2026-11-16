@@ -1,0 +1,11 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {isFreshActionable,chooseUniqueJobs} from "./recommendation-guard.mjs";
+const now=Date.parse("2026-11-16T15:00:00Z"),cutoff=Date.parse("2026-10-27T00:00:00Z");
+const row={id:"one",company_id:"a",requisition_id:"123",canonical_title:"Buying Intern",city:"Milano",state:"active_verified",published_at:"2026-11-08T00:00:00Z",first_seen_at:"2026-11-08T00:00:00Z",last_verified_at:"2026-11-16T10:00:00Z",description:"official"};
+test("20 day limit is based on real publication, not refreshed verification",()=>{assert.equal(isFreshActionable({...row,published_at:"2026-09-24T00:00:00Z"},cutoff,now),false)});
+test("undated jobs use first seen, never fabricated publication dates",()=>{assert.equal(isFreshActionable({...row,published_at:null},cutoff,now),true);assert.equal(isFreshActionable({...row,published_at:null,first_seen_at:"2026-09-24T00:00:00Z"},cutoff,now),false)});
+test("unverified and stale jobs cannot be recommended",()=>{assert.equal(isFreshActionable({...row,last_verified_at:"2026-11-01T00:00:00Z"},cutoff,now),false);assert.equal(isFreshActionable({...row,state:"stale_possible"},cutoff,now),false)});
+test("official requisition dedupes to earliest existing canonical listing",()=>{const other={...row,id:"two",first_seen_at:"2026-11-09T00:00:00Z"};const out=chooseUniqueJobs([other,row],cutoff,now);assert.deepEqual(out.jobs.map(x=>x.id),["one"]);assert.deepEqual(out.duplicateIds,["two"])});
+test("requisition IDs are never merged across companies",()=>{assert.equal(chooseUniqueJobs([row,{...row,company_id:"b",id:"other"}],cutoff,now).jobs.length,2)});
+test("tracking parameters are ignored but distinct role titles remain distinct",()=>{const left={...row,requisition_id:null,primary_apply_url:"https://example.com/job?oga=true"};const right={...left,id:"two",primary_apply_url:"https://example.com/job"};assert.equal(chooseUniqueJobs([left,right],cutoff,now).jobs.length,1);assert.equal(chooseUniqueJobs([left,{...right,canonical_title:"Manager"}],cutoff,now).jobs.length,2)});
