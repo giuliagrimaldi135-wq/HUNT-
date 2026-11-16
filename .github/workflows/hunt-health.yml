@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Check radar freshness and public app availability
+      - name: Check radar, public app and Supabase backend availability
         uses: actions/github-script@v7
         with:
           script: |
@@ -27,7 +27,11 @@ jobs:
             const incidentTitle = 'HUNT · radar o sito non aggiornati';
             const appUrl = 'https://giuliagrimaldi135-wq.github.io/HUNT-/hunt2-preview/';
             const staleHours = 6;
-            let radarState = 'unknown', siteState = 'unknown';
+            const authHealthUrl = 'https://dfiokxjfgqoboxckcuut.supabase.co/auth/v1/health';
+            // This is a PUBLIC publishable key, also used by the browser;
+            // never use a Supabase service-role key in a public watchdog.
+            const publishableKey = 'sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_';
+            let radarState = 'unknown', siteState = 'unknown', backendState = 'unknown';
             let radarDetail = 'Non verificato';
             try {
               const runs = await github.rest.actions.listWorkflowRuns({
@@ -56,6 +60,28 @@ jobs:
             } catch (e) {
               core.warning('Impossibile completare la verifica del sito: ' + e.message);
             }
+            // Independent reachability probe: GitHub tests the Supabase Auth service,
+            // not just whether its own scheduled scanner completed.
+            try {
+              let healthy = false;
+              for (let attempt = 1; attempt <= 3; attempt++) {
+                try {
+                  const res = await fetch(authHealthUrl, {
+                    signal: AbortSignal.timeout(12000),
+                    headers: {'apikey': publishableKey, 'accept':'application/json'}
+                  });
+                  const payload = res.ok ? await res.json().catch(() => null) : null;
+                  if (res.ok && payload?.name === 'GoTrue') { healthy = true; break; }
+                  core.info('Supabase Auth health: HTTP '+res.status+' attempt '+attempt);
+                } catch (e) {
+                  core.info('Supabase Auth health unreachable (attempt '+attempt+'): '+e.message);
+                }
+                if (attempt < 3) await new Promise(resolve => setTimeout(resolve,2000));
+              }
+              backendState = healthy ? 'ok' : 'unhealthy';
+            } catch (e) {
+              core.warning('Supabase health probe incomplete: ' + e.message);
+            }
             // A recovered workflow-level status alone is not enough: the scan step
             // may have quarantined a source/API problem while recording one incident.
             let scannerIncident = false;
@@ -76,29 +102,31 @@ jobs:
               .addTable([
                 [{data: 'Servizio', header: true}, {data: 'Esito', header: true}, {data: 'Dettaglio', header: true}],
                 ['Radar', radarState, radarDetail],
-                ['Sito pubblico', siteState, appUrl]
+                ['Sito pubblico', siteState, appUrl],
+                ['Backend Supabase Auth', backendState, authHealthUrl]
               ]).write();
-            if (radarState === 'unknown' || siteState === 'unknown') {
+            if (radarState === 'unknown' || siteState === 'unknown' || backendState === 'unknown') {
               core.warning('Controllo incompleto: non modifico incidenti esistenti.');
               return;
             }
-            const unhealthy = radarState !== 'ok' || siteState !== 'ok';
+            const unhealthy = radarState !== 'ok' || siteState !== 'ok' || backendState !== 'ok';
             try {
               const open = await github.paginate(github.rest.issues.listForRepo, {
                 owner, repo, state: 'open', per_page: 100
               });
               const incident = open.find(item => !item.pull_request && item.title === incidentTitle);
-              if (unhealthy && !incident && !(scannerIncident && siteState === 'ok')) {
+              if (unhealthy && !incident && !(scannerIncident && siteState === 'ok' && backendState === 'ok')) {
                 const runUrl = context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId;
                 const body = [
                   'Il monitor automatico di HUNT ha rilevato una condizione persistente.',
                   '',
                   '- Radar: ' + radarState + ' (' + radarDetail + ')',
                   '- Sito: ' + siteState + ' (' + appUrl + ')',
+                  '- Supabase Auth: ' + backendState + ' (' + authHealthUrl + ')',
                   '- Controllo: ' + runUrl,
                   '',
                   'Per evitare notifiche ripetute questo incidente rimane aperto senza un nuovo commento ogni tre ore.',
-                  'Si chiude automaticamente quando entrambi i controlli tornano regolari.'
+                  'Si chiude automaticamente quando radar, sito pubblico e backend tornano regolari.'
                 ].join('\n');
                 await github.rest.issues.create({owner, repo, title: incidentTitle, body});
                 core.warning('Problema rilevato: aperto un singolo incidente operativo.');
