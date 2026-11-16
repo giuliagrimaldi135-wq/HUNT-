@@ -1,4 +1,5 @@
 import {createClient} from "npm:@supabase/supabase-js@2";
+import {scanHealth} from "./scan-health.mjs";
 const e=new TextEncoder();
 async function sha(v:string){return [...new Uint8Array(await crypto.subtle.digest("SHA-256",e.encode(v)))].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function eq(a:string,b:string){if(a.length!==b.length)return false;let v=0;for(let i=0;i<a.length;i++)v|=a.charCodeAt(i)^b.charCodeAt(i);return v===0}
@@ -79,7 +80,7 @@ Deno.serve(async(req)=>{
   const {data:secret,error}=await client.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(error||!secret||!token||!eq(await sha(token),secret.secret_hash))return Response.json({error:"unauthorized"},{status:401});
   const {data:all,error:sourceError}=await client.from("sources")
-    .select("id,company_id,base_url,config,last_scan_at,source_family,source_type")
+    .select("id,company_id,base_url,config,last_scan_at,source_family,source_type,consecutive_failures")
     .eq("active",true).eq("source_family","successfactors").eq("source_type","ats").limit(50);
   if(sourceError)throw Error(sourceError.message);
   const sources=(all||[]).filter(x=>Array.isArray(x.config?.catalog_urls)&&x.config.catalog_urls.length)
@@ -87,12 +88,13 @@ Deno.serve(async(req)=>{
   const dry=Boolean((await req.json().catch(()=>({})))?.dry_run);
   const results:any[]=[];
   for(const source of sources){
+   const startedAt=new Date().toISOString();
    const origin=new URL(source.base_url).origin;
    const catalog=source.config.catalog_urls.slice(0,2);
    let listed=0,checked=0,created=0,updated=0,failures=0;
    const report:any[]=[];
    for(const url of catalog){
-    if(!validURL(url,origin)){report.push({error:"Different catalog host"});continue}
+    if(!validURL(url,origin)){failures++;report.push({error:"Different catalog host"});continue}
     try{
      const {html,url:resolved}=await fetchHTML(url,origin);
      const links=jobsOnPage(html,resolved,origin);
@@ -135,7 +137,21 @@ Deno.serve(async(req)=>{
      }
     }catch(e){failures++;report.push({catalog:url,error:String(e).slice(0,130)})}
    }
-   results.push({source:source.id,listed,checked,created,updated,failures,details:report.slice(0,8)});
+   const h=scanHealth(listed,checked,failures,source.consecutive_failures||0);
+   if(!dry){
+    const at=new Date().toISOString();
+    const patch:any={last_scan_at:at,health_status:h.status,consecutive_failures:h.failures};
+    if(h.successful)patch.last_success_at=at;
+    const {error:healthError}=await client.from("sources").update(patch).eq("id",source.id);
+    if(healthError)report.push({error:"Source health update failed"});
+    await client.from("source_scan_runs").insert({
+      source_id:source.id,started_at:startedAt,finished_at:at,
+      request_ok:failures===0,parser_ok:listed>0&&checked>0,
+      extracted_jobs:checked,health_status:h.status,
+      metadata:{runner:"hunt-successfactors-public-v2",catalog_count:catalog.length,listed,updated,created}
+    });
+   }
+   results.push({source:source.id,listed,checked,created,updated,failures,health:h.status,details:report.slice(0,8)});
   }
   return Response.json({ok:true,dry_run:dry,results});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
