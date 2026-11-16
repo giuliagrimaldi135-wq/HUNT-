@@ -1,6 +1,7 @@
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {scanHealth} from "./scan-health.mjs";
 import {selectCatalogRotation,advanceCatalogCursors} from "./catalog-rotation.mjs";
+import {resolvePradaMaison} from "./prada-maison.mjs";
 const e=new TextEncoder();
 async function sha(v:string){return [...new Uint8Array(await crypto.subtle.digest("SHA-256",e.encode(v)))].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function eq(a:string,b:string){if(a.length!==b.length)return false;let v=0;for(let i=0;i<a.length;i++)v|=a.charCodeAt(i)^b.charCodeAt(i);return v===0}
@@ -91,6 +92,9 @@ Deno.serve(async(req)=>{
   for(const source of sources){
    const startedAt=new Date().toISOString();
    const origin=new URL(source.base_url).origin;
+   const {data:brandCompanies,error:brandsError}=await client.from("companies")
+     .select("id,slug").in("slug",["prada","prada-group","miu-miu","churchs","versace"]);
+   if(brandsError)throw Error("Brand attribution lookup failed");
    const rotation=selectCatalogRotation(source.config);
    const catalog=rotation.pages;
    const observations:Record<number,{total:number,selected:number}>={};
@@ -114,18 +118,22 @@ Deno.serve(async(req)=>{
        if(!info){report.push({url:link,issue:"Incomplete public job details"});continue}
        checked++;
        if(dry){report.push({title:info.title,city:info.city,url:info.url,chars:info.description.length});continue}
-       const {data:existing,error:lookupErr}=await client.from("jobs").select("id,description").eq("company_id",source.company_id).eq("primary_apply_url",info.url).maybeSingle();
+       const employer=origin==="https://jobs.pradagroup.com"
+         ?(resolvePradaMaison(info.title,brandCompanies||[])||source.company_id)
+         :source.company_id;
+       const {data:existing,error:lookupErr}=await client.from("jobs").select("id,company_id,description")
+         .eq("primary_apply_url",info.url).maybeSingle();
        if(lookupErr){failures++;continue}
        const now=new Date().toISOString();
        const metadata={public_ats:"ats_successfactors",discovered_by:"hunt-successfactors-public-v1",
          verified_career_url:source.base_url,source_catalog_url:url,provider_date:info.published?"posted":"unknown",source_verified_at:now};
        if(existing){
-        const patch:any={last_seen_at:now,last_verified_at:now,state:"active_verified",vacancy_confidence:96,confidence_label:"VERIFIED ACTIVE"};
+        const patch:any={company_id:employer,last_seen_at:now,last_verified_at:now,state:"active_verified",vacancy_confidence:96,confidence_label:"VERIFIED ACTIVE"};
         if(String(existing.description||"").length<info.description.length)patch.description=info.description;
         const {error:upErr}=await client.from("jobs").update(patch).eq("id",existing.id);
         if(upErr)failures++;else updated++;
        }else{
-        const payload={company_id:source.company_id,canonical_title:info.title,
+        const payload={company_id:employer,canonical_title:info.title,
           normalized_title:norm(info.title),role_family:family(info.title),
           seniority:seniority(info.title),employment_type:seniority(info.title)==="internship"?"internship":"full_time",
           description:info.description,city:info.city,country_code:info.country,requisition_id:info.jobId,
