@@ -973,5 +973,28 @@
     "source_name": "TOD'S Group / LinkedIn Jobs (ID 4489777310)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-fendi-shoes-collection-merchandising-fend04707",
+    "brand": "Fendi",
+    "title": "Internship within Collection Merchandising Team – Women's & Men's Shoes",
+    "location": "Roma, Italia",
+    "published_at": "2026-09-11",
+    "detected_at": "2026-11-17T00:32:59+01:00",
+    "priority": "ALTA",
+    "score": 91,
+    "role_family": "Collection Merchandising",
+    "why_fit": "Stage nel merchandising collezione calzature donna e uomo: merchandising brief, ricerca competitor, line sheet, analisi SKU, showroom e campagne buying. Fashion Management esplicitamente richiesto e precedente esperienza showroom pertinente. Sede Roma, non Milano.",
+    "reasons": [
+      "Merchandising collezione calzature",
+      "Line sheet e analisi SKU",
+      "Campagne buying e showroom",
+      "Fashion Management richiesto",
+      "Stage beginner a Roma; rimborso €800 lordi e buoni pasto"
+    ],
+    "url": "https://www.lvmh.com/en/join-us/our-job-offers/FEND04707",
+    "source_name": "LVMH Careers / Fendi (FEND04707)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
