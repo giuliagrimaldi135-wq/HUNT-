@@ -1,5 +1,6 @@
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {scanHealth} from "./scan-health.mjs";
+import {selectCatalogRotation,advanceCatalogCursors} from "./catalog-rotation.mjs";
 const e=new TextEncoder();
 async function sha(v:string){return [...new Uint8Array(await crypto.subtle.digest("SHA-256",e.encode(v)))].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function eq(a:string,b:string){if(a.length!==b.length)return false;let v=0;for(let i=0;i<a.length;i++)v|=a.charCodeAt(i)^b.charCodeAt(i);return v===0}
@@ -90,17 +91,21 @@ Deno.serve(async(req)=>{
   for(const source of sources){
    const startedAt=new Date().toISOString();
    const origin=new URL(source.base_url).origin;
-   const catalog=source.config.catalog_urls.slice(0,2);
+   const rotation=selectCatalogRotation(source.config);
+   const catalog=rotation.pages;
+   const observations:Record<number,{total:number,selected:number}>={};
    let listed=0,checked=0,created=0,updated=0,failures=0;
    const report:any[]=[];
-   for(const url of catalog){
+   for(const catalogPage of catalog){
+    const url=catalogPage.url;
     if(!validURL(url,origin)){failures++;report.push({error:"Different catalog host"});continue}
     try{
      const {html,url:resolved}=await fetchHTML(url,origin);
      const links=jobsOnPage(html,resolved,origin);
      listed+=links.length;
-     const cursor=Math.max(0,Number(source.config?.catalog_cursor||0));
+     const cursor=catalogPage.cursor>=links.length?0:catalogPage.cursor;
      const selected=links.slice(cursor,cursor+5);
+     observations[catalogPage.index]={total:links.length,selected:selected.length};
      // Cursor is bounded and resets when the end is reached.
      for(const link of selected){
       try{
@@ -131,16 +136,15 @@ Deno.serve(async(req)=>{
        }
       }catch(e){failures++;report.push({url:link,error:String(e).slice(0,130)})}
      }
-     if(!dry&&links.length){
-      const nextCursor=cursor+Math.max(1,selected.length)>=links.length?0:cursor+Math.max(1,selected.length);
-      await client.from("sources").update({config:{...source.config,catalog_cursor:nextCursor},last_scan_at:new Date().toISOString()}).eq("id",source.id);
-     }
     }catch(e){failures++;report.push({catalog:url,error:String(e).slice(0,130)})}
    }
    const h=scanHealth(listed,checked,failures,source.consecutive_failures||0);
    if(!dry){
     const at=new Date().toISOString();
-    const patch:any={last_scan_at:at,health_status:h.status,consecutive_failures:h.failures};
+    const patch:any={
+     last_scan_at:at,health_status:h.status,consecutive_failures:h.failures,
+     config:advanceCatalogCursors(source.config,catalog,observations,rotation.nextRotation)
+    };
     if(h.successful)patch.last_success_at=at;
     const {error:healthError}=await client.from("sources").update(patch).eq("id",source.id);
     if(healthError)report.push({error:"Source health update failed"});
@@ -148,7 +152,7 @@ Deno.serve(async(req)=>{
       source_id:source.id,started_at:startedAt,finished_at:at,
       request_ok:failures===0,parser_ok:listed>0&&checked>0,
       extracted_jobs:checked,health_status:h.status,
-      metadata:{runner:"hunt-successfactors-public-v2",catalog_count:catalog.length,listed,updated,created}
+      metadata:{runner:"hunt-successfactors-public-v3",catalog_count:catalog.length,rotation:catalog.map((x:any)=>x.index),listed,updated,created}
     });
    }
    results.push({source:source.id,listed,checked,created,updated,failures,health:h.status,details:report.slice(0,8)});
