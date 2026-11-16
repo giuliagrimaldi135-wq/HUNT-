@@ -42,6 +42,9 @@ jobs:
       - name: Test SuccessFactors source health scoring
         working-directory: v2/supabase/functions/hunt-successfactors-public
         run: node --test scan-health.test.mjs
+      - name: Test SAP SuccessFactors official microdata extraction
+        working-directory: v2/supabase/functions/hunt-source-discovery
+        run: node --test successfactors-microdata.test.mjs
       - name: Test adaptive source backoff and recovery
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test source-health-policy.test.mjs
