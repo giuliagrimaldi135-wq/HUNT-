@@ -1,6 +1,7 @@
 
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {isRealCareerPosting,trustedSmartRecruitersIdentity,isEligibleForStaleTransition} from "./ats-ingestion-guard.mjs";
+import {shouldProbeATS,atsScanStatus} from "./ats-source-health.mjs";
 const enc=new TextEncoder();
 const trim=(v:unknown,n=12000)=>String(v??"").replace(/\s+/g," ").trim().slice(0,n);
 async function hash(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}
@@ -119,9 +120,12 @@ Deno.serve(async(req)=>{
     .select("id,company_id,source_family,base_url,config,last_scan_at,consecutive_failures")
     .eq("source_type","public_ats_board").eq("active",true);
   if(params?.source_id&&/^[0-9a-f-]{36}$/i.test(String(params.source_id)))selection=selection.eq("id",String(params.source_id));
-  const {data:sources,error}=await selection.order("last_scan_at",{ascending:true,nullsFirst:true}).limit(params?.source_id?1:6);
+  const {data:candidates,error}=await selection.order("last_scan_at",{ascending:true,nullsFirst:true}).limit(params?.source_id?1:80);
   if(error)throw Error(error.message);
-  let boards=0,available=0,inserted=0,updated=0,rejected=0;
+  const eligibleSources=(candidates||[]).filter((s:any)=>params?.source_id||shouldProbeATS(s));
+  const sources=eligibleSources.slice(0,6);
+  const skippedBackoff=(candidates||[]).length-eligibleSources.length;
+  let boards=0,available=0,inserted=0,updated=0,rejected=0,failedBoards=0;
   const details:any[]=[];
   for(const source of sources||[]){
    boards++;
@@ -276,18 +280,44 @@ Deno.serve(async(req)=>{
         if(!jobError)stale++;
       }
     }
-    await db.from("sources").update({
-      last_scan_at:at,last_success_at:at,health_status:"healthy",consecutive_failures:0,
+    const health=atsScanStatus(entries.length,scanned);
+    if(health==="degraded")failedBoards++;
+    const healthPatch:any={
+      last_scan_at:at,health_status:health,
+      consecutive_failures:health==="degraded"?(source.consecutive_failures||0)+1:0,
       config:{...(source.config||{}),catalog_cursor:nextCursor,catalog_page_offset:nextOffset}
-    }).eq("id",source.id);
-    details.push({family:source.source_family,board:source.config?.board,status:"healthy",fetched:entries.length,created,checked:scanned,ignored,stale,catalog_cursor:nextCursor,catalog_page_offset:nextOffset});
+    };
+    if(health==="healthy"||health==="reachable_no_listings")healthPatch.last_success_at=at;
+    const {error:healthError}=await db.from("sources").update(healthPatch).eq("id",source.id);
+    if(healthError)throw Error("ATS health record update failed");
+    if(health!=="healthy"||(source.consecutive_failures||0)>0){
+      await db.from("source_scan_runs").insert({
+        source_id:source.id,started_at:at,finished_at:new Date().toISOString(),
+        request_ok:true,parser_ok:scanned>0,extracted_jobs:scanned,
+        health_status:health,error_code:health==="degraded"?"ats_zero_accepted_jobs":null,
+        metadata:{runner:"hunt-ats-board-scan-v6",family:source.source_family,
+          fetched:entries.length,ignored,created,stale}
+      });
+    }
+    details.push({family:source.source_family,board:source.config?.board,status:health,fetched:entries.length,created,checked:scanned,ignored,stale,catalog_cursor:nextCursor,catalog_page_offset:nextOffset});
    }catch(e){
+    failedBoards++;
+    const msg=String(e instanceof Error?e.message:e).slice(0,180);
+    const httpError=msg.match(/^Error:\s*ATS HTTP (\d{3})|^ATS HTTP (\d{3})/);
+    const httpStatus=httpError?Number(httpError[1]||httpError[2]):null;
     await db.from("sources").update({
       last_scan_at:at,health_status:"degraded",consecutive_failures:(source.consecutive_failures||0)+1
     }).eq("id",source.id);
-    details.push({family:source.source_family,board:source.config?.board,status:"error",error:String(e instanceof Error?e.message:e).slice(0,180)});
+    await db.from("source_scan_runs").insert({
+      source_id:source.id,started_at:at,finished_at:new Date().toISOString(),
+      request_ok:httpStatus===null,parser_ok:false,extracted_jobs:0,
+      health_status:"degraded",error_code:httpStatus?"ats_http_"+httpStatus:"ats_processing_error",
+      metadata:{runner:"hunt-ats-board-scan-v6",family:source.source_family,error_detail:msg}
+    });
+    details.push({family:source.source_family,board:source.config?.board,status:"error",error:msg});
    }
   }
-  return Response.json({ok:true,boards,available,inserted,updated,rejected,details});
+  return Response.json({ok:failedBoards===0,partial:failedBoards>0,failedBoards,
+    backoffSkipped:skippedBackoff,boards,available,inserted,updated,rejected,details});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
 });
