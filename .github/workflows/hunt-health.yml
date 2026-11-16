@@ -56,6 +56,22 @@ jobs:
             } catch (e) {
               core.warning('Impossibile completare la verifica del sito: ' + e.message);
             }
+            // A recovered workflow-level status alone is not enough: the scan step
+            // may have quarantined a source/API problem while recording one incident.
+            let scannerIncident = false;
+            try {
+              const incidents = await github.paginate(github.rest.issues.listForRepo, {
+                owner, repo, state: 'open', per_page: 100
+              });
+              scannerIncident = incidents.some(item => !item.pull_request &&
+                item.title === 'HUNT · aggiornamento dati o notifiche bloccato');
+            } catch (e) {
+              core.warning('Could not inspect scanner incident status: ' + e.message);
+            }
+            if (scannerIncident) {
+              radarState = 'unhealthy';
+              radarDetail = 'Un incidente del radar è ancora aperto';
+            }
             await core.summary.addHeading('HUNT · Stato automatico')
               .addTable([
                 [{data: 'Servizio', header: true}, {data: 'Esito', header: true}, {data: 'Dettaglio', header: true}],
@@ -72,7 +88,7 @@ jobs:
                 owner, repo, state: 'open', per_page: 100
               });
               const incident = open.find(item => !item.pull_request && item.title === incidentTitle);
-              if (unhealthy && !incident) {
+              if (unhealthy && !incident && !(scannerIncident && siteState === 'ok')) {
                 const runUrl = context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId;
                 const body = [
                   'Il monitor automatico di HUNT ha rilevato una condizione persistente.',
