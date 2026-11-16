@@ -9,3 +9,22 @@ test("unverified and stale jobs cannot be recommended",()=>{assert.equal(isFresh
 test("official requisition dedupes to earliest existing canonical listing",()=>{const other={...row,id:"two",first_seen_at:"2026-11-09T00:00:00Z"};const out=chooseUniqueJobs([other,row],cutoff,now);assert.deepEqual(out.jobs.map(x=>x.id),["one"]);assert.deepEqual(out.duplicateIds,["two"])});
 test("requisition IDs are never merged across companies",()=>{assert.equal(chooseUniqueJobs([row,{...row,company_id:"b",id:"other"}],cutoff,now).jobs.length,2)});
 test("tracking parameters are ignored but distinct role titles remain distinct",()=>{const left={...row,requisition_id:null,primary_apply_url:"https://example.com/job?oga=true"};const right={...left,id:"two",primary_apply_url:"https://example.com/job"};assert.equal(chooseUniqueJobs([left,right],cutoff,now).jobs.length,1);assert.equal(chooseUniqueJobs([left,{...right,canonical_title:"Manager"}],cutoff,now).jobs.length,2)});
+
+test("shared official SmartRecruiters job is one vacancy across sibling brand labels",()=>{
+ const url="https://jobs.smartrecruiters.com/MaxMaraFashionGroup/744000154069439-sales-assistant-intrend-cesano-boscone?oga=true";
+ const a={...row,id:"max-mara",company_id:"maxmara",requisition_id:"744000154069439",primary_apply_url:url,first_seen_at:"2026-11-09T10:00:00Z"};
+ const b={...a,id:"sportmax",company_id:"sportmax",first_seen_at:"2026-11-09T12:00:00Z"};
+ const out=chooseUniqueJobs([b,a],cutoff,now);
+ assert.deepEqual(out.jobs.map(x=>x.id),["max-mara"]);
+ assert.deepEqual(out.duplicateIds,["sportmax"]);
+});
+test("unrelated SmartRecruiters boards with matching numeric IDs are separate",()=>{
+ const a={...row,id:"one-a",company_id:"a",primary_apply_url:"https://jobs.smartrecruiters.com/CompanyA/744000154069439-role",requisition_id:"744000154069439"};
+ const b={...a,id:"one-b",company_id:"b",primary_apply_url:"https://jobs.smartrecruiters.com/CompanyB/744000154069439-role"};
+ assert.equal(chooseUniqueJobs([a,b],cutoff,now).jobs.length,2);
+});
+test("generic company career links never merge independent brand vacancies",()=>{
+ const a={...row,id:"one-a",company_id:"a",primary_apply_url:"https://www.maxmarafashiongroup.com/join-us",requisition_id:"123"};
+ const b={...a,id:"one-b",company_id:"b"};
+ assert.equal(chooseUniqueJobs([a,b],cutoff,now).jobs.length,2);
+});
