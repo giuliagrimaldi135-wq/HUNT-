@@ -1,6 +1,7 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { shouldScanSource } from "./source-health-policy.mjs";
+import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from "./candidate-integrity.mjs";
 
 const enc = new TextEncoder();
 const HOUR = 3600000;
@@ -141,18 +142,12 @@ function fallbackPosting(html:string,url:string,hint:string){
 function candidateLinks(html:string,base:string){
   const map=new Map<string,string>();
   for(const m of html.matchAll(/<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)){
-    try{
-      const href=new URL(m[1],base).href;
-      const text=cleanText(m[2]);
-      if(!text||text.length<5||text.length>180)continue;
-      const signal=(href+" "+text).toLowerCase();
-      if(!/(\/job|jobs\/|job-details|offerte-di-lavoro|job-opportunit|vacanc|position|career.*job)/.test(signal))continue;
-      if(/privacy|cookie|login|sign in|spontaneous|candidatura spontanea/.test(signal))continue;
-      map.set(href,text);
-    }catch{}
+    const found=safeVacancyCandidate(m[1],cleanText(m[2]),base);
+    if(found)map.set(found.url,found.title);
   }
   return [...map.entries()].slice(0,80).map(([url,title])=>({url,title}));
 }
+
 function ageDays(date:string){return Math.floor((Date.now()-new Date(date).getTime())/DAY)}
 function freshnessScore(age:number){return Math.max(20,100-age*4)}
 function locationHit(city:string|null,arr:any[]){
@@ -191,7 +186,7 @@ Deno.serve(async(req)=>{
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
-  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0};
+  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0};
 
   const {data:sources}=await db.from("sources")
     .select("id,company_id,base_url,official,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
@@ -213,11 +208,20 @@ Deno.serve(async(req)=>{
         const links=candidateLinks(html,res.url||source.base_url);
         extracted=links.length; parserOk=true; summary.source_ok++;
         for(const link of links){
+          // Preserve prior review decisions and retry counters when another
+          // shared-group careers page discovers the same listing again.
           const {error}=await db.from("job_candidates").upsert({
-            source_id:source.id,company_id:source.company_id,listing_url:link.url,title_hint:link.title,last_seen_at:new Date().toISOString(),
+            source_id:source.id,company_id:source.company_id,listing_url:link.url,title_hint:link.title,
+            last_seen_at:new Date().toISOString(),
             raw:{source_family:source.source_family,company:source.companies?.name||null}
-          },{onConflict:"listing_url"});
+          },{onConflict:"listing_url",ignoreDuplicates:true});
           if(!error)summary.candidates++;
+        }
+        for(let i=0;i<links.length;i+=80){
+          const {error:seenError}=await db.from("job_candidates")
+            .update({last_seen_at:new Date().toISOString()})
+            .in("listing_url",links.slice(i,i+80).map((x:any)=>x.url));
+          if(seenError)summary.errors++;
         }
       }
       if(!requestOk){errorCode="http_error";summary.errors++;}
@@ -244,8 +248,19 @@ Deno.serve(async(req)=>{
     });
   }
 
-  const {data:cands}=await db.from("job_candidates").select("id,source_id,company_id,listing_url,title_hint,status,sources(official),companies(name)")
-    .eq("status","discovered").order("discovered_at",{ascending:true}).limit(36);
+  const [{data:newCandidates,error:newError},{data:reviewCandidates,error:reviewError}]=await Promise.all([
+    db.from("job_candidates")
+      .select("id,source_id,company_id,listing_url,title_hint,status,raw,parsed_at,last_seen_at,sources(official),companies(name)")
+      .eq("status","discovered").order("discovered_at",{ascending:true}).limit(30),
+    db.from("job_candidates")
+      .select("id,source_id,company_id,listing_url,title_hint,status,raw,parsed_at,last_seen_at,sources(official),companies(name)")
+      .eq("status","needs_review").order("parsed_at",{ascending:true}).limit(700)
+  ]);
+  if(newError||reviewError)return new Response('{"ok":false,"error":"candidate_read_failed"}',{status:503,headers:{"content-type":"application/json"}});
+  // Retry only recently seen leads with independent employer evidence,
+  // after a 24h pause and no more than two review attempts.
+  const cands=[...(newCandidates||[]),...(reviewCandidates||[])
+    .filter((c:any)=>canRetryReview(c)).slice(0,6)];
 
   const {data:prefs}=await db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences");
   const {data:profiles}=await db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true);
@@ -254,7 +269,26 @@ Deno.serve(async(req)=>{
   const profileMap=new Map((profiles||[]).map((p:any)=>[p.user_id,p]));
   const personalizationMap=new Map((personalizations||[]).map((p:any)=>[p.user_id,p]));
 
-  for(const cand of cands||[]){
+  for(const cand of cands){
+    const extraReview=cand.status==="needs_review";
+    const attempt=(Number(cand.raw?.review_retry_count)||0)+(extraReview?1:0);
+    const originalRaw={...(cand.raw||{}),...(extraReview?{review_retry_count:attempt}:{})};
+    if(!safeVacancyCandidate(cand.listing_url,cand.title_hint,cand.listing_url)){
+      await db.from("job_candidates").update({
+        status:"needs_manual_review",parsed_at:new Date().toISOString(),
+        raw:{...originalRaw,reason:"invalid_candidate_link"}
+      }).eq("id",cand.id);
+      summary.needs_review++;
+      continue;
+    }
+    if(extraReview){
+      summary.review_retries++;
+      // Even a transient fetch failure consumes a bounded retry attempt.
+      await db.from("job_candidates").update({
+        status:attempt>=2?"needs_manual_review":"needs_review",
+        parsed_at:new Date().toISOString(),raw:originalRaw
+      }).eq("id",cand.id);
+    }
     try{
       const res=await fetch(cand.listing_url,{redirect:"follow",signal:AbortSignal.timeout(10000),headers:{"user-agent":"Mozilla/5.0 HUNT Job Parser/1.0","accept":"text/html,application/xhtml+xml"}});
       if(!res.ok){summary.errors++;continue}
@@ -262,20 +296,20 @@ Deno.serve(async(req)=>{
       const postings=jsonLdJobs(html);
       const jp=postings.find((x:any)=>x.title&&x.datePosted)||fallbackPosting(html,cand.listing_url,cand.title_hint);
       if(!jp||!jp.title||!jp.datePosted){
-        await db.from("job_candidates").update({status:"needs_review",parsed_at:new Date().toISOString(),raw:{reason:"missing_jsonld_or_date"}}).eq("id",cand.id);
+        await db.from("job_candidates").update({status:extraReview&&attempt>=2?"needs_manual_review":"needs_review",parsed_at:new Date().toISOString(),raw:{...originalRaw,reason:"missing_jsonld_or_date"}}).eq("id",cand.id);
         summary.needs_review++;continue;
       }
       summary.parsed++;
       const age=ageDays(jp.datePosted);
       if(age<0||age>20){
-        await db.from("job_candidates").update({status:"skipped_old",parsed_at:new Date().toISOString(),raw:{datePosted:jp.datePosted,age_days:age}}).eq("id",cand.id);
+        await db.from("job_candidates").update({status:"skipped_old",parsed_at:new Date().toISOString(),raw:{...originalRaw,datePosted:jp.datePosted,age_days:age}}).eq("id",cand.id);
         summary.old++;continue;
       }
       const title=cleanText(String(jp.title));
       const city=cityFrom(jp);
       const family=roleFamily(title);
       const reqId=String(jp.identifier?.value||jp.identifier?.name||"").trim()||requisitionFromUrl(cand.listing_url);
-      const resolvedCompanyId=resolveCompanyId(jp,title,cand.company_id,companies||[]);
+      const resolvedCompanyId=resolveSharedBoardEmployer(cand.listing_url,title,companies||[])||resolveCompanyId(jp,title,cand.company_id,companies||[]);
       const official=Boolean(cand.sources?.official);
       const confidence=official?96:78;
       const state=official?"active_verified":"active_likely";
@@ -315,7 +349,7 @@ Deno.serve(async(req)=>{
       }
 
       await db.from("job_observations").insert({job_id:jobId,listing_present:true,apply_works:true,http_status:res.status,title,location:city,raw:{monitor:"hunt-source-discovery-v1",datePosted:jp.datePosted}});
-      await db.from("job_candidates").update({status:"promoted",parsed_at:new Date().toISOString(),raw:{datePosted:jp.datePosted,age_days:age,title,city}}).eq("id",cand.id);
+      await db.from("job_candidates").update({status:"promoted",parsed_at:new Date().toISOString(),raw:{...originalRaw,datePosted:jp.datePosted,age_days:age,title,city}}).eq("id",cand.id);
       summary.promoted++;
 
       // Matching is handled by the dedicated hunt-match-refresh eligibility engine.
