@@ -54,7 +54,7 @@ jobs:
         run: node --test successfactors-microdata.test.mjs
       - name: Test canonical ATS ingestion and safe vacancy lifecycle
         working-directory: v2/supabase/functions/hunt-ats-board-scan
-        run: node --test ats-ingestion-guard.test.mjs
+        run: node --test ats-ingestion-guard.test.mjs ats-source-health.test.mjs
       - name: Test adaptive source backoff and recovery
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test source-health-policy.test.mjs
