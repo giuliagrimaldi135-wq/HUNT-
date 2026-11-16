@@ -1,5 +1,18 @@
 [
   {
+    "key": "57bc574236db07ba7095",
+    "brand": "Alberta Ferretti",
+    "headline": "Alberta Ferretti debutta nell’universo dei prodotti di cortesia con GFL Cosmetics - FashionNetwork Italia",
+    "signal_type": "category_launch",
+    "score": 75,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta lanciando una nuova categoria, capsule o collaborazione. Per te conta perché aumenta il lavoro su assortment, pricing, buying, merchandising e go-to-market.",
+    "detected_at": "2026-11-16T17:41:39.510536+00:00",
+    "published_at": "2026-11-16T17:28:03+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQRHJrbHhGa3gyeWx5MERKaFdPMUw2NUV3cXN2QUVXdXZJbWx6TmlkN2pnNUZOeHBldkdSRHpYOGhHTk83d0V0MzVGSE1vQkR6Mks0Sm9uUi00TWV4NTVEZk52MElNbzdreEI4UDZJY0d6Tmk2OFl0VGd0LUJOZ3hheWM5cHZoSWhNdlIzV0JtZTBTMHdlSGlwejBVV0thbHpVSjh4UVNuTjhKeUJwX3Q5aTVpcnpyN21Fd0xRaGhNVHk4QnVOMnBCYg?oc=5"
+  },
+  {
     "key": "0e4dba326d2633e1311e",
     "brand": "Patrizia Pepe",
     "headline": "Patrizia Pepe racconta il nero assoluto con SKIN ’93 - Fashion Times",
@@ -2065,6 +2078,19 @@
     "published_at": "2026-10-06T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPTDNLZnBmM1lyQmlpanc5NldRUS12QXpGcnAzdTZxOWM0UHJ5S0NQSE5Rc2g0aTNNWkx1RmVObWdDQUZnTzdYZnpabHBjV2NlZzZveTQ2UzFUOV9EdThXbmE1R1p6WWtVbVRtbGdNQXpSTlVGd2xCMk1JR3hhbGZ0YmpMRThaWVhvNEU4cl9JVVF6Z0t2emdBOU5qcElFb2I4NU5pX21vbVNTc3ZNMDhnZExoUHpnUkxDZHozR2g2WThWa3ZlZHRXUFJyRXN6RXhqdG5aS2dn?oc=5"
+  },
+  {
+    "key": "59418378e68e9f020813",
+    "brand": "Celine",
+    "headline": "CELINE - WOMEN SS 2027 - PARIS - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-16T17:41:39.510536+00:00",
+    "published_at": "2026-10-06T07:00:00+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNNG0xcmR0Zm1YZTIwUG5zMDhCbGFNRGNraGJEclRRRG9PUmVaVW94Yk1CR3FhYWU1SUJSSmZub0tXNENTRS1EaDdBeVN0Q2tON25rMFNhQnNRUV9FTFN1N05zVHl4TEI1Sjhvd3hDT3JwbEtyd2ROeGtySHBRbTN5T0Nhb2tJQk0?oc=5"
   },
   {
     "key": "237421d27ca940a13f9a",
