@@ -42,6 +42,9 @@ jobs:
       - name: Test rotating all career categories without missing jobs
         working-directory: v2/supabase/functions/hunt-successfactors-public
         run: node --test catalog-rotation.test.mjs
+      - name: Test Prada Group Maison identity preservation
+        working-directory: v2/supabase/functions/hunt-successfactors-public
+        run: node --test prada-maison.test.mjs
       - name: Test SuccessFactors source health scoring
         working-directory: v2/supabase/functions/hunt-successfactors-public
         run: node --test scan-health.test.mjs
