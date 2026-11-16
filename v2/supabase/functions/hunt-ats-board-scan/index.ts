@@ -275,7 +275,6 @@ Deno.serve(async(req)=>{
         }).eq("id",link.job_id).eq("state","active_verified");
         if(!jobError)stale++;
       }
-      }
     }
     await db.from("sources").update({
       last_scan_at:at,last_success_at:at,health_status:"healthy",consecutive_failures:0,
