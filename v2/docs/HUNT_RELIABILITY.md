@@ -50,3 +50,18 @@ This is operational resilience, not a claim of unrestricted scraping or self-rep
 - Do not turn failure detection into a false claim of success; retain GitHub step summaries and one consolidated incident.
 - Compare scan outputs and verify freshness. A successful scheduled run does not alone establish comprehensive live coverage across every brand.
 - Review operational incidents before declaring HUNT fully healthy.
+
+## 16 November 2026 — Verified live vacancy-quality changes
+
+Production status is **verified in Supabase**; Vercel is still not independently verified.
+
+- GitHub pull requests [#10](https://github.com/giuliagrimaldi135-wq/HUNT-/pull/10) and [#11](https://github.com/giuliagrimaldi135-wq/HUNT-/pull/11) merged into `main`. GitHub Python and Node regression checks passed.
+- Supabase `hunt-match-refresh` Edge Function deployed as **version 15** with two layers of deduplication. Latest observed cron HTTP response was 200 with 536 unique vacancies processed, 98 duplicate source records excluded from recommendations and 13 personal suggestions matched.
+- Personal recommendation filtering: real `published_at` (or `first_seen_at` only when no publication date is known) must be within the latest 20-day window; `last_verified_at` must be within seven days; state must be `active_verified` or `active_likely`.
+- Strong verified SmartRecruiters board + numeric job ID can deduplicate across sibling brands; generic careers URLs never merge jobs. This was needed because 199 official application URLs occurred under both Max Mara and Sportmax for the same MaxMaraFashionGroup ATS board.
+- Seven outdated/inactive computed `user_job_matches` were removed with a narrow SQL DELETE. A subsequent database check reported 13 matches and **zero** stale/older-than-20-days matches. Historical `jobs`, private CVs, and saved applications were not deleted.
+- The recurring database cleanup `hunt-recommendations-cleanup-hourly`, pg_cron job **24**, runs at minute **34** of every hour. It removes only `user_job_matches` whose linked job is non-active, lacks both dates, has `coalesce(published_at,first_seen_at)` older than 20 days, or has an absent/older-than-seven-days verification. Independent quality snapshots remain on job **23** at minute **28**. Match-refresh remains job **16**, every five minutes.
+- Two repeated and degraded SmartRecruiters sources were quarantined (`active=false`): `3b3c9f64-97ea-4150-9f20-c9e3800f139a` (Max Mara) and `c9d49872-4b2f-4830-8575-30891847860c` (Sportmax). The canonical active healthy source `cf4434fe-a71c-4317-b758-9f6d15e6b1ab` (`careers.smartrecruiters.com/MaxMaraFashionGroup`) still scans the same ATS board. Existing `hunt-ats-discovery` identifies known boards by per-company URL even if marked inactive, preventing these two exact registrations being reactivated from their career origins without further changes.
+- Approved luxury/editorial UI, CV dossier, outreach, cover letters and user-owned content were unchanged.
+
+**Remaining quality work:** 41 thin active-vacancy descriptions in the last audit, source degradation such as Furla careers extracting no jobs, brand attribution for group-owned ATS boards, stronger independent source coverage monitoring and authenticated Vercel/browser checks. A passing cron execution is not by itself proof that every underlying site returned complete data. Never describe HUNT as globally comprehensive or fully self-healing.
