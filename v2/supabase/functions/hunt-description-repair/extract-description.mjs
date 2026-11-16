@@ -38,7 +38,7 @@ function trimJobPage(text){
   const ref=value.match(/\bReference code:\s*[a-z]{1,4}\d+\.?/i);
   if(ref&&ref.index!==undefined&&ref.index<500)value=value.slice(ref.index+ref[0].length).trim();
   const footer=value.search(/\bLearn more\s*\.\s*Richemont is the owner of prestigious Maisons/i);
-  if(footer>1000)value=value.slice(0,footer).trim();
+  if(footer>250&&credible(value.slice(0,footer)))value=value.slice(0,footer).trim();
   return value;
 }
 export function extractOfficialDescription(html, title, requisitionId="") {
