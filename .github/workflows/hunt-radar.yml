@@ -14,15 +14,11 @@ on:
 permissions:
   contents: write
   issues: write
-  pages: write
-  id-token: write
 concurrency:
   group: hunt-radar
   cancel-in-progress: true
 jobs:
   scan:
-    outputs:
-      changed: ${{ steps.persist.outputs.changed }}
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
@@ -54,48 +50,29 @@ jobs:
           git config user.name "HUNT Radar"
           git config user.email "actions@users.noreply.github.com"
           CHANGED=false
-          for ATTEMPT in 1 2 3; do
+          PERSISTED=false
+          for ATTEMPT in 1 2 3 4 5; do
             git fetch origin main
             git reset --hard origin/main
             cp /tmp/hunt-data/*.json data/
             git add data/
             if git diff --cached --quiet; then
-              echo "No data changes"
-              CHANGED=false
+              echo "No new data to publish"
+              PERSISTED=true
               break
             fi
             git commit -m "radar: update opportunities"
             if git push origin HEAD:main; then
               CHANGED=true
+              PERSISTED=true
               break
             fi
-            echo "Concurrent update detected; retrying"
-            sleep 2
+            echo "::warning::Concurrent repository write; retry $ATTEMPT of 5"
+            sleep $((ATTEMPT * 2))
           done
-          if [ "$CHANGED" = "true" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+          if [ "$PERSISTED" != "true" ]; then
+            echo "::error::HUNT Radar could not persist its refreshed data after 5 attempts"
+            exit 1
           fi
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
 
-  deploy:
-    needs: scan
-    if: needs.scan.outputs.changed == 'true'
-    concurrency:
-      group: pages
-      cancel-in-progress: true
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: "."
-      - name: Deploy refreshed HUNT data
-        id: deployment
-        uses: actions/deploy-pages@v4
