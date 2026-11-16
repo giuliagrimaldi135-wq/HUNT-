@@ -1,7 +1,9 @@
 name: HUNT Preview Syntax
 
 on:
-  push:
+  # Validate a proposed change before it is merged. The guarded Pages workflow
+  # already checks every push to main, so running the same suite twice is noise.
+  pull_request:
     branches: [main]
     paths:
       - 'hunt2-preview/**'
