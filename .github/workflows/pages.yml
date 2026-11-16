@@ -16,6 +16,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  issues: write
   pages: write
   id-token: write
 concurrency:
@@ -31,8 +32,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build the public outreach evidence feed without personalized drafts
+        id: feed
+        continue-on-error: true
         run: node hunt2-preview/build-outreach-public.mjs
       - name: Block deployment if HUNT dossier, CV or letter regressions fail
+        id: quality
+        if: steps.feed.outcome == 'success'
+        continue-on-error: true
         run: |
           node --check hunt2-preview/app.js
           node --check hunt2-preview/cv-profile.js
@@ -48,12 +54,65 @@ jobs:
           node --check hunt2-preview/requirement-priority.js
           node --check hunt2-preview/dossier-intelligence.js
           node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/job-workspace.test.mjs hunt2-preview/tests/cv-workspace.test.mjs hunt2-preview/tests/outreach-intelligence.test.mjs hunt2-preview/tests/outreach-ui-flow.test.mjs hunt2-preview/tests/requirement-priority.test.mjs
+      # Invalid code or broken public-data generation must never replace the last good release.
+      # Record one incident rather than sending a new failure email for every radar update.
+      - name: Quarantine invalid release and register one quality incident
+        if: steps.feed.outcome != 'success' || steps.quality.outcome != 'success'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const title = 'HUNT · pubblicazione bloccata dai controlli';
+            const runUrl = context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId;
+            const message = [
+              'HUNT ha impedito che una versione non valida sostituisse quella funzionante.',
+              '',
+              'Un controllo di generazione dei dati o dei test del codice non è riuscito.',
+              'Il radar e il sito precedentemente pubblicato restano separati da questo aggiornamento.',
+              '',
+              'Prima esecuzione bloccata: ' + runUrl,
+              '',
+              'Questo incidente resta aperto senza nuovi commenti a ogni scansione.',
+              'Si chiuderà automaticamente dopo una pubblicazione riuscita.'
+            ].join('\n');
+            core.warning('HUNT: quality gate failed; release skipped. Check the open incident.');
+            await core.summary.addHeading('Pubblicazione sospesa per sicurezza')
+              .addRaw('L’ultima versione valida rimane online. Controllare ' + runUrl)
+              .write();
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 100
+            });
+            if (!issues.some(item => !item.pull_request && item.title === title)) {
+              await github.rest.issues.create({owner, repo, title, body: message});
+            }
       - uses: actions/configure-pages@v5
+        if: steps.feed.outcome == 'success' && steps.quality.outcome == 'success'
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
+        if: steps.feed.outcome == 'success' && steps.quality.outcome == 'success'
         with:
           path: "."
       - name: Deploy to GitHub Pages
+        if: steps.feed.outcome == 'success' && steps.quality.outcome == 'success'
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Resolve the quality incident after a successful deployment
+        if: steps.deployment.outcome == 'success'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const title = 'HUNT · pubblicazione bloccata dai controlli';
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 100
+            });
+            const incident = issues.find(item => !item.pull_request && item.title === title);
+            if (incident) {
+              await github.rest.issues.update({
+                owner, repo, issue_number: incident.number, state: 'closed'
+              });
+              core.info('Previous HUNT quality incident resolved.');
+            }
