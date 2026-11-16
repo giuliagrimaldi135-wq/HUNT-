@@ -1,6 +1,7 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { chooseUniqueJobs } from "./recommendation-guard.mjs";
+import { chooseRelevantCvProfile } from "./cv-evidence.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -98,12 +99,15 @@ function specialistSignals(desc:string,title:string){
   if(/after effects|photoshop|illustrator|indesign|motion design/.test(t))signals.push("creative_technical");
   return signals;
 }
-function experienceCapacity(profileSeniority:string,parsed:any){
-  const y=Number(parsed?.relevant_years_experience ?? parsed?.years_experience);
-  if(Number.isFinite(y)&&y>=0)return y;
-  const map:Record<string,number>={internship:.5,trainee:.5,entry_level:1,assistant:1.5,junior:2,associate:3,coordinator_specialist:3,mid_level:5,manager:6,senior_manager:9,head_director:12};
-  return map[profileSeniority]??1;
+function experienceCapacity(parsed:any):number|null{
+  // Profile seniority is NOT a factual number of years. Trust explicit
+  // structured evidence from a confirmed CV only.
+  const raw=parsed?.relevant_years_experience??parsed?.years_experience;
+  if(raw===null||raw===undefined||raw==="")return null;
+  const years=Number(raw);
+  return Number.isFinite(years)&&years>=0&&years<=45?years:null;
 }
+
 function adjacency(primary:string[],family:string|null){
   if(!family)return false;
   const map:Record<string,string[]>={
@@ -259,30 +263,20 @@ Deno.serve(async(req)=>{
     if(!cvMap.has(cv.user_id))cvMap.set(cv.user_id,[]);
     cvMap.get(cv.user_id)!.push(cv);
   }
-  const chooseForFamily=(userId:string,family:string,desc:string)=>{
-    const versions=cvMap.get(userId)||[];
-    // An uploaded but unread PDF must not displace a CV containing documented experience.
-    const ready=versions.filter((v:any)=>{
-      const p=v.parsed_profile||{};
-      return Boolean(p.profile_confirmed_by_user||p.profile_verified_from_user_history);
-    });
-    if(!ready.length)return {};
-    const common=new Set((family+" "+desc.slice(0,1600)).toLowerCase().match(/[a-z]{5,}/g)||[]);
-    const rated=ready.map((v:any)=>{
-      const p=v.parsed_profile||{},target=Array.isArray(v.target_role_families)?v.target_role_families:[];
-      const evidence=[...(p.experience||[]).flatMap((x:any)=>x.evidence||[]),...(p.projects||[]).flatMap((x:any)=>x.evidence||[]),...(p.tools||[])].join(" ").toLowerCase();
-      const words=new Set(evidence.match(/[a-z]{5,}/g)||[]);
-      let overlap=0;for(const t of common){if(words.has(t))overlap++}
-      const related=family==="Merchandising"?/merchandis|assort|capsule/.test(evidence):family==="Buying"?/buying|assort|order|budget/.test(evidence):family==="Planning & Allocation"?/planning|forecast|kpi|stock|allocat/.test(evidence):family==="E-commerce & Digital"?/ecommerce|e-commerce|digital/.test(evidence):/showroom|order|retail|client/.test(evidence);
-      const score=(related?32:0)+Math.min(25,overlap*3)+(v.is_default?8:0)+((p.profile_confirmed_by_user||p.profile_verified_from_user_history)?40:0)+((p.experience?.length||p.projects?.length)?6:0);
-      return {score,p};
-    }).sort((a:any,b:any)=>b.score-a.score);
-    return rated[0]?.p||{};
-  };
+  const chooseForFamily=(userId:string,family:string,desc:string)=>
+    chooseRelevantCvProfile(cvMap.get(userId)||[],family,desc);
 
-  let considered=0,matched=0,rejected=0;
+  let considered=0,matched=0,rejected=0,missingDetails=0;
   for(const job of uniqueJobs){
     const desc=String(job.description||"");
+    if(desc.trim().length<250){
+      // Do not claim strong CV fit when employer duties or mandatory
+      // qualifications are missing; keep vacancy accessible for repair.
+      const {error:cleanupError}=await db.from("user_job_matches").delete().eq("job_id",job.id);
+      if(cleanupError)return new Response('{"ok":false,"error":"quality_cleanup_failed"}',{status:503});
+      missingDetails++;
+      continue;
+    }
     const family=roleFamily(job.canonical_title)||job.role_family;
     const minYears=extractMinYears(desc);
     const jobSeniority=seniority(job.canonical_title,desc);
@@ -315,13 +309,15 @@ Deno.serve(async(req)=>{
       const adjacent=adjacency(primary,family);
       const preferredHit=locationHit(job.city,pref.preferred_locations||[]);
       const relocationHit=locationHit(job.city,pref.relocation_locations||[]);
-      const capacity=experienceCapacity(profile?.seniority||"entry_level",cv);
+      const capacity=experienceCapacity(cv);
       const hardReasons:string[]=[];
 
       if(job.remote_mode!=="remote"&&(pref.preferred_locations||[]).length+(pref.relocation_locations||[]).length>0&&!preferredHit&&!relocationHit)hardReasons.push("location");
       const cvParsed=Boolean(cv?.profile_confirmed_by_user||cv?.profile_verified_from_user_history);
       const earlyCareer=["internship","trainee","entry_level","assistant","junior"].includes(profile?.seniority||"entry_level");
-      if(minYears!==null&&minYears>capacity+0.25)hardReasons.push("experience_years");
+      if(minYears!==null&&capacity!==null&&minYears>capacity+0.25)hardReasons.push("experience_years");
+      // With no verified years of experience, 3+ year roles are not entry-level.
+      if(minYears!==null&&capacity===null&&minYears>=3)hardReasons.push("experience_years_unverified");
       if(minYears!==null&&minYears>0&&earlyCareer&&!cvParsed)hardReasons.push("experience_unverified_until_cv");
       if(["manager","senior_manager","head_director"].includes(jobSeniority)&&earlyCareer)hardReasons.push("seniority");
       if(radar==="focused"&&!direct)hardReasons.push("outside_focused_target");
@@ -367,7 +363,8 @@ Deno.serve(async(req)=>{
         reasons.push(...cvReasons);
       }
       if(preferredHit||relocationHit)score+=5;
-      if(minYears!==null&&minYears>capacity)gaps.push("Richiede almeno "+minYears+" anni di esperienza; il profilo attuale è vicino alla soglia e va verificato sul CV")
+      if(minYears!==null&&capacity!==null&&minYears>capacity)gaps.push("La vacancy richiede almeno "+minYears+" anni di esperienza, da verificare rispetto al CV");
+      if(minYears!==null&&capacity===null&&minYears>0)gaps.push("Il CV non documenta un numero di anni verificabile rispetto al requisito richiesto");
       if(specialist.length&&Object.keys(cv||{}).length===0)gaps.push("La vacancy richiede competenze specialistiche che HUNT verificherà sul CV prima di consigliarla con alta confidenza")
       score=Math.max(0,Math.min(100,score));
 
@@ -395,5 +392,5 @@ Deno.serve(async(req)=>{
       return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',{status:503,headers:{"content-type":"application/json"}});
     }
   }
-  return new Response(JSON.stringify({ok:true,considered,matched,rejected,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicateIds.length}),{headers:{"content-type":"application/json"}});
+  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicateIds.length}),{headers:{"content-type":"application/json"}});
 });

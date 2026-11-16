@@ -1,5 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { shouldScanSource } from "./source-health-policy.mjs";
 
 const enc = new TextEncoder();
 const HOUR = 3600000;
@@ -190,17 +191,20 @@ Deno.serve(async(req)=>{
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
-  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0};
+  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0};
 
   const {data:sources}=await db.from("sources")
-    .select("id,company_id,base_url,official,source_family,last_scan_at,companies(name)")
+    .select("id,company_id,base_url,official,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
     .eq("active",true).eq("official",true).neq("source_type","public_ats_board").not("base_url","is",null)
-    .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(18);
+    .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(120);
 
   for(const source of sources||[]){
+    if(summary.sources>=18)break;
+    if(!shouldScanSource(source)){summary.backoff_skipped++;continue}
     summary.sources++;
     const started=new Date().toISOString();
-    let extracted=0,requestOk=false,parserOk=false;
+    let extracted=0,requestOk=false,parserOk=false,errorCode:string|null=null;
+    let errorDetail="";
     try{
       const res=await fetch(source.base_url,{redirect:"follow",signal:AbortSignal.timeout(12000),headers:{"user-agent":"Mozilla/5.0 HUNT Career Discovery/1.0","accept":"text/html,application/xhtml+xml"}});
       requestOk=res.ok;
@@ -216,9 +220,28 @@ Deno.serve(async(req)=>{
           if(!error)summary.candidates++;
         }
       }
-      await db.from("sources").update({last_scan_at:new Date().toISOString(),last_success_at:requestOk?new Date().toISOString():source.last_scan_at,health_status:requestOk?"healthy":"degraded"}).eq("id",source.id);
-    }catch(e){summary.errors++;await db.from("sources").update({last_scan_at:new Date().toISOString(),health_status:"degraded"}).eq("id",source.id)}
-    await db.from("source_scan_runs").insert({source_id:source.id,started_at:started,finished_at:new Date().toISOString(),request_ok:requestOk,parser_ok:parserOk,extracted_jobs:extracted,health_status:requestOk?"healthy":"degraded",metadata:{runner:"hunt-source-discovery-v1"}});
+      if(!requestOk){errorCode="http_error";summary.errors++;}
+    }catch(e){
+      errorCode="fetch_exception";
+      errorDetail=String(e instanceof Error?e.message:e).slice(0,140);
+      summary.errors++;
+    }
+    const healthy=requestOk&&parserOk;
+    const updated:any={
+      last_scan_at:new Date().toISOString(),
+      health_status:healthy?(extracted>0?"healthy":"reachable_no_listings"):"degraded",
+      consecutive_failures:healthy?0:Number(source.consecutive_failures||0)+1
+    };
+    // Never overwrite last_success_at with the time of a failed request.
+    if(healthy)updated.last_success_at=new Date().toISOString();
+    await db.from("sources").update(updated).eq("id",source.id);
+    await db.from("source_scan_runs").insert({
+      source_id:source.id,started_at:started,finished_at:new Date().toISOString(),
+      request_ok:requestOk,parser_ok:parserOk,extracted_jobs:extracted,
+      health_status:healthy?(extracted>0?"healthy":"reachable_no_listings"):"degraded",
+      error_code:errorCode,
+      metadata:{runner:"hunt-source-discovery-v2",...(errorDetail?{error_detail:errorDetail}:{})}
+    });
   }
 
   const {data:cands}=await db.from("job_candidates").select("id,source_id,company_id,listing_url,title_hint,status,sources(official),companies(name)")
