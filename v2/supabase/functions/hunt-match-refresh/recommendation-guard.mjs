@@ -30,6 +30,16 @@ export function preferCanonicalJob(a,b) {
   return String(a.id)<String(b.id)?a:b;
 }
 
+// Only a provider-structured, per-vacancy identifier can cross a brand boundary.
+// A group's shared career homepage is NOT a vacancy and must never collapse roles.
+export function strongOfficialBoardIdentity(job) {
+  const url=String(job.primary_apply_url||"").trim();
+  // SmartRecruiters URLs encode the hiring group's board and unique job ID.
+  // Sportmax and Max Mara legitimately share the same MaxMaraFashionGroup board.
+  const m=url.match(/^https:\/\/jobs\.smartrecruiters\.com\/([^/?#]+)\/(\d{8,})(?:[-/?#]|$)/i);
+  return m?"smartrecruiters:"+m[1].toLowerCase()+":"+m[2]:null;
+}
+
 export function chooseUniqueJobs(rows,cutoffMs,nowMs=Date.now()) {
   const found=new Map(),duplicateIds=[];
   for(const job of rows){
@@ -40,5 +50,17 @@ export function chooseUniqueJobs(rows,cutoffMs,nowMs=Date.now()) {
     duplicateIds.push(winner.id===prior.id?job.id:prior.id);
     found.set(key,winner);
   }
-  return {jobs:[...found.values()],duplicateIds:[...new Set(duplicateIds)]};
+  // A strict official ATS job ID is stronger than the company label assigned
+  // by discovery. Preserve one job even when sibling fashion brands share a board.
+  const official=new Map(),unidentified=[];
+  for(const job of found.values()){
+    const key=strongOfficialBoardIdentity(job);
+    if(!key){unidentified.push(job);continue}
+    const prior=official.get(key);
+    if(!prior){official.set(key,job);continue}
+    const winner=preferCanonicalJob(prior,job);
+    duplicateIds.push(winner.id===prior.id?job.id:prior.id);
+    official.set(key,winner);
+  }
+  return {jobs:[...unidentified,...official.values()],duplicateIds:[...new Set(duplicateIds)]};
 }
