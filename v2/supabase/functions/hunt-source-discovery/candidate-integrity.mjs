@@ -19,7 +19,10 @@ export function safeVacancyCandidate(href,label,base){
   if(url.hash)url.hash="";
   const path=decodeURIComponent(url.pathname).toLowerCase();
   if(/\{\{|\}\}|<|>|assessmenturl|email-verify|verification|privacy|cookie/i.test(path))return null;
-  if(!/(?:\/job\/|\/jobs\/|\/job-details\/|\/vacancy\/|\/position\/|\/offerte-di-lavoro\/)/i.test(path))return null;
+  const knownATS=/^jobs\.smartrecruiters\.com$/i.test(url.hostname)&&/^\/[^/]+\/\d{7,}/.test(path)
+    ||/^jobs(?:\.eu)?\.lever\.co$/i.test(url.hostname)&&/^\/[^/]+\/[0-9a-f-]{20,}/.test(path)
+    ||/^jobs\.ashbyhq\.com$/i.test(url.hostname)&&/^\/[^/]+\/[0-9a-f-]{20,}/.test(path);
+  if(!knownATS&&!/(?:\/job\/|\/jobs\/|\/job-details\/|\/job-offers\/|\/offres-d-emploi\/|\/vacancy\/|\/position\/|\/offerte-di-lavoro\/)/i.test(path))return null;
   const ats=/(^|\.)((myworkdayjobs|smartrecruiters|lever|greenhouse|ashbyhq|workable|successfactors)\.com|jobs\.pradagroup\.com)$/i.test(url.hostname);
   const jobsHost=/^(jobs|careers|careers-international)\./i.test(url.hostname);
   if(url.hostname!==baseURL.hostname&&!ats&&!jobsHost)return null;
@@ -29,6 +32,7 @@ export function safeVacancyCandidate(href,label,base){
 }
 const sharedBrands={
  "careers.otb.net":{group:"otb",brands:[["maison margiela","maison-margiela"],["jil sander","jil-sander"],["diesel","diesel"],["marni","marni"]]},
+ "www.kering.com":{group:"kering",brands:[["bottega veneta","bottega-veneta"],["saint laurent","saint-laurent"],["balenciaga","balenciaga"],["brioni","brioni"],["gucci","gucci"]]},
  "jobs.monclergroup.com":{group:"moncler",brands:[["stone island","stone-island"],["moncler","moncler"]]}
 };
 function matchesBrand(title,name){
