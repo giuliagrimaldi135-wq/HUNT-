@@ -1,5 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { chooseUniqueJobs } from "./recommendation-guard.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -231,16 +232,25 @@ Deno.serve(async(req)=>{
   cutoffDate.setUTCDate(cutoffDate.getUTCDate()-20);
   cutoffDate.setUTCHours(0,0,0,0);
   const cutoff=cutoffDate.toISOString();
-  const [{data:jobs},{data:prefs},{data:profiles},{data:personal},{data:cvs}]=await Promise.all([
-    db.from("jobs").select("id,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,last_verified_at,vacancy_confidence,state,metadata")
+  const [{data:jobs,error:jobsError},{data:prefs,error:prefsError},{data:profiles,error:profilesError},{data:personal,error:personalError},{data:cvs,error:cvsError}]=await Promise.all([
+    db.from("jobs").select("id,company_id,requisition_id,primary_apply_url,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,last_verified_at,vacancy_confidence,state,metadata")
       .in("state",["active_verified","active_likely"])
-      .or(`published_at.gte.${cutoff},first_seen_at.gte.${cutoff},last_verified_at.gte.${cutoff}`)
+      .or(`published_at.gte.${cutoff},and(published_at.is.null,first_seen_at.gte.${cutoff})`)
+      .gte("last_verified_at",new Date(Date.now()-7*DAY).toISOString())
       .limit(2000),
     db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences"),
     db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true),
     db.from("user_personalization").select("user_id,interest_areas,avoid_role_traits"),
     db.from("user_cvs").select("user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true)
   ]);
+  // Never transform a transient database error into a false "zero recommendations".
+  if(jobsError||prefsError||profilesError||personalError||cvsError){
+    console.error("HUNT match-refresh: one or more source reads failed");
+    return new Response('{"ok":false,"error":"data_unavailable"}',{status:503,headers:{"content-type":"application/json"}});
+  }
+  // The database keeps every observation; personal suggestions only use actionable,
+  // recently verified vacancies, with one representative per official requisition.
+  const {jobs:uniqueJobs,duplicateIds}=chooseUniqueJobs(jobs||[],Date.parse(cutoff));
   const profileMap=new Map((profiles||[]).map((x:any)=>[x.user_id,x]));
   const personalMap=new Map((personal||[]).map((x:any)=>[x.user_id,x]));
   // Keep every CV version. Different vacancies can require different evidence.
@@ -271,7 +281,7 @@ Deno.serve(async(req)=>{
   };
 
   let considered=0,matched=0,rejected=0;
-  for(const job of jobs||[]){
+  for(const job of uniqueJobs){
     const desc=String(job.description||"");
     const family=roleFamily(job.canonical_title)||job.role_family;
     const minYears=extractMinYears(desc);
@@ -376,5 +386,14 @@ Deno.serve(async(req)=>{
       matched++;
     }
   }
-  return new Response(JSON.stringify({ok:true,considered,matched,rejected}),{headers:{"content-type":"application/json"}});
+  // Remove only computed recommendations for duplicates, never the underlying
+  // vacancies, saved applications, CVs, or personal feedback.
+  for(let i=0;i<duplicateIds.length;i+=100){
+    const {error}=await db.from("user_job_matches").delete().in("job_id",duplicateIds.slice(i,i+100));
+    if(error){
+      console.error("HUNT match-refresh: duplicate recommendation cleanup failed");
+      return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',{status:503,headers:{"content-type":"application/json"}});
+    }
+  }
+  return new Response(JSON.stringify({ok:true,considered,matched,rejected,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicateIds.length}),{headers:{"content-type":"application/json"}});
 });
