@@ -32,6 +32,15 @@ function collect(value,out=[]) {
   for(const v of Object.values(value)){if(v&&typeof v==="object")collect(v,out)}
   return out;
 }
+function trimJobPage(text){
+  let value=String(text||"").trim();
+  // Employer page chrome is not evidence of duties or requirements.
+  const ref=value.match(/\bReference code:\s*[a-z]{1,4}\d+\.?/i);
+  if(ref&&ref.index!==undefined&&ref.index<500)value=value.slice(ref.index+ref[0].length).trim();
+  const footer=value.search(/\bLearn more\s*\.\s*Richemont is the owner of prestigious Maisons/i);
+  if(footer>1000)value=value.slice(0,footer).trim();
+  return value;
+}
 export function extractOfficialDescription(html, title, requisitionId="") {
   if(typeof html!=="string"||html.length>3000000)return null;
   const reference=String(requisitionId||"").trim();
@@ -57,7 +66,7 @@ export function extractOfficialDescription(html, title, requisitionId="") {
     const attrs=m[2]||"",body=m[3]||"";
     if(!/(?:job[-_ ]?(?:description|content|detail|body)|vacancy[-_ ]?(?:detail|description)|posting[-_ ]?content)/i.test(attrs)
        && !/(?:responsibilit|requirements|qualifications|about the role|your mission|job description)/i.test(body.replace(/<[^>]*>/g," ").slice(0,6000)))continue;
-    const text=plain(body);
+    const text=trimJobPage(plain(body));
     if(credible(text)&&text.length<11500)candidates.push(text);
   }
   candidates.sort((a,b)=>b.length-a.length);
