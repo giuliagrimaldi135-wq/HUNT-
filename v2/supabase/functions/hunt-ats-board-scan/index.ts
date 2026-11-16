@@ -1,5 +1,6 @@
 
 import {createClient} from "npm:@supabase/supabase-js@2";
+import {isRealCareerPosting,trustedSmartRecruitersIdentity,isEligibleForStaleTransition} from "./ats-ingestion-guard.mjs";
 const enc=new TextEncoder();
 const trim=(v:unknown,n=12000)=>String(v??"").replace(/\s+/g," ").trim().slice(0,n);
 async function hash(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}
@@ -35,7 +36,7 @@ function family(title:string){
 // CV, seniority, geography and unwanted-role exclusions belong to hunt-match-refresh.
 function eligible(title:string){
  const t=title.trim();
- return t.length>=4&&t.length<=200&&!/^(all jobs|view all positions|job search|careers homepage)$/i.test(t);
+ return isRealCareerPosting(t);
 }
 function sen(title:string){
  if(/intern|stage|stagiaire/i.test(title))return "internship";
@@ -175,19 +176,58 @@ Deno.serve(async(req)=>{
       if(!item.url||!item.description||item.description.length<75){rejected++;ignored++;continue}
       if(recentLinks.has(item.url))continue;recentLinks.add(item.url);scanned++;
       // This is a live public ATS listing. Do not invent a publication date: first_seen_at is distinct.
-      const {data:existingLink}=await db.from("job_sources")
+      const {data:existingLink,error:linkLookupError}=await db.from("job_sources")
         .select("job_id").eq("source_id",source.id).eq("listing_url",item.url).maybeSingle();
-      const existingId=existingLink?.job_id||null;
+      if(linkLookupError)throw Error(linkLookupError.message);
+      let existingId=existingLink?.job_id||null;
       const location=item.location||null;
       const stamp=new Date().toISOString();
       const role=family(item.title);
+      // A board+requisition ID proves a specific official posting. Cross-source
+      // lookups avoid creating a second job when a brand group shares a board.
+      if(!existingId){
+        const identity=trustedSmartRecruitersIdentity(source,item);
+        if(identity){
+          const {data:found,error:identityError}=await db.from("jobs")
+            .select("id").eq("requisition_id",identity.id)
+            .ilike("primary_apply_url",identity.postingsUrlPrefix+"%")
+            .order("first_seen_at",{ascending:true}).limit(1);
+          if(identityError)throw Error(identityError.message);
+          existingId=found?.[0]?.id||null;
+        }
+      }
+      if(!existingId){
+        const {data:sharedLink,error:sharedError}=await db.from("job_sources")
+          .select("job_id").eq("listing_url",item.url).order("last_seen_at",{ascending:false}).limit(1);
+        if(sharedError)throw Error(sharedError.message);
+        existingId=sharedLink?.[0]?.job_id||null;
+      }
       if(existingId){
-        const {error:jobError}=await db.from("jobs").update({
+        const {data:prior,error:readError}=await db.from("jobs")
+          .select("description,published_at").eq("id",existingId).single();
+        if(readError)throw Error(readError.message);
+        const patch:any={
           last_seen_at:stamp,last_verified_at:stamp,updated_at:stamp,
           state:"active_verified",confidence_label:"VERIFIED ACTIVE",vacancy_confidence:96
-        }).eq("id",existingId);
+        };
+        if(item.description.length>String(prior?.description||"").length)patch.description=item.description;
+        if(!prior?.published_at&&item.posted&&Number.isFinite(Date.parse(item.posted))&&Date.parse(item.posted)<=Date.now())
+          patch.published_at=new Date(item.posted).toISOString();
+        const {error:jobError}=await db.from("jobs").update(patch).eq("id",existingId);
         if(jobError)throw Error(jobError.message);
-        await db.from("job_sources").update({last_seen_at:stamp,last_verified_at:stamp,active:true}).eq("source_id",source.id).eq("listing_url",item.url);
+        if(existingLink){
+          const {error:linkUpdateError}=await db.from("job_sources")
+            .update({last_seen_at:stamp,last_verified_at:stamp,active:true})
+            .eq("source_id",source.id).eq("listing_url",item.url);
+          if(linkUpdateError)throw Error(linkUpdateError.message);
+        }else{
+          const {error:newLinkError}=await db.from("job_sources").insert({
+            job_id:existingId,source_id:source.id,external_job_id:item.id||null,
+            listing_url:item.url,apply_url:item.apply,raw_title:item.title,
+            raw_location:location,last_seen_at:stamp,last_verified_at:stamp,active:true
+          });
+          if(newLinkError)throw Error(newLinkError.message);
+        }
         updated++;continue;
       }
       const {data:job,error:insertError}=await db.from("jobs").insert({
@@ -218,17 +258,23 @@ Deno.serve(async(req)=>{
     if(entries.length>0&&isCompleteBoard){
       const {data:linked}=await db.from("job_sources")
         .select("job_id,listing_url,last_seen_at").eq("source_id",source.id).eq("active",true).limit(700);
-      const staleCutoff=Date.now()-15*60*1000;
       for(const link of linked||[]){
         if(liveURLs.has(link.listing_url))continue;
-        if(link.last_seen_at&&new Date(link.last_seen_at).getTime()>staleCutoff)continue;
+        if(!isEligibleForStaleTransition(link.last_seen_at))continue;
+        // Deactivate only the missing source link. A job remains current if
+        // another independent official source has still verified it.
+        const {error:inactiveError}=await db.from("job_sources")
+          .update({active:false}).eq("source_id",source.id).eq("listing_url",link.listing_url);
+        if(inactiveError)continue;
+        const {data:otherActive,error:otherError}=await db.from("job_sources")
+          .select("id").eq("job_id",link.job_id).eq("active",true).limit(1);
+        if(otherError||otherActive?.length)continue;
         const {error:jobError}=await db.from("jobs").update({
           state:"stale_possible",vacancy_confidence:50,confidence_label:"STALE / NEEDS RECHECK",
           updated_at:at
         }).eq("id",link.job_id).eq("state","active_verified");
-        if(jobError)continue;
-        await db.from("job_sources").update({active:false}).eq("source_id",source.id).eq("listing_url",link.listing_url);
-        stale++;
+        if(!jobError)stale++;
+      }
       }
     }
     await db.from("sources").update({
