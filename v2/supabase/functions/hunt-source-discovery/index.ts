@@ -2,6 +2,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { shouldScanSource } from "./source-health-policy.mjs";
 import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from "./candidate-integrity.mjs";
+import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 
 const enc = new TextEncoder();
 const HOUR = 3600000;
@@ -117,9 +118,8 @@ function strictPostedDate(html:string){
   ...[...html.matchAll(/["'](?:datePosted|postingStartDate|postedDate)["']\s*:\s*["'](\d{4}-\d{2}-\d{2}(?:T[^"']*)?)["']/gi)].map(x=>x[1])
  ];
  for(const raw of dates){
-  if(!/^\d{4}-\d{2}-\d{2}(?:T|$)/.test(raw))continue;
-  const parsed=new Date(raw);
-  if(Number.isFinite(parsed.getTime())&&parsed.getTime()<=Date.now()+DAY)return parsed.toISOString();
+  const posted=parseOfficialPostedDate(raw);
+  if(posted)return posted;
  }
  return null;
 }
@@ -131,11 +131,12 @@ function fallbackPosting(html:string,url:string,hint:string){
  const posted=strictPostedDate(html);
  if(!posted)return null;
  const fromMeta=metaValue(html,"property","og:title")||metaValue(html,"name","twitter:title")||microdataValue(html,"title");
- const title=cleanText(hint||fromMeta).replace(/\s*[-|]\s*(Careers|Jobs|Apply).*$/i,"").slice(0,170);
+ const title=cleanText(extractOfficialJobTitle(html)||hint||fromMeta).replace(/\s*[-|]\s*(Careers|Jobs|Apply).*$/i,"").slice(0,170);
  if(title.length<7||/search jobs|view all jobs|careers|login|our people|apply now/i.test(title))return null;
  const location=microdataValue(html,"addressLocality")||null;
- const descriptionMatch=html.match(/<[^>]+\bitemprop\s*=\s*["']description["'][^>]*>([\s\S]{50,16000}?)<\/(?:div|section|article|p)>/i);
- const summary=descriptionMatch?cleanText(descriptionMatch[1]).slice(0,12000):"";
+ const summary=extractOfficialJobDescription(html);
+ // A date/title alone is not enough to qualify as a real actionable vacancy.
+ if(!summary)return null;
  return {title,datePosted:posted,description:summary,jobLocation:location?{address:{addressLocality:location}}:null,hiringOrganization:null,identifier:null};
 }
 
@@ -332,7 +333,7 @@ Deno.serve(async(req)=>{
           employment_type:employment(title,jp.employmentType),city,description:desc,requisition_id:reqId,primary_apply_url:cand.listing_url,
           state,vacancy_confidence:confidence,confidence_label:label,published_at:new Date(jp.datePosted).toISOString(),
           last_seen_at:new Date().toISOString(),last_verified_at:new Date().toISOString(),
-          metadata:{discovered_by:"hunt-source-discovery-v1",date_posted_source:"jsonld"}
+          metadata:{discovered_by:"hunt-source-discovery-v3",date_posted_source:postings.length?"jsonld_or_official_microdata":"official_microdata"}
         }).select("id").single();
         if(jobErr||!newJob){summary.errors++;continue}
         jobId=newJob.id;
