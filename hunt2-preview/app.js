@@ -5,6 +5,7 @@ import { findSimilarOpportunities } from "./opportunity-similarity.js?v=20261109
 import { chooseRelevantCv } from "./cv-ranking.js?v=20261109-73";
 import { prioritizeRequirements, compareKeyRequirement } from "./requirement-priority.js?v=20261109-145";
 import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
+import {isActionablePreviewJob} from "./job-actionability.mjs?v=20261116-1810";
 import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261111-172";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
@@ -416,10 +417,7 @@ async function getOpportunityFeed(limit=100){
    const city=normalize(job.city);
    return cities.some(x=>{const area=normalize(x);return area.length>2&&(city.includes(area)||area.includes(city))});
  };
- const fresh=(jobs||[]).filter(job=>{
-   const live=[job.published_at,job.first_seen_at,job.last_verified_at].filter(Boolean).some(date=>new Date(date)>=cutoff);
-   return live&&cityAllowed(job)&&["active_verified","active_likely"].includes(job.state);
- });
+ const fresh=(jobs||[]).filter(job=>isActionablePreviewJob(job,cutoff.getTime())&&cityAllowed(job));
  const byId=new Map(fresh.map(job=>[job.id,job]));
  const applicationByJob=new Map((applications||[]).map(x=>[x.job_id,x.status]));
  return {data:matches.map(match=>({...match,job:byId.get(match.job_id),applicationStatus:applicationByJob.get(match.job_id)||null}))
@@ -444,7 +442,7 @@ async function getOpportunityDetail(jobId){
  const [{data:signals},{data:relatedMatches},{data:brandMedia},{data:companyJobs},{data:nearbyJobs}]=await Promise.all([
    supabase.from("company_signals").select("id,signal_type,title,summary,source_name,source_url,published_at,relevance_score").eq("company_id",job.company_id).order("published_at",{ascending:false,nullsFirst:false}).limit(35),
    supabase.from("user_job_matches")
-     .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,first_seen_at,state)")
+     .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,first_seen_at,last_verified_at,state,metadata)")
      .eq("user_id",currentUser.id)
      .eq("jobs.company_id",job.company_id)
      .neq("job_id",jobId)
@@ -454,23 +452,24 @@ async function getOpportunityDetail(jobId){
    searchBrand.length>=3
      ?supabase.from("world_news_items").select("id,title,summary,url,published_at,evidence,world_news_sources(publisher)").or("title.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%,summary.ilike.%"+searchBrand.replace(/[%_,().]/g," ").slice(0,75)+"%").order("published_at",{ascending:false}).limit(35)
      :Promise.resolve({data:[]}),
-   supabase.from("jobs").select("id,canonical_title,city,role_family,seniority,employment_type,published_at,first_seen_at,primary_apply_url,state,confidence_label")
+   supabase.from("jobs").select("id,canonical_title,city,role_family,seniority,employment_type,published_at,first_seen_at,last_verified_at,primary_apply_url,state,confidence_label,metadata")
      .eq("company_id",job.company_id).in("state",["active_verified","active_likely"])
      .neq("id",jobId).order("first_seen_at",{ascending:false}).limit(40),
    supabase.from("user_job_matches")
-     .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,first_seen_at,primary_apply_url,state,companies(name))")
+     .select("match_score,priority_score,jobs!inner(id,company_id,canonical_title,city,role_family,published_at,first_seen_at,last_verified_at,primary_apply_url,state,metadata,companies(name))")
      .eq("user_id",currentUser.id).gte("match_score",65)
      .in("jobs.state",["active_verified","active_likely"])
      .order("priority_score",{ascending:false}).limit(40)
  ]);
- const cutoff=new Date(Date.now()-20*86400000);
+ const cutoff=new Date();cutoff.setDate(cutoff.getDate()-20);cutoff.setHours(0,0,0,0);
  const sameJobs=(relatedMatches||[])
    .map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
-   .filter(x=>{const date=x?.published_at||x?.first_seen_at;return date&&new Date(date)>=cutoff});
+   .filter(x=>isActionablePreviewJob(x,cutoff.getTime()));
  const candidates=(nearbyJobs||[]).map(x=>({...x.jobs,match_score:x.match_score,priority_score:x.priority_score}))
-   .filter(x=>x.id&&x.id!==jobId&&x.company_id!==job.company_id&&["active_verified","active_likely"].includes(x.state));
+   .filter(x=>x.id&&x.id!==jobId&&x.company_id!==job.company_id&&isActionablePreviewJob(x,cutoff.getTime()));
  const alternatives=findSimilarOpportunities(job,candidates,4);
- return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:companyJobs||[],sameJobs,alternatives,careerPrefs:careerPrefs||{},dossier:dossier||null};
+ const verifiedCompanyJobs=(companyJobs||[]).filter(x=>isActionablePreviewJob(x,cutoff.getTime()));
+ return {job,...(match||{match_score:0,priority_score:0,reasons:[],gaps:[]}),application,personalization,cvs:cvs||[],reposts:reposts||[],signals:signals||[],brandMedia:brandMedia||[],companyJobs:verifiedCompanyJobs,sameJobs,alternatives,careerPrefs:careerPrefs||{},dossier:dossier||null};
 }
 
 function ageLabel(value,firstSeen=null){
