@@ -1,0 +1,97 @@
+name: HUNT Health
+# Independent watchdog: report persistent outages once, not on every radar run.
+on:
+  schedule:
+    - cron: '13 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+concurrency:
+  group: hunt-health
+  cancel-in-progress: true
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check radar freshness and public app availability
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const incidentTitle = 'HUNT · radar o sito non aggiornati';
+            const appUrl = 'https://giuliagrimaldi135-wq.github.io/HUNT-/hunt2-preview/';
+            const staleHours = 6;
+            let radarState = 'unknown', siteState = 'unknown';
+            let radarDetail = 'Non verificato';
+            try {
+              const runs = await github.rest.actions.listWorkflowRuns({
+                owner, repo, workflow_id: 'hunt-radar.yml', per_page: 30
+              });
+              const lastSuccess = runs.data.workflow_runs.find(run => run.conclusion === 'success');
+              const ageHours = lastSuccess ? (Date.now() - new Date(lastSuccess.created_at).getTime()) / 3600000 : Infinity;
+              radarState = lastSuccess && ageHours < staleHours ? 'ok' : 'unhealthy';
+              radarDetail = lastSuccess ? 'Ultima scansione riuscita ' + ageHours.toFixed(1) + ' ore fa' : 'Nessuna scansione riuscita recente';
+            } catch (e) {
+              core.warning('Impossibile leggere le esecuzioni del radar: ' + e.message);
+            }
+            try {
+              let responseOk = false;
+              for (let attempt = 1; attempt <= 3; attempt++) {
+                try {
+                  const res = await fetch(appUrl, {signal: AbortSignal.timeout(15000)});
+                  if (res.ok) { responseOk = true; break; }
+                  core.info('Verifica sito: HTTP ' + res.status + ' tentativo ' + attempt);
+                } catch (e) {
+                  core.info('Sito non raggiungibile al tentativo ' + attempt + ': ' + e.message);
+                }
+                if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 2000));
+              }
+              siteState = responseOk ? 'ok' : 'unhealthy';
+            } catch (e) {
+              core.warning('Impossibile completare la verifica del sito: ' + e.message);
+            }
+            await core.summary.addHeading('HUNT · Stato automatico')
+              .addTable([
+                [{data: 'Servizio', header: true}, {data: 'Esito', header: true}, {data: 'Dettaglio', header: true}],
+                ['Radar', radarState, radarDetail],
+                ['Sito pubblico', siteState, appUrl]
+              ]).write();
+            if (radarState === 'unknown' || siteState === 'unknown') {
+              core.warning('Controllo incompleto: non modifico incidenti esistenti.');
+              return;
+            }
+            const unhealthy = radarState !== 'ok' || siteState !== 'ok';
+            try {
+              const open = await github.paginate(github.rest.issues.listForRepo, {
+                owner, repo, state: 'open', per_page: 100
+              });
+              const incident = open.find(item => !item.pull_request && item.title === incidentTitle);
+              if (unhealthy && !incident) {
+                const runUrl = context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId;
+                const body = [
+                  'Il monitor automatico di HUNT ha rilevato una condizione persistente.',
+                  '',
+                  '- Radar: ' + radarState + ' (' + radarDetail + ')',
+                  '- Sito: ' + siteState + ' (' + appUrl + ')',
+                  '- Controllo: ' + runUrl,
+                  '',
+                  'Per evitare notifiche ripetute questo incidente rimane aperto senza un nuovo commento ogni tre ore.',
+                  'Si chiude automaticamente quando entrambi i controlli tornano regolari.'
+                ].join('\n');
+                await github.rest.issues.create({owner, repo, title: incidentTitle, body});
+                core.warning('Problema rilevato: aperto un singolo incidente operativo.');
+              } else if (!unhealthy && incident) {
+                await github.rest.issues.update({owner, repo, issue_number: incident.number, state: 'closed'});
+                core.info('Radar e sito sono tornati regolari; incidente chiuso.');
+              } else if (unhealthy) {
+                core.warning('Problema ancora presente; non invio segnalazioni duplicate.');
+              }
+            } catch (e) {
+              core.warning('Non posso aggiornare il registro degli incidenti: ' + e.message);
+            }
