@@ -18,3 +18,8 @@ test("only backfills stored directory profiles with a retry window",()=>{
  assert.equal(websiteBackfillEligible(c,Date.parse("2026-11-17T10:00:00Z")),true);
  assert.equal(websiteBackfillEligible({...c,website_url:"https://veromoda.com"},Date.parse("2026-11-17T10:00:00Z")),false);
 });
+
+test("accepts legacy HTTP directory links only as unverified HTTPS candidates",()=>{
+ const html='<div>Website: <a href="http://www.veromoda.com">veromoda.com</a></div>';
+ assert.equal(extractDirectoryWebsite(html,"Vero Moda"),"https://www.veromoda.com/");
+});
