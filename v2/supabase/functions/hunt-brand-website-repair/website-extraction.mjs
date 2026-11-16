@@ -3,7 +3,7 @@ function compact(v){return String(v||"").toLowerCase().normalize("NFKD").replace
 function originCandidate(v,name){
  try{
   const u=new URL(v);
-  if(u.protocol!=="https:"||u.username||u.password)return null;
+  if(!["https:","http:"].includes(u.protocol)||u.username||u.password||u.port)return null;
   const host=u.hostname.toLowerCase().replace(/^www\./,"");
   if(!/^[a-z0-9.-]+$/.test(host)||!host.includes(".")||host.includes(".."))return null;
   if(/(?:^|\.)(?:fashionunited|linkedin|facebook|instagram|tiktok|twitter|x|youtube)\./.test(host))return null;
@@ -14,13 +14,15 @@ function originCandidate(v,name){
   if(brand.length<5||domain.length<5)return null;
   // Strong single-brand identity only. Ignore parent groups and lookalikes.
   if(brand!==domain && !(brand.length>=8&&domain===brand.replace(/^(the)/,"")))return null;
-  return u.origin+"/";
+  // Upgrade historical HTTP directory links only into candidate HTTPS site URLs.
+  // This is not evidence of an open position or a verified careers endpoint.
+  return "https://"+u.hostname+"/";
  }catch{return null}
 }
 export function extractDirectoryWebsite(html,brandName){
  if(typeof html!=="string"||html.length>1800000)return null;
  const links=[];
- for(const m of html.matchAll(/<a\b[^>]*href\s*=\s*["'](https:\/\/[^"']+)["'][^>]*>/gi)){
+ for(const m of html.matchAll(/<a\b[^>]*href\s*=\s*["'](https?:\/\/[^"']+)["'][^>]*>/gi)){
   const uri=originCandidate(m[1].replace(/&amp;/gi,"&"),brandName);
   if(uri)links.push(uri);
  }
