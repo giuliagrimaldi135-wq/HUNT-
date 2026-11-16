@@ -10,6 +10,7 @@ on:
       - "v2/services/**"
       - "v2/supabase/functions/hunt-match-refresh/**"
       - "v2/supabase/functions/hunt-source-discovery/**"
+      - "v2/supabase/functions/hunt-ats-board-scan/**"
       - "v2/supabase/functions/hunt-successfactors-public/**"
       - "v2/supabase/functions/hunt-description-repair/**"
       - "v2/supabase/functions/hunt-brand-website-repair/**"
@@ -51,6 +52,9 @@ jobs:
       - name: Test SAP SuccessFactors official microdata extraction
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test successfactors-microdata.test.mjs
+      - name: Test canonical ATS ingestion and safe vacancy lifecycle
+        working-directory: v2/supabase/functions/hunt-ats-board-scan
+        run: node --test ats-ingestion-guard.test.mjs
       - name: Test adaptive source backoff and recovery
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test source-health-policy.test.mjs
