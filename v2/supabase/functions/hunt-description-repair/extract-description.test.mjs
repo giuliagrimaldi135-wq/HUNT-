@@ -22,3 +22,13 @@ test("rejects entire navigation text and a job page with no explicit job section
 test("does not hallucinate details when only headline is available",()=>{
  assert.equal(extractOfficialDescription("<h1>Buying Intern</h1>","Buying Intern"),null);
 });
+
+test("removes sharing/navigation and group footer from verified employer job article",()=>{
+ const body="Key Responsibilities. "+("Manage assortment planning, reporting and coordination of sales performance. ".repeat(10));
+ const html="<h1>Retail Merchandising Intern</h1><main class='job-description'>Open sharing options . Apply Now . Reference code: JR123. "+body+" Learn more . Richemont is the owner of prestigious Maisons.</main>";
+ const found=extractOfficialDescription(html,"Retail Merchandising Intern","JR123");
+ assert.equal(found?.method,"verified_job_section");
+ assert.ok(found.description.startsWith("Key Responsibilities"));
+ assert.ok(!found.description.includes("Open sharing options"));
+ assert.ok(!found.description.includes("Richemont is the owner of prestigious Maisons"));
+});
