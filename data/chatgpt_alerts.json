@@ -950,5 +950,28 @@
     "source_name": "Acqua di Parma – LinkedIn Jobs (ID 4487490394)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "chatgpt-tods-collection-merchandising-4489777310",
+    "brand": "TOD'S Group",
+    "title": "Collection Merchandising Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-16",
+    "detected_at": "2026-11-16T21:30:00+01:00",
+    "priority": "ALTA",
+    "score": 95,
+    "role_family": "Collection Merchandising",
+    "why_fit": "Stage nel Collection Merchandising con analisi sell-in/sell-out, KPI di prodotto, assortimenti, competitor, delivery plan e materiali di collezione; coerente con Fashion Management ed esperienza showroom.",
+    "reasons": [
+      "Stage a Milano",
+      "Analisi KPI sell-in e sell-out",
+      "Performance di prodotto e collezione",
+      "Benchmark assortimento e prezzi",
+      "Supporto a delivery plan, ordini e materiali merchandising"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/collection-merchandising-intern-at-tod-s-group-4489777310",
+    "source_name": "TOD'S Group / LinkedIn Jobs (ID 4489777310)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
