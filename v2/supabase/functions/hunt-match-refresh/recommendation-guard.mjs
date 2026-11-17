@@ -1,3 +1,8 @@
+// Strict rolling 20*24-hour freshness, not a calendar-midnight approximation.
+export function freshnessCutoff(nowMs=Date.now(),days=20){
+ if(!Number.isFinite(nowMs)||!Number.isFinite(days)||days<=0)throw Error("invalid freshness limit");
+ return new Date(nowMs-days*86400000).toISOString();
+}
 export function isFreshActionable(job, cutoffMs, nowMs=Date.now()) {
   if (!["active_verified","active_likely"].includes(job.state)) return false;
   const postedMs=Date.parse(job.published_at||job.first_seen_at||"");
