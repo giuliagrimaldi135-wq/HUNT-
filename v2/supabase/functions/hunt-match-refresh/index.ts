@@ -252,6 +252,21 @@ Deno.serve(async(req)=>{
   // The database keeps every observation; personal suggestions only use actionable,
   // recently verified vacancies, with one representative per official requisition.
   const {jobs:uniqueJobs,duplicateIds}=chooseUniqueJobs(jobs||[],Date.parse(cutoff));
+  const exactCutoffMs=Date.parse(cutoff);
+  const provablyOldJobIDs=(jobs||[]).filter((j:any)=>{
+    if(!j.metadata?.provider_creation_at)return false;
+    const age=Date.parse(String(j.metadata.provider_creation_at));
+    return !Number.isFinite(age)||age<exactCutoffMs;
+  }).map((j:any)=>j.id);
+  // These matches can have recent first_seen_at despite being created many
+  // weeks earlier. Clear computed recommendations; never delete vacancies,
+  // CVs, user applications, or human-added feedback.
+  for(let i=0;i<provablyOldJobIDs.length;i+=100){
+    const {error}=await db.from("user_job_matches").delete()
+      .in("job_id",provablyOldJobIDs.slice(i,i+100));
+    if(error)return new Response('{"ok":false,"error":"provider_age_cleanup_failed"}',
+      {status:503,headers:{"content-type":"application/json"}});
+  }
   const profileMap=new Map((profiles||[]).map((x:any)=>[x.user_id,x]));
   const personalMap=new Map((personal||[]).map((x:any)=>[x.user_id,x]));
   // Keep every CV version. Different vacancies can require different evidence.
@@ -389,5 +404,5 @@ Deno.serve(async(req)=>{
       return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',{status:503,headers:{"content-type":"application/json"}});
     }
   }
-  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicateIds.length}),{headers:{"content-type":"application/json"}});
+  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicateIds.length,providerOldCandidatesExcluded:provablyOldJobIDs.length}),{headers:{"content-type":"application/json"}});
 });

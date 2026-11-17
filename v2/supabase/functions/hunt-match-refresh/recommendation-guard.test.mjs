@@ -37,3 +37,16 @@ test("20 days is a rolling limit, not midnight of the 20th calendar day",()=>{
  assert.equal(isFreshActionable(old,limit,nowMs),false);
  assert.equal(isFreshActionable({...old,published_at:"2026-10-28T13:00:00Z"},limit,nowMs),true);
 });
+
+test("official Lever creation date prevents old postings looking new after discovery",()=>{
+ const today=Date.parse("2026-11-17T15:00:00Z");
+ const limit=Date.parse(freshnessCutoff(today));
+ const freshFirstObservation={...row,published_at:null,first_seen_at:"2026-11-16T10:00:00Z",last_verified_at:"2026-11-17T12:00:00Z"};
+ const mulberry={...freshFirstObservation,metadata:{provider_creation_at:"2026-10-12T12:30:37.234Z"}};
+ const vestiaire={...freshFirstObservation,metadata:{provider_creation_at:"2026-10-15T08:24:40.954Z"}};
+ const veepee={...freshFirstObservation,metadata:{provider_creation_at:"2026-11-17T09:28:26.870Z"}};
+ assert.equal(isFreshActionable(mulberry,limit,today),false);
+ assert.equal(isFreshActionable(vestiaire,limit,today),false);
+ assert.equal(isFreshActionable(veepee,limit,today),true);
+ assert.equal(chooseUniqueJobs([mulberry,vestiaire,veepee],limit,today).jobs.length,1);
+});

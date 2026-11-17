@@ -7,6 +7,14 @@ export function isFreshActionable(job, cutoffMs, nowMs=Date.now()) {
   if (!["active_verified","active_likely"].includes(job.state)) return false;
   const postedMs=Date.parse(job.published_at||job.first_seen_at||"");
   const verifiedMs=Date.parse(job.last_verified_at||"");
+  // Some public ATSs (Lever) provide posting createdAt, not datePublished.
+  // An official posting older than 20 days cannot be made "new" just because
+  // HUNT first saw it recently. Keep publication provenance distinct.
+  const sourceCreation=job.metadata?.provider_creation_at;
+  if(sourceCreation){
+    const createdMs=Date.parse(String(sourceCreation));
+    if(!Number.isFinite(createdMs)||createdMs<cutoffMs||createdMs>nowMs+86400000)return false;
+  }
   return Number.isFinite(postedMs) && postedMs>=cutoffMs &&
     Number.isFinite(verifiedMs) && verifiedMs<=nowMs+86400000 && verifiedMs>=nowMs-7*86400000;
 }
