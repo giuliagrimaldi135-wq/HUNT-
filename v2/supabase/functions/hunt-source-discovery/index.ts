@@ -5,6 +5,7 @@ import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from
 import { normalizedCareerURL, selectUniqueCareerSources } from "./shared-source-policy.mjs";
 import {reviewStatus,invalidVacancyStatus,reviewFailureReason} from "./review-status.mjs";
 import {eligibleAlreadyVerifiedJob,postedWithinTwentyDays} from "./existing-official-job.mjs";
+import {classifyLegacyReviewRecords} from "./review-queue-cleanup.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 
 const enc = new TextEncoder();
@@ -190,7 +191,7 @@ Deno.serve(async(req)=>{
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
-  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0,shared_duplicate_sources_skipped:0,already_verified_reconciled:0};
+  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0,shared_duplicate_sources_skipped:0,already_verified_reconciled:0,legacy_review_junk_rejected:0};
 
   const {data:sources}=await db.from("sources")
     .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
@@ -273,9 +274,28 @@ Deno.serve(async(req)=>{
       .eq("status","needs_review").order("parsed_at",{ascending:true}).limit(700)
   ]);
   if(newError||reviewError)return new Response('{"ok":false,"error":"candidate_read_failed"}',{status:503,headers:{"content-type":"application/json"}});
+  // Prior scanner versions admitted menu links and twice HTML-escaped URLs.
+  // The retry filter correctly excludes them from HTTP parsing, but would
+  // otherwise leave them stuck as needs_review forever. Only narrow positive
+  // evidence of navigation/duplication permits cleanup; all remaining job
+  // detail links retain their review status regardless of unknown date.
+  const legacyInvalid=classifyLegacyReviewRecords(reviewCandidates||[]);
+  for(const invalid of legacyInvalid){
+    const {data:existing}=await db.from("job_candidates")
+      .select("raw").eq("id",invalid.id).eq("status","needs_review").maybeSingle();
+    if(!existing)continue;
+    const {error}=await db.from("job_candidates").update({
+      status:"rejected",parsed_at:new Date().toISOString(),
+      raw:{...(existing.raw||{}),reason:invalid.reason,
+        ...(invalid.canonical_candidate_id?{canonical_candidate_id:invalid.canonical_candidate_id}:{})}
+    }).eq("id",invalid.id).eq("status","needs_review");
+    if(error)summary.errors++;else summary.legacy_review_junk_rejected++;
+  }
+  const legacyInvalidIDs=new Set(legacyInvalid.map((r:any)=>r.id));
   // Retry only recently seen leads with independent employer evidence,
   // after a 24h pause and no more than two review attempts.
-  const cands=[...(newCandidates||[]),...(reviewCandidates||[])];
+  const cands=[...(newCandidates||[]),...(reviewCandidates||[])]
+    .filter((c:any)=>!legacyInvalidIDs.has(c.id));
   const retryIDs=new Set((reviewCandidates||[])
     .filter((c:any)=>canRetryReview(c)).slice(0,6).map((c:any)=>c.id));
   // Another official ATS scanner may have already verified the exact job.

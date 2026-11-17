@@ -87,6 +87,9 @@ jobs:
       - name: Test Lever posting creation date provenance
         working-directory: v2/supabase/functions/hunt-ats-board-scan
         run: node --test lever-original-date.test.mjs
+      - name: Test proven legacy navigation and HTML duplicate classification
+        working-directory: v2/supabase/functions/hunt-source-discovery
+        run: node --test review-queue-cleanup.test.mjs
       - name: Test career link integrity and shared-group employer resolution
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test candidate-integrity.test.mjs
