@@ -1,5 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import {chooseDueNewsSources} from "./news-source-backoff.mjs";
 const enc=new TextEncoder();
 const MAX_AGE_DAYS=21;
 const ACCEPTED=/fashion|luxury|retail|merchandis|buying|buyer|wholesale|apparel|brand|store|boutique|designer|collection|runway|footwear|handbag|accessor|textile|prada|kering|lvmh|moncler|gucci|inditex|sustainab|fashion week|business/i;
@@ -83,8 +84,9 @@ Deno.serve(async(req)=>{
   const token=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error:secretError}=await client.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(secretError||!secret||!token||!equal(await digest(token),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
-  const {data:sources,error}=await client.from("world_news_sources").select("id,publisher,feed_url,region,language,category,trust_level,last_scan_at,consecutive_failures").eq("active",true).order("last_scan_at",{ascending:true,nullsFirst:true}).limit(20);
+  const {data:sources,error}=await client.from("world_news_sources").select("id,publisher,feed_url,region,language,category,trust_level,last_scan_at,consecutive_failures,last_error").eq("active",true).order("last_scan_at",{ascending:true,nullsFirst:true}).limit(400);
   if(error)throw Error(error.message);
+  const {due,backoffSkipped}=chooseDueNewsSources(sources||[],12);
   const scan=async(source:any)=>{
    let inserted=0,status="healthy",problem="";
    try{
@@ -105,7 +107,14 @@ Deno.serve(async(req)=>{
    }
    return {publisher:source.publisher,status,inserted,problem};
   };
-  const results=await Promise.all((sources||[]).map(scan));
-  return Response.json({ok:true,scanned:results.length,inserted:results.reduce((sum,x)=>sum+x.inserted,0),healthy:results.filter(x=>x.status==="healthy").length,results});
+  // Throttle concurrent publisher requests to avoid repeated RSS 429s.
+  const results:any[]=[];
+  for(let i=0;i<due.length;i+=4){
+    const batch=await Promise.all(due.slice(i,i+4).map(scan));
+    results.push(...batch);
+  }
+  return Response.json({ok:true,scanned:results.length,backoffSkipped,
+    inserted:results.reduce((sum,x)=>sum+x.inserted,0),
+    healthy:results.filter(x=>x.status==="healthy").length,results});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
 });
