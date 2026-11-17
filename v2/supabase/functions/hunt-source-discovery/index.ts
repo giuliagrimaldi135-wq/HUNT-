@@ -193,7 +193,7 @@ Deno.serve(async(req)=>{
 
   const {data:sources}=await db.from("sources")
     .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
-    .eq("active",true).eq("official",true).neq("source_type","public_ats_board").not("base_url","is",null)
+    .eq("active",true).eq("official",true).eq("source_type","career_page").not("base_url","is",null)
     .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(1000);
 
   const uniqueSources=selectUniqueCareerSources(sources||[]);
