@@ -84,6 +84,9 @@ jobs:
       - name: Test official vacancy reuse and exact 20-day cutoff
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test existing-official-job.test.mjs
+      - name: Test Lever posting creation date provenance
+        working-directory: v2/supabase/functions/hunt-ats-board-scan
+        run: node --test lever-original-date.test.mjs
       - name: Test career link integrity and shared-group employer resolution
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test candidate-integrity.test.mjs
