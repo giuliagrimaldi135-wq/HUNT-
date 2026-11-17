@@ -11,6 +11,7 @@ on:
       - "v2/services/**"
       - "v2/supabase/functions/hunt-match-refresh/**"
       - "v2/supabase/functions/hunt-source-discovery/**"
+      - "v2/supabase/functions/hunt-vacancy-monitor/**"
       - "v2/supabase/functions/hunt-ats-board-scan/**"
       - "v2/supabase/functions/hunt-successfactors-public/**"
       - "v2/supabase/functions/hunt-description-repair/**"
@@ -59,6 +60,9 @@ jobs:
       - name: Test adaptive source backoff and recovery
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test source-health-policy.test.mjs
+      - name: Test vacancy monitor isolation and confirmed closure policy
+        working-directory: v2/supabase/functions/hunt-vacancy-monitor
+        run: node --test monitor-policy.test.mjs
       - name: Test career link integrity and shared-group employer resolution
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test candidate-integrity.test.mjs
