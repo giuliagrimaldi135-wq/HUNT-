@@ -12,13 +12,18 @@ export function safeVacancyCandidate(href,label,base){
  try{
   const decoded=decodeEntities(href).trim(),title=decodeEntities(label).replace(/\s+/g," ").trim();
   if(!decoded||!title||title.length<5||title.length>180)return null;
-  if(/\{\{|\}\}|%7b|%7d|<|>|javascript:|data:/i.test(decoded))return null;
-  if(/\{\{|\}\}|assessmenturl|verify your account|verifica del tuo account|privacy|cookies?|login|sign in|create account|registrati/i.test(title))return null;
+  // Embedded JS templates or escaped delimiters are not vacancy hyperlinks.
+  if(/\{\{|\}\}|\$\{|%7b|%7d|%24%7b|<|>|javascript:|data:/i.test(decoded))return null;
+  if(/\{\{|\}\}|\$\{|assessmenturl|verify your account|verifica del tuo account|privacy|cookies?|login|sign in|create account|registrati/i.test(title))return null;
   const url=new URL(decoded,base),baseURL=new URL(base);
   if(url.protocol!=="https:"||url.username||url.password||!hostnameSafe(url.hostname))return null;
   if(url.hash)url.hash="";
   const path=decodeURIComponent(url.pathname).toLowerCase();
-  if(/\{\{|\}\}|<|>|assessmenturl|email-verify|verification|privacy|cookie/i.test(path))return null;
+  if(/\{\{|\}\}|\$\{|<|>|assessmenturl|email-verify|verification|privacy|cookie/i.test(path))return null;
+  // SuccessFactors category pages and generic career-navigation hubs must
+  // never enter the per-vacancy review queue. They are scanned by source catalog.
+  if(/\/go\/|\/viewalljobs(?:\/|$)|\/jobs\/(?:send-cv|register|sign-in|login)(?:\/|$)|\/talent\/job-offers\/?$/i.test(path))return null;
+  if(/\$\{|\{\{|\}\}/.test(decodeURIComponent(url.search)))return null;
   const knownATS=/^jobs\.smartrecruiters\.com$/i.test(url.hostname)&&/^\/[^/]+\/\d{7,}/.test(path)
     ||/^jobs(?:\.eu)?\.lever\.co$/i.test(url.hostname)&&/^\/[^/]+\/[0-9a-f-]{20,}/.test(path)
     ||/^jobs\.ashbyhq\.com$/i.test(url.hostname)&&/^\/[^/]+\/[0-9a-f-]{20,}/.test(path);
