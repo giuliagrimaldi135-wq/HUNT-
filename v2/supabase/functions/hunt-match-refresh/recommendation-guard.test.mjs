@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {isFreshActionable,chooseUniqueJobs,freshnessCutoff} from "./recommendation-guard.mjs";
+import {isFreshActionable,chooseUniqueJobs,freshnessCutoff,officialKeringLocaleIdentity} from "./recommendation-guard.mjs";
 const now=Date.parse("2026-11-16T15:00:00Z"),cutoff=Date.parse("2026-10-27T00:00:00Z");
 const row={id:"one",company_id:"a",requisition_id:"123",canonical_title:"Buying Intern",city:"Milano",state:"active_verified",published_at:"2026-11-08T00:00:00Z",first_seen_at:"2026-11-08T00:00:00Z",last_verified_at:"2026-11-16T10:00:00Z",description:"official"};
 test("20 day limit is based on real publication, not refreshed verification",()=>{assert.equal(isFreshActionable({...row,published_at:"2026-09-24T00:00:00Z"},cutoff,now),false)});
@@ -49,4 +49,36 @@ test("official Lever creation date prevents old postings looking new after disco
  assert.equal(isFreshActionable(vestiaire,limit,today),false);
  assert.equal(isFreshActionable(veepee,limit,today),true);
  assert.equal(chooseUniqueJobs([mulberry,vestiaire,veepee],limit,today).jobs.length,1);
+});
+
+test("same Gucci role on Italian/French official Kering URLs appears only once",()=>{
+ const italian={...row,id:"official-it",company_id:"gucci",requisition_id:"R173178",
+  canonical_title:"GUCCI MRTW Collection Merchandising Intern",
+  primary_apply_url:"https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-mrtw-collection-merchandising-intern/",
+  description:"Intern helps merchandising product assortment and inventory reporting. ".repeat(8),
+  first_seen_at:"2026-11-09T00:00:00Z"};
+ const french={...italian,id:"localized-fr",requisition_id:null,
+  canonical_title:"MRTW Collection Merchandising Intern",
+  primary_apply_url:"https://www.kering.com/fr/talent/offres-d-emploi/europe/gucci-mrtw-collection-merchandising-intern/",
+  first_seen_at:"2026-11-08T00:00:00Z"};
+ assert.equal(officialKeringLocaleIdentity(italian),officialKeringLocaleIdentity(french));
+ const result=chooseUniqueJobs([french,italian],cutoff,now);
+ assert.deepEqual(result.jobs.map(x=>x.id),["official-it"]);
+ assert.deepEqual(result.duplicateIds,["localized-fr"]);
+});
+test("Kering matching URL slugs are NOT enough without matching full requirements",()=>{
+ const base={...row,id:"a",company_id:"gucci",requisition_id:null,
+ primary_apply_url:"https://www.kering.com/it/talenti/offerte-di-lavoro/europe/gucci-mrtw-collection-merchandising-intern/",
+ description:"A distinct job with important sample management duties. ".repeat(10)};
+ const fr={...base,id:"b",primary_apply_url:"https://www.kering.com/fr/talent/offres-d-emploi/europe/gucci-mrtw-collection-merchandising-intern/",
+ description:"A different job demanding 5 years specialized experience. ".repeat(10)};
+ assert.equal(chooseUniqueJobs([base,fr],cutoff,now).jobs.length,2);
+ assert.equal(chooseUniqueJobs([base,{...fr,description:base.description,requisition_id:"R1"},{...base,id:"c",requisition_id:"R2"}],cutoff,now).jobs.length,2);
+});
+test("generic Kering category, outside host and unrelated brands cannot dedupe",()=>{
+ const base={...row,id:"a",company_id:"gucci",primary_apply_url:"https://www.kering.com/fr/talent/offres-d-emploi/europe/gucci-mrtw-collection-merchandising-intern/",
+ description:"This is a known genuine merchandising role. ".repeat(9)};
+ assert.equal(officialKeringLocaleIdentity({...base,primary_apply_url:"https://fake-kering.example/fr/talent/offres-d-emploi/europe/gucci-mrtw-collection-merchandising-intern/"}),null);
+ assert.equal(officialKeringLocaleIdentity({...base,primary_apply_url:"https://www.kering.com/fr/talent/offres-d-emploi/"}),null);
+ assert.equal(chooseUniqueJobs([base,{...base,id:"b",company_id:"brioni"}],cutoff,now).jobs.length,2);
 });
