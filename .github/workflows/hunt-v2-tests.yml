@@ -72,6 +72,9 @@ jobs:
       - name: Test schema-compatible candidate review statuses
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test review-status.test.mjs
+      - name: Test safe brand-site ATS discovery seeding
+        working-directory: v2/supabase/functions/hunt-ats-discovery
+        run: node --test website-seed-policy.test.mjs
       - name: Test career link integrity and shared-group employer resolution
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test candidate-integrity.test.mjs

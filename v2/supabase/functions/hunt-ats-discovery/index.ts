@@ -1,5 +1,6 @@
 
 import {createClient} from "npm:@supabase/supabase-js@2";
+import {findMissingWebsiteLeads} from "./website-seed-policy.mjs";
 const enc=new TextEncoder();
 async function digest(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function same(a:string,b:string){if(a.length!==b.length)return false;let n=0;for(let i=0;i<a.length;i++)n|=a.charCodeAt(i)^b.charCodeAt(i);return n===0}
@@ -56,6 +57,22 @@ Deno.serve(async(req)=>{
   const db=client(),supplied=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error:e}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(e||!secret||!supplied||!same(await digest(supplied),secret.secret_hash))return Response.json({error:"unauthorized"},{status:401});
+  // Seed missing BRAND WEBSITE leads, never official career sources.
+  // Previously 11 monitored companies had a website but were invisible to ATS discovery.
+  const [{data:brands,error:brandError},{data:registered,error:registryError}]=await Promise.all([
+   db.from("companies").select("id,name,website_url,monitored").eq("monitored",true).not("website_url","is",null).order("name",{ascending:true}).limit(400),
+   db.from("sources").select("company_id,source_type,active,official").limit(2000)
+  ]);
+  if(brandError||registryError)throw Error("Website discovery source registry unavailable");
+  const leads=findMissingWebsiteLeads(brands||[],registered||[],12);
+  let seeded=0;
+  if(leads.length){
+   const {data:newLeads,error:seedError}=await db.from("sources")
+    .upsert(leads,{onConflict:"company_id,source_type,base_url",ignoreDuplicates:true})
+    .select("id");
+   if(seedError)throw Error("Website lead seeding failed: "+seedError.message);
+   seeded=(newLeads||[]).length;
+  }
   const [{data:origins,error:se},{data:runs,error:re},{data:existing,error:ee}]=await Promise.all([
    db.from("sources").select("id,company_id,source_type,source_family,base_url,companies(name)").eq("active",true).or("official.eq.true,source_type.eq.brand_website_candidate").neq("source_type","public_ats_board").not("base_url","is",null).limit(2000),
    db.from("ats_discovery_runs").select("source_id,checked_at").limit(2000),
@@ -122,6 +139,6 @@ Deno.serve(async(req)=>{
    await db.from("ats_discovery_runs").upsert({source_id:source.id,checked_at:moment,found_boards:found,last_error:problem||null},{onConflict:"source_id"});
    details.push({company:String(source.companies?.name||""),found,error:problem||undefined});
   }
-  return Response.json({ok:true,scanned:tested,discovered,validated,failed,details});
+  return Response.json({ok:true,scanned:tested,discovered,validated,failed,website_leads_seeded:seeded,details});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
 });

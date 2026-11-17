@@ -28,3 +28,22 @@ test("review retry is bounded, and requires recent sighting",()=>{
  assert.equal(canRetryReview({...x,raw:{review_retry_count:2}},now),false);
  assert.equal(canRetryReview({...x,parsed_at:"2026-11-16T10:00:00Z"},now),false);
 });
+
+test("never promote job category hubs, career navigation or spontaneous CV submission as individual roles",()=>{
+ const cases=[
+  ["https://jobs.todsgroup.com/go/Boutiques/9072055/","Boutiques"],
+  ["https://jobs.dolcegabbana.com/go/HG_Internship_IT/9136901/","new INTERNSHIPS"],
+  ["https://careers.aeffe.com/jobs/send-cv","Candidatura spontanea"],
+  ["https://www.kering.com/en/talent/job-offers/","Join us"],
+  ["https://jobs.todsgroup.com/viewalljobs/?locale=en_US","English (US)"]
+ ];
+ for(const [url,title] of cases)assert.equal(safeVacancyCandidate(url,title,url),null,url);
+});
+test("JS template interpolation in escaped URL paths and labels is invalid",()=>{
+ assert.equal(safeVacancyCandidate("https://jobs.valentino.com/go/INTERNSHIP/5411201/$%7Burl%7D","Retail Intern",base),null);
+ assert.equal(safeVacancyCandidate("https://careers.otb.net/job/Milano-Buyer/1375114257/",'${button}',base),null);
+});
+test("keep real SuccessFactors and ATS job detail URLs with explicit requisition identifiers",()=>{
+ assert.ok(safeVacancyCandidate("https://jobs.valentino.com/job/Milano-Retail-Planning-Intern/1375114257/","Retail Planning Intern",base));
+ assert.ok(safeVacancyCandidate("https://careers.zegnagroup.com/jobs/job-details?JobID=275415124&Team=231361273","Style Advisor",base));
+});
