@@ -191,7 +191,7 @@ Deno.serve(async(req)=>{
   const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0,shared_duplicate_sources_skipped:0};
 
   const {data:sources}=await db.from("sources")
-    .select("id,company_id,base_url,official,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
+    .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
     .eq("active",true).eq("official",true).neq("source_type","public_ats_board").not("base_url","is",null)
     .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(1000);
 
@@ -246,7 +246,7 @@ Deno.serve(async(req)=>{
     // Synchronize health for all exact-URL copies, rather than allowing stale
     // duplicate records to accumulate fake errors or trigger extra retries.
     const {error:healthError}=await db.from("sources").update(updated)
-      .eq("source_type","career_page").eq("active",true).eq("base_url",source.base_url);
+      .eq("source_type",source.source_type).eq("active",true).eq("base_url",source.base_url);
     if(healthError)summary.errors++;
     await db.from("source_scan_runs").insert({
       source_id:source.id,started_at:started,finished_at:new Date().toISOString(),
