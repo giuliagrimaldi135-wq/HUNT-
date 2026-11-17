@@ -1,6 +1,7 @@
 
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {findMissingWebsiteLeads} from "./website-seed-policy.mjs";
+import {linkedCareerTarget,acceptedCareerResponse} from "./careers-link-policy.mjs";
 const enc=new TextEncoder();
 async function digest(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function same(a:string,b:string){if(a.length!==b.length)return false;let n=0;for(let i=0;i<a.length;i++)n|=a.charCodeAt(i)^b.charCodeAt(i);return n===0}
@@ -102,21 +103,23 @@ Deno.serve(async(req)=>{
     const foundBoards=new Map<string,Board>();
     for(const board of boardsIn(html))foundBoards.set(board.family+":"+board.site,board);
     if(source.source_type==="brand_website_candidate"&&foundBoards.size===0){
-      // Probe at most 2 same-origin careers pages found on the verified directory website.
-      const rootURL=new URL(source.base_url);
+      // Explore up to 2 explicitly linked recruitment pages on the brand's
+      // own registrable domain, including careers.brand.com subdomains.
       const targetURLs=new Set<string>();
       for(const m of html.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]{0,180}?)<\/a>/gi)){
-        const txt=(m[1]+" "+m[2].replace(/<[^>]+>/g," ")).toLowerCase();
-        if(!/careers?|jobs|join[- ]?(?:us|our team)|lavora con noi|offerte di lavoro|work with us/i.test(txt))continue;
-        try{const u=new URL(m[1],response.url);if(u.origin===rootURL.origin&&u.protocol==="https:"&&u.pathname!=="/")targetURLs.add(u.toString())}catch{}
+        const target=linkedCareerTarget(m[1],m[2],source.base_url,response.url);
+        if(target)targetURLs.add(target);
         if(targetURLs.size>=2)break;
       }
       for(const target of targetURLs){
         try{
-          const page=await fetch(target,{redirect:"follow",signal:AbortSignal.timeout(7500),headers:{"accept":"text/html","user-agent":"HUNT ATS source-discovery/1.1"}});
+          const page=await fetch(target,{redirect:"follow",signal:AbortSignal.timeout(7500),headers:{"accept":"text/html","user-agent":"HUNT ATS source-discovery/1.2"}});
           if(!page.ok||!page.headers.get("content-type")?.includes("text/html"))continue;
+          if(!acceptedCareerResponse(page.url,source.base_url,HOSTS.map(x=>x[0])))continue;
+          // Directly redirected official ATS listing URLs are useful even when
+          // the destination HTML has no further outgoing links.
           const body=(await page.text()).slice(0,850000);
-          for(const board of boardsIn(body))foundBoards.set(board.family+":"+board.site,board);
+          for(const board of boardsIn(body+" "+page.url))foundBoards.set(board.family+":"+board.site,board);
         }catch{}
       }
     }
