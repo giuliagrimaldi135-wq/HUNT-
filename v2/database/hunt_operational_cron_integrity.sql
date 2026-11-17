@@ -18,6 +18,14 @@ select cron.schedule(
        or coalesce(j.published_at,j.first_seen_at)<now()-interval '20 days'
        or j.last_verified_at is null
        or j.last_verified_at<now()-interval '7 days'
+       -- Strictly verified original Lever createdAt date (not publication).
+       or (
+         (j.metadata->>'provider_creation_at') ~
+           '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}'
+         and left(j.metadata->>'provider_creation_at',19) <
+           to_char((now()-interval '20 days') at time zone 'UTC',
+             'YYYY-MM-DD"T"HH24:MI:SS')
+       )
      );
   $cleanup$
 );
@@ -45,6 +53,43 @@ begin
       $$date_trunc('day',now()-interval '20 days')$$,
       $$(now()-interval '20 days')$$)
   );
+ end if;
+end $do$;
+
+-- Keep the snapshot's "fresh actionable" and "obsolete suggestions"
+-- metrics consistent with Lever provider-origin age and substantive descriptions.
+-- Patch the existing audit text (including its other metrics) only once.
+do $do$
+declare cmd text;
+begin
+ select command into cmd from cron.job where jobname='hunt-quality-audit-hourly';
+ if cmd is not null
+   and position('provider_creation_at' in cmd)=0
+   and position($oldfresh$and coalesce(published_at,first_seen_at)>=(now()-interval '20 days')$oldfresh$ in cmd)>0
+   and position($oldobsolete$or coalesce(j.published_at,j.first_seen_at)<(now()-interval '20 days')$oldobsolete$ in cmd)>0 then
+  cmd=replace(cmd,
+    $oldfresh$and coalesce(published_at,first_seen_at)>=(now()-interval '20 days')$oldfresh$,
+    $newfresh$and coalesce(published_at,first_seen_at)>=(now()-interval '20 days')
+          and length(coalesce(description,''))>=250
+          and (
+            metadata->>'provider_creation_at' is null
+            or (
+              (metadata->>'provider_creation_at') ~
+                '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}'
+              and left(metadata->>'provider_creation_at',19) >=
+                to_char((now()-interval '20 days') at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS')
+            )
+          )$newfresh$);
+  cmd=replace(cmd,
+    $oldobsolete$or coalesce(j.published_at,j.first_seen_at)<(now()-interval '20 days')$oldobsolete$,
+    $newobsolete$or coalesce(j.published_at,j.first_seen_at)<(now()-interval '20 days')
+         or (
+           (j.metadata->>'provider_creation_at') ~
+             '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}'
+           and left(j.metadata->>'provider_creation_at',19) <
+             to_char((now()-interval '20 days') at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS')
+         )$newobsolete$);
+  perform cron.schedule('hunt-quality-audit-hourly','28 * * * *',cmd);
  end if;
 end $do$;
 
