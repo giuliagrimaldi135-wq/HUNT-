@@ -2,7 +2,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { shouldScanSource } from "./source-health-policy.mjs";
 import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from "./candidate-integrity.mjs";
-import { selectUniqueCareerSources } from "./shared-source-policy.mjs";
+import { normalizedCareerURL, selectUniqueCareerSources } from "./shared-source-policy.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 
 const enc = new TextEncoder();
@@ -245,8 +245,13 @@ Deno.serve(async(req)=>{
     // Shared career-board URLs represent the same endpoint for sibling brands.
     // Synchronize health for all exact-URL copies, rather than allowing stale
     // duplicate records to accumulate fake errors or trigger extra retries.
+    const physicalURL=normalizedCareerURL(source.base_url);
+    const sameEndpointIDs=(sources||[])
+      .filter((s:any)=>s.active!==false&&s.source_type===source.source_type
+        &&normalizedCareerURL(s.base_url)===physicalURL)
+      .map((s:any)=>s.id);
     const {error:healthError}=await db.from("sources").update(updated)
-      .eq("source_type",source.source_type).eq("active",true).eq("base_url",source.base_url);
+      .in("id",sameEndpointIDs);
     if(healthError)summary.errors++;
     await db.from("source_scan_runs").insert({
       source_id:source.id,started_at:started,finished_at:new Date().toISOString(),
