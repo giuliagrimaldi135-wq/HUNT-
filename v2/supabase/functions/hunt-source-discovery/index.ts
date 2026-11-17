@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { shouldScanSource } from "./source-health-policy.mjs";
 import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from "./candidate-integrity.mjs";
 import { normalizedCareerURL, selectUniqueCareerSources } from "./shared-source-policy.mjs";
+import {reviewStatus,invalidVacancyStatus,reviewFailureReason} from "./review-status.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 
 const enc = new TextEncoder();
@@ -289,7 +290,7 @@ Deno.serve(async(req)=>{
     const originalRaw={...(cand.raw||{}),...(extraReview?{review_retry_count:attempt}:{})};
     if(!safeVacancyCandidate(cand.listing_url,cand.title_hint,cand.listing_url)){
       await db.from("job_candidates").update({
-        status:"needs_manual_review",parsed_at:new Date().toISOString(),
+        status:invalidVacancyStatus(),parsed_at:new Date().toISOString(),
         raw:{...originalRaw,reason:"invalid_candidate_link"}
       }).eq("id",cand.id);
       summary.needs_review++;
@@ -299,7 +300,7 @@ Deno.serve(async(req)=>{
       summary.review_retries++;
       // Even a transient fetch failure consumes a bounded retry attempt.
       await db.from("job_candidates").update({
-        status:attempt>=2?"needs_manual_review":"needs_review",
+        status:reviewStatus(attempt),
         parsed_at:new Date().toISOString(),raw:originalRaw
       }).eq("id",cand.id);
     }
@@ -310,7 +311,7 @@ Deno.serve(async(req)=>{
       const postings=jsonLdJobs(html);
       const jp=postings.find((x:any)=>x.title&&x.datePosted)||fallbackPosting(html,cand.listing_url,cand.title_hint);
       if(!jp||!jp.title||!jp.datePosted){
-        await db.from("job_candidates").update({status:extraReview&&attempt>=2?"needs_manual_review":"needs_review",parsed_at:new Date().toISOString(),raw:{...originalRaw,reason:"missing_jsonld_or_date"}}).eq("id",cand.id);
+        await db.from("job_candidates").update({status:extraReview?reviewStatus(attempt):"needs_review",parsed_at:new Date().toISOString(),raw:{...originalRaw,reason:extraReview?reviewFailureReason(attempt):"missing_jsonld_or_date"}}).eq("id",cand.id);
         summary.needs_review++;continue;
       }
       summary.parsed++;
