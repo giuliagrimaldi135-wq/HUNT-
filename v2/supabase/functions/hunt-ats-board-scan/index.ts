@@ -2,6 +2,7 @@
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {isRealCareerPosting,trustedSmartRecruitersIdentity,isEligibleForStaleTransition} from "./ats-ingestion-guard.mjs";
 import {shouldProbeATS,atsScanStatus} from "./ats-source-health.mjs";
+import {leverPostingCreatedAtISO} from "./lever-original-date.mjs";
 const enc=new TextEncoder();
 const trim=(v:unknown,n=12000)=>String(v??"").replace(/\s+/g," ").trim().slice(0,n);
 async function hash(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}
@@ -71,7 +72,8 @@ function mapped(source:any,data:any){
     title:trim(x.text,200),location:trim(x.categories?.location||"",140),
     description:cleanHTML(x.descriptionPlain||x.description||""),
     url:safeURL(x.hostedUrl),apply:safeURL(x.applyUrl)||safeURL(x.hostedUrl),
-    id:trim(x.id,110),remote:/remote/i.test(String(x.workplaceType||x.categories?.location||""))
+    id:trim(x.id,110),remote:/remote/i.test(String(x.workplaceType||x.categories?.location||"")),
+     providerCreatedRaw:x.createdAt
   }));
  }
  if(source.source_family==="ats_greenhouse"&&Array.isArray(data.jobs)){
@@ -179,6 +181,7 @@ Deno.serve(async(req)=>{
       }
       if(!item.url||!item.description||item.description.length<75){rejected++;ignored++;continue}
       if(recentLinks.has(item.url))continue;recentLinks.add(item.url);scanned++;
+       const providerCreated=source.source_family==="ats_lever"?leverPostingCreatedAtISO(item.providerCreatedRaw):null;
       // This is a live public ATS listing. Do not invent a publication date: first_seen_at is distinct.
       const {data:existingLink,error:linkLookupError}=await db.from("job_sources")
         .select("job_id").eq("source_id",source.id).eq("listing_url",item.url).maybeSingle();
@@ -208,13 +211,18 @@ Deno.serve(async(req)=>{
       }
       if(existingId){
         const {data:prior,error:readError}=await db.from("jobs")
-          .select("description,published_at").eq("id",existingId).single();
+          .select("description,published_at,metadata").eq("id",existingId).single();
         if(readError)throw Error(readError.message);
         const patch:any={
           last_seen_at:stamp,last_verified_at:stamp,updated_at:stamp,
           state:"active_verified",confidence_label:"VERIFIED ACTIVE",vacancy_confidence:96
         };
         if(item.description.length>String(prior?.description||"").length)patch.description=item.description;
+         // Creation precedes publication. It can safely bound maximum
+         // possible freshness without falsely claiming a datePosted.
+         if(providerCreated)patch.metadata={...(prior?.metadata||{}),
+           provider_creation_at:providerCreated,provider_creation_source:"lever_createdAt_public_postings_API",
+           provider_creation_is_publication_date:false};
         if(!prior?.published_at&&item.posted&&Number.isFinite(Date.parse(item.posted))&&Date.parse(item.posted)<=Date.now())
           patch.published_at=new Date(item.posted).toISOString();
         const {error:jobError}=await db.from("jobs").update(patch).eq("id",existingId);
@@ -246,7 +254,8 @@ Deno.serve(async(req)=>{
         published_at:item.posted&&Number.isFinite(new Date(item.posted).getTime())&&new Date(item.posted).getTime()<=Date.now()
           ?new Date(item.posted).toISOString():null,
         first_seen_at:stamp,last_seen_at:stamp,last_verified_at:stamp,
-        metadata:{discovered_by:"hunt-ats-board-v4",catalog_scope:"all_public_roles",public_ats:source.source_family,posted_date:item.posted?"provider_date":"not_exposed",employment_type_inferred_from_title:!item.providerEmploymentType,source_verified_at:stamp}
+        metadata:{discovered_by:"hunt-ats-board-v4",catalog_scope:"all_public_roles",public_ats:source.source_family,posted_date:item.posted?"provider_date":"not_exposed",employment_type_inferred_from_title:!item.providerEmploymentType,source_verified_at:stamp,
+          ...(providerCreated?{provider_creation_at:providerCreated,provider_creation_source:"lever_createdAt_public_postings_API",provider_creation_is_publication_date:false}:{})}
       }).select("id").single();
       if(insertError||!job)throw Error(insertError?.message||"Job insert failed");
       const {error:linkError}=await db.from("job_sources").insert({
