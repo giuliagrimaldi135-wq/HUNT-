@@ -1,6 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
-import {publishedDateInArticleURL,belongsToNamedCompany} from "./article-provenance.mjs";
+import {publishedDateInArticleURL,belongsToNamedCompany,labeledPressPublishedDate} from "./article-provenance.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -85,8 +85,9 @@ function articleFromHtml(html:string,url:string){
  const d=rawDate?new Date(rawDate):null;
  // A dated path on an official press article supersedes a generic page-updated
  // meta timestamp. Never infer publication from unrelated dates in page chrome.
+ const labeledDate=labeledPressPublishedDate(html);
  const datedPath=publishedDateInArticleURL(url);
- const published=datedPath||(d&&!Number.isNaN(d.getTime())?d.toISOString():null);
+ const published=labeledDate||datedPath||(d&&!Number.isNaN(d.getTime())?d.toISOString():null);
  const articleEvidence=Boolean(structured.length||meta(html,"article:published_time")||(isArticlePath(url)&&(timeTag||published)));
  return {title,description,published,url,articleEvidence};
 }
