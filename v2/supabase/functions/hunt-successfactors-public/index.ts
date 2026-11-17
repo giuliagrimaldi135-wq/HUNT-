@@ -2,6 +2,7 @@ import {createClient} from "npm:@supabase/supabase-js@2";
 import {scanHealth} from "./scan-health.mjs";
 import {selectCatalogRotation,advanceCatalogCursors} from "./catalog-rotation.mjs";
 import {resolvePradaMaison} from "./prada-maison.mjs";
+import {shouldProbeSuccessFactors,successFactorsCooldownMinutes} from "./successfactors-retry-policy.mjs";
 const e=new TextEncoder();
 async function sha(v:string){return [...new Uint8Array(await crypto.subtle.digest("SHA-256",e.encode(v)))].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function eq(a:string,b:string){if(a.length!==b.length)return false;let v=0;for(let i=0;i<a.length;i++)v|=a.charCodeAt(i)^b.charCodeAt(i);return v===0}
@@ -85,8 +86,10 @@ Deno.serve(async(req)=>{
     .select("id,company_id,base_url,config,last_scan_at,source_family,source_type,consecutive_failures")
     .eq("active",true).eq("source_family","successfactors").eq("source_type","ats").limit(50);
   if(sourceError)throw Error(sourceError.message);
-  const sources=(all||[]).filter(x=>Array.isArray(x.config?.catalog_urls)&&x.config.catalog_urls.length)
-    .sort((a,b)=>Date.parse(a.last_scan_at||"2000-01-01")-Date.parse(b.last_scan_at||"2000-01-01")).slice(0,2);
+  const sorted=(all||[]).filter(x=>Array.isArray(x.config?.catalog_urls)&&x.config.catalog_urls.length)
+    .sort((a,b)=>Date.parse(a.last_scan_at||"2000-01-01")-Date.parse(b.last_scan_at||"2000-01-01"));
+  const skippedBackoff=sorted.filter(x=>!shouldProbeSuccessFactors(x));
+  const sources=sorted.filter(x=>shouldProbeSuccessFactors(x)).slice(0,2);
   const dry=Boolean((await req.json().catch(()=>({})))?.dry_run);
   const results:any[]=[];
   for(const source of sources){
@@ -165,6 +168,6 @@ Deno.serve(async(req)=>{
    }
    results.push({source:source.id,listed,checked,created,updated,failures,health:h.status,details:report.slice(0,8)});
   }
-  return Response.json({ok:true,dry_run:dry,results});
+  return Response.json({ok:true,dry_run:dry,backoff_skipped:skippedBackoff.length,backoff_minutes:skippedBackoff.map(x=>({source:x.id,minutes:successFactorsCooldownMinutes(x.consecutive_failures)})),results});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
 });
