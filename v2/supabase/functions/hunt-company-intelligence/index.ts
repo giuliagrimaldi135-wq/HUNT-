@@ -1,5 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import {publishedDateInArticleURL,belongsToNamedCompany} from "./article-provenance.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -82,7 +83,10 @@ function articleFromHtml(html:string,url:string){
  const timeTag=(html.match(/<time[^>]*datetime=["\x27]([^"\x27]+)["\x27]/i)||[])[1]||"";
  const rawDate=metaDate||timeTag;
  const d=rawDate?new Date(rawDate):null;
- const published=d&&!Number.isNaN(d.getTime())?d.toISOString():(isArticlePath(url)?visibleDate(html):null);
+ // A dated path on an official press article supersedes a generic page-updated
+ // meta timestamp. Never infer publication from unrelated dates in page chrome.
+ const datedPath=publishedDateInArticleURL(url);
+ const published=datedPath||(d&&!Number.isNaN(d.getTime())?d.toISOString():null);
  const articleEvidence=Boolean(structured.length||meta(html,"article:published_time")||(isArticlePath(url)&&(timeTag||published)));
  return {title,description,published,url,articleEvidence};
 }
@@ -128,7 +132,7 @@ Deno.serve(async(req)=>{
  if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
  const {data:sources}=await db.from("intelligence_sources")
-   .select("id,company_id,source_type,platform,name,url,official,trust_level,last_scan_at,consecutive_failures,companies(name)")
+   .select("id,company_id,source_type,platform,name,url,official,trust_level,last_scan_at,consecutive_failures,companies(name,website_url)")
    .eq("active",true).eq("platform","web")
    .in("source_type",["newsroom","investor_relations"])
    .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(8);
@@ -158,6 +162,8 @@ Deno.serve(async(req)=>{
        }
        const a=articleFromHtml(pageHtml,cand.url);
        if(!a.articleEvidence||!a.title||a.title.length<8||!a.published)continue;
+       if(!belongsToNamedCompany(a.title,a.description,source.companies?.name||"",
+         source.url,source.companies?.website_url||null))continue;
        const age=Math.floor((Date.now()-new Date(a.published).getTime())/DAY);
        if(age<0||age>120)continue;
        const rel=relevance(a.title,a.description,source.source_type);
