@@ -275,16 +275,17 @@ Deno.serve(async(req)=>{
   if(newError||reviewError)return new Response('{"ok":false,"error":"candidate_read_failed"}',{status:503,headers:{"content-type":"application/json"}});
   // Retry only recently seen leads with independent employer evidence,
   // after a 24h pause and no more than two review attempts.
-  const cands=[...(newCandidates||[]),...(reviewCandidates||[])
-    .filter((c:any)=>canRetryReview(c)).slice(0,6)];
+  const cands=[...(newCandidates||[]),...(reviewCandidates||[])];
+  const retryIDs=new Set((reviewCandidates||[])
+    .filter((c:any)=>canRetryReview(c)).slice(0,6).map((c:any)=>c.id));
   // Another official ATS scanner may have already verified the exact job.
   // Use complete official URLs, never title-similarity or shared-group labels.
   const candidateURLs=[...new Set(cands.map((x:any)=>x.listing_url))];
   const knownByURL=new Map<string,any[]>();
-  if(candidateURLs.length){
+  for(let offset=0;offset<candidateURLs.length;offset+=80){
     const {data:previouslyVerified,error:knownError}=await db.from("jobs")
       .select("id,primary_apply_url,state,published_at,first_seen_at,last_verified_at,description")
-      .in("primary_apply_url",candidateURLs).limit(120);
+      .in("primary_apply_url",candidateURLs.slice(offset,offset+80)).limit(200);
     if(knownError)return new Response('{"ok":false,"error":"existing_verification_read_failed"}',
       {status:503,headers:{"content-type":"application/json"}});
     for(const verified of previouslyVerified||[]){
@@ -314,6 +315,9 @@ Deno.serve(async(req)=>{
       summary.already_verified_reconciled++;
       continue;
     }
+    // Reconciliation is cheap and immediate; HTTP reparse still observes
+    // the 24-hour delay, 2-attempt cap and 6-review-per-cycle budget.
+    if(cand.status==="needs_review"&&!retryIDs.has(cand.id))continue;
     const extraReview=cand.status==="needs_review";
     const attempt=(Number(cand.raw?.review_retry_count)||0)+(extraReview?1:0);
     const originalRaw={...(cand.raw||{}),...(extraReview?{review_retry_count:attempt}:{})};
