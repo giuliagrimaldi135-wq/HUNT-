@@ -53,6 +53,32 @@ export function strongOfficialBoardIdentity(job) {
   return m?"smartrecruiters:"+m[1].toLowerCase()+":"+m[2]:null;
 }
 
+// Localized Kering career links may represent the same official requisition
+// in Italian and French. Canonicalize only the employer, region and exact slug;
+// distinct job IDs, dates or substantively different descriptions must remain.
+export function officialKeringLocaleIdentity(job){
+ try{
+  const u=new URL(String(job.primary_apply_url||""));
+  if(u.protocol!=="https:"||u.hostname.toLowerCase()!=="www.kering.com")return null;
+  const m=u.pathname.toLowerCase().match(/^\/(?:it\/talenti\/offerte-di-lavoro|fr\/talent\/offres-d-emploi|en\/talent\/job-offers)\/(europe|americas|asia-pacific)\/([a-z0-9-]{9,})\/?$/);
+  if(!m||!job.company_id)return null;
+  return String(job.company_id).toLowerCase()+"|kering:"+m[1]+":"+m[2];
+ }catch{return null}
+}
+function sameOfficialVacancy(a,b){
+ if(officialKeringLocaleIdentity(a)!==officialKeringLocaleIdentity(b))return false;
+ if(a.requisition_id&&b.requisition_id&&String(a.requisition_id).toLowerCase()!==String(b.requisition_id).toLowerCase())return false;
+ const aDescription=String(a.description||"").trim().replace(/\s+/g," ").toLowerCase();
+ const bDescription=String(b.description||"").trim().replace(/\s+/g," ").toLowerCase();
+ // A long exact job spec is essential; a matching title slug alone is not.
+ return aDescription.length>=250&&aDescription===bDescription;
+}
+function preferOfficialKeringRecord(a,b){
+ const aReq=Boolean(String(a.requisition_id||"").trim()),bReq=Boolean(String(b.requisition_id||"").trim());
+ if(aReq!==bReq)return aReq?a:b;
+ return preferCanonicalJob(a,b);
+}
+
 export function chooseUniqueJobs(rows,cutoffMs,nowMs=Date.now()) {
   const found=new Map(),duplicateIds=[];
   for(const job of rows){
@@ -75,5 +101,20 @@ export function chooseUniqueJobs(rows,cutoffMs,nowMs=Date.now()) {
     duplicateIds.push(winner.id===prior.id?job.id:prior.id);
     official.set(key,winner);
   }
-  return {jobs:[...unidentified,...official.values()],duplicateIds:[...new Set(duplicateIds)]};
+  // The same official Kering role may be visible through language-specific
+  // URLs without the requisition code in one locale. Keep the source with an
+  // official requisition ID. Never delete the physical job or applications.
+  const locales=new Map(),remaining=[];
+  for(const job of [...unidentified,...official.values()]){
+    const key=officialKeringLocaleIdentity(job);
+    if(!key){remaining.push(job);continue}
+    const existing=locales.get(key)||[];
+    const target=existing.find((prior)=>sameOfficialVacancy(prior,job));
+    if(!target){existing.push(job);locales.set(key,existing);continue}
+    const winner=preferOfficialKeringRecord(target,job);
+    duplicateIds.push(winner.id===target.id?job.id:target.id);
+    existing.splice(existing.indexOf(target),1,winner);
+    locales.set(key,existing);
+  }
+  return {jobs:[...remaining,...[...locales.values()].flat()],duplicateIds:[...new Set(duplicateIds)]};
 }
