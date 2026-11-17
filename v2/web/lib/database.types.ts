@@ -71,6 +71,35 @@ export type Database = {
           },
         ]
       }
+      ats_discovery_runs: {
+        Row: {
+          checked_at: string
+          found_boards: number
+          last_error: string | null
+          source_id: string
+        }
+        Insert: {
+          checked_at?: string
+          found_boards?: number
+          last_error?: string | null
+          source_id: string
+        }
+        Update: {
+          checked_at?: string
+          found_boards?: number
+          last_error?: string | null
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ats_discovery_runs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: true
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_preferences: {
         Row: {
           employment_types: Json
@@ -219,6 +248,229 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hunt_ai_request_events: {
+        Row: {
+          created_at: string
+          feature: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hunt_quality_snapshots: {
+        Row: {
+          id: number
+          metrics: Json
+          snapshot_at: string
+        }
+        Insert: {
+          id?: never
+          metrics: Json
+          snapshot_at?: string
+        }
+        Update: {
+          id?: never
+          metrics?: Json
+          snapshot_at?: string
+        }
+        Relationships: []
+      }
+      intelligence_scan_runs: {
+        Row: {
+          extracted_items: number
+          finished_at: string | null
+          health_status: string | null
+          id: string
+          metadata: Json
+          parser_ok: boolean | null
+          request_ok: boolean | null
+          source_id: string
+          started_at: string
+        }
+        Insert: {
+          extracted_items?: number
+          finished_at?: string | null
+          health_status?: string | null
+          id?: string
+          metadata?: Json
+          parser_ok?: boolean | null
+          request_ok?: boolean | null
+          source_id: string
+          started_at?: string
+        }
+        Update: {
+          extracted_items?: number
+          finished_at?: string | null
+          health_status?: string | null
+          id?: string
+          metadata?: Json
+          parser_ok?: boolean | null
+          request_ok?: boolean | null
+          source_id?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intelligence_scan_runs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "intelligence_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intelligence_sources: {
+        Row: {
+          active: boolean
+          company_id: string
+          config: Json
+          consecutive_failures: number
+          created_at: string
+          health_status: string
+          id: string
+          last_scan_at: string | null
+          last_success_at: string | null
+          metadata: Json
+          name: string | null
+          official: boolean
+          platform: string
+          source_type: string
+          trust_level: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          company_id: string
+          config?: Json
+          consecutive_failures?: number
+          created_at?: string
+          health_status?: string
+          id?: string
+          last_scan_at?: string | null
+          last_success_at?: string | null
+          metadata?: Json
+          name?: string | null
+          official?: boolean
+          platform?: string
+          source_type: string
+          trust_level?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          active?: boolean
+          company_id?: string
+          config?: Json
+          consecutive_failures?: number
+          created_at?: string
+          health_status?: string
+          id?: string
+          last_scan_at?: string | null
+          last_success_at?: string | null
+          metadata?: Json
+          name?: string | null
+          official?: boolean
+          platform?: string
+          source_type?: string
+          trust_level?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intelligence_sources_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      internal_runtime_secrets: {
+        Row: {
+          created_at: string
+          name: string
+          secret_hash: string
+        }
+        Insert: {
+          created_at?: string
+          name: string
+          secret_hash: string
+        }
+        Update: {
+          created_at?: string
+          name?: string
+          secret_hash?: string
+        }
+        Relationships: []
+      }
+      job_candidates: {
+        Row: {
+          company_id: string
+          discovered_at: string
+          id: number
+          last_seen_at: string
+          listing_url: string
+          parsed_at: string | null
+          raw: Json
+          source_id: string
+          status: string
+          title_hint: string | null
+        }
+        Insert: {
+          company_id: string
+          discovered_at?: string
+          id?: number
+          last_seen_at?: string
+          listing_url: string
+          parsed_at?: string | null
+          raw?: Json
+          source_id: string
+          status?: string
+          title_hint?: string | null
+        }
+        Update: {
+          company_id?: string
+          discovered_at?: string
+          id?: number
+          last_seen_at?: string
+          listing_url?: string
+          parsed_at?: string | null
+          raw?: Json
+          source_id?: string
+          status?: string
+          title_hint?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_candidates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_candidates_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
             referencedColumns: ["id"]
           },
         ]
@@ -534,7 +786,9 @@ export type Database = {
           display_name: string | null
           education: Json
           experience: Json
+          first_name: string | null
           languages: Json
+          last_name: string | null
           onboarding_completed: boolean
           profile_summary: string | null
           seniority: string | null
@@ -548,7 +802,9 @@ export type Database = {
           display_name?: string | null
           education?: Json
           experience?: Json
+          first_name?: string | null
           languages?: Json
+          last_name?: string | null
           onboarding_completed?: boolean
           profile_summary?: string | null
           seniority?: string | null
@@ -562,7 +818,9 @@ export type Database = {
           display_name?: string | null
           education?: Json
           experience?: Json
+          first_name?: string | null
           languages?: Json
+          last_name?: string | null
           onboarding_completed?: boolean
           profile_summary?: string | null
           seniority?: string | null
@@ -973,6 +1231,211 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_news_reads: {
+        Row: {
+          item_id: string
+          read_at: string
+          source_kind: string
+          user_id: string
+        }
+        Insert: {
+          item_id: string
+          read_at?: string
+          source_kind: string
+          user_id: string
+        }
+        Update: {
+          item_id?: string
+          read_at?: string
+          source_kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_outreach_drafts: {
+        Row: {
+          brand_name: string
+          cv_id: string | null
+          email_body: string
+          outreach_key: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          brand_name: string
+          cv_id?: string | null
+          email_body?: string
+          outreach_key: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          brand_name?: string
+          cv_id?: string | null
+          email_body?: string
+          outreach_key?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_outreach_drafts_cv_id_fkey"
+            columns: ["cv_id"]
+            isOneToOne: false
+            referencedRelation: "user_cvs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_personalization: {
+        Row: {
+          avoid_role_traits: string[]
+          career_goal: string | null
+          communication_style: string | null
+          company_preference: string | null
+          completed: boolean
+          excluded_notes: string | null
+          interest_areas: string[]
+          next_experience_drivers: string[]
+          outreach_preference: string | null
+          priority_factors: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avoid_role_traits?: string[]
+          career_goal?: string | null
+          communication_style?: string | null
+          company_preference?: string | null
+          completed?: boolean
+          excluded_notes?: string | null
+          interest_areas?: string[]
+          next_experience_drivers?: string[]
+          outreach_preference?: string | null
+          priority_factors?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avoid_role_traits?: string[]
+          career_goal?: string | null
+          communication_style?: string | null
+          company_preference?: string | null
+          completed?: boolean
+          excluded_notes?: string | null
+          interest_areas?: string[]
+          next_experience_drivers?: string[]
+          outreach_preference?: string | null
+          priority_factors?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      world_news_items: {
+        Row: {
+          detected_at: string
+          evidence: Json
+          id: string
+          published_at: string
+          relevance_score: number
+          source_id: string
+          summary: string | null
+          theme: string
+          title: string
+          url: string
+        }
+        Insert: {
+          detected_at?: string
+          evidence?: Json
+          id?: string
+          published_at: string
+          relevance_score?: number
+          source_id: string
+          summary?: string | null
+          theme?: string
+          title: string
+          url: string
+        }
+        Update: {
+          detected_at?: string
+          evidence?: Json
+          id?: string
+          published_at?: string
+          relevance_score?: number
+          source_id?: string
+          summary?: string | null
+          theme?: string
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_news_items_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "world_news_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      world_news_sources: {
+        Row: {
+          active: boolean
+          category: string
+          consecutive_failures: number
+          created_at: string
+          feed_url: string
+          id: string
+          language: string
+          last_error: string | null
+          last_scan_at: string | null
+          last_success_at: string | null
+          publisher: string
+          region: string
+          status: string
+          trust_level: number
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          consecutive_failures?: number
+          created_at?: string
+          feed_url: string
+          id?: string
+          language?: string
+          last_error?: string | null
+          last_scan_at?: string | null
+          last_success_at?: string | null
+          publisher: string
+          region?: string
+          status?: string
+          trust_level?: number
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          consecutive_failures?: number
+          created_at?: string
+          feed_url?: string
+          id?: string
+          language?: string
+          last_error?: string | null
+          last_scan_at?: string | null
+          last_success_at?: string | null
+          publisher?: string
+          region?: string
+          status?: string
+          trust_level?: number
+        }
+        Relationships: []
       }
     }
     Views: {
