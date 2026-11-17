@@ -66,6 +66,9 @@ jobs:
       - name: Test vacancy monitor isolation and confirmed closure policy
         working-directory: v2/supabase/functions/hunt-vacancy-monitor
         run: node --test monitor-policy.test.mjs
+      - name: Test schema-compatible candidate review statuses
+        working-directory: v2/supabase/functions/hunt-source-discovery
+        run: node --test review-status.test.mjs
       - name: Test career link integrity and shared-group employer resolution
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test candidate-integrity.test.mjs
