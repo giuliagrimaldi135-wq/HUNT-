@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {isFreshActionable,chooseUniqueJobs} from "./recommendation-guard.mjs";
+import {isFreshActionable,chooseUniqueJobs,freshnessCutoff} from "./recommendation-guard.mjs";
 const now=Date.parse("2026-11-16T15:00:00Z"),cutoff=Date.parse("2026-10-27T00:00:00Z");
 const row={id:"one",company_id:"a",requisition_id:"123",canonical_title:"Buying Intern",city:"Milano",state:"active_verified",published_at:"2026-11-08T00:00:00Z",first_seen_at:"2026-11-08T00:00:00Z",last_verified_at:"2026-11-16T10:00:00Z",description:"official"};
 test("20 day limit is based on real publication, not refreshed verification",()=>{assert.equal(isFreshActionable({...row,published_at:"2026-09-24T00:00:00Z"},cutoff,now),false)});
@@ -27,4 +27,13 @@ test("generic company career links never merge independent brand vacancies",()=>
  const a={...row,id:"one-a",company_id:"a",primary_apply_url:"https://www.maxmarafashiongroup.com/join-us",requisition_id:"123"};
  const b={...a,id:"one-b",company_id:"b"};
  assert.equal(chooseUniqueJobs([a,b],cutoff,now).jobs.length,2);
+});
+
+test("20 days is a rolling limit, not midnight of the 20th calendar day",()=>{
+ const nowMs=Date.parse("2026-11-17T13:00:00Z");
+ const limit=Date.parse(freshnessCutoff(nowMs));
+ assert.equal(limit,Date.parse("2026-10-28T13:00:00Z"));
+ const old={...row,published_at:"2026-10-28T00:00:00Z",last_verified_at:"2026-11-17T12:00:00Z"};
+ assert.equal(isFreshActionable(old,limit,nowMs),false);
+ assert.equal(isFreshActionable({...old,published_at:"2026-10-28T13:00:00Z"},limit,nowMs),true);
 });
