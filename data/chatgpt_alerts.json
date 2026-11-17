@@ -996,5 +996,29 @@
     "source_name": "LVMH Careers / Fendi (FEND04707)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-fendi-retail-merchandising-woman-lg-fend04706",
+    "brand": "Fendi",
+    "title": "Internship within the Retail Merchandising Woman Leather Goods team",
+    "location": "Roma, Italia",
+    "published_at": "2026-11-09",
+    "detected_at": "2026-11-17T02:36:56+01:00",
+    "priority": "ALTA",
+    "score": 94,
+    "role_family": "Retail Merchandising / Buying / Allocation",
+    "why_fit": "Stage beginner nel retail merchandising pelletteria donna: assortimenti, distribuzione per cluster di negozi, sell-through, stock target e analisi di vendita. Coerente con Fashion Management e l'esperienza showroom; sede Roma.",
+    "reasons": [
+      "Livello beginner",
+      "Analisi assortimenti e sell-through",
+      "Allocazione stock per cluster e target stock level",
+      "Collaborazione con Retail e Collection Merchandising",
+      "Excel avanzato e inglese richiesti",
+      "Sede Roma e inizio previsto 23 novembre 2026"
+    ],
+    "url": "https://www.lvmh.com/en/join-us/our-job-offers/FEND04706",
+    "source_name": "LVMH Careers / Fendi (FEND04706)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
