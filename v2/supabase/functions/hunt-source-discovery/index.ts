@@ -2,6 +2,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { shouldScanSource } from "./source-health-policy.mjs";
 import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from "./candidate-integrity.mjs";
+import { normalizedCareerURL, selectUniqueCareerSources } from "./shared-source-policy.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 
 const enc = new TextEncoder();
@@ -187,14 +188,16 @@ Deno.serve(async(req)=>{
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
-  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0};
+  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0,shared_duplicate_sources_skipped:0};
 
   const {data:sources}=await db.from("sources")
-    .select("id,company_id,base_url,official,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
+    .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
     .eq("active",true).eq("official",true).neq("source_type","public_ats_board").not("base_url","is",null)
-    .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(120);
+    .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(1000);
 
-  for(const source of sources||[]){
+  const uniqueSources=selectUniqueCareerSources(sources||[]);
+  summary.shared_duplicate_sources_skipped=Math.max(0,(sources||[]).length-uniqueSources.length);
+  for(const source of uniqueSources){
     if(summary.sources>=18)break;
     if(!shouldScanSource(source)){summary.backoff_skipped++;continue}
     summary.sources++;
@@ -239,7 +242,17 @@ Deno.serve(async(req)=>{
     };
     // Never overwrite last_success_at with the time of a failed request.
     if(healthy)updated.last_success_at=new Date().toISOString();
-    await db.from("sources").update(updated).eq("id",source.id);
+    // Shared career-board URLs represent the same endpoint for sibling brands.
+    // Synchronize health for all exact-URL copies, rather than allowing stale
+    // duplicate records to accumulate fake errors or trigger extra retries.
+    const physicalURL=normalizedCareerURL(source.base_url);
+    const sameEndpointIDs=(sources||[])
+      .filter((s:any)=>s.active!==false&&s.source_type===source.source_type
+        &&normalizedCareerURL(s.base_url)===physicalURL)
+      .map((s:any)=>s.id);
+    const {error:healthError}=await db.from("sources").update(updated)
+      .in("id",sameEndpointIDs);
+    if(healthError)summary.errors++;
     await db.from("source_scan_runs").insert({
       source_id:source.id,started_at:started,finished_at:new Date().toISOString(),
       request_ok:requestOk,parser_ok:parserOk,extracted_jobs:extracted,
