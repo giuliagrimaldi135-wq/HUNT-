@@ -39,3 +39,17 @@ export function belongsToNamedCompany(articleTitle,description,company,sourceURL
  // Tiger article. Keep group news with the actual group brand instead.
  return false;
 }
+
+// Some corporate press portals display an explicit "YYYY.MM.DD Press release"
+// while their generic page metadata reflects the date the page was refreshed.
+// Only use this date when the label is adjacent to the actual date.
+export function labeledPressPublishedDate(html,nowMs=Date.now()){
+ const text=String(html||"").replace(/<[^>]+>/g," ").replace(/\s+/g," ").slice(0,25000);
+ const m=text.match(/\b(20\d{2})[.\-/](\d{2})[.\-/](\d{2})\s*(?:press release|comunicato stampa|press statement)\b/i);
+ if(!m)return null;
+ const iso=m[1]+"-"+m[2]+"-"+m[3];
+ const timestamp=Date.parse(iso+"T00:00:00Z");
+ if(!Number.isFinite(timestamp)||new Date(timestamp).toISOString().slice(0,10)!==iso
+   ||timestamp>nowMs+86400000||timestamp<Date.parse("2010-01-01"))return null;
+ return new Date(timestamp).toISOString();
+}
