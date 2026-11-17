@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {publishedDateInArticleURL as pathDate,belongsToNamedCompany as belongs} from "./article-provenance.mjs";
+import {publishedDateInArticleURL as pathDate,belongsToNamedCompany as belongs,labeledPressPublishedDate} from "./article-provenance.mjs";
 test("dated ASICS press URLs reveal May/June dates, never today's crawl date",()=>{
  assert.equal(pathDate("https://corp.asics.com/en/press/article/2026-05-22_cdp-supplier-engagement",Date.parse("2026-11-17")), "2026-05-22T00:00:00.000Z");
  assert.equal(pathDate("https://corp.asics.com/en/press/article/2026-06-02-avc_kenzen",Date.parse("2026-11-17")), "2026-06-02T00:00:00.000Z");
@@ -16,4 +16,10 @@ test("ASICS generic corporate news cannot pretend to be Onitsuka Tiger news",()=
 test("actual house domains and genuinely scoped articles still qualify",()=>{
  assert.equal(belongs("Autumn collection unveiled","","La DoubleJ","https://www.ladoublej.com/blog","https://www.ladoublej.com/"),true);
  assert.equal(belongs("Prada Group 9M results","","Prada Group","https://www.pradagroup.com/en/news-media/","https://www.pradagroup.com"),true);
+});
+
+test("explicit dated corporate press labels win over website crawl timestamps",()=>{
+ const html='<section>2026.05.29 Press release THE NEW NOVABLAST 6 SHOE IS HERE</section>';
+ assert.equal(labeledPressPublishedDate(html,Date.parse("2026-11-17")), "2026-05-29T00:00:00.000Z");
+ assert.equal(labeledPressPublishedDate("<p>Results for 2026.05.29 were excellent</p>"),null);
 });
