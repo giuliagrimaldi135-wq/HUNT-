@@ -1,6 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { chooseUniqueJobs } from "./recommendation-guard.mjs";
+import { chooseUniqueJobs, freshnessCutoff } from "./recommendation-guard.mjs";
 import { chooseRelevantCvProfile } from "./cv-evidence.mjs";
 
 const enc=new TextEncoder();
@@ -232,10 +232,7 @@ Deno.serve(async(req)=>{
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
-  const cutoffDate=new Date();
-  cutoffDate.setUTCDate(cutoffDate.getUTCDate()-20);
-  cutoffDate.setUTCHours(0,0,0,0);
-  const cutoff=cutoffDate.toISOString();
+  const cutoff=freshnessCutoff();
   const [{data:jobs,error:jobsError},{data:prefs,error:prefsError},{data:profiles,error:profilesError},{data:personal,error:personalError},{data:cvs,error:cvsError}]=await Promise.all([
     db.from("jobs").select("id,company_id,requisition_id,primary_apply_url,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,last_verified_at,vacancy_confidence,state,metadata")
       .in("state",["active_verified","active_likely"])
