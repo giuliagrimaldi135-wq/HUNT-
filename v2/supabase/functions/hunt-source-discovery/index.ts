@@ -4,6 +4,7 @@ import { shouldScanSource } from "./source-health-policy.mjs";
 import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from "./candidate-integrity.mjs";
 import { normalizedCareerURL, selectUniqueCareerSources } from "./shared-source-policy.mjs";
 import {reviewStatus,invalidVacancyStatus,reviewFailureReason} from "./review-status.mjs";
+import {eligibleAlreadyVerifiedJob,postedWithinTwentyDays} from "./existing-official-job.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 
 const enc = new TextEncoder();
@@ -189,7 +190,7 @@ Deno.serve(async(req)=>{
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
-  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0,shared_duplicate_sources_skipped:0};
+  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0,shared_duplicate_sources_skipped:0,already_verified_reconciled:0};
 
   const {data:sources}=await db.from("sources")
     .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
@@ -276,6 +277,21 @@ Deno.serve(async(req)=>{
   // after a 24h pause and no more than two review attempts.
   const cands=[...(newCandidates||[]),...(reviewCandidates||[])
     .filter((c:any)=>canRetryReview(c)).slice(0,6)];
+  // Another official ATS scanner may have already verified the exact job.
+  // Use complete official URLs, never title-similarity or shared-group labels.
+  const candidateURLs=[...new Set(cands.map((x:any)=>x.listing_url))];
+  const knownByURL=new Map<string,any[]>();
+  if(candidateURLs.length){
+    const {data:previouslyVerified,error:knownError}=await db.from("jobs")
+      .select("id,primary_apply_url,state,published_at,first_seen_at,last_verified_at,description")
+      .in("primary_apply_url",candidateURLs).limit(120);
+    if(knownError)return new Response('{"ok":false,"error":"existing_verification_read_failed"}',
+      {status:503,headers:{"content-type":"application/json"}});
+    for(const verified of previouslyVerified||[]){
+      if(!knownByURL.has(verified.primary_apply_url))knownByURL.set(verified.primary_apply_url,[]);
+      knownByURL.get(verified.primary_apply_url)!.push(verified);
+    }
+  }
 
   const {data:prefs}=await db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences");
   const {data:profiles}=await db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true);
@@ -285,6 +301,19 @@ Deno.serve(async(req)=>{
   const personalizationMap=new Map((personalizations||[]).map((p:any)=>[p.user_id,p]));
 
   for(const cand of cands){
+    const verified=(knownByURL.get(cand.listing_url)||[])
+      .find((j:any)=>eligibleAlreadyVerifiedJob(j,cand.listing_url));
+    if(verified){
+      const {error}=await db.from("job_candidates").update({
+        status:"promoted",parsed_at:new Date().toISOString(),
+        raw:{...(cand.raw||{}),existing_verified_job_id:verified.id,
+          reason:"already_verified_by_dedicated_official_source",
+          date_provenance:verified.published_at?"official_posted":"first_observed_only"}
+      }).eq("id",cand.id);
+      if(error){summary.errors++;continue}
+      summary.already_verified_reconciled++;
+      continue;
+    }
     const extraReview=cand.status==="needs_review";
     const attempt=(Number(cand.raw?.review_retry_count)||0)+(extraReview?1:0);
     const originalRaw={...(cand.raw||{}),...(extraReview?{review_retry_count:attempt}:{})};
@@ -316,7 +345,7 @@ Deno.serve(async(req)=>{
       }
       summary.parsed++;
       const age=ageDays(jp.datePosted);
-      if(age<0||age>20){
+      if(!postedWithinTwentyDays(jp.datePosted)){
         await db.from("job_candidates").update({status:"skipped_old",parsed_at:new Date().toISOString(),raw:{...originalRaw,datePosted:jp.datePosted,age_days:age}}).eq("id",cand.id);
         summary.old++;continue;
       }
