@@ -93,6 +93,9 @@ jobs:
       - name: Test proven legacy navigation and HTML duplicate classification
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test review-queue-cleanup.test.mjs
+      - name: Test sourcing role evidence and specialist risk exclusions
+        working-directory: v2/supabase/functions/hunt-match-refresh
+        run: node --test role-specialization.test.mjs
       - name: Test global news HTTP429 backoff and limited publisher concurrency
         working-directory: v2/supabase/functions/hunt-global-news
         run: node --test news-source-backoff.test.mjs
