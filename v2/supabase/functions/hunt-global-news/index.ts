@@ -86,7 +86,7 @@ Deno.serve(async(req)=>{
   if(secretError||!secret||!token||!equal(await digest(token),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
   const {data:sources,error}=await client.from("world_news_sources").select("id,publisher,feed_url,region,language,category,trust_level,last_scan_at,consecutive_failures,last_error").eq("active",true).order("last_scan_at",{ascending:true,nullsFirst:true}).limit(400);
   if(error)throw Error(error.message);
-  const {due,backoffSkipped}=chooseDueNewsSources(sources||[],12);
+  const {due,backoffSkipped,hostLimitedSkipped}=chooseDueNewsSources(sources||[],12);
   const scan=async(source:any)=>{
    let inserted=0,status="healthy",problem="";
    try{
@@ -113,7 +113,7 @@ Deno.serve(async(req)=>{
     const batch=await Promise.all(due.slice(i,i+4).map(scan));
     results.push(...batch);
   }
-  return Response.json({ok:true,scanned:results.length,backoffSkipped,
+  return Response.json({ok:true,scanned:results.length,backoffSkipped,hostLimitedSkipped,
     inserted:results.reduce((sum,x)=>sum+x.inserted,0),
     healthy:results.filter(x=>x.status==="healthy").length,results});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
