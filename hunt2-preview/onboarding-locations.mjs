@@ -11,5 +11,5 @@ export function addChosenCity(list=[],raw=""){
 export function findCitySuggestions(term="",max=18){
  const query=norm(term);
  const matches=LOCATION_SUGGESTIONS.filter(city=>!query||norm(city).includes(query));
- return matches.slice(0,Math.max(0,Math.min(100,Number(max)||18)));
+ return matches.slice(0,Math.max(0,Math.min(260,Number(max)||18)));
 }
