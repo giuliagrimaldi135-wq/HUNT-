@@ -35,3 +35,20 @@ test("rejects redirects outside the brand, home pages, and JSON",()=>{
  assert.equal(verified(linked,linked,root,"application/json",'{"jobs":[]}'),null);
  assert.equal(verified("https://127.0.0.1/jobs","https://127.0.0.1/jobs",root,"text/html","<title>Careers</title>"),null);
 });
+
+test("worldwide second-level country-code domains cannot impersonate siblings",()=>{
+ const examples=[
+  ["brand.co.za","other.co.za"],
+  ["brand.com.mx","other.com.mx"],
+  ["brand.co.kr","other.co.kr"],
+  ["brand.com.ar","other.com.ar"],
+  ["brand.co.id","other.co.id"]
+ ];
+ for(const [ours,theirs] of examples){
+  const website="https://"+ours+"/";
+  assert.equal(target("https://careers."+ours+"/jobs","Careers",website,website),"https://careers."+ours+"/jobs");
+  assert.equal(target("https://careers."+theirs+"/jobs","Careers",website,website),null);
+  assert.equal(accepts("https://careers."+theirs+"/jobs",website,[]),false);
+ }
+ assert.equal(target("https://co.za/jobs","Careers","https://brand.co.za/","https://brand.co.za/"),null);
+});
