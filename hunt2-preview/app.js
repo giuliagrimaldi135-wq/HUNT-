@@ -163,16 +163,58 @@ function onboardingView(profile){
  </form></div>`;
  const preferredLocations=[];
  const relocationLocations=[];
- const renderLocationTags=(id,items,type)=>{document.getElementById(id).innerHTML=items.map((item,index)=>`<span class="locationTag">${esc(item)}<button type="button" data-remove-location="${type}" data-index="${index}" aria-label="Rimuovi">×</button></span>`).join("")};
- const addLocation=(cityId,items,listId,type)=>{
-   const city=document.getElementById(cityId).value.trim();
-   if(!city)return;
-   if(!items.includes(city))items.push(city);
-   document.getElementById(cityId).value="";
-   renderLocationTags(listId,items,type);
+ const renderLocationTags=(id,items,type)=>{
+  document.getElementById(id).innerHTML=items.map((item,index)=>
+   '<span class="locationTag">'+esc(item)+'<button type="button" data-remove-location="'+type+'" data-index="'+index+'" aria-label="Rimuovi '+esc(item)+'">×</button></span>'
+  ).join("");
  };
+ const hideLocationMenu=id=>{
+  const list=document.getElementById(id+"Options"),input=document.getElementById(id);
+  if(list)list.hidden=true;
+  if(input)input.setAttribute("aria-expanded","false");
+ };
+ const addLocation=(cityId,items,listId,type,chosen)=>{
+  const input=document.getElementById(cityId);
+  const updated=addChosenCity(items,chosen??input.value);
+  items.splice(0,items.length,...updated);
+  input.value="";
+  renderLocationTags(listId,items,type);
+  hideLocationMenu(cityId);
+ };
+ const pickerConfigs=[
+  {id:"preferredCity",items:preferredLocations,list:"preferredLocationsList",type:"preferred"},
+  {id:"relocationCity",items:relocationLocations,list:"relocationLocationsList",type:"relocation"}
+ ];
+ for(const picker of pickerConfigs){
+  const input=document.getElementById(picker.id),list=document.getElementById(picker.id+"Options");
+  const draw=()=>{
+   const query=input.value.trim();
+   const choices=findCitySuggestions(query,18);
+   list.innerHTML=choices.map(city=>'<button type="button" role="option" data-city-choice="'+esc(city)+'">'+esc(city)+'</button>').join("")+
+    (query&&!choices.some(x=>x.toLowerCase()===query.toLowerCase())?'<button type="button" data-city-choice="'+esc(query)+'">+ Aggiungi «'+esc(query)+'»</button>':"")+
+    '<p>Non trovi la città? Scrivila e premi Invio o «Aggiungi città».</p>';
+   list.hidden=false;
+   input.setAttribute("aria-expanded","true");
+  };
+  input.addEventListener("focus",draw);
+  input.addEventListener("input",draw);
+  input.addEventListener("keydown",e=>{
+   if(e.key==="Escape"){hideLocationMenu(picker.id);return;}
+   if(e.key==="Enter"&&input.value.trim()){e.preventDefault();addLocation(picker.id,picker.items,picker.list,picker.type);}
+  });
+  list.addEventListener("click",e=>{
+   const btn=e.target.closest("[data-city-choice]");
+   if(btn)addLocation(picker.id,picker.items,picker.list,picker.type,btn.dataset.cityChoice);
+  });
+ }
  document.getElementById("addPreferredLocation").onclick=()=>addLocation("preferredCity",preferredLocations,"preferredLocationsList","preferred");
  document.getElementById("addRelocationLocation").onclick=()=>addLocation("relocationCity",relocationLocations,"relocationLocationsList","relocation");
+ document.addEventListener("pointerdown",e=>{
+  for(const picker of pickerConfigs)
+   if(!e.target.closest("#"+picker.id+"Options")&&!e.target.closest("#"+picker.id))
+    hideLocationMenu(picker.id);
+ });
+
  document.getElementById("onboarding").onclick=(event)=>{
    const btn=event.target.closest("[data-remove-location]");
    if(!btn)return;
@@ -188,12 +230,14 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
  e.preventDefault();
  const form=e.currentTarget, fd=new FormData(form), msg=document.getElementById("onMsg");
  const primary=fd.getAll("primary");
- const locations=preferredLocations;
+ const locations=addChosenCity(preferredLocations,document.getElementById("preferredCity")?.value||"");
+ relocationLocations=addChosenCity(relocationLocations,document.getElementById("relocationCity")?.value||"");
  const firstName=String(fd.get("first_name")||"").trim();
  const lastName=String(fd.get("last_name")||"").trim();
  const radarScope=String(fd.get("radar_scope")||"smart");
  if(!firstName||!lastName){msg.innerHTML='<div class="msg bad">Inserisci nome e cognome.</div>';return}
  if(!primary.length){msg.innerHTML='<div class="msg bad">Scegli almeno un obiettivo professionale.</div>';return}
+ if(!locations.length&&!relocationLocations.length){msg.innerHTML='<div class="msg bad">Aggiungi almeno una città in cui vuoi lavorare. Puoi cercarla tra i suggerimenti o scriverla liberamente.</div>';return}
  msg.innerHTML='<div class="msg good">Salvataggio…</div>';
  const now=new Date().toISOString();
  const p=await supabase.from("profiles").upsert({
