@@ -47,6 +47,9 @@ jobs:
       - name: Test legacy radar commit policy (prevent timestamp-only deploys)
         working-directory: .
         run: python -m unittest discover -s scripts -p test_radar_persist_policy.py -v
+      - name: Test Vercel frontend-only build policy
+        working-directory: .
+        run: python -m unittest discover -s scripts -p test_hunt_vercel_ignore.py -v
       - name: Test freshness, official-job deduplication and CV evidence
         working-directory: v2/supabase/functions/hunt-match-refresh
         run: node --test recommendation-guard.test.mjs cv-evidence.test.mjs
