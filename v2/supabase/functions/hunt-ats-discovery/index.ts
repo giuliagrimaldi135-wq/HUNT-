@@ -1,7 +1,7 @@
 
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {findMissingWebsiteLeads} from "./website-seed-policy.mjs";
-import {linkedCareerTarget,acceptedCareerResponse} from "./careers-link-policy.mjs";
+import {linkedCareerTarget,acceptedCareerResponse,verifiedBrandCareerPage} from "./careers-link-policy.mjs";
 const enc=new TextEncoder();
 async function digest(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function same(a:string,b:string){if(a.length!==b.length)return false;let n=0;for(let i=0;i<a.length;i++)n|=a.charCodeAt(i)^b.charCodeAt(i);return n===0}
@@ -85,12 +85,13 @@ Deno.serve(async(req)=>{
   const queue=(origins||[]).filter((x:any)=>!times.has(x.id)||times.get(x.id)!<since)
     .sort((a:any,b:any)=>(times.get(a.id)||0)-(times.get(b.id)||0)).slice(0,12);
   const known=new Set((existing||[]).map((x:any)=>x.company_id+"|"+x.base_url));
-  let tested=0,discovered=0,failed=0,validated=0;
+  let tested=0,discovered=0,failed=0,validated=0,careerPagesDiscovered=0;
   const details:any[]=[];
   for(const source of queue){
    tested++;
    const moment=new Date().toISOString();
    let found=0,problem="";
+   let verifiedCareerURL:string|null=null;
    try{
     const location=new URL(source.base_url);
     if(location.protocol!=="https:"||location.username||location.password)throw Error("Unsupported origin URL");
@@ -119,9 +120,24 @@ Deno.serve(async(req)=>{
           // Directly redirected official ATS listing URLs are useful even when
           // the destination HTML has no further outgoing links.
           const body=(await page.text()).slice(0,850000);
+          const careerURL=verifiedBrandCareerPage(target,page.url,source.base_url,page.headers.get("content-type"),body);
+          if(careerURL&&!verifiedCareerURL)verifiedCareerURL=careerURL;
           for(const board of boardsIn(body+" "+page.url))foundBoards.set(board.family+":"+board.site,board);
         }catch{}
       }
+    }
+    if(verifiedCareerURL){
+      const {data:careerRecord,error:careerError}=await db.from("sources").upsert({
+        company_id:source.company_id,source_type:"career_page",source_family:"custom",
+        name:String(source.companies?.name||"Brand")+" · verified careers",
+        base_url:verifiedCareerURL,official:true,trust_level:88,
+        active:true,health_status:"unknown",
+        config:{},metadata:{discovery:"verified_same_domain_careers",
+          referring_source_id:source.id,referring_url:source.base_url,
+          not_a_verified_vacancy:true}
+      },{onConflict:"company_id,source_type,base_url",ignoreDuplicates:true}).select("id");
+      if(careerError)throw Error(careerError.message);
+      if(careerRecord?.length)careerPagesDiscovered++;
     }
     const boards=[...foundBoards.values()];
     for(const board of boards){
@@ -142,6 +158,6 @@ Deno.serve(async(req)=>{
    await db.from("ats_discovery_runs").upsert({source_id:source.id,checked_at:moment,found_boards:found,last_error:problem||null},{onConflict:"source_id"});
    details.push({company:String(source.companies?.name||""),found,error:problem||undefined});
   }
-  return Response.json({ok:true,scanned:tested,discovered,validated,failed,website_leads_seeded:seeded,details});
+  return Response.json({ok:true,scanned:tested,discovered,validated,career_pages_discovered:careerPagesDiscovered,failed,website_leads_seeded:seeded,details});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
 });

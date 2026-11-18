@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {linkedCareerTarget as target,acceptedCareerResponse as accepts} from "./careers-link-policy.mjs";
+import {linkedCareerTarget as target,acceptedCareerResponse as accepts,verifiedBrandCareerPage as verified} from "./careers-link-policy.mjs";
 const root="https://www.maison-alaia.com/";
 test("official brand job subdomain is traversed even if it is a different origin",()=>{
  assert.equal(target("https://careers.maison-alaia.com/","Opportunities",root,root),"https://careers.maison-alaia.com/");
@@ -20,4 +20,18 @@ test("external redirects must reach a supported ATS host, never arbitrary origin
  assert.equal(accepts("https://careers.brand.com/jobs","https://brand.com",[]),true);
  assert.equal(accepts("https://bad.example/jobs","https://brand.com",[]),false);
  assert.equal(accepts("http://jobs.lever.co/brand","https://brand.com",["jobs.lever.co"]),false);
+});
+
+test("register only verified same-domain HTML careers destinations",()=>{
+ const html="<html><head><title>Careers at Alaïa</title></head><body><h1>Open positions</h1></body></html>";
+ assert.equal(verified("https://careers.maison-alaia.com/","https://careers.maison-alaia.com/",root,"text/html",html),"https://careers.maison-alaia.com/");
+ assert.equal(verified("https://www.maison-alaia.com/pages/careers","https://www.maison-alaia.com/pages/careers",root,"text/html",html),"https://www.maison-alaia.com/pages/careers");
+});
+test("rejects redirects outside the brand, home pages, and JSON",()=>{
+ const home="<html><title>Maison Alaïa Online Store</title><a href='/careers'>Careers</a></html>";
+ const linked="https://www.maison-alaia.com/pages/careers";
+ assert.equal(verified(linked,"https://careers.unknown-vendor.com/jobs",root,"text/html","<title>Careers</title>"),null);
+ assert.equal(verified(linked,root,root,"text/html",home),null);
+ assert.equal(verified(linked,linked,root,"application/json",'{"jobs":[]}'),null);
+ assert.equal(verified("https://127.0.0.1/jobs","https://127.0.0.1/jobs",root,"text/html","<title>Careers</title>"),null);
 });

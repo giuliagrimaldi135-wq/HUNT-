@@ -37,3 +37,24 @@ export function acceptedCareerResponse(finalUrl,brandUrl,atsHosts=[]) {
  return rootDomain(target.hostname)===rootDomain(brand.hostname)
    ||atsHosts.some(h=>h===target.hostname);
 }
+
+/**
+ * Only a real, linked HTML careers page under the same brand domain is
+ * promoted to a monitored careers source. Do not treat a generic home page,
+ * an external redirect, or arbitrary text mentioning 'jobs' as a listing.
+ */
+export function verifiedBrandCareerPage(linkedUrl,finalUrl,brandUrl,contentType,html){
+ const linked=publicUrl(linkedUrl),final=publicUrl(finalUrl),brand=publicUrl(brandUrl);
+ if(!linked||!final||!brand)return null;
+ if(rootDomain(linked.hostname)!==rootDomain(brand.hostname))return null;
+ if(!acceptedCareerResponse(finalUrl,brandUrl,[]))return null;
+ if(!String(contentType||"").toLowerCase().includes("text/html"))return null;
+ const path=(final.hostname+" "+final.pathname).toLowerCase();
+ const heading=(String(html||"").match(/<(?:title|h1)\b[^>]*>([\s\S]*?)<\/(?:title|h1)>/i)?.[1]||"")
+    .replace(/<[^>]+>/g," ").toLowerCase();
+ const isCareer=/(?:careers?|jobs?|join[- ]?(?:us|our.team)|work[- ]with[- ]us|lavora[- ]con[- ]noi|opportunit|recruit(?:ment|ing)?|vacanc|offerte[- ]di[- ]lavoro)/i;
+ if(!isCareer.test(path)&&!isCareer.test(heading))return null;
+ if(final.pathname==="/"&&!/^(jobs|careers|recruitment|recruiting)\./i.test(final.hostname))return null;
+ final.hash="";
+ return final.href;
+}
