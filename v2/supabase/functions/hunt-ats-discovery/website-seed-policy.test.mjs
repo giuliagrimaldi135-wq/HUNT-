@@ -43,3 +43,22 @@ test("automatically reseeds a brand if every official careers source is degraded
  assert.deepEqual(leads.map(x=>x.company_id),["furla","richemont"]);
  assert.ok(leads.every(x=>!x.official && x.source_type==="brand_website_candidate"));
 });
+
+test("finds alternative career routes for reachable HTML pages with zero discovered jobs",()=>{
+ const brand=[
+  {id:"fendi",name:"Fendi",monitored:true,website_url:"https://www.fendi.com"},
+  {id:"dior",name:"Dior",monitored:true,website_url:"https://www.dior.com"},
+  {id:"well",name:"Well covered",monitored:true,website_url:"https://well.example"},
+  {id:"new",name:"Not yet scanned",monitored:true,website_url:"https://new.example"}
+ ];
+ const sources=[
+  {company_id:"fendi",source_type:"career_page",active:true,official:true,health_status:"reachable_no_listings"},
+  {company_id:"dior",source_type:"career_page",active:true,official:true,health_status:"reachable_no_listings"},
+  {company_id:"dior",source_type:"career_page",active:true,official:true,health_status:"degraded"},
+  {company_id:"well",source_type:"career_page",active:true,official:true,health_status:"healthy"},
+  {company_id:"new",source_type:"career_page",active:true,official:true,health_status:"unknown"}
+ ];
+ const leads=findMissingWebsiteLeads(brand,sources,12);
+ assert.deepEqual(leads.map(x=>x.company_id),["fendi","dior"]);
+ assert.ok(leads.every(x=>x.official===false&&x.metadata.not_a_verified_careers_page===true));
+});

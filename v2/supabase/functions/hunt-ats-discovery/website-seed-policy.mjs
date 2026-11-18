@@ -19,8 +19,9 @@ export function findMissingWebsiteLeads(companies,sources,max=12){
   if(!s.company_id)continue;
   const entry=byCompany.get(s.company_id)||{candidate:false,covered:false};
   if(s.source_type==="brand_website_candidate")entry.candidate=true;
-  // A degraded-only careers setup must not block discovery of a backup source.
-  if(s.active&&s.official&&s.health_status!=="degraded"&&["ats","career_page","public_ats_board"].includes(s.source_type))
+  // Empty but reachable career hubs can be JS-only: seek an independent
+  // alternative path while retaining those registered official sources.
+  if(s.active&&s.official&&!["degraded","reachable_no_listings"].includes(s.health_status)&&["ats","career_page","public_ats_board"].includes(s.source_type))
    entry.covered=true;
   byCompany.set(s.company_id,entry);
  }
