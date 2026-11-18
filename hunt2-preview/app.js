@@ -286,7 +286,8 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
    const reader=document.querySelector('#cvManagerRoot [data-cv-action="read"][data-cv-id="'+newCvId+'"]');
    if(reader)reader.click();
  }else{
-   await renderShell();
+   // No CV is needed to answer the second questionnaire or explore real jobs.
+   await personalizationView({display_name:firstName+" "+lastName,seniority:fd.get("seniority")||"entry_level"},null);
  }
 }
 
@@ -336,7 +337,7 @@ async function personalizationView(profile,personalization){
  app.innerHTML=`<div class="main" style="margin:auto">
   <div class="eyebrow">Profilo personale</div>
   <h1>Conosciamoci un po' meglio.</h1>
-  <p class="lead">Poche domande su ciò che ti interessa davvero. Niente testi lunghi: HUNT userà queste risposte insieme al CV e alle tue scelte nel tempo.</p>
+  <p class="lead">Poche domande su ciò che ti interessa davvero. HUNT userà queste risposte anche se non hai ancora un CV; potrai aggiungerlo in seguito per confrontare le esperienze con i requisiti.</p>
 
   <section class="card section">
    <div class="eyebrow">Quello che HUNT sa già</div>
