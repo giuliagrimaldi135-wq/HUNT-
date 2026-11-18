@@ -1264,14 +1264,15 @@ async function renderApplications(){
 let outreachCache={leads:[],drafts:{},cvs:[],person:{},preferences:{},selectedCv:{}};
 async function renderOutreach(){
  currentView="outreach";
- const [curatedRes,brandSourcesRes,signalsRes,draftsRes,cvsRes,personRes,preferencesRes]=await Promise.all([
+ const [curatedRes,brandSourcesRes,signalsRes,draftsRes,cvsRes,personRes,preferencesRes,careerRes]=await Promise.all([
    fetch("../data/outreach_signals_public.json?v=20261110-168",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
    fetch("../data/outreach_brand_sources.json?v=20261110-168",{cache:"no-store"}).then(async r=>r.ok?await r.json():{}).catch(()=>({})),
    supabase.from("company_signals").select("id,signal_type,title,summary,source_url,published_at,detected_at,companies(name,is_independent,size_band,careers_url)").order("published_at",{ascending:false,nullsFirst:false}).limit(200),
    supabase.from("user_outreach_drafts").select("outreach_key,brand_name,subject,email_body,status,updated_at,cv_id").eq("user_id",currentUser.id),
    supabase.from("user_cvs").select("id,name,is_default,parsed_profile,target_role_families").eq("user_id",currentUser.id).eq("active",true),
    supabase.from("profiles").select("display_name,first_name,last_name").eq("user_id",currentUser.id).maybeSingle(),
-   supabase.from("user_personalization").select("career_goal,communication_style,interest_areas").eq("user_id",currentUser.id).maybeSingle()
+   supabase.from("user_personalization").select("career_goal,communication_style,interest_areas").eq("user_id",currentUser.id).maybeSingle(),
+  supabase.from("career_preferences").select("primary_role_families,preferred_locations,relocation_locations").eq("user_id",currentUser.id).maybeSingle()
  ]);
  const baseLeads=buildOutreachLeads(curatedRes,signalsRes.data||[]);
  // A small brand can be buried among thousands of general news results. Search for each named brand.
@@ -1283,18 +1284,19 @@ async function renderOutreach(){
      return {key:lead.key,data:result.data||[],error:result.error};
    }catch(e){return {key:lead.key,data:[],error:e}}
  }));
- const leads=enrichOutreachLeads(baseLeads.map(lead=>{
+ const allLeads=enrichOutreachLeads(baseLeads.map(lead=>{
    const match=newsMatches.find(x=>x.key===lead.key);
    return attachBrandNews([lead],match?.data||[])[0];
  }),brandSourcesRes||{});
+ const leads=filterOutreachForMember(allLeads,careerRes.data?.primary_role_families||[]);
  const drafts=Object.fromEntries((draftsRes.data||[]).map(d=>[d.outreach_key,d]));
  outreachCache={leads,drafts,cvs:cvsRes.data||[],person:personRes.data||{},preferences:preferencesRes.data||{},selectedCv:{}};
- const errors=[signalsRes.error,draftsRes.error,cvsRes.error].filter(Boolean).map(e=>e.message);
+ const errors=[signalsRes.error,draftsRes.error,cvsRes.error,careerRes.error].filter(Boolean).map(e=>e.message);
  app.innerHTML=shell('<div class="outPage"><div class="eyebrow">HUNT / Ricerca brand</div>'+
  '<header class="outPageHeader"><h1>Brand da contattare</h1><p>HUNT individua occasioni concrete per presentarti a marchi indipendenti ed emergenti, anche quando non pubblicano un annuncio.</p></header>'+
- '<div class="outAbout">Per ogni brand trovi il motivo del contatto, le notizie che lo sostengono e una candidatura costruita sui dati del tuo CV verificato.</div>'+
+ '<div class="outAbout">I brand sono filtrati per le aree professionali che hai selezionato. I segnali non confermano assunzioni: per ogni contatto verifica le fonti e il canale ufficiale. ${!(cvsRes.data||[]).length?"Puoi esplorare anche senza CV; la personalizzazione della candidatura richiede esperienze confermate.":""}</div>'+
  (errors.length?'<div class="msg bad">Alcuni dati non sono disponibili: '+esc(errors.join(" · "))+'</div>':"")+
- renderOutreachCards(leads,drafts)+'</div>');
+ (leads.length?renderOutreachCards(leads,drafts):'<section class="outEmpty"><h2>Nessun brand coerente con le tue aree al momento.</h2><p>HUNT non ti propone un elenco generico uguale per tutti. Quando ci saranno segnali verificati collegati ai tuoi interessi li troverai qui.</p></section>')+'</div>');
  bindNav();
  document.querySelectorAll("[data-outreach-open]").forEach(button=>button.onclick=()=>openOutreachFolder(button.dataset.outreachOpen));
 }
