@@ -47,3 +47,11 @@ GitHub `giuliagrimaldi135-wq/HUNT-`, main. PR di questa sessione:
 - #51 https://github.com/giuliagrimaldi135-wq/HUNT-/pull/51
 
 Regola di lavoro: verificare database + codice GitHub + CI + Edge Function attiva; non confondere merge GitHub, deploy Vercel e reale acquisizione vacancy. Il design premium e i dati personali non vanno toccati per miglioramenti backend non correlati.
+
+
+## Risultati successivi osservati il 18/11 alle 12:22-12:28 UTC
+- Il primo ciclo automatico `hunt-ats-discovery` v8 dopo la correzione ha creato tre nuove fonti careers ufficiali sul dominio del brand: Richemont `https://www.richemont.com/talent/career-areas/`, Cup of Joe Denim `https://cojdenim.com/pages/jobs` e Difuzed `https://www.difuzed.com/careers`. Sono fonti, NON offerte individuali già validate.
+- Per Furla e Richemont sono stati creati automaticamente nuovi `brand_website_candidate` dopo errori 403/404 delle fonti originali. Il recupero Richemont ha prodotto un nuovo link careers; non è confermato un link alternativo Furla.
+- Il numero di brand con fonte ufficiale è salito da 66 a 68; ci sono 164 website candidate e tre nuove pagine verificate.
+- PR #52 https://github.com/giuliagrimaldi135-wq/HUNT-/pull/52: riconoscimento careers multilingue (francese, tedesco, spagnolo, portoghese, olandese, polacco, turco, giapponese, cinese, coreano). CI verde, merge e deploy live su Supabase `hunt-ats-discovery` v9 ACTIVE verificati.
+- PR #51 ha superato CI e raggiunto main; GitHub ha restituito stato Vercel success per merge e commit documentale. La validazione autenticata end-to-end frontend rimane aperta.
