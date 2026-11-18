@@ -189,7 +189,7 @@ function onboardingView(profile){
   const input=document.getElementById(picker.id),list=document.getElementById(picker.id+"Options");
   const draw=()=>{
    const query=input.value.trim();
-   const choices=findCitySuggestions(query,18);
+   const choices=findCitySuggestions(query,260);
    list.innerHTML=choices.map(city=>'<button type="button" role="option" data-city-choice="'+esc(city)+'">'+esc(city)+'</button>').join("")+
     (query&&!choices.some(x=>x.toLowerCase()===query.toLowerCase())?'<button type="button" data-city-choice="'+esc(query)+'">+ Aggiungi «'+esc(query)+'»</button>':"")+
     '<p>Non trovi la città? Scrivila e premi Invio o «Aggiungi città».</p>';
@@ -1274,7 +1274,7 @@ async function renderOutreach(){
    supabase.from("user_personalization").select("career_goal,communication_style,interest_areas").eq("user_id",currentUser.id).maybeSingle(),
   supabase.from("career_preferences").select("primary_role_families,preferred_locations,relocation_locations").eq("user_id",currentUser.id).maybeSingle()
  ]);
- const baseLeads=buildOutreachLeads(curatedRes,signalsRes.data||[]);
+ const baseLeads=filterOutreachForMember(buildOutreachLeads(curatedRes,signalsRes.data||[]),careerRes.data?.primary_role_families||[]);
  // A small brand can be buried among thousands of general news results. Search for each named brand.
  const newsMatches=await Promise.all(baseLeads.map(async lead=>{
    const term=String(lead.brand||"").replace(/[%_,().]/g," ").trim().slice(0,80);
@@ -1288,7 +1288,7 @@ async function renderOutreach(){
    const match=newsMatches.find(x=>x.key===lead.key);
    return attachBrandNews([lead],match?.data||[])[0];
  }),brandSourcesRes||{});
- const leads=filterOutreachForMember(allLeads,careerRes.data?.primary_role_families||[]);
+ const leads=allLeads;
  const drafts=Object.fromEntries((draftsRes.data||[]).map(d=>[d.outreach_key,d]));
  outreachCache={leads,drafts,cvs:cvsRes.data||[],person:personRes.data||{},preferences:preferencesRes.data||{},selectedCv:{}};
  const errors=[signalsRes.error,draftsRes.error,cvsRes.error,careerRes.error].filter(Boolean).map(e=>e.message);
