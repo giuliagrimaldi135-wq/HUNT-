@@ -1294,7 +1294,7 @@ async function renderOutreach(){
  const errors=[signalsRes.error,draftsRes.error,cvsRes.error,careerRes.error].filter(Boolean).map(e=>e.message);
  app.innerHTML=shell('<div class="outPage"><div class="eyebrow">HUNT / Ricerca brand</div>'+
  '<header class="outPageHeader"><h1>Brand da contattare</h1><p>HUNT individua occasioni concrete per presentarti a marchi indipendenti ed emergenti, anche quando non pubblicano un annuncio.</p></header>'+
- '<div class="outAbout">I brand sono filtrati per le aree professionali che hai selezionato. I segnali non confermano assunzioni: per ogni contatto verifica le fonti e il canale ufficiale. ${!(cvsRes.data||[]).length?"Puoi esplorare anche senza CV; la personalizzazione della candidatura richiede esperienze confermate.":""}</div>'+
+ '<div class="outAbout">I brand sono filtrati per le aree professionali che hai selezionato. I segnali non confermano assunzioni: verifica sempre le fonti e il canale ufficiale. '+(!(cvsRes.data||[]).length?'Puoi esplorare anche senza CV, ma una candidatura personale richiede esperienze documentate.':'')+'</div>'+
  (errors.length?'<div class="msg bad">Alcuni dati non sono disponibili: '+esc(errors.join(" · "))+'</div>':"")+
  (leads.length?renderOutreachCards(leads,drafts):'<section class="outEmpty"><h2>Nessun brand coerente con le tue aree al momento.</h2><p>HUNT non ti propone un elenco generico uguale per tutti. Quando ci saranno segnali verificati collegati ai tuoi interessi li troverai qui.</p></section>')+'</div>');
  bindNav();
