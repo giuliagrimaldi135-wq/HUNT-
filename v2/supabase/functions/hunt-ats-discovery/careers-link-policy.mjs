@@ -14,6 +14,14 @@ function rootDomain(host) {
  if(parts.length<depth)return null;
  return parts.slice(-depth).join(".");
 }
+// Multilingual evidence from a link label, URL path or careers page title.
+// Recognition alone never creates an individual job: an official URL must
+// still pass HTTPS, same-brand origin and HTML-response validation.
+const CAREER_TERMS=/(?:careers?|jobs?|join[- ]?(?:us|our[ -]?team)|lavora[ -]?con[ -]?noi|offerte[ -]?di[ -]?lavoro|posizioni[ -]?aperte|work[ -]?with[ -]?us|opportunit|recruit(?:ment|ing)?|vacanc|open[ -]?positions|carri[eèé]res?|recrutement|nous[ -]?rejoindre|offres?[ -]?d['’ ]emploi|karriere|stellenangebote|arbeiten[ -]?bei[ -]?uns|empleo|trabaja[ -]?con[ -]?nosotros|ofertas?[ -]?de[ -]?trabajo|carreras|carreiras?|trabalhe[ -]?conosco|vagas|vacatures?|werken[ -]?bij|karriär|lediga[ -]?jobb|kariera|oferty[ -]?pracy|kariyer|iş[ -]?ilanları|採用|求人|キャリア|招聘|招贤纳士|채용|커리어)/iu;
+export function isCareerIntent(text) {
+ return CAREER_TERMS.test(String(text||"").toLowerCase());
+}
+
 function publicUrl(input,base) {
  try{
   const u=new URL(input,base);
@@ -29,7 +37,7 @@ export function linkedCareerTarget(href,label,brandUrl,pageUrl) {
  if(!target||!brand||rootDomain(target.hostname)!==rootDomain(brand.hostname))return null;
  const text=String(label||"").replace(/<[^>]*>/g," ").toLowerCase();
  const reference=(target.pathname+" "+text).toLowerCase();
- if(!/careers?|jobs|join[- ]?(?:us|our team)|lavora con noi|offerte di lavoro|work with us|opportunit|recruiting|vacancies|open positions/.test(reference))return null;
+ if(!isCareerIntent(reference))return null;
  if(/unsubscribe|privacy|newsletter|cookie|login|sign.in|register/.test(reference))return null;
  if(target.origin===brand.origin&&target.pathname==="/")return null;
  // A separate official jobs subdomain can have its listing at root.
@@ -58,8 +66,7 @@ export function verifiedBrandCareerPage(linkedUrl,finalUrl,brandUrl,contentType,
  const path=(final.hostname+" "+final.pathname).toLowerCase();
  const heading=(String(html||"").match(/<(?:title|h1)\b[^>]*>([\s\S]*?)<\/(?:title|h1)>/i)?.[1]||"")
     .replace(/<[^>]+>/g," ").toLowerCase();
- const isCareer=/(?:careers?|jobs?|join[- ]?(?:us|our.team)|work[- ]with[- ]us|lavora[- ]con[- ]noi|opportunit|recruit(?:ment|ing)?|vacanc|offerte[- ]di[- ]lavoro)/i;
- if(!isCareer.test(path)&&!isCareer.test(heading))return null;
+ if(!isCareerIntent(path)&&!isCareerIntent(heading))return null;
  if(final.pathname==="/"&&!/^(jobs|careers|recruitment|recruiting)\./i.test(final.hostname))return null;
  final.hash="";
  return final.href;
