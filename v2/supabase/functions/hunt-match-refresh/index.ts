@@ -2,6 +2,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { chooseUniqueJobs, freshnessCutoff } from "./recommendation-guard.mjs";
 import { chooseRelevantCvProfile } from "./cv-evidence.mjs";
+import { supplierRiskNeedsExplicitInterest, fashionSourcingEvidence } from "./role-specialization.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -150,6 +151,9 @@ function roleEvidence(desc:string,title:string,family:string|null,personal:any){
   if(family==="Buying"){
     if(/buying|vendor|supplier|order|assort|otb|open to buy|budget/.test(t))out.push("buying_core");
     if(interests.has("product_assortment")&&/product|assort|collection|category/.test(t))out.push("buying_product");
+  }
+  if(family==="Production & Sourcing"){
+    out.push(...fashionSourcingEvidence(title,desc,personal?.interest_areas||[]));
   }
   if(family==="Supply Chain & Logistics"){
     if(/logistics|shipment|shipping|distribution|warehouse|inventory|supply chain|delivery|order flow/.test(t))out.push("supply_core");
@@ -332,6 +336,7 @@ Deno.serve(async(req)=>{
       if(minYears!==null&&capacity===null&&minYears>=3)hardReasons.push("experience_years_unverified");
       if(minYears!==null&&minYears>0&&earlyCareer&&!cvParsed)hardReasons.push("experience_unverified_until_cv");
       if(["manager","senior_manager","head_director"].includes(jobSeniority)&&earlyCareer)hardReasons.push("seniority");
+      if(supplierRiskNeedsExplicitInterest(job.canonical_title,pers?.interest_areas||[]))hardReasons.push("supplier_risk_specialization_not_selected");
       if(radar==="focused"&&!direct)hardReasons.push("outside_focused_target");
       if(radar==="smart"&&!direct&&!adjacent)hardReasons.push("outside_smart_adjacency");
       if(!family)hardReasons.push("unclassified_role");
@@ -362,6 +367,8 @@ Deno.serve(async(req)=>{
       if(signals.includes("planning_numbers"))reasons.push("La componente quantitativa è centrale: analisi, performance e pianificazione")
       if(signals.includes("buying_core"))reasons.push("Il ruolo lavora su buying, ordini, budget o relazione con fornitori")
       if(signals.includes("buying_product"))reasons.push("La selezione e costruzione dell'assortimento prodotto è parte del lavoro")
+      if(signals.includes("sourcing_operations"))reasons.push("Le mansioni includono gestione dei fornitori, degli ordini o dei processi produttivi")
+      if(signals.includes("sourcing_product"))reasons.push("L’attività di sourcing riguarda materiali, collezioni o sviluppo del prodotto moda")
       if(signals.includes("supply_core"))reasons.push("Le responsabilità riguardano flussi logistici, distribuzione, stock o consegne")
       if(signals.includes("supply_ops"))reasons.push("Il ruolo richiede coordinamento operativo dei flussi e dei processi")
       if(signals.includes("retail_ops_core"))reasons.push("Il lavoro è focalizzato su processi e operatività della rete retail")
