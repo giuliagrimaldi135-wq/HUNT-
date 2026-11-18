@@ -4,6 +4,7 @@ import {addChosenCity,findCitySuggestions,LOCATION_SUGGESTIONS} from "./onboardi
 test("city suggestions appear before typing and can be searched",()=>{
  assert.ok(LOCATION_SUGGESTIONS.length>100);
  assert.ok(findCitySuggestions("",18).length>0);
+ assert.equal(findCitySuggestions("",260).length,LOCATION_SUGGESTIONS.length);
  assert.ok(findCitySuggestions("Milano").includes("Milano"));
  assert.ok(findCitySuggestions("zurigo").includes("Zurigo"));
 });
