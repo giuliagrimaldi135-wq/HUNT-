@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { chooseUniqueJobs, freshnessCutoff } from "./recommendation-guard.mjs";
 import { chooseRelevantCvProfile } from "./cv-evidence.mjs";
 import { supplierRiskNeedsExplicitInterest, fashionSourcingEvidence } from "./role-specialization.mjs";
+import {seniorityOverrideFromTitle} from "./seniority-guard.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -46,6 +47,8 @@ function roleFamily(title:string){
   return null;
 }
 function seniority(title:string,desc:string){
+  const titleOverride=seniorityOverrideFromTitle(title);
+  if(titleOverride)return titleOverride;
   const t=(title+" "+desc.slice(0,1200)).toLowerCase();
   if(/intern|stage|tirocin/.test(title.toLowerCase())) return "internship";
   if(/trainee|graduate/.test(title.toLowerCase())) return "trainee";

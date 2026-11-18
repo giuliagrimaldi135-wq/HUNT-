@@ -7,6 +7,8 @@ import { prioritizeRequirements, compareKeyRequirement } from "./requirement-pri
 import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
 import {isActionablePreviewJob} from "./job-actionability.mjs?v=20261116-1810";
 import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261111-172";
+import {addChosenCity,findCitySuggestions} from "./onboarding-locations.mjs?v=20261118-1";
+import {safeWithoutCvJob,requiresSeniorExperience,filterOutreachForMember} from "./preview-preference-policy.mjs?v=20261118-1";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -135,8 +137,8 @@ function onboardingView(profile){
  <p class="lead">Non devi conoscere tutti i titoli di lavoro del settore. Tu ci dici dove vuoi andare; HUNT può allargare il radar senza perdere di vista il tuo obiettivo.</p>
  <form id="onboarding" class="stack section">
   <section class="card"><div class="eyebrow">1 · Chi sei</div><div class="grid2" style="margin-top:12px">
-   <label><div class="eyebrow">Nome</div><input class="input" name="first_name" placeholder="Es. Giulia" value="${esc(profile?.first_name||"")}" required></label>
-   <label><div class="eyebrow">Cognome</div><input class="input" name="last_name" placeholder="Es. Grimaldi" value="${esc(profile?.last_name||"")}" required></label>
+   <label><div class="eyebrow">Nome</div><input class="input" name="first_name" placeholder="Es. Mario" value="${esc(profile?.first_name||"")}" required></label>
+   <label><div class="eyebrow">Cognome</div><input class="input" name="last_name" placeholder="Es. Rossi" value="${esc(profile?.last_name||"")}" required></label>
   </div><label style="display:block;margin-top:12px"><div class="eyebrow">A che livello sei oggi?</div><select class="input" name="seniority">${seniorityHtml}</select></label>
   </section>
 
@@ -144,33 +146,75 @@ function onboardingView(profile){
 
   <section class="card"><div class="eyebrow">3 · Ampiezza del radar</div><h2>Quanto vuoi che HUNT allarghi gli orizzonti?</h2><p class="lead">Non ti chiediamo di conoscere in anticipo tutti i “ruoli adiacenti”. Decidi solo quanto vuoi esplorare; sarà HUNT a proporre alternative sensate e a spiegarti il collegamento.</p><div class="radarGrid">${radarHtml}</div></section>
 
-  <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vuoi lavorare?</h2>
-   <label><div class="eyebrow">Città</div><input class="input" id="preferredCity" placeholder="Es. Milano"></label>
+  <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vorresti lavorare?</h2><p class="lead">Scegli una o più città in cui vuoi cercare lavoro, anche se ci vivi già. Tocca il campo per vedere le città suggerite oppure scrivi qualsiasi altra città e aggiungila.</p>
+   <div class="locationPicker"><label><div class="eyebrow">Città in cui vuoi lavorare</div><input class="input" id="preferredCity" placeholder="Cerca una città, es. Milano" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="preferredCityOptions"></label><div class="locationResults" id="preferredCityOptions" role="listbox" hidden></div></div>
    <div class="actions"><button class="btn" type="button" id="addPreferredLocation">+ Aggiungi città</button></div>
    <div id="preferredLocationsList" class="tagList"></div>
 
    <div style="height:1px;background:var(--line);margin:20px 0"></div>
 
-   <div class="eyebrow">Dove ti trasferiresti?</div>
-   <label style="display:block;margin-top:12px"><div class="eyebrow">Città</div><input class="input" id="relocationCity" placeholder="Es. Parigi"></label>
+   <div class="eyebrow">Dove saresti disposta/o a trasferirti?</div><p class="locationHint">Aggiungi solo città in cui accetteresti di cambiare residenza. Se non vuoi trasferirti, lascia questo campo vuoto. Le due liste servono a cose diverse.</p>
+   <div class="locationPicker"><label style="display:block;margin-top:12px"><div class="eyebrow">Altre città per un possibile trasferimento</div><input class="input" id="relocationCity" placeholder="Cerca una città, es. Parigi" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="relocationCityOptions"></label><div class="locationResults" id="relocationCityOptions" role="listbox" hidden></div></div>
    <div class="actions"><button class="btn" type="button" id="addRelocationLocation">+ Aggiungi città</button></div>
    <div id="relocationLocationsList" class="tagList"></div>
   </section>
-  <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"></label></div></section>
+  <section class="card"><div class="eyebrow">5 · Curriculum</div><h2>Il CV è facoltativo.</h2><p class="lead">Puoi completare HUNT anche senza curriculum: le opportunità saranno selezionate inizialmente per città, livello e area professionale. Il confronto preciso con esperienze e requisiti inizierà quando aggiungerai e confermerai il CV nel Profilo.</p><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"></label></div></section>
   <div id="onMsg"></div><div class="actions"><button class="btn green" type="submit">Crea il mio HUNT</button><button class="btn" id="logoutOn" type="button">Esci</button></div>
  </form></div>`;
  const preferredLocations=[];
  const relocationLocations=[];
- const renderLocationTags=(id,items,type)=>{document.getElementById(id).innerHTML=items.map((item,index)=>`<span class="locationTag">${esc(item)}<button type="button" data-remove-location="${type}" data-index="${index}" aria-label="Rimuovi">×</button></span>`).join("")};
- const addLocation=(cityId,items,listId,type)=>{
-   const city=document.getElementById(cityId).value.trim();
-   if(!city)return;
-   if(!items.includes(city))items.push(city);
-   document.getElementById(cityId).value="";
-   renderLocationTags(listId,items,type);
+ const renderLocationTags=(id,items,type)=>{
+  document.getElementById(id).innerHTML=items.map((item,index)=>
+   '<span class="locationTag">'+esc(item)+'<button type="button" data-remove-location="'+type+'" data-index="'+index+'" aria-label="Rimuovi '+esc(item)+'">×</button></span>'
+  ).join("");
  };
+ const hideLocationMenu=id=>{
+  const list=document.getElementById(id+"Options"),input=document.getElementById(id);
+  if(list)list.hidden=true;
+  if(input)input.setAttribute("aria-expanded","false");
+ };
+ const addLocation=(cityId,items,listId,type,chosen)=>{
+  const input=document.getElementById(cityId);
+  const updated=addChosenCity(items,chosen??input.value);
+  items.splice(0,items.length,...updated);
+  input.value="";
+  renderLocationTags(listId,items,type);
+  hideLocationMenu(cityId);
+ };
+ const pickerConfigs=[
+  {id:"preferredCity",items:preferredLocations,list:"preferredLocationsList",type:"preferred"},
+  {id:"relocationCity",items:relocationLocations,list:"relocationLocationsList",type:"relocation"}
+ ];
+ for(const picker of pickerConfigs){
+  const input=document.getElementById(picker.id),list=document.getElementById(picker.id+"Options");
+  const draw=()=>{
+   const query=input.value.trim();
+   const choices=findCitySuggestions(query,18);
+   list.innerHTML=choices.map(city=>'<button type="button" role="option" data-city-choice="'+esc(city)+'">'+esc(city)+'</button>').join("")+
+    (query&&!choices.some(x=>x.toLowerCase()===query.toLowerCase())?'<button type="button" data-city-choice="'+esc(query)+'">+ Aggiungi «'+esc(query)+'»</button>':"")+
+    '<p>Non trovi la città? Scrivila e premi Invio o «Aggiungi città».</p>';
+   list.hidden=false;
+   input.setAttribute("aria-expanded","true");
+  };
+  input.addEventListener("focus",draw);
+  input.addEventListener("input",draw);
+  input.addEventListener("keydown",e=>{
+   if(e.key==="Escape"){hideLocationMenu(picker.id);return;}
+   if(e.key==="Enter"&&input.value.trim()){e.preventDefault();addLocation(picker.id,picker.items,picker.list,picker.type);}
+  });
+  list.addEventListener("click",e=>{
+   const btn=e.target.closest("[data-city-choice]");
+   if(btn)addLocation(picker.id,picker.items,picker.list,picker.type,btn.dataset.cityChoice);
+  });
+ }
  document.getElementById("addPreferredLocation").onclick=()=>addLocation("preferredCity",preferredLocations,"preferredLocationsList","preferred");
  document.getElementById("addRelocationLocation").onclick=()=>addLocation("relocationCity",relocationLocations,"relocationLocationsList","relocation");
+ document.addEventListener("pointerdown",e=>{
+  for(const picker of pickerConfigs)
+   if(!e.target.closest("#"+picker.id+"Options")&&!e.target.closest("#"+picker.id))
+    hideLocationMenu(picker.id);
+ });
+
  document.getElementById("onboarding").onclick=(event)=>{
    const btn=event.target.closest("[data-remove-location]");
    if(!btn)return;
@@ -186,12 +230,14 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
  e.preventDefault();
  const form=e.currentTarget, fd=new FormData(form), msg=document.getElementById("onMsg");
  const primary=fd.getAll("primary");
- const locations=preferredLocations;
+ const locations=addChosenCity(preferredLocations,document.getElementById("preferredCity")?.value||"");
+ relocationLocations=addChosenCity(relocationLocations,document.getElementById("relocationCity")?.value||"");
  const firstName=String(fd.get("first_name")||"").trim();
  const lastName=String(fd.get("last_name")||"").trim();
  const radarScope=String(fd.get("radar_scope")||"smart");
  if(!firstName||!lastName){msg.innerHTML='<div class="msg bad">Inserisci nome e cognome.</div>';return}
  if(!primary.length){msg.innerHTML='<div class="msg bad">Scegli almeno un obiettivo professionale.</div>';return}
+ if(!locations.length&&!relocationLocations.length){msg.innerHTML='<div class="msg bad">Aggiungi almeno una città in cui vuoi lavorare. Puoi cercarla tra i suggerimenti o scriverla liberamente.</div>';return}
  msg.innerHTML='<div class="msg good">Salvataggio…</div>';
  const now=new Date().toISOString();
  const p=await supabase.from("profiles").upsert({
@@ -240,7 +286,8 @@ async function saveOnboarding(e,preferredLocations=[],relocationLocations=[]){
    const reader=document.querySelector('#cvManagerRoot [data-cv-action="read"][data-cv-id="'+newCvId+'"]');
    if(reader)reader.click();
  }else{
-   await renderShell();
+   // No CV is needed to answer the second questionnaire or explore real jobs.
+   await personalizationView({display_name:firstName+" "+lastName,seniority:fd.get("seniority")||"entry_level"},null);
  }
 }
 
@@ -290,7 +337,7 @@ async function personalizationView(profile,personalization){
  app.innerHTML=`<div class="main" style="margin:auto">
   <div class="eyebrow">Profilo personale</div>
   <h1>Conosciamoci un po' meglio.</h1>
-  <p class="lead">Poche domande su ciò che ti interessa davvero. Niente testi lunghi: HUNT userà queste risposte insieme al CV e alle tue scelte nel tempo.</p>
+  <p class="lead">Poche domande su ciò che ti interessa davvero. HUNT userà queste risposte anche se non hai ancora un CV; potrai aggiungerlo in seguito per confrontare le esperienze con i requisiti.</p>
 
   <section class="card section">
    <div class="eyebrow">Quello che HUNT sa già</div>
@@ -385,43 +432,80 @@ async function renderShell(){
 }
 
 async function getOpportunityFeed(limit=100){
- const [{data:matches,error:matchError},{data:hidden},{data:applications},{data:pref}]=await Promise.all([
-   supabase.from("user_job_matches").select("job_id,match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(limit),
-   supabase.from("user_job_feedback").select("job_id").eq("user_id",currentUser.id).eq("feedback_type","hide"),
-   supabase.from("applications").select("job_id,status").eq("user_id",currentUser.id),
-   supabase.from("career_preferences").select("preferred_locations,relocation_locations,preferences").eq("user_id",currentUser.id).maybeSingle()
+ const [matchesRes,hiddenRes,applicationsRes,prefRes,cvsRes,profileRes]=await Promise.all([
+  supabase.from("user_job_matches").select("job_id,match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(limit),
+  supabase.from("user_job_feedback").select("job_id").eq("user_id",currentUser.id).eq("feedback_type","hide"),
+  supabase.from("applications").select("job_id,status").eq("user_id",currentUser.id),
+  supabase.from("career_preferences").select("primary_role_families,preferred_locations,relocation_locations,preferences").eq("user_id",currentUser.id).maybeSingle(),
+  supabase.from("user_cvs").select("id").eq("user_id",currentUser.id).eq("active",true).limit(1),
+  supabase.from("profiles").select("seniority").eq("user_id",currentUser.id).maybeSingle()
  ]);
- if(matchError||!matches?.length)return {data:[],error:matchError};
- // A saved or "preparing" vacancy must stay in the feed; only submitted/closed applications are excluded.
- const completed=new Set(["applied","interview","offer","accepted","rejected","withdrawn","declined"]);
- const excluded=new Set([...(hidden||[]).map(x=>x.job_id),...(applications||[]).filter(x=>completed.has(x.status)).map(x=>x.job_id).filter(Boolean)]);
- const ids=matches.map(x=>x.job_id).filter(id=>!excluded.has(id));
- if(!ids.length)return {data:[],error:null};
- const {data:jobs,error:jobError}=await supabase
-   .from("jobs")
-   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
-   .in("id",ids);
- if(jobError)return {data:[],error:jobError};
-
- const cutoff=new Date();cutoff.setDate(cutoff.getDate()-20);cutoff.setHours(0,0,0,0);
- const cities=[...(pref?.preferred_locations||[]),...(pref?.relocation_locations||[])].map(x=>String(x).toLowerCase());
- const radar=String(pref?.preferences?.radar_scope||"smart");
+ const error=matchesRes.error||hiddenRes.error||applicationsRes.error||prefRes.error||cvsRes.error||profileRes.error;
+ if(error)return {data:[],explore:[],exploreOutside:[],noCv:false,error};
+ const noCv=!(cvsRes.data||[]).length;
+ const early=["internship","trainee","entry_level","assistant","junior"].includes(profileRes.data?.seniority||"entry_level");
+ const pref=prefRes.data||{};
+ const selectedRoles=Array.isArray(pref.primary_role_families)?pref.primary_role_families:[];
+ const cities=[...(pref.preferred_locations||[]),...(pref.relocation_locations||[])].map(x=>String(x).toLowerCase());
+ const radar=String(pref.preferences?.radar_scope||"smart");
  const minMatch=radar==="explore"?60:radar==="focused"?75:70;
- const cityAllowed=(job)=>{
-   if(job.remote_mode==="remote")return true;
-   if(!cities.length)return true;
-   if(!job.city)return false;
-   const normalize=v=>String(v||"").toLowerCase().trim()
-     .replace(/milano\b/g,"milan").replace(/parigi\b/g,"paris").replace(/londra\b/g,"london").replace(/roma\b/g,"rome")
-     .replace(/ginevra\b/g,"geneva").replace(/zurigo\b/g,"zurich").replace(/bruxelles\b/g,"brussels");
-   const city=normalize(job.city);
-   return cities.some(x=>{const area=normalize(x);return area.length>2&&(city.includes(area)||area.includes(city))});
+ const completed=new Set(["applied","interview","offer","accepted","rejected","withdrawn","declined"]);
+ const excluded=new Set([...(hiddenRes.data||[]).map(x=>x.job_id),...(applicationsRes.data||[]).filter(x=>completed.has(x.status)).map(x=>x.job_id).filter(Boolean)]);
+ const applications=new Map((applicationsRes.data||[]).map(x=>[x.job_id,x.status]));
+ const cutoff=new Date();cutoff.setDate(cutoff.getDate()-20);cutoff.setHours(0,0,0,0);
+ const normalize=v=>String(v||"").toLowerCase().trim()
+  .replace(/milano\b/g,"milan").replace(/parigi\b/g,"paris").replace(/londra\b/g,"london").replace(/roma\b/g,"rome")
+  .replace(/ginevra\b/g,"geneva").replace(/zurigo\b/g,"zurich").replace(/bruxelles\b/g,"brussels");
+ const cityAllowed=job=>{
+  if(job.remote_mode==="remote")return true;
+  if(!cities.length)return true;
+  if(!job.city)return false;
+  const city=normalize(job.city);
+  return cities.some(x=>{const area=normalize(x);return area.length>2&&(city.includes(area)||area.includes(city))});
  };
- const fresh=(jobs||[]).filter(job=>isActionablePreviewJob(job,cutoff.getTime())&&cityAllowed(job));
- const byId=new Map(fresh.map(job=>[job.id,job]));
- const applicationByJob=new Map((applications||[]).map(x=>[x.job_id,x.status]));
- return {data:matches.map(match=>({...match,job:byId.get(match.job_id),applicationStatus:applicationByJob.get(match.job_id)||null}))
-   .filter(x=>x.job&&!excluded.has(x.job_id)&&x.match_score>=minMatch),error:null};
+ const matches=matchesRes.data||[];
+ let rows=[];
+ if(matches.length){
+  const ids=matches.map(x=>x.job_id).filter(id=>!excluded.has(id));
+  if(ids.length){
+   const {data:jobs,error:jobError}=await supabase.from("jobs")
+    .select("id,company_id,canonical_title,role_family,seniority,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
+    .in("id",ids);
+   if(jobError)return {data:[],explore:[],exploreOutside:[],noCv,error:jobError};
+   const valid=(jobs||[]).filter(job=>isActionablePreviewJob(job,cutoff.getTime())&&cityAllowed(job)
+    &&!(early&&requiresSeniorExperience(job.canonical_title,job.seniority))
+    &&(!noCv||safeWithoutCvJob(job,selectedRoles,profileRes.data?.seniority)));
+   const byId=new Map(valid.map(job=>[job.id,job]));
+   rows=matches.map(match=>({...match,job:byId.get(match.job_id),noCv,
+     applicationStatus:applications.get(match.job_id)||null}))
+     .filter(x=>x.job&&!excluded.has(x.job_id)&&x.match_score>=minMatch);
+  }
+ }
+ // A CV-less profile still deserves to browse REAL junior vacancies selected
+ // by its own role and cities. Do not manufacture a numeric CV-fit score.
+ let explore=[],exploreOutside=[];
+ if(noCv&&selectedRoles.length&&rows.length<4){
+  const {data:jobs,error:exploreError}=await supabase.from("jobs")
+   .select("id,company_id,canonical_title,role_family,seniority,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
+   .in("state",["active_verified","active_likely"]).in("role_family",selectedRoles)
+   .gte("last_verified_at",new Date(Date.now()-7*86400000).toISOString())
+   .order("last_verified_at",{ascending:false}).limit(400);
+  if(!exploreError){
+   const existing=new Set(rows.map(x=>x.job_id));
+   const suggested=(jobs||[]).filter(job=>!excluded.has(job.id)&&!existing.has(job.id)
+     &&isActionablePreviewJob(job,cutoff.getTime())
+     &&safeWithoutCvJob(job,selectedRoles,profileRes.data?.seniority));
+   const rank=(a,b)=>Number(b.seniority==="internship")-Number(a.seniority==="internship")||
+     new Date(b.published_at||b.first_seen_at)-new Date(a.published_at||a.first_seen_at);
+   const convert=(job,outsideSelected)=>({job_id:job.id,job,match_score:null,priority_score:null,
+      noCv:true,exploratory:true,outsideSelected,applicationStatus:applications.get(job.id)||null});
+   explore=suggested.filter(cityAllowed).sort(rank).slice(0,Math.max(0,6-rows.length)).map(j=>convert(j,false));
+   // Different cities are NEVER labeled "personal matches".
+   if(rows.length+explore.length<3)
+    exploreOutside=suggested.filter(j=>!cityAllowed(j)).sort(rank).slice(0,4).map(j=>convert(j,true));
+  }
+ }
+ return {data:rows,explore,exploreOutside,noCv,error:null};
 }
 
 async function getOpportunityDetail(jobId){
@@ -512,7 +596,7 @@ function opportunityCard(row){
    <h3>${esc(job.canonical_title)}</h3>
    <div class="jobMeta">${esc(job.city||"Località da verificare")} · ${esc(job.role_family||"Altro")}</div>
    <div class="humanBadges editorialMeta">
-    <span class="matchPill">${partialJobSource(job)?"Match preliminare":row.match_score+"% compatibilità stimata"}</span>
+    <span class="matchPill">${row.exploratory?(row.outsideSelected?"Altra città · Da esplorare":"In linea con i tuoi interessi · Da esplorare"):row.noCv?"In linea con interessi e città · CV facoltativo":partialJobSource(job)?"Match preliminare":row.match_score+"% compatibilità stimata"}</span>
     ${row.applicationStatus==="preparing"?'<span class="jobPreparing">In preparazione</span>':""}
     <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
     <span>${esc(verifiedLabel(job))}</span>
@@ -520,7 +604,7 @@ function opportunityCard(row){
    </div>
    <div class="actions editorialActions">
     ${job.primary_apply_url?`<a class="btn primary" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ↗</a>`:""}
-    <button class="btn" type="button" data-open-dossier="${job.id}">Apri dossier</button>
+    ${row.noCv?'<span class="source">Dossier completo disponibile dopo il caricamento di un CV</span>':`<button class="btn" type="button" data-open-dossier="${job.id}">Apri dossier</button>`}
     <button class="btn" data-applied="${job.id}">Già candidata</button>
     <button class="btn ghostDanger" data-ignore="${job.id}">Ignora</button>
    </div>
@@ -603,7 +687,7 @@ async function renderOpportunities(){
  currentView="opportunities";
  selectedJobId=null;
  const feed=await getOpportunityFeed(100);
- const rows=[...(feed.data||[])];
+ const rows=[...(feed.data||[])],explore=[...(feed.explore||[])],outside=[...(feed.exploreOutside||[])];
  if(opportunitySort==="recent"){
    rows.sort((a,b)=>new Date(b.job.published_at||b.job.first_seen_at||0)-new Date(a.job.published_at||a.job.first_seen_at||0));
  }else{
@@ -611,10 +695,11 @@ async function renderOpportunities(){
  }
  app.innerHTML=shell(`<div class="opportunitiesPage">
  <div class="eyebrow">Il tuo radar</div><h1>Opportunità</h1>
- <p class="lead">HUNT esplora il mercato in profondità e qui mostra solo le posizioni fresche che vale la pena guardare.</p>
+ <p class="lead">HUNT cerca posizioni recenti e verificabili nelle aree professionali e nelle città che hai scelto.</p>
+ ${feed.noCv?'<p class="locationHint">Non hai ancora caricato un CV? Puoi comunque esplorare annunci reali per interessi, livello e località. HUNT non attribuisce compatibilità con esperienze che non conosce. Potrai aggiungere il CV dal Profilo.</p>':""}
   <button type="button" class="outreachJump" data-view="outreach">Scopri i brand da contattare <span aria-hidden="true">↗</span></button>
  <div class="feedToolbar section">
-   <strong>${rows.length} posizioni</strong>
+   <strong>${rows.length+explore.length} ${feed.noCv?"posizioni nelle città selezionate":"posizioni"}</strong>
    <label class="sortControl"><span>Ordina per</span>
      <select id="opportunitySort">
        <option value="priority" ${opportunitySort==="priority"?"selected":""}>Più adatte a me</option>
@@ -622,7 +707,7 @@ async function renderOpportunities(){
      </select>
    </label>
  </div>
- <section class="section stack opportunityList">${feed.error?`<div class="msg bad">${esc(feed.error.message)}</div>`:(rows.length?rows.map(x=>opportunityCard(x)).join(""):`<div class="emptyState"><h3>Nessuna posizione fresca da mostrare.</h3><p>HUNT continua a cercare senza riempire il feed con annunci vecchi o poco affidabili.</p></div>`)}</section></div>`);
+ <section class="section stack opportunityList">${feed.error?`<div class="msg bad">${esc(feed.error.message)}</div>`:(rows.length+explore.length?rows.concat(explore).map(x=>opportunityCard(x)).join(""):`<div class="emptyState"><h3>Nessuna posizione coerente nelle città selezionate.</h3><p>HUNT non consiglia ruoli senior o non coerenti soltanto per riempire il feed. Puoi ampliare le città oppure esplorare sotto le posizioni di altre località.</p></div>`)}</section> ${outside.length?'<section class="section"><div class="eyebrow">Una ricerca più ampia</div><h2>Altre città, stessa area professionale</h2><p class="lead">Questi annunci sono reali, ma si trovano fuori dalle città che hai scelto: sono solo da esplorare, non consigli personali.</p><div class="stack opportunityList">'+outside.map(x=>opportunityCard(x)).join("")+'</div></section>':""}</div>`);
  bindNav();bindOpportunityActions();
  const sort=document.getElementById("opportunitySort");
  if(sort)sort.onchange=()=>{opportunitySort=sort.value;renderOpportunities()};
@@ -1179,14 +1264,15 @@ async function renderApplications(){
 let outreachCache={leads:[],drafts:{},cvs:[],person:{},preferences:{},selectedCv:{}};
 async function renderOutreach(){
  currentView="outreach";
- const [curatedRes,brandSourcesRes,signalsRes,draftsRes,cvsRes,personRes,preferencesRes]=await Promise.all([
+ const [curatedRes,brandSourcesRes,signalsRes,draftsRes,cvsRes,personRes,preferencesRes,careerRes]=await Promise.all([
    fetch("../data/outreach_signals_public.json?v=20261110-168",{cache:"no-store"}).then(async r=>r.ok?await r.json():[]).catch(()=>[]),
    fetch("../data/outreach_brand_sources.json?v=20261110-168",{cache:"no-store"}).then(async r=>r.ok?await r.json():{}).catch(()=>({})),
    supabase.from("company_signals").select("id,signal_type,title,summary,source_url,published_at,detected_at,companies(name,is_independent,size_band,careers_url)").order("published_at",{ascending:false,nullsFirst:false}).limit(200),
    supabase.from("user_outreach_drafts").select("outreach_key,brand_name,subject,email_body,status,updated_at,cv_id").eq("user_id",currentUser.id),
    supabase.from("user_cvs").select("id,name,is_default,parsed_profile,target_role_families").eq("user_id",currentUser.id).eq("active",true),
    supabase.from("profiles").select("display_name,first_name,last_name").eq("user_id",currentUser.id).maybeSingle(),
-   supabase.from("user_personalization").select("career_goal,communication_style,interest_areas").eq("user_id",currentUser.id).maybeSingle()
+   supabase.from("user_personalization").select("career_goal,communication_style,interest_areas").eq("user_id",currentUser.id).maybeSingle(),
+  supabase.from("career_preferences").select("primary_role_families,preferred_locations,relocation_locations").eq("user_id",currentUser.id).maybeSingle()
  ]);
  const baseLeads=buildOutreachLeads(curatedRes,signalsRes.data||[]);
  // A small brand can be buried among thousands of general news results. Search for each named brand.
@@ -1198,18 +1284,19 @@ async function renderOutreach(){
      return {key:lead.key,data:result.data||[],error:result.error};
    }catch(e){return {key:lead.key,data:[],error:e}}
  }));
- const leads=enrichOutreachLeads(baseLeads.map(lead=>{
+ const allLeads=enrichOutreachLeads(baseLeads.map(lead=>{
    const match=newsMatches.find(x=>x.key===lead.key);
    return attachBrandNews([lead],match?.data||[])[0];
  }),brandSourcesRes||{});
+ const leads=filterOutreachForMember(allLeads,careerRes.data?.primary_role_families||[]);
  const drafts=Object.fromEntries((draftsRes.data||[]).map(d=>[d.outreach_key,d]));
  outreachCache={leads,drafts,cvs:cvsRes.data||[],person:personRes.data||{},preferences:preferencesRes.data||{},selectedCv:{}};
- const errors=[signalsRes.error,draftsRes.error,cvsRes.error].filter(Boolean).map(e=>e.message);
+ const errors=[signalsRes.error,draftsRes.error,cvsRes.error,careerRes.error].filter(Boolean).map(e=>e.message);
  app.innerHTML=shell('<div class="outPage"><div class="eyebrow">HUNT / Ricerca brand</div>'+
  '<header class="outPageHeader"><h1>Brand da contattare</h1><p>HUNT individua occasioni concrete per presentarti a marchi indipendenti ed emergenti, anche quando non pubblicano un annuncio.</p></header>'+
- '<div class="outAbout">Per ogni brand trovi il motivo del contatto, le notizie che lo sostengono e una candidatura costruita sui dati del tuo CV verificato.</div>'+
+ '<div class="outAbout">I brand sono filtrati per le aree professionali che hai selezionato. I segnali non confermano assunzioni: verifica sempre le fonti e il canale ufficiale. '+(!(cvsRes.data||[]).length?'Puoi esplorare anche senza CV, ma una candidatura personale richiede esperienze documentate.':'')+'</div>'+
  (errors.length?'<div class="msg bad">Alcuni dati non sono disponibili: '+esc(errors.join(" · "))+'</div>':"")+
- renderOutreachCards(leads,drafts)+'</div>');
+ (leads.length?renderOutreachCards(leads,drafts):'<section class="outEmpty"><h2>Nessun brand coerente con le tue aree al momento.</h2><p>HUNT non ti propone un elenco generico uguale per tutti. Quando ci saranno segnali verificati collegati ai tuoi interessi li troverai qui.</p></section>')+'</div>');
  bindNav();
  document.querySelectorAll("[data-outreach-open]").forEach(button=>button.onclick=()=>openOutreachFolder(button.dataset.outreachOpen));
 }

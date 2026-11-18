@@ -1,0 +1,13 @@
+/* Inherits the existing HUNT luxury cards, inputs and typography. */
+.locationPicker{position:relative;max-width:650px}
+.locationPicker .input{width:100%}
+.locationHint{font-size:12px;color:var(--muted,#768078);line-height:1.65;margin:7px 0 12px}
+.locationResults{position:absolute;top:100%;left:0;right:0;max-height:250px;overflow-y:auto;z-index:40;background:#fff;border:1px solid #cfd9d0;border-radius:12px;box-shadow:0 12px 28px rgba(21,37,25,.11);padding:5px;scrollbar-width:thin}
+.locationResults[hidden]{display:none}
+.locationResults button{appearance:none;border:0;background:transparent;padding:12px 13px;width:100%;text-align:left;display:block;color:#233a29;font:inherit;font-size:13px;cursor:pointer;border-radius:7px}
+.locationResults button:hover,.locationResults button:focus-visible{background:#eff4ef;outline:1px solid #a5c3aa}
+.locationResults p{color:#758179;font-size:12px;padding:8px 12px;margin:0}
+.locationSectionLabel{font-size:12px;font-weight:750;color:#48624f;margin:0 0 5px}
+.locationGroup{margin:13px 0 19px}
+.locationGroup .locationTag{margin:3px}
+@media(max-width:600px){.locationResults{max-height:210px}.locationResults button{padding:13px}}

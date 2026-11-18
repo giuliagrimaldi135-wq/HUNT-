@@ -1,0 +1,15 @@
+// Searchable city suggestions, never a mandatory closed list: users may add ANY city.
+// These suggestions do not claim to be a complete world-city database.
+export const LOCATION_SUGGESTIONS=["Milano","Roma","Torino","Firenze","Napoli","Bologna","Venezia","Verona","Genova","Padova","Bergamo","Brescia","Monza","Como","Lecco","Varese","Novara","Parma","Modena","Reggio Emilia","Rimini","Forlì","Cesena","Ravenna","Pisa","Livorno","Lucca","Siena","Arezzo","Perugia","Ancona","Pescara","L'Aquila","Salerno","Bari","Lecce","Brindisi","Taranto","Palermo","Catania","Messina","Siracusa","Cagliari","Sassari","Bolzano","Trento","Trieste","Udine","Pordenone","Treviso","Vicenza","Belluno","Piacenza","Cremona","Mantova","Alessandria","Asti","Cuneo","Biella","Aosta","Sondrio","Lugano","Zurigo","Ginevra","Basilea","Berna","Losanna","Lucerna","San Gallo","Winterthur","Parigi","Lione","Marsiglia","Nizza","Cannes","Monaco","Strasburgo","Lilla","Bordeaux","Tolosa","Nantes","Rennes","Montpellier","Grenoble","Annecy","Londra","Manchester","Birmingham","Liverpool","Leeds","Bristol","Brighton","Edimburgo","Glasgow","Oxford","Cambridge","Dublino","Cork","Belfast","Berlino","Amburgo","Monaco di Baviera","Francoforte","Düsseldorf","Colonia","Stoccarda","Hannover","Lipsia","Dresda","Bonn","Münster","Amsterdam","Rotterdam","L'Aia","Utrecht","Eindhoven","Bruxelles","Anversa","Bruges","Gand","Vienna","Salisburgo","Graz","Innsbruck","Madrid","Barcellona","Valencia","Siviglia","Bilbao","Malaga","Lisbona","Porto","Coimbra","Copenaghen","Aarhus","Stoccolma","Göteborg","Malmö","Oslo","Bergen","Helsinki","Tampere","Reykjavik","Varsavia","Cracovia","Danzica","Praga","Brno","Budapest","Bucarest","Sofia","Belgrado","Zagabria","Lubiana","Atene","Salonicco","Istanbul","Ankara","Dubai","Abu Dhabi","Doha","Riyadh","Jeddah","New York","Boston","Washington","Chicago","Los Angeles","San Francisco","San Diego","Seattle","Miami","Atlanta","Austin","Dallas","Houston","Las Vegas","Philadelphia","Detroit","Minneapolis","Denver","Portland","Toronto","Montreal","Vancouver","Ottawa","Calgary","Città del Messico","Guadalajara","San Paolo","Rio de Janeiro","Buenos Aires","Santiago","Lima","Bogotá","Città del Capo","Johannesburg","Casablanca","Il Cairo","Tokyo","Osaka","Kyoto","Seoul","Busan","Pechino","Shanghai","Shenzhen","Guangzhou","Hong Kong","Taipei","Singapore","Bangkok","Kuala Lumpur","Jakarta","Manila","Ho Chi Minh City","Hanoi","Mumbai","New Delhi","Bangalore","Sydney","Melbourne","Brisbane","Perth","Auckland","Wellington"].sort((a,b)=>a.localeCompare(b,"it"));
+
+const norm=v=>String(v||"").trim().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ");
+export function addChosenCity(list=[],raw=""){
+ const city=String(raw||"").trim().replace(/\s+/g," ").slice(0,85);
+ if(!city||/[<>\u0000-\u001f]/.test(city)||list.some(x=>norm(x)===norm(city)))return [...list];
+ return [...list,city];
+}
+export function findCitySuggestions(term="",max=18){
+ const query=norm(term);
+ const matches=LOCATION_SUGGESTIONS.filter(city=>!query||norm(city).includes(query));
+ return matches.slice(0,Math.max(0,Math.min(100,Number(max)||18)));
+}
