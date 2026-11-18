@@ -7,6 +7,7 @@ import {reviewStatus,invalidVacancyStatus,reviewFailureReason} from "./review-st
 import {eligibleAlreadyVerifiedJob,postedWithinTwentyDays} from "./existing-official-job.mjs";
 import {classifyLegacyReviewRecords} from "./review-queue-cleanup.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
+import {extractStructuredVacancyLinks} from "./source-jsonld-links.mjs";
 
 const enc = new TextEncoder();
 const HOUR = 3600000;
@@ -146,6 +147,8 @@ function fallbackPosting(html:string,url:string,hint:string){
 
 function candidateLinks(html:string,base:string){
   const map=new Map<string,string>();
+  // Schema.org JobPosting can expose official URLs when cards are hydrated by JS.
+  for(const job of extractStructuredVacancyLinks(html,base,80))map.set(job.url,job.title);
   for(const m of html.matchAll(/<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)){
     const found=safeVacancyCandidate(m[1],cleanText(m[2]),base);
     if(found)map.set(found.url,found.title);

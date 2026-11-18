@@ -113,6 +113,9 @@ jobs:
       - name: Test career link integrity and shared-group employer resolution
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test candidate-integrity.test.mjs
+      - name: Test structured schema.org JobPosting discovery without fabricated vacancies
+        working-directory: v2/supabase/functions/hunt-source-discovery
+        run: node --test source-jsonld-links.test.mjs
       - name: Test verified brand website discovery
         working-directory: v2/supabase/functions/hunt-brand-website-repair
         run: node --test website-extraction.test.mjs
