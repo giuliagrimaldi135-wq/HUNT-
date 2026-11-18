@@ -3,6 +3,7 @@ import {createClient} from "npm:@supabase/supabase-js@2";
 import {isRealCareerPosting,trustedSmartRecruitersIdentity,isEligibleForStaleTransition} from "./ats-ingestion-guard.mjs";
 import {shouldProbeATS,atsScanStatus} from "./ats-source-health.mjs";
 import {leverPostingCreatedAtISO} from "./lever-original-date.mjs";
+import {leverPageUrl,leverNextPageOffset,leverCatalogComplete,providerCountryCode,successfulATSParserFlag,safeCatalogOffset} from "./ats-world-coverage.mjs";
 const enc=new TextEncoder();
 const trim=(v:unknown,n=12000)=>String(v??"").replace(/\s+/g," ").trim().slice(0,n);
 async function hash(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}
@@ -56,7 +57,7 @@ function safeURL(v:unknown){
 function apiURL(source:any){
  const board=trim(source.config?.board,90);
  if(!/^[a-z0-9_-]{2,90}$/i.test(board))throw Error("Invalid ATS board ID");
- if(source.source_family==="ats_lever")return "https://api.lever.co/v0/postings/"+board+"?mode=json&limit=250";
+ if(source.source_family==="ats_lever")return leverPageUrl(board,source.config?.catalog_page_offset);
  if(source.source_family==="ats_greenhouse")return "https://boards-api.greenhouse.io/v1/boards/"+board+"/jobs?content=true";
  if(source.source_family==="ats_ashby")return "https://api.ashbyhq.com/posting-api/job-board/"+board;
  if(source.source_family==="ats_smartrecruiters"){
@@ -73,7 +74,7 @@ function mapped(source:any,data:any){
     description:cleanHTML(x.descriptionPlain||x.description||""),
     url:safeURL(x.hostedUrl),apply:safeURL(x.applyUrl)||safeURL(x.hostedUrl),
     id:trim(x.id,110),remote:/remote/i.test(String(x.workplaceType||x.categories?.location||"")),
-     providerCreatedRaw:x.createdAt
+     countryCode:providerCountryCode(x.country),providerCreatedRaw:x.createdAt
   }));
  }
  if(source.source_family==="ats_greenhouse"&&Array.isArray(data.jobs)){
@@ -143,19 +144,25 @@ Deno.serve(async(req)=>{
     if(raw.length>4500000)throw Error("ATS board response too large");
     const parsed=JSON.parse(raw);
     const entries=mapped(source,parsed);
-    const isCompleteBoard=source.source_family==="ats_smartrecruiters"
-      ?Number(parsed.totalFound||0)<=entries.length
+    const pageOffset=safeCatalogOffset(source.config?.catalog_page_offset);
+    // Do not retire a vacancy based on a partial catalog page.
+    const isCompleteBoard=source.source_family==="ats_lever"
+      ?leverCatalogComplete(pageOffset,entries.length)
+      :source.source_family==="ats_smartrecruiters"
+      ?pageOffset===0&&Number(parsed.totalFound||0)<=entries.length
       :entries.length<250;
     const liveURLs=new Set(entries.map((x:any)=>x.url).filter(Boolean));
     available+=entries.length;
     const recentLinks=new Set<string>();
     const previousCursor=Math.max(0,Number(source.config?.catalog_cursor)||0);
-    const pageSize=source.source_family==="ats_smartrecruiters"?12:35;
+    const pageSize=source.source_family==="ats_smartrecruiters"?12:20;
     const selected=entries.length?Array.from({length:Math.min(entries.length,pageSize)},(_,i)=>entries[(previousCursor+i)%entries.length]):[];
     const wrapped=entries.length>0&&previousCursor+selected.length>=entries.length;
     const nextCursor=wrapped?0:previousCursor+selected.length;
-    const previousOffset=Math.max(0,Number(source.config?.catalog_page_offset)||0);
-    const nextOffset=source.source_family==="ats_smartrecruiters"&&wrapped
+    const previousOffset=pageOffset;
+    const nextOffset=source.source_family==="ats_lever"
+      ?leverNextPageOffset(previousOffset,entries.length,wrapped)
+      :source.source_family==="ats_smartrecruiters"&&wrapped
       ?(Number(parsed.totalFound||0)>previousOffset+entries.length?previousOffset+entries.length:0)
       :previousOffset;
     for(const item of selected){
@@ -211,13 +218,14 @@ Deno.serve(async(req)=>{
       }
       if(existingId){
         const {data:prior,error:readError}=await db.from("jobs")
-          .select("description,published_at,metadata").eq("id",existingId).single();
+          .select("description,published_at,country_code,metadata").eq("id",existingId).single();
         if(readError)throw Error(readError.message);
         const patch:any={
           last_seen_at:stamp,last_verified_at:stamp,updated_at:stamp,
           state:"active_verified",confidence_label:"VERIFIED ACTIVE",vacancy_confidence:96
         };
         if(item.description.length>String(prior?.description||"").length)patch.description=item.description;
+        if(!prior?.country_code&&item.countryCode)patch.country_code=item.countryCode;
          // Creation precedes publication. It can safely bound maximum
          // possible freshness without falsely claiming a datePosted.
          if(providerCreated)patch.metadata={...(prior?.metadata||{}),
@@ -247,7 +255,7 @@ Deno.serve(async(req)=>{
         role_family:role,seniority:sen(item.title),employment_type:item.providerEmploymentType
           ?(/^intern|stag|tirocin|apprentice/i.test(item.providerEmploymentType)?"internship":/^part/i.test(item.providerEmploymentType)?"part_time":"full_time")
           :(sen(item.title)==="internship"?"internship":"full_time"),
-        city:location,remote_mode:item.remote?"remote":"onsite",
+        city:location,country_code:item.countryCode||null,remote_mode:item.remote?"remote":"onsite",
         description:item.description,requisition_id:item.id||null,
         primary_apply_url:item.apply,
         state:"active_verified",vacancy_confidence:96,confidence_label:"VERIFIED ACTIVE",
@@ -302,10 +310,10 @@ Deno.serve(async(req)=>{
     if(health!=="healthy"||(source.consecutive_failures||0)>0){
       await db.from("source_scan_runs").insert({
         source_id:source.id,started_at:at,finished_at:new Date().toISOString(),
-        request_ok:true,parser_ok:scanned>0,extracted_jobs:scanned,
+        request_ok:true,parser_ok:successfulATSParserFlag(),extracted_jobs:scanned,
         health_status:health,error_code:health==="degraded"?"ats_zero_accepted_jobs":null,
         metadata:{runner:"hunt-ats-board-scan-v6",family:source.source_family,
-          fetched:entries.length,ignored,created,stale}
+          fetched:entries.length,ignored,created,stale,catalog_page_offset:previousOffset,next_page_offset:nextOffset}
       });
     }
     details.push({family:source.source_family,board:source.config?.board,status:health,fetched:entries.length,created,checked:scanned,ignored,stale,catalog_cursor:nextCursor,catalog_page_offset:nextOffset});
