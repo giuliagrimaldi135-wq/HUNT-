@@ -596,7 +596,7 @@ function opportunityCard(row){
    <h3>${esc(job.canonical_title)}</h3>
    <div class="jobMeta">${esc(job.city||"Località da verificare")} · ${esc(job.role_family||"Altro")}</div>
    <div class="humanBadges editorialMeta">
-    <span class="matchPill">${partialJobSource(job)?"Match preliminare":row.match_score+"% compatibilità stimata"}</span>
+    <span class="matchPill">${row.exploratory?(row.outsideSelected?"Altra città · Da esplorare":"In linea con i tuoi interessi · Da esplorare"):row.noCv?"In linea con interessi e città · CV facoltativo":partialJobSource(job)?"Match preliminare":row.match_score+"% compatibilità stimata"}</span>
     ${row.applicationStatus==="preparing"?'<span class="jobPreparing">In preparazione</span>':""}
     <span>${esc(ageLabel(job.published_at,job.first_seen_at))}</span>
     <span>${esc(verifiedLabel(job))}</span>
@@ -604,7 +604,7 @@ function opportunityCard(row){
    </div>
    <div class="actions editorialActions">
     ${job.primary_apply_url?`<a class="btn primary" href="${esc(job.primary_apply_url)}" target="_blank" rel="noopener">Apri posizione ↗</a>`:""}
-    <button class="btn" type="button" data-open-dossier="${job.id}">Apri dossier</button>
+    ${row.noCv?'<span class="source">Dossier completo disponibile dopo il caricamento di un CV</span>':`<button class="btn" type="button" data-open-dossier="${job.id}">Apri dossier</button>`}
     <button class="btn" data-applied="${job.id}">Già candidata</button>
     <button class="btn ghostDanger" data-ignore="${job.id}">Ignora</button>
    </div>
