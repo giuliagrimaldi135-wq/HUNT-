@@ -4,12 +4,16 @@ on:
   push:
     paths:
       - "v2/services/**"
+      - "scripts/**"
+      - ".github/workflows/hunt-radar.yml"
       - "v2/web/lib/data/**"
       - "v2/web/**"
       - ".github/workflows/hunt-v2-tests.yml"
   pull_request:
     paths:
       - "v2/services/**"
+      - "scripts/**"
+      - ".github/workflows/hunt-radar.yml"
       - "v2/web/**"
       - "v2/supabase/functions/hunt-match-refresh/**"
       - "v2/supabase/functions/hunt-source-discovery/**"
@@ -40,6 +44,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Test legacy radar commit policy (prevent timestamp-only deploys)
+        working-directory: .
+        run: python -m unittest discover -s scripts -p test_radar_persist_policy.py -v
       - name: Test freshness, official-job deduplication and CV evidence
         working-directory: v2/supabase/functions/hunt-match-refresh
         run: node --test recommendation-guard.test.mjs cv-evidence.test.mjs
