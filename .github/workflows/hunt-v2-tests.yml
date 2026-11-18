@@ -8,6 +8,7 @@ on:
       - ".github/workflows/hunt-radar.yml"
       - "v2/web/lib/data/**"
       - "v2/web/**"
+      - "hunt2-preview/**"
       - ".github/workflows/hunt-v2-tests.yml"
   pull_request:
     paths:
@@ -15,6 +16,7 @@ on:
       - "scripts/**"
       - ".github/workflows/hunt-radar.yml"
       - "v2/web/**"
+      - "hunt2-preview/**"
       - "v2/supabase/functions/hunt-match-refresh/**"
       - "v2/supabase/functions/hunt-source-discovery/**"
       - "v2/supabase/functions/hunt-vacancy-monitor/**"
@@ -53,6 +55,17 @@ jobs:
       - name: Test freshness, official-job deduplication and CV evidence
         working-directory: v2/supabase/functions/hunt-match-refresh
         run: node --test recommendation-guard.test.mjs cv-evidence.test.mjs
+      - name: Test explicit senior-title protection for entry career profiles
+        working-directory: v2/supabase/functions/hunt-match-refresh
+        run: node --test seniority-guard.test.mjs
+      - name: Test original HUNT luxury onboarding, no-CV junior opportunity eligibility and user-targeted outreach
+        working-directory: hunt2-preview
+        run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs
+      - name: Check original luxury application syntax
+        working-directory: .
+        run: |
+          node --input-type=module --check < hunt2-preview/app.js
+          node --input-type=module --check < hunt2-preview/outreach-intelligence.js
       - name: Test verified official-job description recovery
         working-directory: v2/supabase/functions/hunt-description-repair
         run: node --test extract-description.test.mjs
