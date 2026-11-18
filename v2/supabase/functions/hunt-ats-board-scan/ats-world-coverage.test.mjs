@@ -19,7 +19,7 @@ test("never mark an incomplete page as full-board vacancy closure evidence",()=>
 test("valid source country must be an explicit two-letter code",()=>{
  assert.equal(providerCountryCode("gb"),"GB");
  assert.equal(providerCountryCode(" US "),"US");
- for(const v of ["Italy","Milan","","EU",null,{},["IT"],"U5"])assert.equal(providerCountryCode(v),v==="EU"?"EU":null);
+ for(const v of ["Italy","Milan","","EU","ZZ",null,{},["IT"],"U5"])assert.equal(providerCountryCode(v),null);
 });
 test("parser success is independent of zero accepted postings",()=>{
  assert.equal(successfulATSParserFlag(),true);
