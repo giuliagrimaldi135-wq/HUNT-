@@ -24,15 +24,16 @@ function sourceHost(source){
 export function chooseDueNewsSources(sources,max=12,nowMs=Date.now()){
  const eligible=(sources||[]).filter(x=>shouldScanNewsSource(x,nowMs));
  const due=[], hostCounts=new Map();
+ let hostLimitedSkipped=0;
  for(const candidate of eligible){
   if(due.length>=max)break;
   const host=sourceHost(candidate);
   const count=hostCounts.get(host)||0;
   // Keep one upstream domain from monopolizing each scheduled batch.
-  if(count>=2)continue;
+  if(count>=2){hostLimitedSkipped++;continue;}
   due.push(candidate);
   hostCounts.set(host,count+1);
  }
  return {due,backoffSkipped:(sources||[]).length-eligible.length,
-  hostLimitedSkipped:eligible.length-due.length};
+  hostLimitedSkipped};
 }
