@@ -1,18 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {explicitOfficialCountry,jobPostingCountryCode} from "./official-location-country.mjs";
+const place=country=>({address:country?{addressCountry:country}:{addressLocality:"Paris"}});
+const job=location=>({jobLocation:location});
 test("read country from official schema.org PostalAddress",()=>{
- const x={"@type":"JobPosting",jobLocation:{"@type":"Place",address:{"@type":"PostalAddress",addressLocality:"Milano",addressCountry:"IT"}}};
- assert.equal(jobPostingCountryCode(x),"IT");
- assert.equal(jobPostingCountryCode({jobLocation:{address:{addressCountry:{name:"France"}}}),"FR");
- assert.equal(jobPostingCountryCode({jobLocation:{address:{addressCountry:"United States"}}}),"US");
+ assert.equal(jobPostingCountryCode(job(place("IT"))),"IT");
+ assert.equal(jobPostingCountryCode(job(place({name:"France"}))),"FR");
+ assert.equal(jobPostingCountryCode(job(place("United States"))),"US");
 });
 test("never guess from city, multiple countries or untrusted regions",()=>{
- assert.equal(jobPostingCountryCode({jobLocation:{address:{addressLocality:"Paris"}}}),null);
- assert.equal(jobPostingCountryCode({jobLocation:[{address:{addressCountry:"Italy"}},{address:{addressCountry:"Spain"}}]}),null);
- assert.equal(jobPostingCountryCode({jobLocation:[{address:{addressCountry:"Italy"}},{address:{addressLocality:"Paris"}}]}),null);
- assert.equal(jobPostingCountryCode({jobLocation:[{address:{addressCountry:"Italy"}},{address:{addressCountry:"IT"}}]}),"IT");
- assert.equal(jobPostingCountryCode({applicantLocationRequirements:{address:{addressCountry:"UK"}}}),null);
+ assert.equal(jobPostingCountryCode(job(place(null))),null);
+ assert.equal(jobPostingCountryCode(job([place("Italy"),place("Spain")])),null);
+ assert.equal(jobPostingCountryCode(job([place("Italy"),place(null)])),null);
+ assert.equal(jobPostingCountryCode(job([place("Italy"),place("IT")])),"IT");
+ assert.equal(jobPostingCountryCode({applicantLocationRequirements:place("UK")}),null);
 });
 test("accept only plausible explicit country values",()=>{
  assert.equal(explicitOfficialCountry("es"),"ES");
