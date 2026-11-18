@@ -6,7 +6,13 @@ function rootDomain(host) {
  const parts=host.toLowerCase().replace(/\.$/,"").split(".");
  if(parts.length<2||parts.some(x=>!x||!/^[a-z0-9-]+$/.test(x)))return null;
  const tail=parts.slice(-2).join(".");
- return parts.slice(-(suffixes.has(tail)?3:2)).join(".");
+ // Treat reserved second-level labels under any country-code TLD as public
+ // suffixes. "brand.co.za" and "other.co.za" must NEVER share a root.
+ const genericSecondLevel=/^(?:co|com|org|net|gov|edu|ac|ne|ltd|mil)$/i;
+ const countryCodeTld=parts[parts.length-1].length===2;
+ const depth=(suffixes.has(tail)||(countryCodeTld&&genericSecondLevel.test(parts[parts.length-2])))?3:2;
+ if(parts.length<depth)return null;
+ return parts.slice(-depth).join(".");
 }
 function publicUrl(input,base) {
  try{
