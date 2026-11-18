@@ -15,6 +15,7 @@ on:
       - "v2/supabase/functions/hunt-source-discovery/**"
       - "v2/supabase/functions/hunt-vacancy-monitor/**"
       - "v2/supabase/functions/hunt-ats-board-scan/**"
+      - "v2/supabase/functions/hunt-ats-discovery/**"
       - "v2/supabase/functions/hunt-global-news/**"
       - "v2/supabase/functions/hunt-successfactors-public/**"
       - "v2/supabase/functions/hunt-description-repair/**"
