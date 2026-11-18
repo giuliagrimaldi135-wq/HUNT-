@@ -435,7 +435,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
     '</div></section>'+ 
   '<div class="outTabPanel outApplicationPane" id="outApplication" role="tabpanel" aria-labelledby="outTabApplication" data-outreach-panel="application" hidden><section class="outV3Section outV3Application"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO PERCORSO</span><h2>Scheda candidatura</h2>'+
-   '<p>HUNT parte dal tuo curriculum verificato e dalle esigenze che emergono dal brand.</p></div>'+
+   '<p>'+(email.verifiedCv?'HUNT confronta le esperienze confermate nel tuo CV con le informazioni documentate sul brand.':'Non hai ancora un CV confermato: questa scheda usa solo gli interessi che hai dichiarato e i segnali pubblici del brand.')+'</p></div>'+
    '<div class="outCandidateDecision"><div class="outCandidateDecisionTop">'+
     '<span>CONTATTO MIRATO · '+esc(priority||"da valutare")+'</span>'+
     '<span>'+esc(candidacyStatus)+'</span></div>'+
@@ -447,7 +447,7 @@ export function renderOutreachFolder(lead,{cvs=[],cvId="",draft=null,person={},p
     '<div id="outCvEvidence">'+renderOutreachCvInsight(lead,selected,cvs)+'</div></section>'+
   '<section class="outV3Section outLetterSection" id="outLetter"><div class="outSectionIntro">'+
    '<span class="outSectionKicker">IL TUO MESSAGGIO</span><h2>Email pronta da personalizzare</h2>'+
-   '<p>Un messaggio professionale costruito sul brand e sulle tue esperienze verificate. Ogni parola è modificabile.</p></div>'+
+   '<p>'+(email.verifiedCv?'Testo basato sui dati verificati del tuo CV e sulle fonti del brand.':'Bozza iniziale basata sui tuoi interessi dichiarati; verifica e completa la tua esperienza prima di inviarla.')+' Ogni parola è modificabile.</p></div>'+
    '<label class="outField">Oggetto<input type="text" id="outSubject" value="'+esc(subject)+'" maxlength="300"></label>'+
    '<label class="outField">Testo email<textarea id="outBody" rows="13">'+esc(body)+'</textarea></label>'+
    '<div class="outEmailActions"><button type="button" data-outreach-save="preparing">Salva la bozza</button>'+
