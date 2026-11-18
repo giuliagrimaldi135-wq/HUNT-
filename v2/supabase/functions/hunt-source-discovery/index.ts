@@ -8,6 +8,7 @@ import {eligibleAlreadyVerifiedJob,postedWithinTwentyDays} from "./existing-offi
 import {classifyLegacyReviewRecords} from "./review-queue-cleanup.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 import {extractStructuredVacancyLinks} from "./source-jsonld-links.mjs";
+import {jobPostingCountryCode} from "./official-location-country.mjs";
 
 const enc = new TextEncoder();
 const HOUR = 3600000;
@@ -379,6 +380,7 @@ Deno.serve(async(req)=>{
       }
       const title=cleanText(String(jp.title));
       const city=cityFrom(jp);
+      const countryCode=jobPostingCountryCode(jp);
       const family=roleFamily(title);
       const reqId=String(jp.identifier?.value||jp.identifier?.name||"").trim()||requisitionFromUrl(cand.listing_url);
       const resolvedCompanyId=resolveSharedBoardEmployer(cand.listing_url,title,companies||[])||resolveCompanyId(jp,title,cand.company_id,companies||[]);
@@ -401,7 +403,7 @@ Deno.serve(async(req)=>{
       if(!jobId){
         const {data:newJob,error:jobErr}=await db.from("jobs").insert({
           company_id:resolvedCompanyId,canonical_title:title,normalized_title:normalized(title),role_family:family,seniority:seniority(title),
-          employment_type:employment(title,jp.employmentType),city,description:desc,requisition_id:reqId,primary_apply_url:cand.listing_url,
+          employment_type:employment(title,jp.employmentType),city,country_code:countryCode,description:desc,requisition_id:reqId,primary_apply_url:cand.listing_url,
           state,vacancy_confidence:confidence,confidence_label:label,published_at:new Date(jp.datePosted).toISOString(),
           last_seen_at:new Date().toISOString(),last_verified_at:new Date().toISOString(),
           metadata:{discovered_by:"hunt-source-discovery-v3",date_posted_source:postings.length?"jsonld_or_official_microdata":"official_microdata"}
@@ -413,14 +415,14 @@ Deno.serve(async(req)=>{
           raw_title:title,raw_location:city,published_at:new Date(jp.datePosted).toISOString(),last_seen_at:new Date().toISOString(),last_verified_at:new Date().toISOString(),active:true
         });
       }else{
-        await db.from("jobs").update({company_id:resolvedCompanyId,role_family:family,requisition_id:reqId||undefined,state,vacancy_confidence:confidence,confidence_label:label,published_at:new Date(jp.datePosted).toISOString(),last_seen_at:new Date().toISOString(),last_verified_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",jobId);
+        await db.from("jobs").update({company_id:resolvedCompanyId,role_family:family,requisition_id:reqId||undefined,country_code:countryCode||undefined,state,vacancy_confidence:confidence,confidence_label:label,published_at:new Date(jp.datePosted).toISOString(),last_seen_at:new Date().toISOString(),last_verified_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",jobId);
         const {data:linked}=await db.from("job_sources").select("id").eq("source_id",cand.source_id).eq("listing_url",cand.listing_url).maybeSingle();
         if(!linked){
           await db.from("job_sources").insert({job_id:jobId,source_id:cand.source_id,external_job_id:reqId,listing_url:cand.listing_url,apply_url:cand.listing_url,requisition_id:reqId,raw_title:title,raw_location:city,published_at:new Date(jp.datePosted).toISOString(),last_seen_at:new Date().toISOString(),last_verified_at:new Date().toISOString(),active:true});
         }
       }
 
-      await db.from("job_observations").insert({job_id:jobId,listing_present:true,apply_works:true,http_status:res.status,title,location:city,raw:{monitor:"hunt-source-discovery-v1",datePosted:jp.datePosted}});
+      await db.from("job_observations").insert({job_id:jobId,listing_present:true,apply_works:true,http_status:res.status,title,location:city,raw:{monitor:"hunt-source-discovery-v1",datePosted:jp.datePosted,official_address_country:countryCode}});
       await db.from("job_candidates").update({status:"promoted",parsed_at:new Date().toISOString(),raw:{...originalRaw,datePosted:jp.datePosted,age_days:age,title,city}}).eq("id",cand.id);
       summary.promoted++;
 
