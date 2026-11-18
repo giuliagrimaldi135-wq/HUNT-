@@ -22,7 +22,7 @@ export function leverCatalogComplete(offset,receivedCount){
 export function providerCountryCode(value){
  if(typeof value!=="string")return null;
  const v=value.trim().toUpperCase();
- return /^[A-Z]{2}$/.test(v)?v:null;
+ return /^[A-Z]{2}$/.test(v)&&!["EU","UN","ZZ","XX","WW"].includes(v)?v:null;
 }
 // A valid 0-posting or 0-eligible-posting response is not a parser failure.
 export function successfulATSParserFlag(){return true;}
