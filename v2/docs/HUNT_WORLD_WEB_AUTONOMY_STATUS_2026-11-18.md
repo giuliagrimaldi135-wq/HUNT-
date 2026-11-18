@@ -71,3 +71,25 @@ Regola di lavoro: verificare database + codice GitHub + CI + Edge Function attiv
 3. Test browser autenticati end-to-end: CV per candidatura, dossier realistici, candidatura spontanea, link ufficiali, fonti news; preservare design luxury.
 4. Misurare stabilità su più giorni, contenimento falsi positivi e notifiche senza rumore; non promettere “perfetto” a priori.
 5. Repo GitHub ancora pubblico. Non renderlo privato senza aver verificato il collegamento Vercel e la PWA legacy. Nessun segreto o CV va salvato nel repo pubblico.
+
+## Decisione del progetto — completare HUNT prima di intervenire ancora su Vercel
+Richiesta esplicita dell'utente il 18 novembre 2026: **prima completare la qualità/autosufficienza del backend e la copertura World Web; solo dopo riprendere la configurazione Vercel**. Non toccare il frontend luxury o cambiare struttura dell'app per risolvere lacune di raccolta dati. La CI deve continuare a testare i cambi backend; i file GitHub che non riguardano il frontend non devono provocare nuove build Next.js se la regola Vercel funziona.
+
+### Audit di prontezza misurabile: aggiornamento alle 15:05 UTC
+Applicata migrazione `20261118151900_hunt_world_readiness_metrics.sql`. Mantiene il cron esistente `hunt-world-coverage-audit-6h`, RLS e storico; arricchisce la stessa tabella privata `hunt_world_coverage_snapshots` con indicatori di copertura realmente recente e produttività. Prima esecuzione manuale e privilegi verificati:
+- 636 annunci `recent_verified_described_jobs`: stato attivo, pubblicati/avvistati entro 20 giorni, verificati entro 7 giorni, descrizione almeno 250 caratteri, URL https; non equivalgono a 636 annunci necessariamente adatti al singolo utente.
+- 21 codici Paese tra le offerte attive, recenti e verificate; 35 brand con almeno una vacancy recente/verificata e descrizione estesa.
+- 20 fonti ufficiali con almeno un candidato estratto nelle ultime 24h.
+- 56 fonti careers ufficiali `reachable_no_listings`; 2 sorgenti ufficiali ATS non scansionate nelle ultime 24 ore (Moncler Group e Valentino, `source_family=successfactors`, senza `config.catalog_urls`). Non dichiararle operative solo perché registrate.
+- 208 brand monitorati senza una fonte careers ufficiale; 2 lead in review da oltre 48h; **0 suggerimenti fuori freschezza**.
+- Verifica indipendente su `user_job_matches`: 11 suggerimenti, zero oltre 20 giorni, zero con ultima verifica oltre 7 giorni, zero di livello manager/senior/director, zero inattivi.
+- Snapshot privato e funzione `hunt_world_readiness_metrics()`: EXECUTE non concesso a `anon` o `authenticated`.
+
+### Criteri di completamento prima di Vercel
+1. **Recall/precisione sul campione:** benchmark manualmente verificato su almeno 20–30 portali ufficiali, includendo piattaforme ATS diverse e più Paesi. Misurare vacancy vere, data, fonte e annuncio applicabile; non vantare "tutto il World Web", che non è certificabile.
+2. **Portali bloccanti:** almeno un percorso realmente produttivo per i grandi portali LVMH, Oracle/Workday e quelli con liste client-side, oppure limite spiegato e tracciato come fonte non supportata; non trattare un 200 con 0 annunci come copertura riuscita. Il catalogo ufficiale LVMH mostra molte migliaia di opportunità ma il parser corrente delle dieci pagine LVMH estrae 0 lead; prioritario.
+3. **Qualità offerte:** nessun annuncio obsoleto o senior non pertinente fra i suggerimenti, deduplica per requisition ID, prove dal CV e contenuto ricco per i dossier. I 26 annunci attivi con descrizione <250 caratteri provengono soprattutto da Richemont (pagine che il repair non riesce a completare); non inventare descrizioni.
+4. **Autonomia:** esecuzioni cron e log su più giornate senza errori persistenti/non gestiti, recupero automatico per fonti degradate, nessuna tempesta di email/commit; usare gli indicatori ogni 6h.
+5. **Frontend Vercel e deployment:** fase successiva e distinta, appena il motore supera i controlli prioritari. Il blocco Vercel Hobby e il connettore non autorizzato al progetto sono ancora noti; non dichiarare pronti né deploy né app end-to-end prima di verifica.
+
+Continuità: repository `giuliagrimaldi135-wq/HUNT-` main, Supabase `dfiokxjfgqoboxckcuut`. Non cancellare dati di candidature/CV, non creare notizie o opportunità fittizie, non riaprire il redesign.
