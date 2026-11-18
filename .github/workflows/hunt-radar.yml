@@ -75,6 +75,17 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             cp /tmp/hunt-data/*.json data/
+            # Keep scanning every 5m, but do not deploy again for timestamps only.
+            # Force a refresh at least twice daily for the legacy PWA's freshness.
+            DECISION="$(python scripts/radar_persist_policy.py --max-age-hours 12)"
+            if [ "$DECISION" = "SKIP" ]; then
+              echo "No meaningful data changes; skip commit and Vercel deployment"
+              PERSISTED=true
+              break
+            elif [ "$DECISION" != "PUBLISH" ]; then
+              echo "::error::Invalid radar persistence decision"
+              exit 1
+            fi
             git add data/
             if git diff --cached --quiet; then
               echo "No new data to publish"
