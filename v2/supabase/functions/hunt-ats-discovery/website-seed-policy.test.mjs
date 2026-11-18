@@ -26,3 +26,20 @@ test("strict discovery budget avoids runaway external probing",()=>{
  const list=Array.from({length:32},(_,i)=>({id:String(i),monitored:true,name:"Brand "+i,website_url:"https://brand"+i+".com"}));
  assert.equal(findMissingWebsiteLeads(list,[],12).length,12);
 });
+
+test("automatically reseeds a brand if every official careers source is degraded",()=>{
+ const brands=[
+  {id:"furla",monitored:true,name:"Furla",website_url:"https://www.furla.com"},
+  {id:"richemont",monitored:true,name:"Richemont",website_url:"https://www.richemont.com"},
+  {id:"valentino",monitored:true,name:"Valentino",website_url:"https://www.valentino.com"}
+ ];
+ const sources=[
+  {company_id:"furla",source_type:"career_page",active:true,official:true,health_status:"degraded"},
+  {company_id:"richemont",source_type:"career_page",active:true,official:true,health_status:"degraded"},
+  {company_id:"valentino",source_type:"career_page",active:true,official:true,health_status:"degraded"},
+  {company_id:"valentino",source_type:"career_page",active:true,official:true,health_status:"healthy"}
+ ];
+ const leads=findMissingWebsiteLeads(brands,sources,12);
+ assert.deepEqual(leads.map(x=>x.company_id),["furla","richemont"]);
+ assert.ok(leads.every(x=>!x.official && x.source_type==="brand_website_candidate"));
+});

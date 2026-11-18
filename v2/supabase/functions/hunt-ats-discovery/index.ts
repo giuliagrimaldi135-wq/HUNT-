@@ -62,7 +62,7 @@ Deno.serve(async(req)=>{
   // Previously 11 monitored companies had a website but were invisible to ATS discovery.
   const [{data:brands,error:brandError},{data:registered,error:registryError}]=await Promise.all([
    db.from("companies").select("id,name,website_url,monitored").eq("monitored",true).not("website_url","is",null).order("name",{ascending:true}).limit(400),
-   db.from("sources").select("company_id,source_type,active,official").limit(2000)
+   db.from("sources").select("company_id,source_type,active,official,health_status").limit(2000)
   ]);
   if(brandError||registryError)throw Error("Website discovery source registry unavailable");
   const leads=findMissingWebsiteLeads(brands||[],registered||[],12);
