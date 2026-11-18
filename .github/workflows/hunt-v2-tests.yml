@@ -71,6 +71,9 @@ jobs:
       - name: Test canonical ATS ingestion and safe vacancy lifecycle
         working-directory: v2/supabase/functions/hunt-ats-board-scan
         run: node --test ats-ingestion-guard.test.mjs ats-source-health.test.mjs
+      - name: Test world-wide Lever pagination and authoritative country codes
+        working-directory: v2/supabase/functions/hunt-ats-board-scan
+        run: node --test ats-world-coverage.test.mjs
       - name: Test shared fashion-group career URL deduplication
         working-directory: v2/supabase/functions/hunt-source-discovery
         run: node --test shared-source-policy.test.mjs
