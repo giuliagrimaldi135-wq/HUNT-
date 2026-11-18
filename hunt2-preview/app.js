@@ -7,6 +7,8 @@ import { prioritizeRequirements, compareKeyRequirement } from "./requirement-pri
 import {renderJobWorkspace} from "./job-workspace.js?v=20261110-155";
 import {isActionablePreviewJob} from "./job-actionability.mjs?v=20261116-1810";
 import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261111-172";
+import {addChosenCity,findCitySuggestions} from "./onboarding-locations.mjs?v=20261118-1";
+import {safeWithoutCvJob,requiresSeniorExperience,filterOutreachForMember} from "./preview-preference-policy.mjs?v=20261118-1";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -135,8 +137,8 @@ function onboardingView(profile){
  <p class="lead">Non devi conoscere tutti i titoli di lavoro del settore. Tu ci dici dove vuoi andare; HUNT può allargare il radar senza perdere di vista il tuo obiettivo.</p>
  <form id="onboarding" class="stack section">
   <section class="card"><div class="eyebrow">1 · Chi sei</div><div class="grid2" style="margin-top:12px">
-   <label><div class="eyebrow">Nome</div><input class="input" name="first_name" placeholder="Es. Giulia" value="${esc(profile?.first_name||"")}" required></label>
-   <label><div class="eyebrow">Cognome</div><input class="input" name="last_name" placeholder="Es. Grimaldi" value="${esc(profile?.last_name||"")}" required></label>
+   <label><div class="eyebrow">Nome</div><input class="input" name="first_name" placeholder="Es. Mario" value="${esc(profile?.first_name||"")}" required></label>
+   <label><div class="eyebrow">Cognome</div><input class="input" name="last_name" placeholder="Es. Rossi" value="${esc(profile?.last_name||"")}" required></label>
   </div><label style="display:block;margin-top:12px"><div class="eyebrow">A che livello sei oggi?</div><select class="input" name="seniority">${seniorityHtml}</select></label>
   </section>
 
@@ -144,19 +146,19 @@ function onboardingView(profile){
 
   <section class="card"><div class="eyebrow">3 · Ampiezza del radar</div><h2>Quanto vuoi che HUNT allarghi gli orizzonti?</h2><p class="lead">Non ti chiediamo di conoscere in anticipo tutti i “ruoli adiacenti”. Decidi solo quanto vuoi esplorare; sarà HUNT a proporre alternative sensate e a spiegarti il collegamento.</p><div class="radarGrid">${radarHtml}</div></section>
 
-  <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vuoi lavorare?</h2>
-   <label><div class="eyebrow">Città</div><input class="input" id="preferredCity" placeholder="Es. Milano"></label>
+  <section class="card"><div class="eyebrow">4 · Dove</div><h2>Dove vorresti lavorare?</h2><p class="lead">Scegli una o più città in cui vuoi cercare lavoro, anche se ci vivi già. Tocca il campo per vedere le città suggerite oppure scrivi qualsiasi altra città e aggiungila.</p>
+   <div class="locationPicker"><label><div class="eyebrow">Città in cui vuoi lavorare</div><input class="input" id="preferredCity" placeholder="Cerca una città, es. Milano" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="preferredCityOptions"></label><div class="locationResults" id="preferredCityOptions" role="listbox" hidden></div></div>
    <div class="actions"><button class="btn" type="button" id="addPreferredLocation">+ Aggiungi città</button></div>
    <div id="preferredLocationsList" class="tagList"></div>
 
    <div style="height:1px;background:var(--line);margin:20px 0"></div>
 
-   <div class="eyebrow">Dove ti trasferiresti?</div>
-   <label style="display:block;margin-top:12px"><div class="eyebrow">Città</div><input class="input" id="relocationCity" placeholder="Es. Parigi"></label>
+   <div class="eyebrow">Dove saresti disposta/o a trasferirti?</div><p class="locationHint">Aggiungi solo città in cui accetteresti di cambiare residenza. Se non vuoi trasferirti, lascia questo campo vuoto. Le due liste servono a cose diverse.</p>
+   <div class="locationPicker"><label style="display:block;margin-top:12px"><div class="eyebrow">Altre città per un possibile trasferimento</div><input class="input" id="relocationCity" placeholder="Cerca una città, es. Parigi" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="relocationCityOptions"></label><div class="locationResults" id="relocationCityOptions" role="listbox" hidden></div></div>
    <div class="actions"><button class="btn" type="button" id="addRelocationLocation">+ Aggiungi città</button></div>
    <div id="relocationLocationsList" class="tagList"></div>
   </section>
-  <section class="card"><div class="eyebrow">5 · Primo CV</div><h2>Puoi aggiungerne altri dopo.</h2><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"></label></div></section>
+  <section class="card"><div class="eyebrow">5 · Curriculum</div><h2>Il CV è facoltativo.</h2><p class="lead">Puoi completare HUNT anche senza curriculum: le opportunità saranno selezionate inizialmente per città, livello e area professionale. Il confronto preciso con esperienze e requisiti inizierà quando aggiungerai e confermerai il CV nel Profilo.</p><div class="grid2" style="margin-top:12px"><label><div class="eyebrow">Nome CV</div><input class="input" name="cvname" placeholder="Es. Retail Merchandising"></label><label><div class="eyebrow">File</div><input class="input" name="cv" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"></label></div></section>
   <div id="onMsg"></div><div class="actions"><button class="btn green" type="submit">Crea il mio HUNT</button><button class="btn" id="logoutOn" type="button">Esci</button></div>
  </form></div>`;
  const preferredLocations=[];
