@@ -19,7 +19,8 @@ export function findMissingWebsiteLeads(companies,sources,max=12){
   if(!s.company_id)continue;
   const entry=byCompany.get(s.company_id)||{candidate:false,covered:false};
   if(s.source_type==="brand_website_candidate")entry.candidate=true;
-  if(s.active&&s.official&&["ats","career_page","public_ats_board"].includes(s.source_type))
+  // A degraded-only careers setup must not block discovery of a backup source.
+  if(s.active&&s.official&&s.health_status!=="degraded"&&["ats","career_page","public_ats_board"].includes(s.source_type))
    entry.covered=true;
   byCompany.set(s.company_id,entry);
  }
