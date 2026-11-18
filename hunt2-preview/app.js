@@ -432,43 +432,80 @@ async function renderShell(){
 }
 
 async function getOpportunityFeed(limit=100){
- const [{data:matches,error:matchError},{data:hidden},{data:applications},{data:pref}]=await Promise.all([
-   supabase.from("user_job_matches").select("job_id,match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(limit),
-   supabase.from("user_job_feedback").select("job_id").eq("user_id",currentUser.id).eq("feedback_type","hide"),
-   supabase.from("applications").select("job_id,status").eq("user_id",currentUser.id),
-   supabase.from("career_preferences").select("preferred_locations,relocation_locations,preferences").eq("user_id",currentUser.id).maybeSingle()
+ const [matchesRes,hiddenRes,applicationsRes,prefRes,cvsRes,profileRes]=await Promise.all([
+  supabase.from("user_job_matches").select("job_id,match_score,priority_score,reasons,gaps").eq("user_id",currentUser.id).order("priority_score",{ascending:false}).limit(limit),
+  supabase.from("user_job_feedback").select("job_id").eq("user_id",currentUser.id).eq("feedback_type","hide"),
+  supabase.from("applications").select("job_id,status").eq("user_id",currentUser.id),
+  supabase.from("career_preferences").select("primary_role_families,preferred_locations,relocation_locations,preferences").eq("user_id",currentUser.id).maybeSingle(),
+  supabase.from("user_cvs").select("id").eq("user_id",currentUser.id).eq("active",true).limit(1),
+  supabase.from("profiles").select("seniority").eq("user_id",currentUser.id).maybeSingle()
  ]);
- if(matchError||!matches?.length)return {data:[],error:matchError};
- // A saved or "preparing" vacancy must stay in the feed; only submitted/closed applications are excluded.
- const completed=new Set(["applied","interview","offer","accepted","rejected","withdrawn","declined"]);
- const excluded=new Set([...(hidden||[]).map(x=>x.job_id),...(applications||[]).filter(x=>completed.has(x.status)).map(x=>x.job_id).filter(Boolean)]);
- const ids=matches.map(x=>x.job_id).filter(id=>!excluded.has(id));
- if(!ids.length)return {data:[],error:null};
- const {data:jobs,error:jobError}=await supabase
-   .from("jobs")
-   .select("id,company_id,canonical_title,role_family,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
-   .in("id",ids);
- if(jobError)return {data:[],error:jobError};
-
- const cutoff=new Date();cutoff.setDate(cutoff.getDate()-20);cutoff.setHours(0,0,0,0);
- const cities=[...(pref?.preferred_locations||[]),...(pref?.relocation_locations||[])].map(x=>String(x).toLowerCase());
- const radar=String(pref?.preferences?.radar_scope||"smart");
+ const error=matchesRes.error||hiddenRes.error||applicationsRes.error||prefRes.error||cvsRes.error||profileRes.error;
+ if(error)return {data:[],explore:[],exploreOutside:[],noCv:false,error};
+ const noCv=!(cvsRes.data||[]).length;
+ const early=["internship","trainee","entry_level","assistant","junior"].includes(profileRes.data?.seniority||"entry_level");
+ const pref=prefRes.data||{};
+ const selectedRoles=Array.isArray(pref.primary_role_families)?pref.primary_role_families:[];
+ const cities=[...(pref.preferred_locations||[]),...(pref.relocation_locations||[])].map(x=>String(x).toLowerCase());
+ const radar=String(pref.preferences?.radar_scope||"smart");
  const minMatch=radar==="explore"?60:radar==="focused"?75:70;
- const cityAllowed=(job)=>{
-   if(job.remote_mode==="remote")return true;
-   if(!cities.length)return true;
-   if(!job.city)return false;
-   const normalize=v=>String(v||"").toLowerCase().trim()
-     .replace(/milano\b/g,"milan").replace(/parigi\b/g,"paris").replace(/londra\b/g,"london").replace(/roma\b/g,"rome")
-     .replace(/ginevra\b/g,"geneva").replace(/zurigo\b/g,"zurich").replace(/bruxelles\b/g,"brussels");
-   const city=normalize(job.city);
-   return cities.some(x=>{const area=normalize(x);return area.length>2&&(city.includes(area)||area.includes(city))});
+ const completed=new Set(["applied","interview","offer","accepted","rejected","withdrawn","declined"]);
+ const excluded=new Set([...(hiddenRes.data||[]).map(x=>x.job_id),...(applicationsRes.data||[]).filter(x=>completed.has(x.status)).map(x=>x.job_id).filter(Boolean)]);
+ const applications=new Map((applicationsRes.data||[]).map(x=>[x.job_id,x.status]));
+ const cutoff=new Date();cutoff.setDate(cutoff.getDate()-20);cutoff.setHours(0,0,0,0);
+ const normalize=v=>String(v||"").toLowerCase().trim()
+  .replace(/milano\b/g,"milan").replace(/parigi\b/g,"paris").replace(/londra\b/g,"london").replace(/roma\b/g,"rome")
+  .replace(/ginevra\b/g,"geneva").replace(/zurigo\b/g,"zurich").replace(/bruxelles\b/g,"brussels");
+ const cityAllowed=job=>{
+  if(job.remote_mode==="remote")return true;
+  if(!cities.length)return true;
+  if(!job.city)return false;
+  const city=normalize(job.city);
+  return cities.some(x=>{const area=normalize(x);return area.length>2&&(city.includes(area)||area.includes(city))});
  };
- const fresh=(jobs||[]).filter(job=>isActionablePreviewJob(job,cutoff.getTime())&&cityAllowed(job));
- const byId=new Map(fresh.map(job=>[job.id,job]));
- const applicationByJob=new Map((applications||[]).map(x=>[x.job_id,x.status]));
- return {data:matches.map(match=>({...match,job:byId.get(match.job_id),applicationStatus:applicationByJob.get(match.job_id)||null}))
-   .filter(x=>x.job&&!excluded.has(x.job_id)&&x.match_score>=minMatch),error:null};
+ const matches=matchesRes.data||[];
+ let rows=[];
+ if(matches.length){
+  const ids=matches.map(x=>x.job_id).filter(id=>!excluded.has(id));
+  if(ids.length){
+   const {data:jobs,error:jobError}=await supabase.from("jobs")
+    .select("id,company_id,canonical_title,role_family,seniority,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
+    .in("id",ids);
+   if(jobError)return {data:[],explore:[],exploreOutside:[],noCv,error:jobError};
+   const valid=(jobs||[]).filter(job=>isActionablePreviewJob(job,cutoff.getTime())&&cityAllowed(job)
+    &&!(early&&requiresSeniorExperience(job.canonical_title,job.seniority))
+    &&(!noCv||safeWithoutCvJob(job,selectedRoles,profileRes.data?.seniority)));
+   const byId=new Map(valid.map(job=>[job.id,job]));
+   rows=matches.map(match=>({...match,job:byId.get(match.job_id),noCv,
+     applicationStatus:applications.get(match.job_id)||null}))
+     .filter(x=>x.job&&!excluded.has(x.job_id)&&x.match_score>=minMatch);
+  }
+ }
+ // A CV-less profile still deserves to browse REAL junior vacancies selected
+ // by its own role and cities. Do not manufacture a numeric CV-fit score.
+ let explore=[],exploreOutside=[];
+ if(noCv&&selectedRoles.length&&rows.length<4){
+  const {data:jobs,error:exploreError}=await supabase.from("jobs")
+   .select("id,company_id,canonical_title,role_family,seniority,city,remote_mode,vacancy_confidence,confidence_label,last_verified_at,published_at,first_seen_at,primary_apply_url,state,description,metadata,companies(name)")
+   .in("state",["active_verified","active_likely"]).in("role_family",selectedRoles)
+   .gte("last_verified_at",new Date(Date.now()-7*86400000).toISOString())
+   .order("last_verified_at",{ascending:false}).limit(400);
+  if(!exploreError){
+   const existing=new Set(rows.map(x=>x.job_id));
+   const suggested=(jobs||[]).filter(job=>!excluded.has(job.id)&&!existing.has(job.id)
+     &&isActionablePreviewJob(job,cutoff.getTime())
+     &&safeWithoutCvJob(job,selectedRoles,profileRes.data?.seniority));
+   const rank=(a,b)=>Number(b.seniority==="internship")-Number(a.seniority==="internship")||
+     new Date(b.published_at||b.first_seen_at)-new Date(a.published_at||a.first_seen_at);
+   const convert=(job,outsideSelected)=>({job_id:job.id,job,match_score:null,priority_score:null,
+      noCv:true,exploratory:true,outsideSelected,applicationStatus:applications.get(job.id)||null});
+   explore=suggested.filter(cityAllowed).sort(rank).slice(0,Math.max(0,6-rows.length)).map(j=>convert(j,false));
+   // Different cities are NEVER labeled "personal matches".
+   if(rows.length+explore.length<3)
+    exploreOutside=suggested.filter(j=>!cityAllowed(j)).sort(rank).slice(0,4).map(j=>convert(j,true));
+  }
+ }
+ return {data:rows,explore,exploreOutside,noCv,error:null};
 }
 
 async function getOpportunityDetail(jobId){
