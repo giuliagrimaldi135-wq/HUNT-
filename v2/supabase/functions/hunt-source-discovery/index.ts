@@ -1,6 +1,6 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { shouldScanSource } from "./source-health-policy.mjs";
+import { chooseCareerScanBatch } from "./source-health-policy.mjs";
 import { safeVacancyCandidate, resolveSharedBoardEmployer, canRetryReview } from "./candidate-integrity.mjs";
 import { normalizedCareerURL, selectUniqueCareerSources } from "./shared-source-policy.mjs";
 import {reviewStatus,invalidVacancyStatus,reviewFailureReason} from "./review-status.mjs";
@@ -191,7 +191,7 @@ Deno.serve(async(req)=>{
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
-  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,review_retries:0,shared_duplicate_sources_skipped:0,already_verified_reconciled:0,legacy_review_junk_rejected:0};
+  const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,domain_deferred:0,review_retries:0,shared_duplicate_sources_skipped:0,already_verified_reconciled:0,legacy_review_junk_rejected:0};
 
   const {data:sources}=await db.from("sources")
     .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
@@ -199,10 +199,11 @@ Deno.serve(async(req)=>{
     .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(1000);
 
   const uniqueSources=selectUniqueCareerSources(sources||[]);
+  const {dueSources,backoffSkipped,domainDeferred}=chooseCareerScanBatch(uniqueSources,18);
+  summary.backoff_skipped=backoffSkipped;
+  summary.domain_deferred=domainDeferred;
   summary.shared_duplicate_sources_skipped=Math.max(0,(sources||[]).length-uniqueSources.length);
-  for(const source of uniqueSources){
-    if(summary.sources>=18)break;
-    if(!shouldScanSource(source)){summary.backoff_skipped++;continue}
+  for(const source of dueSources){
     summary.sources++;
     const started=new Date().toISOString();
     let extracted=0,requestOk=false,parserOk=false,errorCode:string|null=null;
