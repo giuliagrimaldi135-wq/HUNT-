@@ -47,3 +47,11 @@ test("keep real SuccessFactors and ATS job detail URLs with explicit requisition
  assert.ok(safeVacancyCandidate("https://jobs.valentino.com/job/Milano-Retail-Planning-Intern/1375114257/","Retail Planning Intern",base));
  assert.ok(safeVacancyCandidate("https://careers.zegnagroup.com/jobs/job-details?JobID=275415124&Team=231361273","Style Advisor",base));
 });
+
+test("accepts verified LVMH individual requisitions but rejects career hub pages",()=>{
+ const source="https://www.lvmh.com/it/opportunita-di-lavoro/le-nostre-posizioni";
+ assert.ok(safeVacancyCandidate("https://www.lvmh.com/en/join-us/our-job-offers/PCD22439","Talent Acquisition & Mobility Manager",source));
+ assert.ok(safeVacancyCandidate("/it/opportunita-di-lavoro/le-nostre-posizioni/CDC15429","VIE Product Merchandiser Assistant",source));
+ assert.equal(safeVacancyCandidate("/it/opportunita-di-lavoro/le-nostre-posizioni","Browse all LVMH vacancies",source),null);
+ assert.equal(safeVacancyCandidate("https://lvmh-fake.example/en/join-us/our-job-offers/PCD22439","Talent Acquisition",source),null);
+});
