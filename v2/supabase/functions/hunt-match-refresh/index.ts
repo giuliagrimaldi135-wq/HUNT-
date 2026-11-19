@@ -4,6 +4,7 @@ import { chooseUniqueJobs, freshnessCutoff } from "./recommendation-guard.mjs";
 import { chooseRelevantCvProfile } from "./cv-evidence.mjs";
 import { supplierRiskNeedsExplicitInterest, fashionSourcingEvidence } from "./role-specialization.mjs";
 import {seniorityOverrideFromTitle} from "./seniority-guard.mjs";
+import {analysisNeedsWrite,matchNeedsWrite,existingRecommendationKey} from "./match-write-policy.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -240,7 +241,7 @@ Deno.serve(async(req)=>{
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
   const cutoff=freshnessCutoff();
-  const [{data:jobs,error:jobsError},{data:prefs,error:prefsError},{data:profiles,error:profilesError},{data:personal,error:personalError},{data:cvs,error:cvsError}]=await Promise.all([
+  const [{data:jobs,error:jobsError},{data:prefs,error:prefsError},{data:profiles,error:profilesError},{data:personal,error:personalError},{data:cvs,error:cvsError},{data:existingMatches,error:existingMatchesError}]=await Promise.all([
     db.from("jobs").select("id,company_id,requisition_id,primary_apply_url,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,last_verified_at,vacancy_confidence,state,metadata")
       .in("state",["active_verified","active_likely"])
       .or(`published_at.gte.${cutoff},and(published_at.is.null,first_seen_at.gte.${cutoff})`)
@@ -249,16 +250,26 @@ Deno.serve(async(req)=>{
     db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences"),
     db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true),
     db.from("user_personalization").select("user_id,interest_areas,avoid_role_traits"),
-    db.from("user_cvs").select("user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true)
+    db.from("user_cvs").select("user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true),
+    db.from("user_job_matches").select("user_id,job_id,match_score,priority_score,reasons,gaps,model_version,calculated_at").limit(5000)
   ]);
   // Never transform a transient database error into a false "zero recommendations".
-  if(jobsError||prefsError||profilesError||personalError||cvsError){
+  if(jobsError||prefsError||profilesError||personalError||cvsError||existingMatchesError||(existingMatches||[]).length>=5000){
     console.error("HUNT match-refresh: one or more source reads failed");
     return new Response('{"ok":false,"error":"data_unavailable"}',{status:503,headers:{"content-type":"application/json"}});
   }
   // The database keeps every observation; personal suggestions only use actionable,
   // recently verified vacancies, with one representative per official requisition.
   const {jobs:uniqueJobs,duplicateIds}=chooseUniqueJobs(jobs||[],Date.parse(cutoff));
+  const storedMatches=new Map((existingMatches||[]).map((m:any)=>[existingRecommendationKey(m.user_id,m.job_id),m]));
+  const storedJobIds=new Set((existingMatches||[]).map((m:any)=>String(m.job_id)));
+  const removeIdsByUser=new Map<string,Set<string>>();
+  const markForRemoval=(userId:string,jobId:string)=>{
+    if(!storedMatches.has(existingRecommendationKey(userId,jobId)))return;
+    if(!removeIdsByUser.has(userId))removeIdsByUser.set(userId,new Set());
+    removeIdsByUser.get(userId)!.add(jobId);
+  };
+  let analysisWrites=0,recommendationWrites=0,skippedWrites=0;
   const exactCutoffMs=Date.parse(cutoff);
   const provablyOldJobIDs=(jobs||[]).filter((j:any)=>{
     if(!j.metadata?.provider_creation_at)return false;
