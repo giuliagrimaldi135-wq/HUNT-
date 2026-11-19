@@ -7,6 +7,12 @@ export function sourceRetryDelayMinutes(failures){
  return 0;
 }
 export function shouldScanSource(source, nowMs=Date.now()){
+ // A reachable landing page with zero real vacancies is NOT productive.
+ // Recheck periodically, but do not fetch it every few minutes forever.
+ if(source?.health_status==="reachable_no_listings"){
+  const last=Date.parse(source?.last_scan_at||"");
+  if(Number.isFinite(last)&&nowMs-last<6*3600000)return false;
+ }
  const delay=sourceRetryDelayMinutes(source?.consecutive_failures);
  if(!delay)return true;
  const last=Date.parse(source?.last_scan_at||"");
