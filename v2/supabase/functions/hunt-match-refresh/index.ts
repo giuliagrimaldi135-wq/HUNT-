@@ -313,21 +313,26 @@ Deno.serve(async(req)=>{
     const jobSeniority=seniority(job.canonical_title,desc);
     const languages=requiredLanguages(desc);
     const specialist=specialistSignals(desc,job.canonical_title);
-    await db.from("jobs").update({
-      role_family:family,
-      seniority:jobSeniority,
-      metadata:{
-        ...(job.metadata||{}),
-        hard_requirements:{
-          min_years_experience:minYears,
-          required_languages:languages,
-          specialist_signals:specialist,
-          analyzed_at:new Date().toISOString(),
-          analyzer_version:"eligibility-v2"
-        }
-      },
-      updated_at:new Date().toISOString()
-    }).eq("id",job.id);
+    const analysis={
+      min_years_experience:minYears,
+      required_languages:languages,
+      specialist_signals:specialist
+    };
+    if(analysisNeedsWrite(job,family,jobSeniority,analysis)){
+      const now=new Date().toISOString();
+      const {error:writeError}=await db.from("jobs").update({
+        role_family:family,
+        seniority:jobSeniority,
+        metadata:{
+          ...(job.metadata||{}),
+          hard_requirements:{...analysis,analyzed_at:now,analyzer_version:"eligibility-v2"}
+        },
+        updated_at:now
+      }).eq("id",job.id);
+      if(writeError)return new Response('{"ok":false,"error":"job_analysis_write_failed"}',
+        {status:503,headers:{"content-type":"application/json"}});
+      analysisWrites++;
+    }
 
     for(const pref of prefs||[]){
       considered++;
