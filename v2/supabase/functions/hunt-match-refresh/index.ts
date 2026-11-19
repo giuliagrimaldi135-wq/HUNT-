@@ -4,6 +4,7 @@ import { chooseUniqueJobs, freshnessCutoff } from "./recommendation-guard.mjs";
 import { chooseRelevantCvProfile } from "./cv-evidence.mjs";
 import { supplierRiskNeedsExplicitInterest, fashionSourcingEvidence } from "./role-specialization.mjs";
 import {seniorityOverrideFromTitle} from "./seniority-guard.mjs";
+import {analysisNeedsWrite,matchNeedsWrite,existingRecommendationKey} from "./match-write-policy.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
@@ -240,7 +241,7 @@ Deno.serve(async(req)=>{
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
   const cutoff=freshnessCutoff();
-  const [{data:jobs,error:jobsError},{data:prefs,error:prefsError},{data:profiles,error:profilesError},{data:personal,error:personalError},{data:cvs,error:cvsError}]=await Promise.all([
+  const [{data:jobs,error:jobsError},{data:prefs,error:prefsError},{data:profiles,error:profilesError},{data:personal,error:personalError},{data:cvs,error:cvsError},{data:existingMatches,error:existingMatchesError}]=await Promise.all([
     db.from("jobs").select("id,company_id,requisition_id,primary_apply_url,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,last_verified_at,vacancy_confidence,state,metadata")
       .in("state",["active_verified","active_likely"])
       .or(`published_at.gte.${cutoff},and(published_at.is.null,first_seen_at.gte.${cutoff})`)
@@ -249,16 +250,26 @@ Deno.serve(async(req)=>{
     db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences"),
     db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true),
     db.from("user_personalization").select("user_id,interest_areas,avoid_role_traits"),
-    db.from("user_cvs").select("user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true)
+    db.from("user_cvs").select("user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true),
+    db.from("user_job_matches").select("user_id,job_id,match_score,priority_score,reasons,gaps,model_version,calculated_at").limit(5000)
   ]);
   // Never transform a transient database error into a false "zero recommendations".
-  if(jobsError||prefsError||profilesError||personalError||cvsError){
+  if(jobsError||prefsError||profilesError||personalError||cvsError||existingMatchesError||(existingMatches||[]).length>=5000){
     console.error("HUNT match-refresh: one or more source reads failed");
     return new Response('{"ok":false,"error":"data_unavailable"}',{status:503,headers:{"content-type":"application/json"}});
   }
   // The database keeps every observation; personal suggestions only use actionable,
   // recently verified vacancies, with one representative per official requisition.
   const {jobs:uniqueJobs,duplicateIds}=chooseUniqueJobs(jobs||[],Date.parse(cutoff));
+  const storedMatches=new Map((existingMatches||[]).map((m:any)=>[existingRecommendationKey(m.user_id,m.job_id),m]));
+  const storedJobIds=new Set((existingMatches||[]).map((m:any)=>String(m.job_id)));
+  const removeIdsByUser=new Map<string,Set<string>>();
+  const markForRemoval=(userId:string,jobId:string)=>{
+    if(!storedMatches.has(existingRecommendationKey(userId,jobId)))return;
+    if(!removeIdsByUser.has(userId))removeIdsByUser.set(userId,new Set());
+    removeIdsByUser.get(userId)!.add(jobId);
+  };
+  let analysisWrites=0,recommendationWrites=0,skippedWrites=0;
   const exactCutoffMs=Date.parse(cutoff);
   const provablyOldJobIDs=(jobs||[]).filter((j:any)=>{
     if(!j.metadata?.provider_creation_at)return false;
@@ -268,9 +279,10 @@ Deno.serve(async(req)=>{
   // These matches can have recent first_seen_at despite being created many
   // weeks earlier. Clear computed recommendations; never delete vacancies,
   // CVs, user applications, or human-added feedback.
-  for(let i=0;i<provablyOldJobIDs.length;i+=100){
+  const oldWithMatches=provablyOldJobIDs.filter((id:string)=>storedJobIds.has(String(id)));
+  for(let i=0;i<oldWithMatches.length;i+=100){
     const {error}=await db.from("user_job_matches").delete()
-      .in("job_id",provablyOldJobIDs.slice(i,i+100));
+      .in("job_id",oldWithMatches.slice(i,i+100));
     if(error)return new Response('{"ok":false,"error":"provider_age_cleanup_failed"}',
       {status:503,headers:{"content-type":"application/json"}});
   }
@@ -286,13 +298,13 @@ Deno.serve(async(req)=>{
     chooseRelevantCvProfile(cvMap.get(userId)||[],family,desc);
 
   let considered=0,matched=0,rejected=0,missingDetails=0;
+  const pendingUpserts:any[]=[];
   for(const job of uniqueJobs){
     const desc=String(job.description||"");
     if(desc.trim().length<250){
       // Do not claim strong CV fit when employer duties or mandatory
       // qualifications are missing; keep vacancy accessible for repair.
-      const {error:cleanupError}=await db.from("user_job_matches").delete().eq("job_id",job.id);
-      if(cleanupError)return new Response('{"ok":false,"error":"quality_cleanup_failed"}',{status:503});
+      for(const row of existingMatches||[])if(row.job_id===job.id)markForRemoval(row.user_id,job.id);
       missingDetails++;
       continue;
     }
@@ -301,21 +313,26 @@ Deno.serve(async(req)=>{
     const jobSeniority=seniority(job.canonical_title,desc);
     const languages=requiredLanguages(desc);
     const specialist=specialistSignals(desc,job.canonical_title);
-    await db.from("jobs").update({
-      role_family:family,
-      seniority:jobSeniority,
-      metadata:{
-        ...(job.metadata||{}),
-        hard_requirements:{
-          min_years_experience:minYears,
-          required_languages:languages,
-          specialist_signals:specialist,
-          analyzed_at:new Date().toISOString(),
-          analyzer_version:"eligibility-v2"
-        }
-      },
-      updated_at:new Date().toISOString()
-    }).eq("id",job.id);
+    const analysis={
+      min_years_experience:minYears,
+      required_languages:languages,
+      specialist_signals:specialist
+    };
+    if(analysisNeedsWrite(job,family,jobSeniority,analysis)){
+      const now=new Date().toISOString();
+      const {error:writeError}=await db.from("jobs").update({
+        role_family:family,
+        seniority:jobSeniority,
+        metadata:{
+          ...(job.metadata||{}),
+          hard_requirements:{...analysis,analyzed_at:now,analyzer_version:"eligibility-v2"}
+        },
+        updated_at:now
+      }).eq("id",job.id);
+      if(writeError)return new Response('{"ok":false,"error":"job_analysis_write_failed"}',
+        {status:503,headers:{"content-type":"application/json"}});
+      analysisWrites++;
+    }
 
     for(const pref of prefs||[]){
       considered++;
@@ -353,7 +370,7 @@ Deno.serve(async(req)=>{
       if(avoid.includes("pure_commercial")&&/(sales representative|business development|account executive|area sales manager|field sales)/.test(lower))hardReasons.push("excluded_pure_commercial");
 
       if(hardReasons.length){
-        await db.from("user_job_matches").delete().eq("user_id",pref.user_id).eq("job_id",job.id);
+        markForRemoval(pref.user_id,job.id);
         rejected++;continue;
       }
 
@@ -395,24 +412,45 @@ Deno.serve(async(req)=>{
       const priority=Math.min(100,Math.round(score*.7+(job.vacancy_confidence||70)*.2+fresh*.1));
       const minScore=radar==="explore"?60:radar==="focused"?72:68;
       if(score<minScore){
-        await db.from("user_job_matches").delete().eq("user_id",pref.user_id).eq("job_id",job.id);
+        markForRemoval(pref.user_id,job.id);
         rejected++;continue;
       }
-      await db.from("user_job_matches").upsert({
-        user_id:pref.user_id,job_id:job.id,match_score:score,priority_score:priority,reasons,gaps,
+      const computed={
+        user_id:pref.user_id,job_id:job.id,match_score:score,
+        priority_score:priority,reasons,gaps,
         model_version:"eligibility-v2",calculated_at:new Date().toISOString()
-      },{onConflict:"user_id,job_id"});
+      };
+      const oldMatch=storedMatches.get(existingRecommendationKey(pref.user_id,job.id));
+      if(matchNeedsWrite(oldMatch,computed))pendingUpserts.push(computed);
+      else skippedWrites++;
       matched++;
     }
   }
-  // Remove only computed recommendations for duplicates, never the underlying
-  // vacancies, saved applications, CVs, or personal feedback.
-  for(let i=0;i<duplicateIds.length;i+=100){
-    const {error}=await db.from("user_job_matches").delete().in("job_id",duplicateIds.slice(i,i+100));
-    if(error){
-      console.error("HUNT match-refresh: duplicate recommendation cleanup failed");
-      return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',{status:503,headers:{"content-type":"application/json"}});
+  // Batch only changed recommendations. A 5-minute scan must not rewrite
+  // every unchanged user's job match or issue DELETE for nonexistent rows.
+  for(let i=0;i<pendingUpserts.length;i+=100){
+    const batch=pendingUpserts.slice(i,i+100);
+    const {error}=await db.from("user_job_matches").upsert(batch,{onConflict:"user_id,job_id"});
+    if(error)return new Response('{"ok":false,"error":"recommendation_write_failed"}',
+      {status:503,headers:{"content-type":"application/json"}});
+    recommendationWrites+=batch.length;
+  }
+  // Only delete rows we actually observed, scoped to their original owner.
+  for(const [userId,ids] of removeIdsByUser){
+    const all=[...ids];
+    for(let i=0;i<all.length;i+=100){
+      const {error}=await db.from("user_job_matches").delete()
+        .eq("user_id",userId).in("job_id",all.slice(i,i+100));
+      if(error)return new Response('{"ok":false,"error":"rejected_match_cleanup_failed"}',
+        {status:503,headers:{"content-type":"application/json"}});
     }
   }
-  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicateIds.length,providerOldCandidatesExcluded:provablyOldJobIDs.length}),{headers:{"content-type":"application/json"}});
+  // Preserve source vacancies, CVs, applications and feedback.
+  const duplicatesWithMatches=duplicateIds.filter((id:string)=>storedJobIds.has(String(id)));
+  for(let i=0;i<duplicatesWithMatches.length;i+=100){
+    const {error}=await db.from("user_job_matches").delete().in("job_id",duplicatesWithMatches.slice(i,i+100));
+    if(error)return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',
+      {status:503,headers:{"content-type":"application/json"}});
+  }
+  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicatesWithMatches.length,providerOldCandidatesExcluded:provablyOldJobIDs.length,analysisWrites,recommendationWrites,skippedWrites,actualDeletes:[...removeIdsByUser.values()].reduce((n,s)=>n+s.size,0)}),{headers:{"content-type":"application/json"}});
 });

@@ -54,7 +54,7 @@ jobs:
         run: python -m unittest discover -s scripts -p test_hunt_vercel_ignore.py -v
       - name: Test freshness, official-job deduplication and CV evidence
         working-directory: v2/supabase/functions/hunt-match-refresh
-        run: node --test recommendation-guard.test.mjs cv-evidence.test.mjs
+        run: node --test recommendation-guard.test.mjs cv-evidence.test.mjs match-write-policy.test.mjs
       - name: Test explicit senior-title protection for entry career profiles
         working-directory: v2/supabase/functions/hunt-match-refresh
         run: node --test seniority-guard.test.mjs
