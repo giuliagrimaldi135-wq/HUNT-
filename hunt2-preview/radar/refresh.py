@@ -87,7 +87,7 @@ def role_family(title):
         (r"retail operations|retail excellence|retail performance|store operations", "Retail & Retail Operations"),
         (r"\b(?:product development|product manager|collection development)\b", "Product Management & Development"),
         (r"\b(?:crm|clienteling)\b", "CRM & Clienteling"),
-        (r"pr|communications|public relations|events", "PR, Communications & Events"),
+        (r"\b(?:pr|communications?|public relations|events?)\b", "PR, Communications & Events"),
         (r"\b(?:finance|accountant|accounting|controller|legal)\b", "Finance & Legal"),
         (r"\b(?:marketing|brand management)\b", "Marketing & Brand"),
         (r"\b(?:data|analyst|analytics|business intelligence)\b", "Data & Analytics"),
