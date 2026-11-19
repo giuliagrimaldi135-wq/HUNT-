@@ -4,6 +4,7 @@ import {isRealCareerPosting,trustedSmartRecruitersIdentity,isEligibleForStaleTra
 import {shouldProbeATS,atsScanStatus} from "./ats-source-health.mjs";
 import {leverPostingCreatedAtISO} from "./lever-original-date.mjs";
 import {leverPageUrl,leverNextPageOffset,leverCatalogComplete,providerCountryCode,successfulATSParserFlag,safeCatalogOffset} from "./ats-world-coverage.mjs";
+import {needsATSVerification,selectATSCatalogSlice} from "./ats-egress-policy.mjs";
 const enc=new TextEncoder();
 const trim=(v:unknown,n=12000)=>String(v??"").replace(/\s+/g," ").trim().slice(0,n);
 async function hash(v:string){const d=await crypto.subtle.digest("SHA-256",enc.encode(v));return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}
@@ -128,7 +129,7 @@ Deno.serve(async(req)=>{
   const eligibleSources=(candidates||[]).filter((s:any)=>params?.source_id||shouldProbeATS(s));
   const sources=eligibleSources.slice(0,6);
   const skippedBackoff=(candidates||[]).length-eligibleSources.length;
-  let boards=0,available=0,inserted=0,updated=0,rejected=0,failedBoards=0;
+  let boards=0,available=0,inserted=0,updated=0,rejected=0,failedBoards=0,unchanged=0;
   const details:any[]=[];
   for(const source of sources||[]){
    boards++;
@@ -156,9 +157,19 @@ Deno.serve(async(req)=>{
     const recentLinks=new Set<string>();
     const previousCursor=Math.max(0,Number(source.config?.catalog_cursor)||0);
     const pageSize=source.source_family==="ats_smartrecruiters"?12:20;
-    const selected=entries.length?Array.from({length:Math.min(entries.length,pageSize)},(_,i)=>entries[(previousCursor+i)%entries.length]):[];
-    const wrapped=entries.length>0&&previousCursor+selected.length>=entries.length;
-    const nextCursor=wrapped?0:previousCursor+selected.length;
+    // Always include the newest official postings, then rotate older ones.
+    // Never sacrifice new discovery just to save database reads.
+    const {selected,nextCursor,wrapped}=selectATSCatalogSlice(entries,previousCursor,pageSize,4);
+    const seenURLs=[...new Set(selected.map((x:any)=>x.url).filter(Boolean))];
+    let selectedLinks:any[]=[];
+    if(seenURLs.length){
+      const {data,error:linksError}=await db.from("job_sources")
+        .select("job_id,listing_url,last_verified_at,active")
+        .eq("source_id",source.id).in("listing_url",seenURLs).limit(80);
+      if(linksError)throw Error(linksError.message);
+      selectedLinks=data||[];
+    }
+    const linksByURL=new Map(selectedLinks.map((x:any)=>[x.listing_url,x]));
     const previousOffset=pageOffset;
     const nextOffset=source.source_family==="ats_lever"
       ?leverNextPageOffset(previousOffset,entries.length,wrapped)
@@ -167,6 +178,13 @@ Deno.serve(async(req)=>{
       :previousOffset;
     for(const item of selected){
       if(!item.title||!eligible(item.title)){rejected++;ignored++;continue}
+      const summaryURL=item.url;
+      const seenLink:any=linksByURL.get(item.url);
+      // An official ATS list confirms this posting still exists.
+      // Avoid full description reads, PATCHes and link updates if recently verified.
+      if(seenLink&&!needsATSVerification(seenLink)){
+        scanned++;unchanged++;continue;
+      }
       if(source.source_family==="ats_smartrecruiters"&&item.id){
         const board=trim(source.config?.board,90),id=encodeURIComponent(item.id);
         const detailURL="https://api.smartrecruiters.com/v1/companies/"+board+"/postings/"+id;
@@ -190,9 +208,14 @@ Deno.serve(async(req)=>{
       if(recentLinks.has(item.url))continue;recentLinks.add(item.url);scanned++;
        const providerCreated=source.source_family==="ats_lever"?leverPostingCreatedAtISO(item.providerCreatedRaw):null;
       // This is a live public ATS listing. Do not invent a publication date: first_seen_at is distinct.
-      const {data:existingLink,error:linkLookupError}=await db.from("job_sources")
-        .select("job_id").eq("source_id",source.id).eq("listing_url",item.url).maybeSingle();
-      if(linkLookupError)throw Error(linkLookupError.message);
+      let existingLink:any=linksByURL.get(item.url)||null;
+      if(!existingLink&&summaryURL!==item.url){
+        const {data,error:linkLookupError}=await db.from("job_sources")
+          .select("job_id,listing_url,last_verified_at,active")
+          .eq("source_id",source.id).eq("listing_url",item.url).maybeSingle();
+        if(linkLookupError)throw Error(linkLookupError.message);
+        existingLink=data;
+      }
       let existingId=existingLink?.job_id||null;
       const location=item.location||null;
       const stamp=new Date().toISOString();
@@ -316,7 +339,7 @@ Deno.serve(async(req)=>{
           fetched:entries.length,ignored,created,stale,catalog_page_offset:previousOffset,next_page_offset:nextOffset}
       });
     }
-    details.push({family:source.source_family,board:source.config?.board,status:health,fetched:entries.length,created,checked:scanned,ignored,stale,catalog_cursor:nextCursor,catalog_page_offset:nextOffset});
+    details.push({family:source.source_family,board:source.config?.board,status:health,fetched:entries.length,created,checked:scanned,ignored,unchanged,stale,catalog_cursor:nextCursor,catalog_page_offset:nextOffset});
    }catch(e){
     failedBoards++;
     const msg=String(e instanceof Error?e.message:e).slice(0,180);
@@ -335,6 +358,6 @@ Deno.serve(async(req)=>{
    }
   }
   return Response.json({ok:failedBoards===0,partial:failedBoards>0,failedBoards,
-    backoffSkipped:skippedBackoff,boards,available,inserted,updated,rejected,details});
+    backoffSkipped:skippedBackoff,boards,available,inserted,updated,rejected,unchanged,details});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
 });
