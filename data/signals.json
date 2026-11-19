@@ -2416,18 +2416,5 @@
     "published_at": "2026-10-05T05:10:15+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQM1NHWGhiT0Jnd19sVzE5N3JpcjZJMHpYV241RnhYelVLaUtFTjF5bUZYOERmMEZzd2ZPTmoyOG9HV0ZCUHlQZjNNX0ZaTHY3VTRMM3U3dTRrWk14TjV3dHpiZTdLOUJ2OF9JLXN6RmtTVnQ4R1k2b3E1Z1R2RWdHcXh3?oc=5"
-  },
-  {
-    "key": "cdc42955c496ed920012",
-    "brand": "Valentino",
-    "headline": "Valentino - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:43:16.398768+00:00",
-    "published_at": "2026-10-05T03:21:10+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBPLUlZdE1CYlpFQUhPX1ZiUmk2SEVXb19keXNCVUxIUzIzMjM4NFNhNnhNQTBDR1ROVThOSnFyVjc1ZDBkM3ItYm0xa2RtTExUOFA3N2k4b1h5YlE5amtWc1ZRc0VrdGpBUVBodmNFT1ZUdGZY?oc=5"
   }
 ]
