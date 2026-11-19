@@ -63,7 +63,7 @@ jobs:
         run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs service-health.test.mjs
       - name: Test independent public radar eligibility and no-CV safety
         working-directory: hunt2-preview/radar
-        run: node --test radar-policy.test.mjs
+        run: node --test radar-policy.test.mjs personal-radar-policy.test.mjs
       - name: Test no-Supabase public ATS crawler
         working-directory: .
         run: python -m unittest discover -s hunt2-preview/radar -p 'test_refresh.py' -v
@@ -72,6 +72,7 @@ jobs:
         run: |
           node --input-type=module --check < hunt2-preview/app.js
           node --input-type=module --check < hunt2-preview/outreach-intelligence.js
+          node --input-type=module --check < hunt2-preview/radar/radar.js
       - name: Test verified official-job description recovery
         working-directory: v2/supabase/functions/hunt-description-repair
         run: node --test extract-description.test.mjs
@@ -92,7 +93,7 @@ jobs:
         run: node --test successfactors-microdata.test.mjs
       - name: Test canonical ATS ingestion and safe vacancy lifecycle
         working-directory: v2/supabase/functions/hunt-ats-board-scan
-        run: node --test ats-ingestion-guard.test.mjs ats-source-health.test.mjs
+        run: node --test ats-ingestion-guard.test.mjs ats-source-health.test.mjs ats-egress-policy.test.mjs
       - name: Test world-wide Lever pagination and authoritative country codes
         working-directory: v2/supabase/functions/hunt-ats-board-scan
         run: node --test ats-world-coverage.test.mjs
