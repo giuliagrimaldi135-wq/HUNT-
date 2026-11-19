@@ -60,7 +60,7 @@ jobs:
         run: node --test seniority-guard.test.mjs
       - name: Test original HUNT luxury onboarding, no-CV junior opportunity eligibility and user-targeted outreach
         working-directory: hunt2-preview
-        run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs
+        run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs service-health.test.mjs
       - name: Check original luxury application syntax
         working-directory: .
         run: |
