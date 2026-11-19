@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#f8f8f4"/>
 <meta name="description" content="HUNT World Radar temporaneo: opportunità fashion e luxury da portali ufficiali, senza registrazione o Supabase."/>
 <title>HUNT · Radar temporaneo</title>
-<link rel="stylesheet" href="./radar.css?v=20261119-1"/>
+<link rel="stylesheet" href="./radar.css?v=20261119-2"/>
 </head><body>
 <header class="top"><div class="top-inner"><a class="brand" href="../" aria-label="HUNT originale">HUNT<span>.</span></a><span class="top-label">FASHION & LUXURY CAREER INTELLIGENCE</span><a class="back" href="../">HUNT completa <span aria-hidden="true">↗</span></a></div></header>
 <div class="system-banner" role="note"><span class="system-dot"></span><p><strong>Accesso temporaneo senza account.</strong> Il servizio privato è momentaneamente limitato. Qui puoi cercare offerte pubbliche; CV, dossier, candidature salvate e personalizzazione automatica saranno nuovamente disponibili quando Supabase sarà ripristinato.</p></div>
@@ -12,7 +12,22 @@
 <section class="intro"><p class="kicker">HUNT / WORLD RADAR</p><h1>Le opportunità, <em>anche adesso.</em></h1><p class="intro-copy">Una selezione consultabile di posizioni fashion e luxury provenienti da fonti ufficiali. Nessun accesso richiesto. Esplora liberamente per ruolo, città e livello, poi apri l'annuncio originale per candidarti.</p></section>
 <section class="pulse" aria-label="Stato radar"><div><span class="metric-label">Offerte consultabili</span><strong class="metric" id="allCount">—</strong></div><div><span class="metric-label">Brand presenti</span><strong class="metric" id="brandCount">—</strong></div><div><span class="metric-label">Ultimo controllo ATS</span><strong class="metric minor" id="lastScan">In preparazione</strong></div></section>
 <p class="freshness" id="freshness" role="status">Caricamento delle offerte pubbliche…</p>
-<section class="explorer" aria-labelledby="radarTitle"><div class="explorer-title"><div><p class="kicker">ESPLORA IL MERCATO</p><h2 id="radarTitle">Opportunità</h2></div><p class="small-note">I filtri restano su questo dispositivo. HUNT non legge il tuo CV in questa modalità.</p></div>
+<section class="my-profile" id="profileSection" aria-labelledby="profileTitle">
+<div class="profile-head"><div><p class="kicker">LA MIA RICERCA</p><h2 id="profileTitle">Le opportunità che cerchi tu.</h2></div><span class="private-label">Solo su questo dispositivo</span></div>
+<p class="profile-copy">Scegli le tue aree, le città in cui vuoi lavorare e quelle in cui ti trasferiresti. HUNT userà queste preferenze per <strong>ordinare e selezionare</strong> le offerte del radar temporaneo. Non serve inserire nome, email o curriculum.</p>
+<form id="profileForm" class="profile-form">
+<fieldset><legend>Le mie aree professionali <small>(puoi selezionarne più di una)</small></legend><div id="roleChoices" class="role-choices"></div></fieldset>
+<div class="profile-city-grid">
+<div><label class="profile-field" for="preferredInput">Dove vuoi lavorare</label><div class="city-add"><input id="preferredInput" list="cityHints" placeholder="Cerca o scrivi una città" autocomplete="off"/><button type="button" id="addPreferred">Aggiungi</button></div><div class="city-tags" id="preferredTags"></div></div>
+<div><label class="profile-field" for="relocationInput">Dove accetteresti di trasferirti <small>(facoltativo)</small></label><div class="city-add"><input id="relocationInput" list="cityHints" placeholder="Cerca o scrivi una città" autocomplete="off"/><button type="button" id="addRelocation">Aggiungi</button></div><div class="city-tags" id="relocationTags"></div></div>
+</div>
+<datalist id="cityHints"><option value="Milano"><option value="Roma"><option value="Torino"><option value="Firenze"><option value="Bologna"><option value="Venezia"><option value="Londra"><option value="Parigi"><option value="Zurigo"><option value="Amsterdam"><option value="Berlino"><option value="New York"><option value="Barcellona"></datalist>
+<label class="profile-field" for="profileLevel">Livello di ricerca</label><select class="profile-level" id="profileLevel"><option value="early">Stage, assistant e junior</option><option value="internship">Soltanto stage</option><option value="all">Tutti i livelli (esplorazione)</option></select>
+<div class="profile-bottom"><button class="save-profile" type="submit">Salva la mia ricerca</button><button class="subtle-button" id="clearProfile" type="button">Cancella preferenze</button><span id="profileFeedback" role="status" class="profile-feedback"></span></div>
+</form>
+<p class="profile-privacy">Le preferenze restano nel browser; non vengono inviate al database, non sostituiscono il confronto con il CV e non si sincronizzano fra dispositivi.</p>
+</section>
+<section class="explorer" aria-labelledby="radarTitle"><div class="explorer-title"><div><p class="kicker">IL TUO RADAR</p><h2 id="radarTitle">Opportunità per te</h2></div><p class="small-note" id="personalSummary">Imposta la tua ricerca qui sopra: vedrai solo aree, città e livelli che hai scelto.</p></div><div class="feed-modes" role="group" aria-label="Quali opportunità mostrare"><button class="feed-mode active" type="button" id="modePersonal" aria-pressed="true">Per me</button><button class="feed-mode" type="button" id="modeAll" aria-pressed="false">Esplora tutte</button><button class="feed-mode" type="button" id="modeSaved" aria-pressed="false">Salvate <span id="savedCount"></span></button></div>
 <div class="filter-bar">
 <label class="filter wide"><span>RUOLO O BRAND</span><input id="textSearch" type="search" autocomplete="off" placeholder="Cerca, es. merchandising, Prada"/></label>
 <label class="filter"><span>CITTÀ</span><input id="citySearch" type="search" autocomplete="off" placeholder="Tutte le città"/></label>
@@ -23,5 +38,5 @@
 </section>
 <div class="footnote"><strong>Informazione importante.</strong> Questa è una modalità ridotta, non la HUNT completa. Le offerte sono verificate rispetto all'ultimo controllo indicato, non in tempo reale; i portali possono cambiare e una posizione potrebbe chiudere. I titoli senza data ufficiale sono etichettati come «rilevati», non «pubblicati». La copertura non è ancora mondiale e non equivale alla totalità delle posizioni disponibili.</div>
 </main><footer><div class="footer-inner"><span class="brand">HUNT<span>.</span></span><span>Career intelligence, built around you.</span><a href="../">Torna a HUNT</a></div></footer>
-<script type="module" src="./radar.js?v=20261119-1"></script>
+<script type="module" src="./radar.js?v=20261119-2"></script>
 </body></html>
