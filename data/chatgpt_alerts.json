@@ -1020,5 +1020,51 @@
     "source_name": "LVMH Careers / Fendi (FEND04706)",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-zegna-distribution-emeai-280160038",
+    "brand": "Zegna",
+    "title": "Distribution EMEAI intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-18",
+    "detected_at": "2026-11-19T13:29:05+01:00",
+    "priority": "ALTA",
+    "score": 91,
+    "role_family": "Allocation",
+    "why_fit": "Stage nell'allocazione e riassortimento retail EMEAI, con analisi sell-through, stock coverage e collaborazione con Retail Merchandising; molto coerente con Fashion Management e interesse per planning e merchandising.",
+    "reasons": [
+      "Allocazione e replenishment retail",
+      "Analisi sell-through e stock coverage",
+      "Collaborazione con Retail Merchandising",
+      "Stage a Milano",
+      "Laurea Fashion Management pertinente"
+    ],
+    "url": "https://careers.zegnagroup.com/jobs/job-details?JobID=280160038",
+    "source_name": "Zegna Careers (JobID 280160038); data pubblicazione 18/11 da Cerulean",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-zegna-junior-product-manager-280191163",
+    "brand": "Zegna",
+    "title": "Junior Product Manager Intern (RTW)",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-18",
+    "detected_at": "2026-11-19T13:29:05+01:00",
+    "priority": "MEDIA",
+    "score": 73,
+    "role_family": "Product",
+    "why_fit": "Stage di sviluppo collezione ready-to-wear con ricerca tessuti, prototipi e coordinamento design/supply chain; pertinente al prodotto ma richiede competenze tecniche di Illustrator e preferisce studi in Fashion Design o Product Management.",
+    "reasons": [
+      "Sviluppo collezione RTW",
+      "Ricerca materiali e accessori",
+      "Coordinamento campioni e prototipi",
+      "Stage a Milano",
+      "Requisiti Adobe Illustrator e background tecnico da verificare"
+    ],
+    "url": "https://careers.zegnagroup.com/jobs/job-details?JobID=280191163&Team=242459886",
+    "source_name": "Zegna Careers (JobID 280191163); listing 1 giorno fa al 19/11",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt"
   }
 ]
