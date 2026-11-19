@@ -1,0 +1,55 @@
+name: HUNT Public Radar (no Supabase)
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "hunt2-preview/radar/refresh.py"
+      - "hunt2-preview/radar/boards.json"
+      - ".github/workflows/hunt-public-radar.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hunt-public-radar
+  cancel-in-progress: false
+
+jobs:
+  refresh-public-ats:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test public ATS parse and privacy policies
+        run: python -m unittest discover -s hunt2-preview/radar -p "test_refresh.py" -v
+      - name: Fetch limited public official ATS feeds directly (zero Supabase requests)
+        run: python hunt2-preview/radar/refresh.py
+      - name: Validate safe public JSON before publication
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('hunt2-preview/radar/jobs.json').read_text())
+          assert p['sources_successful'] >= 1
+          assert 1 <= len(p['jobs']) <= 2500
+          assert all('email' not in x and 'cv' not in x and 'match_score' not in x for x in p['jobs'])
+          assert all(x['url'].startswith('https://') for x in p['jobs'])
+          print('Validated', len(p['jobs']), 'public job records')
+          PY
+      - name: Publish only updated public vacancies
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add hunt2-preview/radar/jobs.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: refresh independent public fashion radar"
+            git push origin HEAD:main
+          else
+            echo 'No public data changes'
+          fi

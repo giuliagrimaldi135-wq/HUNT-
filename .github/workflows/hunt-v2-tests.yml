@@ -61,6 +61,12 @@ jobs:
       - name: Test original HUNT luxury onboarding, no-CV junior opportunity eligibility and user-targeted outreach
         working-directory: hunt2-preview
         run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs service-health.test.mjs
+      - name: Test independent public radar eligibility and no-CV safety
+        working-directory: hunt2-preview/radar
+        run: node --test radar-policy.test.mjs
+      - name: Test no-Supabase public ATS crawler
+        working-directory: .
+        run: python -m unittest discover -s hunt2-preview/radar -p 'test_refresh.py' -v
       - name: Check original luxury application syntax
         working-directory: .
         run: |

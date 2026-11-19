@@ -81,6 +81,7 @@ function authView(message="",bad=false){
      <div class="actions"><button class="btn primary" id="loginBtn" type="button">Accedi</button><button class="btn" id="signupBtn" type="button">Crea account</button></div>
    </form>
    <p class="muted" style="font-size:12px;margin-top:14px">Beta preview HUNT 2 · i CV sono salvati nel bucket privato del tuo account.</p>
+   <p class="muted" style="font-size:12px;margin-top:14px"><a href="./radar/" style="color:#426449;text-decoration:underline">Esplora il radar pubblico senza login →</a><span style="display:block;font-size:11px;margin-top:4px">Modalità temporanea: annunci ufficiali, senza CV o dati personali.</span></p>
  </div></section>`;
  document.getElementById("loginBtn").onclick=login;
  document.getElementById("signupBtn").onclick=signup;
