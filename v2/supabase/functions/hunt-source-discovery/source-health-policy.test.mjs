@@ -34,3 +34,18 @@ test("backoff does not starve independent career domains",()=>{
  assert.deepEqual(result.dueSources.map(s=>s.id),["ready"]);
  assert.equal(result.backoffSkipped,1);
 });
+
+test("accessible pages with zero listings have a six-hour cooldown, never permanent quarantine",()=>{
+ const base={health_status:"reachable_no_listings",consecutive_failures:0,last_scan_at:"2026-11-19T00:00:00Z"};
+ assert.equal(shouldScanSource(base,Date.parse("2026-11-19T02:00:00Z")),false);
+ assert.equal(shouldScanSource(base,Date.parse("2026-11-19T06:01:00Z")),true);
+ assert.equal(shouldScanSource({...base,last_scan_at:null},Date.parse("2026-11-19T02:00:00Z")),true);
+ assert.equal(shouldScanSource({...base,health_status:"healthy"},Date.parse("2026-11-19T02:00:00Z")),true);
+});
+test("source discovery never triggers a full matching refresh on every scan",async()=>{
+ const {readFileSync}=await import("node:fs");
+ const {fileURLToPath}=await import("node:url");
+ const path=new URL("./index.ts",import.meta.url);
+ const code=readFileSync(fileURLToPath(path),"utf8");
+ assert.equal(code.includes('functions/v1/hunt-match-refresh'),false);
+});
