@@ -1066,5 +1066,29 @@
     "source_name": "Zegna Careers (JobID 280191163); listing 1 giorno fa al 19/11",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "chatgpt-fendi-merchandising-europe-fend04718",
+    "brand": "Fendi",
+    "title": "First at FENDI Internship Program – Merchandising Europe",
+    "location": "Roma, Italia",
+    "published_at": "2026-11-17",
+    "detected_at": "2026-11-19T17:55:25+01:00",
+    "priority": "ALTA",
+    "score": 94,
+    "role_family": "Retail Merchandising",
+    "why_fit": "Stage beginner di 6 mesi da gennaio 2027 nel merchandising Europa, con analisi assortimenti, sell-through, performance retail, supporto buying e replenishment. Laurea Fashion Management espressamente pertinente; precedente esperienza showroom utile. Sede Roma.",
+    "reasons": [
+      "Merchandising Europa e performance retail",
+      "Analisi assortimenti, sell-through e stock",
+      "Supporto alle sessioni buying",
+      "Collaborazione Retail e Supply Chain",
+      "Fashion Management tra i titoli richiesti",
+      "Inizio gennaio 2027, stage beginner"
+    ],
+    "url": "https://www.lvmh.com/en/join-us/our-job-offers/FEND04718",
+    "source_name": "LVMH Careers / Fendi (FEND04718)",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
