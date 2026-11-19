@@ -415,21 +415,42 @@ Deno.serve(async(req)=>{
         markForRemoval(pref.user_id,job.id);
         rejected++;continue;
       }
-      await db.from("user_job_matches").upsert({
-        user_id:pref.user_id,job_id:job.id,match_score:score,priority_score:priority,reasons,gaps,
+      const computed={
+        user_id:pref.user_id,job_id:job.id,match_score:score,
+        priority_score:priority,reasons,gaps,
         model_version:"eligibility-v2",calculated_at:new Date().toISOString()
-      },{onConflict:"user_id,job_id"});
+      };
+      const oldMatch=storedMatches.get(existingRecommendationKey(pref.user_id,job.id));
+      if(matchNeedsWrite(oldMatch,computed))pendingUpserts.push(computed);
+      else skippedWrites++;
       matched++;
     }
   }
-  // Remove only computed recommendations for duplicates, never the underlying
-  // vacancies, saved applications, CVs, or personal feedback.
-  for(let i=0;i<duplicateIds.length;i+=100){
-    const {error}=await db.from("user_job_matches").delete().in("job_id",duplicateIds.slice(i,i+100));
-    if(error){
-      console.error("HUNT match-refresh: duplicate recommendation cleanup failed");
-      return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',{status:503,headers:{"content-type":"application/json"}});
+  // Batch only changed recommendations. A 5-minute scan must not rewrite
+  // every unchanged user's job match or issue DELETE for nonexistent rows.
+  for(let i=0;i<pendingUpserts.length;i+=100){
+    const batch=pendingUpserts.slice(i,i+100);
+    const {error}=await db.from("user_job_matches").upsert(batch,{onConflict:"user_id,job_id"});
+    if(error)return new Response('{"ok":false,"error":"recommendation_write_failed"}',
+      {status:503,headers:{"content-type":"application/json"}});
+    recommendationWrites+=batch.length;
+  }
+  // Only delete rows we actually observed, scoped to their original owner.
+  for(const [userId,ids] of removeIdsByUser){
+    const all=[...ids];
+    for(let i=0;i<all.length;i+=100){
+      const {error}=await db.from("user_job_matches").delete()
+        .eq("user_id",userId).in("job_id",all.slice(i,i+100));
+      if(error)return new Response('{"ok":false,"error":"rejected_match_cleanup_failed"}',
+        {status:503,headers:{"content-type":"application/json"}});
     }
   }
-  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicateIds.length,providerOldCandidatesExcluded:provablyOldJobIDs.length}),{headers:{"content-type":"application/json"}});
+  // Preserve source vacancies, CVs, applications and feedback.
+  const duplicatesWithMatches=duplicateIds.filter((id:string)=>storedJobIds.has(String(id)));
+  for(let i=0;i<duplicatesWithMatches.length;i+=100){
+    const {error}=await db.from("user_job_matches").delete().in("job_id",duplicatesWithMatches.slice(i,i+100));
+    if(error)return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',
+      {status:503,headers:{"content-type":"application/json"}});
+  }
+  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicatesWithMatches.length,providerOldCandidatesExcluded:provablyOldJobIDs.length,analysisWrites,recommendationWrites,skippedWrites,actualDeletes:[...removeIdsByUser.values()].reduce((n,s)=>n+s.size,0)}),{headers:{"content-type":"application/json"}});
 });
