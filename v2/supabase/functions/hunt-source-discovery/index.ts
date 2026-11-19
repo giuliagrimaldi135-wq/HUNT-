@@ -9,6 +9,7 @@ import {classifyLegacyReviewRecords} from "./review-queue-cleanup.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 import {extractStructuredVacancyLinks} from "./source-jsonld-links.mjs";
 import {jobPostingCountryCode} from "./official-location-country.mjs";
+import {isLvmhJobDetailUrl,lvmhPublishedDateFromOfficialPage} from "./lvmh-job-policy.mjs";
 
 const enc = new TextEncoder();
 const HOUR = 3600000;
@@ -132,9 +133,9 @@ function strictPostedDate(html:string){
 function fallbackPosting(html:string,url:string,hint:string){
  // Only promote a *real job page* when the site publishes an explicit posting date.
  const path=new URL(url).pathname;
- if(!/\/job\/[^/]+\/\d{5,}\/?|\/jobs?\/[^/]*\d{5,}|\/job\/[^/]{6,}/i.test(path))return null;
+ if(!/\/job\/[^/]+\/\d{5,}\/?|\/jobs?\/[^/]*\d{5,}|\/job\/[^/]{6,}/i.test(path)&&!isLvmhJobDetailUrl(url))return null;
  if(/position (has been filled|is no longer available)|job has expired|not available for applications/i.test(html))return null;
- const posted=strictPostedDate(html);
+ const posted=strictPostedDate(html)||(isLvmhJobDetailUrl(url)?lvmhPublishedDateFromOfficialPage(html):null);
  if(!posted)return null;
  const fromMeta=metaValue(html,"property","og:title")||metaValue(html,"name","twitter:title")||microdataValue(html,"title");
  const title=cleanText(extractOfficialJobTitle(html)||hint||fromMeta).replace(/\s*[-|]\s*(Careers|Jobs|Apply).*$/i,"").slice(0,170);
@@ -166,6 +167,7 @@ function locationHit(city:string|null,arr:any[]){
 function requisitionFromUrl(url:string){
   try{
     const u=new URL(url);
+    if(isLvmhJobDetailUrl(url))return u.pathname.split("/").filter(Boolean).pop()||null;
     const q=u.searchParams.get("JobID")||u.searchParams.get("jobId")||u.searchParams.get("jobid");
     if(q)return q;
     const m=u.pathname.match(/\/jobs?\/(\d{4,})/i)||u.pathname.match(/\/job\/[^/]+\/(\d{5,})(?:\/|$)/i);
@@ -198,7 +200,7 @@ Deno.serve(async(req)=>{
   const summary={sources:0,source_ok:0,candidates:0,parsed:0,promoted:0,old:0,needs_review:0,errors:0,backoff_skipped:0,domain_deferred:0,review_retries:0,shared_duplicate_sources_skipped:0,already_verified_reconciled:0,legacy_review_junk_rejected:0};
 
   const {data:sources}=await db.from("sources")
-    .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,companies(name)")
+    .select("id,company_id,base_url,official,source_type,source_family,last_scan_at,last_success_at,consecutive_failures,health_status,companies(name)")
     .eq("active",true).eq("official",true).eq("source_type","career_page").not("base_url","is",null)
     .order("last_scan_at",{ascending:true,nullsFirst:true}).limit(1000);
 
@@ -430,12 +432,7 @@ Deno.serve(async(req)=>{
     }catch(e){summary.errors++}
   }
 
-  try{
-    await fetch("https://dfiokxjfgqoboxckcuut.supabase.co/functions/v1/hunt-match-refresh",{
-      method:"POST",
-      headers:{"content-type":"application/json","x-hunt-cron":supplied},
-      body:JSON.stringify({trigger:"source-discovery"})
-    });
-  }catch{}
+  // Matching is invoked by the dedicated hourly pg_cron job. Never call it
+  // once per discovery scan: no new vacancies often means an expensive no-op.
   return new Response(JSON.stringify({ok:true,...summary}),{headers:{"content-type":"application/json"}});
 });
