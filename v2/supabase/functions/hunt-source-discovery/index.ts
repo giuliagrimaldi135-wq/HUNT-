@@ -430,12 +430,7 @@ Deno.serve(async(req)=>{
     }catch(e){summary.errors++}
   }
 
-  try{
-    await fetch("https://dfiokxjfgqoboxckcuut.supabase.co/functions/v1/hunt-match-refresh",{
-      method:"POST",
-      headers:{"content-type":"application/json","x-hunt-cron":supplied},
-      body:JSON.stringify({trigger:"source-discovery"})
-    });
-  }catch{}
+  // Matching is invoked by the dedicated hourly pg_cron job. Never call it
+  // once per discovery scan: no new vacancies often means an expensive no-op.
   return new Response(JSON.stringify({ok:true,...summary}),{headers:{"content-type":"application/json"}});
 });
