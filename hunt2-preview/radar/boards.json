@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "description": "Public official ATS boards only; no account tokens, Supabase keys, private user data or site scraping.",
+  "boards": [
+    {
+      "family": "ats_greenhouse",
+      "board": "quince",
+      "brand": "Quince"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "malbon",
+      "brand": "Malbon Golf"
+    },
+    {
+      "family": "ats_lever",
+      "board": "mulberry",
+      "brand": "Mulberry"
+    },
+    {
+      "family": "ats_lever",
+      "board": "veepee",
+      "brand": "Veepee"
+    },
+    {
+      "family": "ats_lever",
+      "board": "vestiairecollective",
+      "brand": "Vestiaire Collective"
+    },
+    {
+      "family": "ats_ashby",
+      "board": "ShortStory",
+      "brand": "Short Story"
+    },
+    {
+      "family": "ats_smartrecruiters",
+      "board": "Frette",
+      "brand": "Frette"
+    },
+    {
+      "family": "ats_smartrecruiters",
+      "board": "MaxMaraFashionGroup",
+      "brand": "Max Mara Fashion Group"
+    },
+    {
+      "family": "ats_workable",
+      "board": "manifattura-mario-colombo",
+      "brand": "Colmar"
+    },
+    {
+      "family": "ats_workable",
+      "board": "goldbergh",
+      "brand": "Goldbergh"
+    },
+    {
+      "family": "ats_workable",
+      "board": "lovebonito",
+      "brand": "Love, Bonito"
+    },
+    {
+      "family": "ats_workable",
+      "board": "printfresh",
+      "brand": "Printfresh"
+    },
+    {
+      "family": "ats_workable",
+      "board": "wolfandbadger",
+      "brand": "Wolf & Badger"
+    }
+  ]
+}
