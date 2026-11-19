@@ -9,6 +9,7 @@ import {classifyLegacyReviewRecords} from "./review-queue-cleanup.mjs";
 import { parseOfficialPostedDate, extractOfficialJobTitle, extractOfficialJobDescription } from "./successfactors-microdata.mjs";
 import {extractStructuredVacancyLinks} from "./source-jsonld-links.mjs";
 import {jobPostingCountryCode} from "./official-location-country.mjs";
+import {isLvmhJobDetailUrl,lvmhPublishedDateFromOfficialPage} from "./lvmh-job-policy.mjs";
 
 const enc = new TextEncoder();
 const HOUR = 3600000;
@@ -132,9 +133,9 @@ function strictPostedDate(html:string){
 function fallbackPosting(html:string,url:string,hint:string){
  // Only promote a *real job page* when the site publishes an explicit posting date.
  const path=new URL(url).pathname;
- if(!/\/job\/[^/]+\/\d{5,}\/?|\/jobs?\/[^/]*\d{5,}|\/job\/[^/]{6,}/i.test(path))return null;
+ if(!/\/job\/[^/]+\/\d{5,}\/?|\/jobs?\/[^/]*\d{5,}|\/job\/[^/]{6,}/i.test(path)&&!isLvmhJobDetailUrl(url))return null;
  if(/position (has been filled|is no longer available)|job has expired|not available for applications/i.test(html))return null;
- const posted=strictPostedDate(html);
+ const posted=strictPostedDate(html)||(isLvmhJobDetailUrl(url)?lvmhPublishedDateFromOfficialPage(html):null);
  if(!posted)return null;
  const fromMeta=metaValue(html,"property","og:title")||metaValue(html,"name","twitter:title")||microdataValue(html,"title");
  const title=cleanText(extractOfficialJobTitle(html)||hint||fromMeta).replace(/\s*[-|]\s*(Careers|Jobs|Apply).*$/i,"").slice(0,170);
@@ -166,6 +167,7 @@ function locationHit(city:string|null,arr:any[]){
 function requisitionFromUrl(url:string){
   try{
     const u=new URL(url);
+    if(isLvmhJobDetailUrl(url))return u.pathname.split("/").filter(Boolean).pop()||null;
     const q=u.searchParams.get("JobID")||u.searchParams.get("jobId")||u.searchParams.get("jobid");
     if(q)return q;
     const m=u.pathname.match(/\/jobs?\/(\d{4,})/i)||u.pathname.match(/\/job\/[^/]+\/(\d{5,})(?:\/|$)/i);
