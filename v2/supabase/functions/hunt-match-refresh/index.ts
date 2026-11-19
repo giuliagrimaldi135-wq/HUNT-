@@ -279,9 +279,10 @@ Deno.serve(async(req)=>{
   // These matches can have recent first_seen_at despite being created many
   // weeks earlier. Clear computed recommendations; never delete vacancies,
   // CVs, user applications, or human-added feedback.
-  for(let i=0;i<provablyOldJobIDs.length;i+=100){
+  const oldWithMatches=provablyOldJobIDs.filter((id:string)=>storedJobIds.has(String(id)));
+  for(let i=0;i<oldWithMatches.length;i+=100){
     const {error}=await db.from("user_job_matches").delete()
-      .in("job_id",provablyOldJobIDs.slice(i,i+100));
+      .in("job_id",oldWithMatches.slice(i,i+100));
     if(error)return new Response('{"ok":false,"error":"provider_age_cleanup_failed"}',
       {status:503,headers:{"content-type":"application/json"}});
   }
@@ -297,13 +298,13 @@ Deno.serve(async(req)=>{
     chooseRelevantCvProfile(cvMap.get(userId)||[],family,desc);
 
   let considered=0,matched=0,rejected=0,missingDetails=0;
+  const pendingUpserts:any[]=[];
   for(const job of uniqueJobs){
     const desc=String(job.description||"");
     if(desc.trim().length<250){
       // Do not claim strong CV fit when employer duties or mandatory
       // qualifications are missing; keep vacancy accessible for repair.
-      const {error:cleanupError}=await db.from("user_job_matches").delete().eq("job_id",job.id);
-      if(cleanupError)return new Response('{"ok":false,"error":"quality_cleanup_failed"}',{status:503});
+      for(const row of existingMatches||[])if(row.job_id===job.id)markForRemoval(row.user_id,job.id);
       missingDetails++;
       continue;
     }
@@ -364,7 +365,7 @@ Deno.serve(async(req)=>{
       if(avoid.includes("pure_commercial")&&/(sales representative|business development|account executive|area sales manager|field sales)/.test(lower))hardReasons.push("excluded_pure_commercial");
 
       if(hardReasons.length){
-        await db.from("user_job_matches").delete().eq("user_id",pref.user_id).eq("job_id",job.id);
+        markForRemoval(pref.user_id,job.id);
         rejected++;continue;
       }
 
@@ -406,7 +407,7 @@ Deno.serve(async(req)=>{
       const priority=Math.min(100,Math.round(score*.7+(job.vacancy_confidence||70)*.2+fresh*.1));
       const minScore=radar==="explore"?60:radar==="focused"?72:68;
       if(score<minScore){
-        await db.from("user_job_matches").delete().eq("user_id",pref.user_id).eq("job_id",job.id);
+        markForRemoval(pref.user_id,job.id);
         rejected++;continue;
       }
       await db.from("user_job_matches").upsert({
