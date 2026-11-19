@@ -9,6 +9,7 @@ import {isActionablePreviewJob} from "./job-actionability.mjs?v=20261116-1810";
 import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,describeOutreachCv,composeOutreachEmail,renderOutreachCards,renderOutreachFolder} from "./outreach-intelligence.js?v=20261111-172";
 import {addChosenCity,findCitySuggestions} from "./onboarding-locations.mjs?v=20261118-1";
 import {safeWithoutCvJob,requiresSeniorExperience,filterOutreachForMember} from "./preview-preference-policy.mjs?v=20261118-1";
+import {serviceErrorMessage,radarFreshness} from "./service-health.mjs?v=20261119-1";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
@@ -89,43 +90,56 @@ async function login(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
  if(!email||password.length<8){authView("Inserisci email e password di almeno 8 caratteri.",true);return}
- const {error}=await supabase.auth.signInWithPassword({email,password});
- if(error){authView(error.message,true);return}
- await bootstrap();
+ try{
+  const {error}=await supabase.auth.signInWithPassword({email,password});
+  if(error){authView(serviceErrorMessage(error),true);return}
+  await bootstrap();
+ }catch(error){authView(serviceErrorMessage(error),true)}
 }
 
 async function signup(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
  if(!email||password.length<8){authView("Inserisci email e password di almeno 8 caratteri.",true);return}
- const redirectTo=location.origin+location.pathname;
- const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});
- if(error){authView(error.message,true);return}
- if(data.session){await bootstrap();return}
- authView("Account creato. Controlla la tua email e conferma l'indirizzo; poi torna qui e accedi.");
+ try{
+  const redirectTo=location.origin+location.pathname;
+  const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});
+  if(error){authView(serviceErrorMessage(error),true);return}
+  if(data.session){await bootstrap();return}
+  authView("Account creato. Controlla la tua email e conferma l'indirizzo; poi torna qui e accedi.");
+ }catch(error){authView(serviceErrorMessage(error),true)}
 }
 
 async function logout(){await supabase.auth.signOut();currentUser=null;authView()}
 
 async function getProfile(){
- const {data}=await supabase.from("profiles").select("*").eq("user_id",currentUser.id).maybeSingle();
+ const {data,error}=await supabase.from("profiles").select("*").eq("user_id",currentUser.id).maybeSingle();
+ if(error)throw error;
  return data;
 }
 
 async function getPersonalization(){
- const {data}=await supabase.from("user_personalization").select("*").eq("user_id",currentUser.id).maybeSingle();
+ const {data,error}=await supabase.from("user_personalization").select("*").eq("user_id",currentUser.id).maybeSingle();
+ if(error)throw error;
  return data;
 }
 
 async function bootstrap(){
- const {data:{session}}=await supabase.auth.getSession();
- currentUser=session?.user||null;
- if(!currentUser){authView();return}
- const profile=await getProfile();
- if(!profile?.onboarding_completed){onboardingView(profile);return}
- const personalization=await getPersonalization();
- if(!personalization?.completed){await personalizationView(profile,personalization);return}
- renderShell();
+ try{
+  const {data:{session},error:sessionError}=await supabase.auth.getSession();
+  if(sessionError)throw sessionError;
+  currentUser=session?.user||null;
+  if(!currentUser){authView();return}
+  const profile=await getProfile();
+  if(!profile?.onboarding_completed){onboardingView(profile);return}
+  const personalization=await getPersonalization();
+  if(!personalization?.completed){await personalizationView(profile,personalization);return}
+  await renderShell();
+ }catch(error){
+  // A rejected database query must never look like a missing profile:
+  // otherwise an existing member wrongly sees onboarding again.
+  authView(serviceErrorMessage(error),true);
+ }
 }
 
 function onboardingView(profile){
