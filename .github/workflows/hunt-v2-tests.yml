@@ -63,7 +63,7 @@ jobs:
         run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs service-health.test.mjs
       - name: Test independent public radar eligibility and no-CV safety
         working-directory: hunt2-preview/radar
-        run: node --test radar-policy.test.mjs personal-radar-policy.test.mjs
+        run: node --test radar-policy.test.mjs personal-radar-policy.test.mjs radar-dedup.test.mjs
       - name: Test no-Supabase public ATS crawler
         working-directory: .
         run: python -m unittest discover -s hunt2-preview/radar -p 'test_refresh.py' -v

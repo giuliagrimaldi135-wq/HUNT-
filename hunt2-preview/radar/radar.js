@@ -1,5 +1,6 @@
 import {filteredJobs,validPublicJob,vacancyAgeLabel,parsedDate} from "./radar-policy.mjs?v=20261119-1";
 import {FAMILIES,EMPTY_PROFILE,validateProfile,readyProfile,addCity,preferenceRecommendations,availableRoleCounts} from "./personal-radar-policy.mjs?v=20261119-2";
+import {deduplicatePublicJobs} from "./radar-dedup.mjs?v=20261119-1";
 const STORE="hunt-public-radar-preferences-v2";
 const el=id=>document.getElementById(id);
 const now=()=>Date.now();
@@ -207,8 +208,8 @@ function recompute(){
  el("more").hidden=count<=state.shown;
 }
 function setup(data){
- state.payload=data;
- const valid=(data.jobs||[]).filter(x=>validPublicJob(x));
+ state.payload={...data,jobs:deduplicatePublicJobs(data.jobs)};
+ const valid=(state.payload.jobs||[]).filter(x=>validPublicJob(x));
  setText("allCount",valid.length.toLocaleString("it-IT"));
  setText("brandCount",new Set(valid.map(x=>x.brand)).size);
  setText("lastScan",data.sources_successful>0?fmtTime(data.last_ats_scan_at):"Controlli in attivazione");
