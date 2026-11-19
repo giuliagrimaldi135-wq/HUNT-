@@ -700,7 +700,16 @@ function bindNav(){
 async function renderOpportunities(){
  currentView="opportunities";
  selectedJobId=null;
- const feed=await getOpportunityFeed(100);
+ const [feed,latestCheck,recentCheck]=await Promise.all([
+   getOpportunityFeed(100),
+   supabase.from("jobs").select("last_verified_at").not("last_verified_at","is",null)
+     .order("last_verified_at",{ascending:false}).limit(1),
+   supabase.from("jobs").select("id",{count:"exact",head:true})
+     .gte("first_seen_at",new Date(Date.now()-86400000).toISOString())
+ ]);
+ const latestStatus=radarFreshness(latestCheck.data?.[0]?.last_verified_at);
+ const stale=Boolean(latestCheck.error)||latestStatus.stale;
+ const statusText=latestCheck.error?serviceErrorMessage(latestCheck.error):latestStatus.text;
  const rows=[...(feed.data||[])],explore=[...(feed.explore||[])],outside=[...(feed.exploreOutside||[])];
  if(opportunitySort==="recent"){
    rows.sort((a,b)=>new Date(b.job.published_at||b.job.first_seen_at||0)-new Date(a.job.published_at||a.job.first_seen_at||0));
@@ -710,6 +719,8 @@ async function renderOpportunities(){
  app.innerHTML=shell(`<div class="opportunitiesPage">
  <div class="eyebrow">Il tuo radar</div><h1>Opportunità</h1>
  <p class="lead">HUNT cerca posizioni recenti e verificabili nelle aree professionali e nelle città che hai scelto.</p>
+ <p class="${stale?"msg bad":"locationHint"}">${esc(statusText)}</p>
+ ${recentCheck.error?"":'<p class="locationHint">'+Number(recentCheck.count||0)+' annunci rilevati da HUNT nelle ultime 24 ore nel mercato monitorato. Non sono necessariamente adatti al tuo profilo.</p>'}
  ${feed.noCv?'<p class="locationHint">Non hai ancora caricato un CV? Puoi comunque esplorare annunci reali per interessi, livello e località. HUNT non attribuisce compatibilità con esperienze che non conosce. Potrai aggiungere il CV dal Profilo.</p>':""}
   <button type="button" class="outreachJump" data-view="outreach">Scopri i brand da contattare <span aria-hidden="true">↗</span></button>
  <div class="feedToolbar section">
@@ -721,7 +732,7 @@ async function renderOpportunities(){
      </select>
    </label>
  </div>
- <section class="section stack opportunityList">${feed.error?`<div class="msg bad">${esc(feed.error.message)}</div>`:(rows.length+explore.length?rows.concat(explore).map(x=>opportunityCard(x)).join(""):`<div class="emptyState"><h3>Nessuna posizione coerente nelle città selezionate.</h3><p>HUNT non consiglia ruoli senior o non coerenti soltanto per riempire il feed. Puoi ampliare le città oppure esplorare sotto le posizioni di altre località.</p></div>`)}</section> ${outside.length?'<section class="section"><div class="eyebrow">Una ricerca più ampia</div><h2>Altre città, stessa area professionale</h2><p class="lead">Questi annunci sono reali, ma si trovano fuori dalle città che hai scelto: sono solo da esplorare, non consigli personali.</p><div class="stack opportunityList">'+outside.map(x=>opportunityCard(x)).join("")+'</div></section>':""}</div>`);
+ <section class="section stack opportunityList">${feed.error?`<div class="msg bad">${esc(serviceErrorMessage(feed.error))}</div>`:(rows.length+explore.length?rows.concat(explore).map(x=>opportunityCard(x)).join(""):`<div class="emptyState"><h3>Nessuna posizione coerente nelle città selezionate.</h3><p>HUNT non consiglia ruoli senior o non coerenti soltanto per riempire il feed. Puoi ampliare le città oppure esplorare sotto le posizioni di altre località.</p></div>`)}</section> ${outside.length?'<section class="section"><div class="eyebrow">Una ricerca più ampia</div><h2>Altre città, stessa area professionale</h2><p class="lead">Questi annunci sono reali, ma si trovano fuori dalle città che hai scelto: sono solo da esplorare, non consigli personali.</p><div class="stack opportunityList">'+outside.map(x=>opportunityCard(x)).join("")+'</div></section>':""}</div>`);
  bindNav();bindOpportunityActions();
  const sort=document.getElementById("opportunitySort");
  if(sort)sort.onchange=()=>{opportunitySort=sort.value;renderOpportunities()};
