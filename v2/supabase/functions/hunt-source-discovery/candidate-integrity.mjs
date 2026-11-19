@@ -1,3 +1,4 @@
+import {isLvmhJobDetailUrl} from "./lvmh-job-policy.mjs";
 // Public vacancy leads must be real job URLs, not templates, account flows or menus.
 function decodeEntities(s){
  return String(s||"").replace(/&amp;apos;|&apos;|&#39;|&#x27;/gi,"'")
@@ -27,7 +28,7 @@ export function safeVacancyCandidate(href,label,base){
   const knownATS=/^jobs\.smartrecruiters\.com$/i.test(url.hostname)&&/^\/[^/]+\/\d{7,}/.test(path)
     ||/^jobs(?:\.eu)?\.lever\.co$/i.test(url.hostname)&&/^\/[^/]+\/[0-9a-f-]{20,}/.test(path)
     ||/^jobs\.ashbyhq\.com$/i.test(url.hostname)&&/^\/[^/]+\/[0-9a-f-]{20,}/.test(path);
-  if(!knownATS&&!/(?:\/job\/|\/jobs\/|\/job-details\/|\/job-offers\/|\/offres-d-emploi\/|\/vacancy\/|\/position\/|\/offerte-di-lavoro\/)/i.test(path))return null;
+  if(!knownATS&&!isLvmhJobDetailUrl(url.href)&&!/(?:\/job\/|\/jobs\/|\/job-details\/|\/job-offers\/|\/offres-d-emploi\/|\/vacancy\/|\/position\/|\/offerte-di-lavoro\/)/i.test(path))return null;
   const ats=/(^|\.)((myworkdayjobs|smartrecruiters|lever|greenhouse|ashbyhq|workable|successfactors)\.com|jobs\.pradagroup\.com)$/i.test(url.hostname);
   const jobsHost=/^(jobs|careers|careers-international)\./i.test(url.hostname);
   if(url.hostname!==baseURL.hostname&&!ats&&!jobsHost)return null;
