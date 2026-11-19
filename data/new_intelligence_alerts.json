@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "key": "958388478b9811b42c98",
+    "brand": "ARMARIUM",
+    "headline": "Armarium debutta nel retail fisico con il primo flagship store a Milano - FashionUnited",
+    "signal_type": "store_opening",
+    "score": 90,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta aprendo, riaprendo o facendo debuttare uno spazio retail. Per te conta perché un'apertura richiede lavoro su assortimento, stock, merchandising, visual e operations e può creare bisogno di nuove persone.",
+    "detected_at": "2026-11-19T00:32:03.437276+00:00",
+    "published_at": "2026-11-18T21:05:16+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQNG5oUk5TZUJCSG1tU0tqSWkxTjNVUG94QTg0TlJiMnRjSkxsZ0txa0p0NDBBNnlOOVVhYkNTa2Z3djVXLUtWYzZYZkhrTVloZUd3djRWX0U4WDdNeVhqZV9KclJrSmZUdDZqRXdKX29qZlJwQVlKWHdfLXhHUW5EalByemhJS3JEMEt4cVR5dnRHeDRMMTBPQ08xMGtxWER3YUF3d0xQQ3FrLVdLa1ZZa3lKWWpud0x6UEVDOTRRVQ?oc=5"
+  }
+]
