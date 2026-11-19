@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="it"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#f8f8f4"/>
+<meta name="description" content="HUNT World Radar temporaneo: opportunità fashion e luxury da portali ufficiali, senza registrazione o Supabase."/>
+<title>HUNT · Radar temporaneo</title>
+<link rel="stylesheet" href="./radar.css?v=20261119-1"/>
+</head><body>
+<header class="top"><div class="top-inner"><a class="brand" href="../" aria-label="HUNT originale">HUNT<span>.</span></a><span class="top-label">FASHION & LUXURY CAREER INTELLIGENCE</span><a class="back" href="../">HUNT completa <span aria-hidden="true">↗</span></a></div></header>
+<div class="system-banner" role="note"><span class="system-dot"></span><p><strong>Accesso temporaneo senza account.</strong> Il servizio privato è momentaneamente limitato. Qui puoi cercare offerte pubbliche; CV, dossier, candidature salvate e personalizzazione automatica saranno nuovamente disponibili quando Supabase sarà ripristinato.</p></div>
+<main class="wrap">
+<section class="intro"><p class="kicker">HUNT / WORLD RADAR</p><h1>Le opportunità, <em>anche adesso.</em></h1><p class="intro-copy">Una selezione consultabile di posizioni fashion e luxury provenienti da fonti ufficiali. Nessun accesso richiesto. Esplora liberamente per ruolo, città e livello, poi apri l'annuncio originale per candidarti.</p></section>
+<section class="pulse" aria-label="Stato radar"><div><span class="metric-label">Offerte consultabili</span><strong class="metric" id="allCount">—</strong></div><div><span class="metric-label">Brand presenti</span><strong class="metric" id="brandCount">—</strong></div><div><span class="metric-label">Ultimo controllo ATS</span><strong class="metric minor" id="lastScan">In preparazione</strong></div></section>
+<p class="freshness" id="freshness" role="status">Caricamento delle offerte pubbliche…</p>
+<section class="explorer" aria-labelledby="radarTitle"><div class="explorer-title"><div><p class="kicker">ESPLORA IL MERCATO</p><h2 id="radarTitle">Opportunità</h2></div><p class="small-note">I filtri restano su questo dispositivo. HUNT non legge il tuo CV in questa modalità.</p></div>
+<div class="filter-bar">
+<label class="filter wide"><span>RUOLO O BRAND</span><input id="textSearch" type="search" autocomplete="off" placeholder="Cerca, es. merchandising, Prada"/></label>
+<label class="filter"><span>CITTÀ</span><input id="citySearch" type="search" autocomplete="off" placeholder="Tutte le città"/></label>
+<label class="filter"><span>AREA PROFESSIONALE</span><select id="roleSelect"><option value="">Tutte le aree</option></select></label>
+<label class="filter"><span>LIVELLO</span><select id="levelSelect"><option value="early" selected>Stage e junior</option><option value="all">Tutti i livelli</option><option value="internship">Solo stage</option></select></label>
+</div><div class="section-line"><span id="resultCount">Ricerca in corso…</span><label class="sort"><span>Ordina per</span> <select id="sortSelect"><option value="date">Più recenti</option><option value="brand">Brand A–Z</option></select></label></div>
+<div id="jobs" class="jobs" aria-live="polite"></div><div class="more-wrap"><button id="more" type="button" class="more" hidden>Mostra altre opportunità</button></div>
+</section>
+<div class="footnote"><strong>Informazione importante.</strong> Questa è una modalità ridotta, non la HUNT completa. Le offerte sono verificate rispetto all'ultimo controllo indicato, non in tempo reale; i portali possono cambiare e una posizione potrebbe chiudere. I titoli senza data ufficiale sono etichettati come «rilevati», non «pubblicati». La copertura non è ancora mondiale e non equivale alla totalità delle posizioni disponibili.</div>
+</main><footer><div class="footer-inner"><span class="brand">HUNT<span>.</span></span><span>Career intelligence, built around you.</span><a href="../">Torna a HUNT</a></div></footer>
+<script src="./radar.js?v=20261119-1" defer></script>
+</body></html>
