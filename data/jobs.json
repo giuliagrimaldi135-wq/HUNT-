@@ -1,5 +1,57 @@
 [
   {
+    "key": "82836462ea50741f70a3",
+    "brand": "Valentino",
+    "title": "EUROPE WHOLESALE INTERN",
+    "location": "Milano",
+    "score": 100,
+    "reasons": [
+      "Ruolo coerente dal titolo",
+      "Seniority junior/intern",
+      "Località target coerente",
+      "Competenze: excel, retail",
+      "Priorità Milano"
+    ],
+    "role_family": "Wholesale",
+    "decision": "strong",
+    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
+    "recommended_cv": "merch_buying",
+    "url": "https://jobs.valentino.com/job/Milano-EUROPE-WHOLESALE-INTERN/1458975433/",
+    "source_name": "Valentino careers",
+    "provider": "career_page",
+    "published_at": null,
+    "years_required": null,
+    "junior_fit": true,
+    "first_seen_at": "2026-11-20T15:42:26.185510+00:00",
+    "last_seen_at": "2026-11-20T15:42:26.185510+00:00"
+  },
+  {
+    "key": "95f862d1d88219d8bae1",
+    "brand": "Valentino",
+    "title": "Store Planning Intern",
+    "location": "Milano",
+    "score": 100,
+    "reasons": [
+      "Ruolo coerente dal titolo",
+      "Seniority junior/intern",
+      "Località target coerente",
+      "Competenze: retail",
+      "Priorità Milano"
+    ],
+    "role_family": "Planning/Allocation",
+    "decision": "strong",
+    "fit_explanation": "Ruolo coerente con il profilo di Giulia.",
+    "recommended_cv": "merch_buying",
+    "url": "https://jobs.valentino.com/job/Milano-Store-Planning-Intern/1448037433/",
+    "source_name": "Valentino careers",
+    "provider": "career_page",
+    "published_at": null,
+    "years_required": null,
+    "junior_fit": true,
+    "first_seen_at": "2026-11-20T15:42:26.185510+00:00",
+    "last_seen_at": "2026-11-20T15:42:26.185510+00:00"
+  },
+  {
     "key": "4450b91259c69e552232",
     "brand": "Bottega Veneta",
     "title": "BOTTEGA VENETA Jewellery Product Development Intern",
@@ -23,7 +75,7 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-18T03:57:04.757765+00:00",
-    "last_seen_at": "2026-11-20T14:49:25.470528+00:00"
+    "last_seen_at": "2026-11-20T15:42:26.185510+00:00"
   },
   {
     "key": "b0cb1c8d0110374cf3e9",
@@ -49,6 +101,6 @@
     "years_required": null,
     "junior_fit": true,
     "first_seen_at": "2026-11-18T03:57:04.757765+00:00",
-    "last_seen_at": "2026-11-20T14:49:25.470528+00:00"
+    "last_seen_at": "2026-11-20T15:42:26.185510+00:00"
   }
 ]
