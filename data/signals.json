@@ -1,5 +1,18 @@
 [
   {
+    "key": "089d2c7337f147764900",
+    "brand": "Stone Island",
+    "headline": "Stone Island svela a Milano il suo flagship più grande al mondo - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 78,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-20T07:54:09.871790+00:00",
+    "published_at": "2026-11-20T06:55:41+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOMU9qWWdUTy1IWUhHb1FCWkF1MERhQjBnbExGc2t0N09FNTA1ejN2MzhDT09CbDJUcVJQTG9kbFJ4X0ZtQ2VSU3R5SUZOaHVwN3ptT3I4OVpjOHVaOVZGWUJTS3p1cGlTbDAtaTh6SHYtWUtyU3lVeXBYRktSUmFaZkRJd0hpM0RyN0g4enBKdE11VjdFT2lrLTJzUlNwcWVWaHpPYUYzNXRDVWt4eEl4bA?oc=5"
+  },
+  {
     "key": "858f44fa9da5438d1cd1",
     "brand": "Givenchy",
     "headline": "Il guardaroba Givenchy di Sarah Burton per l’Autunno-Inverno 2026: identità femminile tra giorno e sera - Alpi Fashion Magazine",
@@ -2377,44 +2390,5 @@
     "published_at": "2026-10-06T19:57:05+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE8zVFZsQjh3TGJTZm5EQklnZmlucGEzS2lib0pqQm02VnAwbEFTd1ZuNURCQ1p5R21QaXJUYmxxNnlzSVVYU2hlV3cwbm56TlBLYXI4RzRxZGtnRDA4UEVHQlFNeEtCN2xrLVhBaHFoZ1hncEkwUVRfQl9n?oc=5"
-  },
-  {
-    "key": "f1c10d5fb23e594bdc40",
-    "brand": "Louis Vuitton",
-    "headline": "Lisa chiude la Paris Fashion Week da Louis Vuitton - PAP Magazine",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:49:10.498756+00:00",
-    "published_at": "2026-10-06T07:00:00+00:00",
-    "source": "PAP Magazine",
-    "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxORTE5YmZZUTlzR29pLXUxRWIwLV92OV82VkxHZ0ZBVEdteEZ3QnllUmZVbTFQUVhpOTBQYjEwUk5TSzBxNWgzQ1VLTG9lRlRQVnY0SC03dklVdHpKYlBGZGNWX1RmVVFpbTRUY1FZeGZGOV95TWJVWnFUTFpfLWE0UFVSQ3V4YkVvcG0xZg?oc=5"
-  },
-  {
-    "key": "845752d8556a3cb532b4",
-    "brand": "Paris Texas",
-    "headline": "I nuovi progetti retail di Liu Jo, Sebago, Mango, Marco Bicego, Alo, Marlù, Paris Texas e Pinalli - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:52:01.624663+00:00",
-    "published_at": "2026-10-06T07:00:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPTDNLZnBmM1lyQmlpanc5NldRUS12QXpGcnAzdTZxOWM0UHJ5S0NQSE5Rc2g0aTNNWkx1RmVObWdDQUZnTzdYZnpabHBjV2NlZzZveTQ2UzFUOV9EdThXbmE1R1p6WWtVbVRtbGdNQXpSTlVGd2xCMk1JR3hhbGZ0YmpMRThaWVhvNEU4cl9JVVF6Z0t2emdBOU5qcElFb2I4NU5pX21vbVNTc3ZNMDhnZExoUHpnUkxDZHozR2g2WThWa3ZlZHRXUFJyRXN6RXhqdG5aS2dn?oc=5"
-  },
-  {
-    "key": "59418378e68e9f020813",
-    "brand": "Celine",
-    "headline": "CELINE - WOMEN SS 2027 - PARIS - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-16T17:41:39.510536+00:00",
-    "published_at": "2026-10-06T07:00:00+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNNG0xcmR0Zm1YZTIwUG5zMDhCbGFNRGNraGJEclRRRG9PUmVaVW94Yk1CR3FhYWU1SUJSSmZub0tXNENTRS1EaDdBeVN0Q2tON25rMFNhQnNRUV9FTFN1N05zVHl4TEI1Sjhvd3hDT3JwbEtyd2ROeGtySHBRbTN5T0Nhb2tJQk0?oc=5"
   }
 ]
