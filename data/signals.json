@@ -1,5 +1,31 @@
 [
   {
+    "key": "7309ec9f289f154f48dd",
+    "brand": "Stone Island",
+    "headline": "Stone Island riapre a Milano il suo più grande flagship store al mondo - FashionUnited",
+    "signal_type": "store_opening",
+    "score": 90,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta aprendo, riaprendo o facendo debuttare uno spazio retail. Per te conta perché un'apertura richiede lavoro su assortimento, stock, merchandising, visual e operations e può creare bisogno di nuove persone.",
+    "detected_at": "2026-11-20T14:50:27.406326+00:00",
+    "published_at": "2026-11-20T11:54:28+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxNWmFWU2FZeXJtWGloR1pfdkFkRjlORWtYMWhUcEIyTXFhSGNneVROQ0lNN2hTdDZhYXE2cG5aeFVUVVVFdzlTMS1jZmNoaVRsU0FKR3gxMVZ6R2JsbGVHV0NmVlRtekRwSkFEdUZtYTIyR2tBNlJtRnN2dTV5X3NjLWZHMEFNeXBLRlVhQjVTc2llZV84bFM4ZklOVktKcVh6VG1YNTBkSUdsT3ZhbWVBOUY4OWNKQ2JiS1k0a2VB?oc=5"
+  },
+  {
+    "key": "2e2a9c65be69c06e5031",
+    "brand": "Tod's",
+    "headline": "Tod’s vicina al rifinanziamento del debito da 400 milioni garantito dai proprietari - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-20T14:50:27.406326+00:00",
+    "published_at": "2026-11-20T09:55:05+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPYUpjZ0hoV2tEUEVTSWhCQUdZSzJsRzE3b2V3MDdHM0lYbnRLQWlobkxTdGpUYjJ6eXZ1S0ZQN2VPYW9DQmtoSTVKUVhRRzB3Y0FXa2JuSjBfMHJabkt4YUdORGxta1NGVFJERV9aRGNOYW11a1VGdm5RTWZYOHg2S3ZDMm95SXhUNUIxNmFBaXYtNWdfWDQ0SEtHTHA3c1huS25KY3ZSUm5UbUthc0pYVFpDTl9PR09mUHZGYmt4cEJmZzN4RTIwdW16RQ?oc=5"
+  },
+  {
     "key": "089d2c7337f147764900",
     "brand": "Stone Island",
     "headline": "Stone Island svela a Milano il suo flagship più grande al mondo - FashionNetwork Italia",
@@ -1688,6 +1714,19 @@
     "published_at": "2026-10-21T07:00:00+00:00",
     "source": "Metropolitan Magazine Italia",
     "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQeEMxSVQ1Sm5OcGZneHlZMFY0QXpVMU5tQk5iTlEzTUFvNC1tOWZ2ZXMtV25PUE5GSnVUOHdwV1NVQkNEdEV6Q0t5WlBCekxIZnNrdzBuck15MnE1OWh3VmU5MW5ya0Y4enVZUDdHaUYzQVJONnA0X2s5Sk5mbXUyYlpCeTRYVnFzTXMyQTBRSWtDS29URWduUjR0cG45dXFuTWVncklZMWNPOWNjMlV6QWxRaWw3LTdYTGlKdl81MGVxTFZxTDJ6UXhIc0RGQWo3WHdpWA?oc=5"
+  },
+  {
+    "key": "895a72879201ec0d1dd9",
+    "brand": "Maison Margiela",
+    "headline": "Maison Margiela celebra i 20 anni dello store di Tokyo con un nuovo capitolo di 'MaisonMargiela/folders' - FashionUnited",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-20T14:50:27.406326+00:00",
+    "published_at": "2026-10-21T07:00:00+00:00",
+    "source": "FashionUnited",
+    "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxORTJBVEYxMXRfU2JQTy1TRVEweWgzMnpUc2VRM2p5R1RzYWhqR19fM2JPclJZMzk1dzkybENSMDlnV3hqZW5xbE9kNkNBZU9Bd3BoWkZGcmR3c3A2NnZsQkZHQzZTQVVXeldCMzRrREEwc1NVTEJfWENhTzRjeFhnM2pOcEtGbGNPZEhyeHBKd1dEQXV5T2UtYl9fUkEyMksxMWhaOW9xZVoxODZGVnFFeWN5ekI2NnJfQklFbVdjRjR4MGhEd0dsd2p1Z2F2NlFScDVMdFp2STN0Um1RRndZWHhQbHA1WWs?oc=5"
   },
   {
     "key": "eec69ef5c5e606526e76",
