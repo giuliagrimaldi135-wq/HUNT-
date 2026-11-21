@@ -1136,5 +1136,29 @@
     "source_name": "Valentino Careers (ID 12827); Cerulean pubblicazione 19 novembre 2026",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-bulgari-europe-merchandising-bulg11046",
+    "brand": "Bulgari",
+    "title": "Europe Merchandising Internship",
+    "location": "Roma, Italia",
+    "published_at": "2026-11-19",
+    "detected_at": "2026-11-21T14:39:24+01:00",
+    "priority": "ALTA",
+    "score": 92,
+    "role_family": "Retail Merchandising",
+    "why_fit": "Stage nel merchandising Europa: analisi performance retail, feedback buying, allocazione prodotti, sell-through e stock. Fashion & Luxury Management richiesto tra i percorsi ammessi; esperienza showroom e gestione ordini pertinente.",
+    "reasons": [
+      "Analisi assortimenti e performance della rete retail europea",
+      "Stock allocation e trasferimenti prodotto",
+      "Feedback dai mercati e dai buyer",
+      "Formazione Fashion Management coerente",
+      "Excel richiesto; Power BI solo preferenziale",
+      "Sede Roma, non Milano"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/europe-merchandising-internship-at-bvlgari-4493213883",
+    "source_name": "LVMH Careers BULG11046; Bvlgari LinkedIn vacancy 4493213883",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
