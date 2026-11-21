@@ -182,6 +182,19 @@
     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOS2FaQlFqdXlJLXVoZ2prQ1pvdXZFN1pBSW5IZFVuVDV4QTh4WGRSb2JvUEQwbEtDc0h1RHF3YXZLcHVYM09JbVhYekJoYmtic3E4RU1BRzlsNFZNUjYyTDdPTUFBLWJmenR0MTZCUmJGMm5vejhndmFKZ1hPQnFyY0pnTjU3SXFmeHZXdk1wdXBKcFg0TG4wcjBiUUo1aEJfLUZHS2hsV2lFSkI4?oc=5"
   },
   {
+    "key": "05416bac3ad1f7e9b20a",
+    "brand": "Dolce & Gabbana",
+    "headline": "Dolce & Gabbana Beauty inaugura il suo primo punto vendita a Gurugram, in India - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-21T10:53:13.267198+00:00",
+    "published_at": "2026-11-17T17:48:18+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPTVlzUTk4Q3ZKekZTR0hTSjc3TWkzWEozNFJjWk1jTzcxLXlDRWV0RG5FRGxvNnBnbmtiNU45UzBfcWhhWFlieGpJeUd5bU9kVVI5dEctVDk3RlJ0aUphTUhVTFR6X3Zhc3Q0eWtfdG9yR1BycFZoYXlscHBqbnl2cUhCVHMyYVVEV3RNNWd2THJvUHdMODhoQTlNeGcyajJwRHZJaVN1Y3k4cE8tNWtVZUFBa0ZveHA2YnZJNHBYUXhSUQ?oc=5"
+  },
+  {
     "key": "17c3669d4478f443c8e8",
     "brand": "Bulgari",
     "headline": "Chanel, Bulgari, Hermès e Loro Piana debuttano a San Diego al Westfield UTC - FashionNetwork Italia",
@@ -2351,18 +2364,5 @@
     "published_at": "2026-10-07T23:28:13+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1UQXo2VDlDbHdiSGw0QkMtTUItU1FlOVo1c1ZNZ3pfVlFET09mRjlTVVdCZXhVYXkycW5tTTZDU0RtTU12MjdnNEROVmZycjFISy1VcmhMRmZCenBYd1dEZXhGR1dMbmR1LWt0Wk5YRnZHMjRjaXN0eWxn?oc=5"
-  },
-  {
-    "key": "bee2c7675fb5c0c5a98a",
-    "brand": "Louis Vuitton",
-    "headline": "Louis Vuitton - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-01T21:49:10.498756+00:00",
-    "published_at": "2026-10-07T10:48:55+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5Oc01SSUNRZVNSUnZVUW0xc1VuaHE0bDRuc19ERElXWGszYlVFWUZ2aDNhS3lfeFF6NExvUnVTenpFdV9pbUphUjk1WVJfbjF3RU5fbklLY25DWkxickh0MEhpcG5Gd2k1TjZIZTJOZVRyQUZLTFh0VS1B?oc=5"
   }
 ]
