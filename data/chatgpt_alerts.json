@@ -1160,5 +1160,28 @@
     "source_name": "LVMH Careers BULG11046; Bvlgari LinkedIn vacancy 4493213883",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "hunt-essilorluxottica-merchandising-internship-1458919933",
+    "brand": "EssilorLuxottica",
+    "title": "Merchandising Internship",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-19",
+    "detected_at": "2026-11-21T23:04:00+01:00",
+    "priority": "ALTA",
+    "score": 91,
+    "role_family": "Retail Merchandising",
+    "why_fit": "Stage merchandising eyewear a Milano con assortimenti, segmentazione punti vendita, planning, analisi sell-out e performance prodotto; coerente con studi Fashion Management e obiettivi Retail Merchandising/Buying.",
+    "reasons": [
+      "Assortment strategy e store segmentation",
+      "Planning e ottimizzazione offerte commerciali",
+      "Analisi sell-out e performance prodotto",
+      "Milano, stage retribuito 900 euro lordi al mese",
+      "Richiesti laurea magistrale o equivalente e Excel avanzato"
+    ],
+    "url": "https://careers.essilorluxottica.com/job/Milano-Merchandising-Internship/1458919933/",
+    "source_name": "EssilorLuxottica Careers (vacancy 1458919933); data pubblicazione da Emploive e InternshipDaily",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
