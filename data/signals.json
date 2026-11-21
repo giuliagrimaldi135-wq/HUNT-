@@ -13,6 +13,19 @@
     "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPaHZfYjhRWDIzeEYwaE5fLVVUMXFHV1NTRjJJbjNEZW9jUFdYWkcxRWxiYWVQbXN1clUyS3VFSzBreGZVYVRqNFFTamRQemNCVVJpLWpOVjR1WTM4eml3UUI2Nkp4cXNERkdzTFBERVBHcmF4ZnlkNGJKbEhETE8xTXc5d1pybjJ6NXBEdnBWcmhGZ21yeGFnUw?oc=5"
   },
   {
+    "key": "54c4926eed85755609fb",
+    "brand": "Versace",
+    "headline": "Mauro Repetto si racconta: «La fuga alla Paris Fashion Week per amore di Brandi nascosta a Max, la cena a casa di Azzedine Alaïa e il mio mito, Gianni Versace» - Vogue",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-21T13:25:15.252167+00:00",
+    "published_at": "2026-11-20T17:43:02+00:00",
+    "source": "Vogue",
+    "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1DdFdlaFBCS0V3Q0k1UG9PWXBhWjZ4bEgxSHBJRnYzc2VOYy1KX3RlUnN5b05CVkI4aUdmOXFVOFpvUTM2Q1poX2kyZUVwcURjbkk5UkhEN010WGhISWhWMjhLMUxpNllz?oc=5"
+  },
+  {
     "key": "2fb0cea3dcc64b9dfcd4",
     "brand": "Jil Sander",
     "headline": "A Milano i profumi Jil Sander dialogano con arte e musica - FashionNetwork Italia",
@@ -1701,6 +1714,19 @@
     "published_at": "2026-10-23T07:00:00+00:00",
     "source": "Milano Finanza",
     "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQcGNxRmdDbFI2VTY2SUVIZ29nSjhmRVhQZmtUZVVzOUN5WURXSFVNY3NDaUlKTWRLcURzM1RUNjJfZF96cVQ0alF5NjE5N0lzUkJKZXZIdk9fbktxLV94U1Nud2dFTzRvSkNlNlU1NmpyekZtQlJXRnlpb2lrUVJvb3k5NV9CMzJHcGRHaEJ0NEhnUTNvRmF2VmUyU3FlUHNZelNnQ0ZMZ1E5YkNDbnc4a3FjUFlxSGJtTWJGNTZpZTBDejZ1b0MyWWFCWms0amxuam9pUQ?oc=5"
+  },
+  {
+    "key": "2b90e8bccf0c04cea05d",
+    "brand": "Zegna",
+    "headline": "Lusso, primi nove mesi fra luci e ombre: Zegna in crescita, su Hermès pesa la Cina - Il Sole 24 ORE",
+    "signal_type": "expansion",
+    "score": 80,
+    "confidence": "public-signal correlation",
+    "reason": "Il brand sta crescendo, investendo o entrando in nuovi mercati. Per te conta perché la crescita può aumentare budget, team, wholesale, retail e bisogno di profili junior.",
+    "detected_at": "2026-11-21T13:25:15.252167+00:00",
+    "published_at": "2026-10-23T07:00:00+00:00",
+    "source": "Il Sole 24 ORE",
+    "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOZWhxcGU3OGRGVTA5dU1sSjBXNEtYcm1qSGl3bi1GcktHUWpvcWlTTVg3WmJBcEUzbnpLeTUwd1Z1d2s5aWVOaW1ueHdYZ05zM3IwaEF0clAySlVQRlJkWDdPZnI4ZzJGNHU2a1Iza0d4SzJwQVRFN0xTTFo3MW9TMHN0RHd6ZHRNcU5hUTh1cWxyOHdGWWZqd0NnS3drQl9wTEl0aTlNLUR0QzQ?oc=5"
   },
   {
     "key": "407c2f8c57054903e47c",
