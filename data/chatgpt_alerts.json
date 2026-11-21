@@ -1113,5 +1113,28 @@
     "source_name": "Moncler / LinkedIn vacancy 4482208584; FashionUnited",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "fashion_mgmt"
+  },
+  {
+    "key": "chatgpt-valentino-europe-wholesale-12827",
+    "brand": "Valentino",
+    "title": "EUROPE WHOLESALE INTERN",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-19",
+    "detected_at": "2026-11-21T13:36:47+01:00",
+    "priority": "ALTA",
+    "score": 88,
+    "role_family": "Wholesale",
+    "why_fit": "Stage nel wholesale europeo con campagne vendita, buyer meeting, sell-through, riassortimenti e analisi di mercato; valorizza l'esperienza showroom e gli studi Fashion Management.",
+    "reasons": [
+      "Campagne vendita e incontri con buyer",
+      "Analisi settimanali sell-through e performance",
+      "Supporto a riordini e key account",
+      "Esperienza showroom pertinente",
+      "Richiesto francese fluente oltre a italiano e inglese"
+    ],
+    "url": "https://jobs.valentino.com/job/Milano-EUROPE-WHOLESALE-INTERN/1458975433/",
+    "source_name": "Valentino Careers (ID 12827); Cerulean pubblicazione 19 novembre 2026",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "merch_buying"
   }
 ]
