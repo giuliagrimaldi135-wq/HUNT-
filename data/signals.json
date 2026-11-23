@@ -182,6 +182,19 @@
     "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFAxRldZamRUQ2JQQlR5SzJiZUlXeXZXVGJNUEt1T2JHRDZfTVl4ZnAwRDFDUXNmcjFwYnAyRG80VHBvRkFtc1JvWkNiOTgyUEFUcXZLemI5czhCYU5JOEtHNmpBRmZhRl9JTndtbzBMZzVFVGpz?oc=5"
   },
   {
+    "key": "6ae5c44ed4ede7520942",
+    "brand": "Fendi",
+    "headline": "Fendi lancia la seconda edizione del Fendi Design Prize - FashionNetwork Italia",
+    "signal_type": "industry_news",
+    "score": 68,
+    "confidence": "public-signal correlation",
+    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
+    "detected_at": "2026-11-23T02:44:35.618789+00:00",
+    "published_at": "2026-11-18T16:24:41+00:00",
+    "source": "FashionNetwork Italia",
+    "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNeDFiZV9IUEcxUnh1SV9jbWhaU0d3M1NNU0J0aURkQk9IR1VYU0o4RGxaOGh1dUhnMmRaM0JmM1d3R0hOQmxEREo4YWpSLXlONnZjd2lTNG5sRll5WjAxUXBCWjg0YUdSc1d6WG91VnFZNmEzb0xQVm5WUWo1aEo1eFp3ZFlpQXoxajhad093Vk5MZmZDVFN4Z3N5Tk5sdGNaSWhMSUdB?oc=5"
+  },
+  {
     "key": "29a761c145cf5614a7d7",
     "brand": "Twinset",
     "headline": "Twinset Holidays 2026 - Fashion Press – Moda e Bellezza",
@@ -2442,18 +2455,5 @@
     "published_at": "2026-10-09T07:00:00+00:00",
     "source": "FashionNetwork Italia",
     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxOMUJ6bTd2bW5sbmkza1dSSHBSMEowcU1ETnQteHVERlp0d0ZOb256bHhlWTRvcU5mQzF5NG5Xci1CVjF3OU45d1liZ2o3X0dOc3oxOHB1X0tyQVBiblYxWTB4Z01SMHVNRUZ2ekVkNmJfYWoxamlCeVNQTlh5dTkyM0hqZ0IyUXNEaEVNZWJaYnlhd3kycU15NWdRLVRVekdEQ3RSc0NTWVQxX19tUXNnRTdYTG9qN3lS?oc=5"
-  },
-  {
-    "key": "4a77f44d9f1b4a8504b8",
-    "brand": "Louis Vuitton",
-    "headline": "LOUIS VUITTON - WOMEN SS 2027 - PARIS - FashionNetwork Italia",
-    "signal_type": "industry_news",
-    "score": 68,
-    "confidence": "public-signal correlation",
-    "reason": "Questa notizia aiuta a capire cosa sta facendo il brand adesso. È utile soprattutto per arrivare a un colloquio o a una candidatura con un riferimento concreto, non con motivazioni generiche.",
-    "detected_at": "2026-11-02T06:15:19.101971+00:00",
-    "published_at": "2026-10-09T02:19:41+00:00",
-    "source": "FashionNetwork Italia",
-    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOUGU2dkVEUXo4ZnF1R1hVbGZ0WG5aMHhoZ3NXWWFkU2paTU84VUt3Q3hPMnlmMUxMUGRtczFhUjB0YkczbU55TUZ1aVJFVHg1ZlRzUy1wZnk5Q2hLMmNadFNhODdmeXRVOGNUWE5NYVQyMTFFTW1kMjcwRTB3ci0wQkRJSHZVSzZrN0xmbmx6X1E?oc=5"
   }
 ]
