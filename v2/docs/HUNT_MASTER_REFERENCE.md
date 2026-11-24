@@ -282,11 +282,12 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
   - **Sblocco atteso:** rinnovo della quota l'**8 dicembre 2026**, oppure upgrade a pagamento (non autorizzato).
   - Il watchdog `hunt_ops.quota_watchdog` ha sospeso i 13 cron di rete; riparte da solo dopo due controlli riusciti.
 - Già corretti: niente scritture inutili nel matching (PR #60), watchdog (PR #61), ATS senza riletture entro 6 ore (PR #64).
-- **Uniti in `main` il 24/11** (PR #66 e #67, vedi §12), **ma non ancora applicati a Supabase**: matching incrementale; misuratore dei consumi, budget di 100 MB al giorno, ripartenza graduale e allerta automatica. Servono le migrazioni e il deploy delle funzioni, con autorizzazione.
-- **Accesso di Claude:** oggi **nessun connettore Supabase** è collegato alle sessioni cloud. Vedi la guida più sotto.
+- **PR #66 e #67 unite il 24/11. Migrazioni applicate in produzione il 24/11** (autorizzate dall'utente): `hunt_incremental_matching_state_20261124` e `hunt_egress_budget_guard_{1_tables,2_logic,3_alerts_watchdog}_20261124`. Verificato dopo l'applicazione: nessuno scanner riattivato, blocco 402 ancora attivo, permessi corretti, 52 livelli di scansione collegati a job esistenti.
+- **Edge Functions non ancora aggiornate**: la produzione esegue ancora le versioni del 9–19/11, che coincidono con GitHub prima di #66/#67. Si pubblicano con il workflow manuale `hunt-supabase-deploy.yml`, che richiede il segreto GitHub `SUPABASE_ACCESS_TOKEN`. Se non vengono aggiornate prima dello sblocco, HUNT ripartirà comunque in sicurezza, ma lentamente (livello `minimal`), perché il misuratore dei consumi mancherà.
+- **Accesso di Claude:** connettore Supabase **collegato dal 24/11** (lettura del database, migrazioni e funzioni, sempre con autorizzazione dell'utente).
 
 ### Vercel
-- Progetto `hunt` nello scope `andreottistefano-1365`, URL `https://hunt-nine-nu.vercel.app/`. Ospita l'app Next.js `v2/web`, **che non è la HUNT approvata**.
+- Progetto `hunt` (`prj_kJf0Md4aMDzqaEI9GnTvWDnv3nri`) nel team `andreottistefano-1365` (`team_0oAQMNmQt8EUdkA7pdAxGQaI`), URL `https://hunt-nine-nu.vercel.app/`. Connettore Vercel **collegato e autorizzato per il team dal 24/11**. Ospita l'app Next.js `v2/web`, **che non è la HUNT approvata**.
 - `vercel.json` con `ignoreCommand` (`scripts/hunt-vercel-ignore.sh`): niente build per i commit di soli dati, documenti o backend.
 - In passato il piano Hobby ha restituito `build-rate-limit`.
 - **Decisione dell'utente (18/11):** prima completare backend e copertura, poi riprendere Vercel.
@@ -455,11 +456,12 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 | 22–23/11/2026 | Automazioni | Aggiunta un'offerta verificata (Veepee), outreach FiveFourFive; commit automatici del radar | — |
 | 24/11/2026 | Claude (responsabile tecnico da questa data) | Analisi completa del progetto. **PR #66**: matching incrementale (gettone di cambiamento, digest delle descrizioni, equivalenza su 19 scenari). **PR #67**: misuratore dei consumi, budget e livelli di scansione, ripartenza graduale, protezione contro telemetria mancante o a zero, allerta automatica con un'unica issue | CI verde. **Unite in `main` il 24/11** su richiesta dell'utente (#66 poi #67). Nessuna modifica a Supabase: migrazioni e deploy restano da autorizzare |
 | 24/11/2026 | Claude | Creati questo documento e `CLAUDE.md` per la continuità tra sessioni | PR #68, unita |
+| 24/11/2026 | Claude (autorizzato dall'utente) | Connettori Supabase e Vercel collegati. **Migrazioni A e B applicate in produzione** (B in 3 parti). Verificato: scanner ancora fermi, 402 attivo, dati intatti (2 account, 2 CV, 11 candidature, 1.414 offerte). Controllato che il codice delle 13 funzioni in produzione coincidesse con GitHub. Aggiunto il workflow manuale di deploy delle funzioni | Deploy delle funzioni in attesa del segreto `SUPABASE_ACCESS_TOKEN` |
 
 **Prossimi passi concordati:**
 1. ~~Unire #66 e #67~~ (fatto il 24/11).
-2. L'utente collega i connettori Supabase e Vercel (§6).
-3. Con autorizzazione: migrazioni e deploy, che si possono fare già prima dell'8/12 perché non riavviano gli scanner.
+2. ~~Collegare i connettori Supabase e Vercel~~ (fatto il 24/11).
+3. ~~Migrazioni~~ (fatto il 24/11). Deploy delle 13 funzioni: l'utente crea il segreto `SUPABASE_ACCESS_TOKEN` su GitHub, poi Claude avvia `hunt-supabase-deploy.yml`.
 4. Dall'8/12: verifica dello sblocco, egress delle prime 24 ore, test end-to-end.
 5. Fase 2 della roadmap: World Radar.
 
