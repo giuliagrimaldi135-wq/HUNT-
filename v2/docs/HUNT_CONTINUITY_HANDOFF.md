@@ -1,5 +1,7 @@
 # HUNT — continuity handoff (9 November 2026)
 
+> **Dal 24/11/2026 il punto di partenza è `v2/docs/HUNT_MASTER_REFERENCE.md`** (più `CLAUDE.md` nella radice). Questo file resta come archivio storico delle decisioni dell'8–11 novembre.
+
 This is the permanent project handoff for continuing development across ChatGPT conversations.
 It is a public, non-personal summary; do **not** add CVs, names, emails, access tokens,
 private application drafts or other user-specific data to this repository.
