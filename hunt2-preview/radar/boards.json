@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "description": "Public official ATS boards only; no account tokens, Supabase keys, private user data or site scraping.",
+  "description": "Public official ATS boards and official public career feeds only; no account tokens, Supabase keys, private user data, bot-challenge bypass or site scraping.",
   "boards": [
     {
       "family": "ats_greenhouse",
@@ -141,6 +141,16 @@
       "family": "ats_smartrecruiters",
       "board": "LVMH",
       "brand": "LVMH"
+    },
+    {
+      "family": "feed_public",
+      "brand": "Ralph Lauren",
+      "feed_url": "https://careers.ralphlauren.com/en_US/CareersCorporate/SearchJobsCorporate/intern/feed",
+      "link_hosts": [
+        "careers.ralphlauren.com"
+      ],
+      "enabled": false,
+      "disabled_reason": "24/11/2026: il feed risponde con una sfida anti-bot (AWS WAF challenge, HTTP 202 vuoto). HUNT non la aggira: riattivare solo se il feed torna leggibile senza sfida o con un accesso ufficiale per partner."
     }
   ],
   "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."

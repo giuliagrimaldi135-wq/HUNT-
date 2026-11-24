@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Test public ATS parse and privacy policies
-        run: python -m unittest discover -s hunt2-preview/radar -p "test_refresh.py" -v
+        run: python -m unittest discover -s hunt2-preview/radar -p "test_*.py" -v
       - name: Fetch limited public official ATS feeds directly (zero Supabase requests)
         run: python hunt2-preview/radar/refresh.py
       - name: Validate safe public JSON before publication

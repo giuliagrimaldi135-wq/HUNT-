@@ -222,6 +222,7 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
   - la sitemap pubblica non elenca i singoli annunci;
   - l'elenco si carica solo dal motore di ricerca interno del sito, che **non va usato**, perché richiederebbe chiavi pensate per il loro sito;
   - strade corrette: portali propri delle singole maison, verifica delle pagine annuncio trovate per altre vie, in futuro un feed ufficiale per partner.
+- **Lettore di feed pubblici (RSS/Atom), PR del 24/11 sera:** codice presente e testato (19 test), nessuna fonte feed ancora attiva. Ralph Lauren configurato ma disattivato per sfida anti-bot (vedi §12).
 
 ### 5.2 Matching basato sui CV
 - **Motore:** `hunt-match-refresh` con `eligibility-v2`. Considera:
@@ -468,6 +469,7 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 | 24/11/2026 | Claude | Creati questo documento e `CLAUDE.md` per la continuità tra sessioni | PR #68, unita |
 | 24/11/2026 | Claude | Radar pubblico: +15 portali verificati, correzione SmartRecruiters, da 661 a 1.216 offerte (PR #71). Creato l'ambiente cloud "HUNT" con accesso alle API pubbliche dei portali (Greenhouse, Lever, SmartRecruiters, Ashby, Workable, lvmh.com). Indagine su LVMH (vedi §5.1). Regola concordata: Claude prepara e testa in autonomia, l'utente risponde "ok" prima di merge e interventi in produzione | Fatto |
 | 24/11/2026 | Claude (autorizzato dall'utente) | Connettori Supabase e Vercel collegati. **Migrazioni A e B applicate in produzione** (B in 3 parti). Verificato: scanner ancora fermi, 402 attivo, dati intatti (2 account, 2 CV, 11 candidature, 1.414 offerte). Controllato che il codice delle 13 funzioni in produzione coincidesse con GitHub. Aggiunto il workflow manuale di deploy delle funzioni | Fatto. Poi pubblicate tutte e 13 le funzioni (vedi §6). Verifica a runtime dopo lo sblocco |
+| 24/11/2026 (sera) | Claude | Radar pubblico: nuovo lettore di **feed pubblici ufficiali RSS/Atom** in `refresh.py` (famiglia `feed_public`), con protezioni (solo HTTPS su domini dichiarati, niente date inventate, XML senza entità, sfide anti-bot riconosciute e mai aggirate, fonti disattivabili con motivazione). 19 test Python. Ambiente "HUNT": aggiunti con approvazione `careers.ralphlauren.com`, `careers.pvh.com`, `www.tapestry.com`, `www.capriholdings.com`. Analisi formati: vedi sotto | PR aperta, CI da verificare. Nessuna modifica a Supabase |
 
 **Ricerca fonti del 24/11 (da riprendere nella prossima sessione):**
 - **Provati circa 150 brand di lusso** (Kering, Richemont, LVMH, maison italiane e francesi) su Greenhouse, Lever, Ashby e SmartRecruiters: quasi nessuno li usa. Le grandi maison usano SuccessFactors, Workday, Oracle o siti propri.
@@ -477,12 +479,18 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
   2. l'aggiunta del dominio all'ambiente cloud "HUNT" (richiede l'approvazione dell'utente).
 - **Altri siti carriere da analizzare:** careers.pvh.com, tapestry.com/careers, capriholdings.com (Michael Kors, Jimmy Choo). Usare solo formati pubblici (feed, sitemap, pagine annuncio con JSON-LD). **Mai** chiavi di ricerca estratte dal codice dei siti: il sistema di sicurezza lo blocca, e giustamente.
 
+**Analisi formati del 24/11 sera (cosa è leggibile senza aggirare nulla):**
+- **Ralph Lauren** (`careers.ralphlauren.com`, piattaforma Avature): il feed `.../intern/feed` e le pagine di ricerca rispondono con una **sfida anti-bot AWS WAF** (HTTP 202 vuoto). Non leggibile in automatico: fonte disattivata. Il robots.txt dichiara una sitemap ufficiale (`/CareersCorporate/sitemap_index.xml`), le sitemap per lingua non sono state aperte (richiesta fermata dal sistema di sicurezza dopo la sfida anti-bot). Strada corretta: chiedere un feed per partner o riprovare più avanti.
+- **PVH** (Calvin Klein, Tommy Hilfiger; `careers.pvh.com`, piattaforma Phenom): **leggibile**. Il robots.txt dichiara 42 sitemap ufficiali; `us/en/sitemap1..3.xml` elencano circa 1.000–1.500 annunci con data di modifica; ogni pagina annuncio contiene JSON-LD `JobPosting` con titolo, città, Paese e `datePosted`. Attenzione: la sitemap contiene anche annunci chiusi (pagina con HTTP 410), quindi l'annuncio va confermato aprendo la pagina. Serve un nuovo lettore "sitemap + JSON-LD" con un tetto di pagine per giro: **prossimo passo consigliato**.
+- **Tapestry** (Coach, Kate Spade, Stuart Weitzman): la pagina careers rimanda a **Workday** (`tapestry.wd108.myworkdayjobs.com/Tapestry_Careers`); il `/feed/` del sito è solo il feed delle notizie aziendali. Workday non è ancora supportato; prima di usarlo va verificato se offre una sitemap o un feed pubblico (dominio da aggiungere all'ambiente).
+- **Capri** (Michael Kors, Jimmy Choo; `www.capriholdings.com`): la pagina careers risponde con una **sfida Cloudflare** ("Just a moment..."). Non leggibile in automatico; il robots.txt chiede anche 10 secondi tra una richiesta e l'altra.
+
 **Prossimi passi concordati:**
 1. ~~Unire #66 e #67~~ (fatto il 24/11).
 2. ~~Collegare i connettori Supabase e Vercel~~ (fatto il 24/11).
 3. ~~Migrazioni e deploy delle 13 funzioni~~ (fatto il 24/11).
 4. Dall'8/12: verifica dello sblocco, egress delle prime 24 ore, test end-to-end.
-5. Fase 2 della roadmap: World Radar.
+5. Fase 2 della roadmap: World Radar. Primo passo: lettore "sitemap + JSON-LD" per PVH (vedi analisi del 24/11 sera).
 
 ---
 
