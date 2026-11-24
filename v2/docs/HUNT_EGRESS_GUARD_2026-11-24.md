@@ -55,6 +55,35 @@ Ogni 30 minuti il watchdog (dopo i controlli 402) chiede al guard il livello:
   - un nuovo 402 sospende tutto come prima.
 - **Job non elencati** in `hunt_ops.scan_levels` non vengono mai attivati.
 
+### Protezione contro telemetria mancante, a zero o anomala
+Una misura assente o pari a zero **non significa consumo zero**. Il costo misurato di una funzione (`hunt_ops.function_telemetry`) è considerato affidabile solo se, nelle ultime 48 ore:
+- ci sono almeno 6 esecuzioni registrate;
+- al massimo il 10% di esse riporta 0 byte o 0 richieste. Ogni funzione legge almeno il proprio segreto dall'API, quindi uno zero indica un misuratore guasto;
+- la media delle esecuzioni non vuote è almeno 1 KB;
+- l'ultima registrazione ha meno di 3 ore;
+- le esecuzioni registrate sono almeno l'80% di quelle avviate da `pg_cron` (`cron.job_run_details`). Timeout, crash o registro non raggiungibile risultano così come esecuzioni mancanti.
+
+Conseguenze:
+- **Funzione non affidabile:** si usa il costo prudente di 250 KB per esecuzione, oppure la media misurata se più alta, e il livello massimo è `economy`.
+- **Misuratore silenzioso** per oltre 3 ore con scanner attivi: livello `minimal`.
+- **Consumo del giorno:** si usa il valore più alto tra il consumo misurato e "esecuzioni avviate da `pg_cron` oggi × costo per esecuzione", che non dipende dal misuratore.
+
+Verificato con test dedicati. Senza queste protezioni, un misuratore che registra solo zeri portava il guard a `fast`.
+
+### Autosufficienza: cosa è automatico e cosa no
+**Automatico, senza interventi:**
+- Scelta del livello ogni 30 minuti, discesa immediata, pausa al limite giornaliero e ripresa il giorno dopo.
+- Sospensione su 402 e ripartenza graduale.
+- Rilevazione di telemetria guasta e confronto con le esecuzioni avviate da `pg_cron`.
+- Allerta: il watchdog salva a ogni giro uno stato (`hunt_ops.compute_alert`). Il workflow `.github/workflows/hunt-supabase-guard.yml` lo legge 4 volte al giorno tramite `public.hunt_egress_alert()`, che restituisce solo codici e livello, senza dati personali, in poche centinaia di byte. Il workflow apre **una sola issue GitHub** (con email automatica di GitHub) quando c'è un problema, la aggiorna se cambiano i codici e la chiude da sola. Finché Supabase resta bloccato, dopo il merge il workflow aprirà subito un'issue `supabase_restricted_402`, che riflette lo stato reale. Codici: `supabase_restricted_402`, `quota_402_suspended`, `budget_pause`, `meter_silent`, `telemetry_untrusted` (oltre 24 ore), `cycle_usage_high` (70% del ciclo), `watchdog_not_running`.
+
+**Non misurabile automaticamente con certezza:**
+- **Uncached Egress reale fatturato da Supabase.** Non è leggibile da SQL né dalle Edge Functions. Secondo le fonti consultate, la Management API espone conteggi di richieste ma non i byte di egress; da ricontrollare nella specifica OpenAPI ufficiale prima di escluderlo del tutto. Inserirlo con `hunt_ops.record_observed_egress()` migliora la calibrazione, ma è facoltativo: senza, il guard usa stime prudenti e lo segnala solo come informazione (`no_recent_observed_egress`).
+- **Traffico dell'app nel browser** (PostgREST, Auth, Storage): coperto solo dalla riserva fissa di 10 MB al giorno. Con 2 account è basso, ma non è misurato.
+- **Compressione:** i byte misurati sono quelli decompressi, quindi la stima è prudente, ma non coincide con il fatturato.
+
+**Conseguenza onesta:** la protezione riduce molto il rischio di un nuovo blocco 402, perché usa stime prudenti, conferma le misure con un secondo sistema e si ferma prima del limite. **Non può dimostrare una protezione assoluta**, perché una parte del traffico fatturato non è osservabile. Il watchdog 402 resta l'ultima difesa, e l'issue automatica avvisa senza controlli quotidiani.
+
 ## Modifiche esatte al database di produzione (da approvare prima di applicarle)
 **Migrazione A** — `20261124120000_hunt_incremental_matching_state.sql`. Solo aggiunte, nessun dato modificato.
 - Crea `public.hunt_job_description_digests(uuid[])` e `public.hunt_match_change_token()`: sola lettura.
@@ -67,6 +96,8 @@ Ogni 30 minuti il watchdog (dopo i controlli 402) chiede al guard il livello:
 - Crea funzioni `hunt_ops.*` per calcolo cron, calibrazione, proiezioni, stato, decisione e applicazione del livello.
 - Crea `public.hunt_record_function_usage()`, solo `service_role`.
 - **Sostituisce** `hunt_ops.quota_watchdog()`: stessa logica 402, nuova ripartenza graduale e guard.
+- Crea `public.hunt_egress_alert()`, **leggibile con la chiave pubblica**: espone solo codici di allerta, livello e ora dell'ultimo controllo, nessun dato utente. Serve al workflow GitHub di monitoraggio.
+- Funzioni di telemetria `hunt_ops.function_telemetry()` e `hunt_ops.compute_alert()`; colonne `empty_runs`, `alert` e `alert_at` e nuove soglie in `budget_config`.
 - **Nessun cron viene attivato, disattivato o rischedulato dalla migrazione** (verificato in CI). Con il blocco attuale nulla riparte.
 
 **Deploy Edge Functions**

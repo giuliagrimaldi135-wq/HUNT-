@@ -31,6 +31,7 @@ on:
       - "v2/supabase/tests/**"
       - "v2/supabase/functions/**"
       - ".github/workflows/hunt-v2-tests.yml"
+      - ".github/workflows/hunt-supabase-guard.yml"
   workflow_dispatch:
 
 permissions:
@@ -77,6 +78,9 @@ jobs:
       - name: Usage meter counts Supabase traffic per run (real supabase-js client)
         working-directory: v2/supabase/shared
         run: deno test --allow-net --allow-env --allow-read usage-meter.test.ts
+      - name: Unattended Supabase guard workflow opens, updates and closes one incident
+        working-directory: .
+        run: node --test scripts/test_supabase_guard_workflow.mjs
       - name: Every scheduled function carries the identical usage meter
         working-directory: v2/supabase/functions
         run: |

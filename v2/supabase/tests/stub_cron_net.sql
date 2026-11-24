@@ -1,6 +1,7 @@
 -- Minimal pg_cron / pg_net stand-ins for CI SQL tests. Never applied to production.
 create schema if not exists cron;
 create table cron.job(jobid bigserial primary key, jobname text unique, schedule text not null, command text not null, active boolean not null default true);
+create table cron.job_run_details(runid bigserial primary key, jobid bigint, status text, start_time timestamptz, end_time timestamptz);
 create function cron.alter_job(job_id bigint, schedule text default null, command text default null,
   database text default null, username text default null, active boolean default null) returns void
 language sql as $$

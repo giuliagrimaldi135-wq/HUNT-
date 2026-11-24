@@ -36,9 +36,14 @@ create table if not exists hunt_ops.function_usage_hourly (
   requests bigint not null default 0,
   runs integer not null default 0,
   error_runs integer not null default 0,
+  -- Runs that reported 0 bytes or 0 requests. Every scheduled function reads
+  -- at least its cron secret from the API, so such a run means the meter did
+  -- not see the traffic: evidence of BROKEN telemetry, never of zero cost.
+  empty_runs integer not null default 0,
   duration_ms bigint not null default 0,
   primary key (bucket, function_name)
 );
+alter table hunt_ops.function_usage_hourly add column if not exists empty_runs integer not null default 0;
 revoke all on hunt_ops.function_usage_hourly from public, anon, authenticated;
 
 create or replace function public.hunt_record_function_usage(
@@ -54,15 +59,17 @@ begin
     raise exception 'invalid HUNT usage record';
   end if;
   insert into hunt_ops.function_usage_hourly as u
-    (bucket, function_name, bytes, requests, runs, error_runs, duration_ms)
+    (bucket, function_name, bytes, requests, runs, error_runs, empty_runs, duration_ms)
   values (date_trunc('hour', now()), p_function, p_bytes, p_requests, 1,
           case when coalesce(p_status, 500) >= 500 then 1 else 0 end,
+          case when p_bytes = 0 or p_requests = 0 then 1 else 0 end,
           greatest(coalesce(p_duration_ms, 0), 0))
   on conflict (bucket, function_name) do update set
     bytes = u.bytes + excluded.bytes,
     requests = u.requests + excluded.requests,
     runs = u.runs + 1,
     error_runs = u.error_runs + excluded.error_runs,
+    empty_runs = u.empty_runs + excluded.empty_runs,
     duration_ms = u.duration_ms + excluded.duration_ms;
 end;
 $fn$;
@@ -111,8 +118,21 @@ create table if not exists hunt_ops.budget_config (
   ramp_economy_hours integer not null default 24,
   ramp_balanced_hours integer not null default 48,
   -- Minimum time at a level before moving one step faster.
-  upgrade_cooldown_minutes integer not null default 120
+  upgrade_cooldown_minutes integer not null default 120,
+  -- Telemetry trust (hunt_ops.function_telemetry). Below these, measured costs
+  -- are NOT used and the level is capped (economy; minimal if the meter is silent).
+  min_trusted_runs integer not null default 6,
+  max_empty_run_share numeric not null default 0.1,
+  min_plausible_run_bytes bigint not null default 1000,
+  telemetry_max_age_minutes integer not null default 180,
+  min_dispatch_coverage numeric not null default 0.8
 );
+alter table hunt_ops.budget_config
+  add column if not exists min_trusted_runs integer not null default 6,
+  add column if not exists max_empty_run_share numeric not null default 0.1,
+  add column if not exists min_plausible_run_bytes bigint not null default 1000,
+  add column if not exists telemetry_max_age_minutes integer not null default 180,
+  add column if not exists min_dispatch_coverage numeric not null default 0.8;
 revoke all on hunt_ops.budget_config from public, anon, authenticated;
 insert into hunt_ops.budget_config(singleton) values (1) on conflict (singleton) do nothing;
 
@@ -264,16 +284,67 @@ as $fn$
   from days where est > 0;
 $fn$;
 
--- Average metered bytes per run of one function over the last 48 hours.
+-- Telemetry health of one function over the last 48 hours. TRUSTED only when:
+--   * at least min_trusted_runs runs were recorded;
+--   * at most max_empty_run_share of them reported 0 bytes / 0 requests;
+--   * the average of the non-empty runs is >= min_plausible_run_bytes;
+--   * the latest record is younger than telemetry_max_age_minutes;
+--   * if pg_cron history is available: recorded runs >= min_dispatch_coverage
+--     x runs pg_cron dispatched to this function (timeouts, crashes or a
+--     failing ledger call show up here as missing runs).
+create or replace function hunt_ops.function_telemetry(p_function text, p_now timestamptz default now())
+returns jsonb language plpgsql stable
+set search_path = pg_catalog, hunt_ops, cron
+as $fn$
+declare
+  c hunt_ops.budget_config%rowtype;
+  runs bigint; empty bigint; total_bytes numeric; last_seen timestamptz; dispatched bigint := null;
+  avg_valid numeric; reasons text[] := '{}';
+begin
+  select * into c from hunt_ops.budget_config where singleton = 1;
+  select coalesce(sum(u.runs), 0), coalesce(sum(u.empty_runs), 0),
+         coalesce(sum(u.bytes), 0), max(u.bucket) + interval '1 hour'
+    into runs, empty, total_bytes, last_seen
+  from hunt_ops.function_usage_hourly u
+  where u.function_name = p_function and u.bucket > p_now - interval '48 hours' and u.bucket <= p_now;
+  -- Empty runs carry 0 bytes, so this is the average of the non-empty runs.
+  avg_valid := case when runs - empty > 0 then total_bytes / (runs - empty) end;
+  if to_regclass('cron.job_run_details') is not null then
+    execute $q$
+      select count(*) from cron.job_run_details d
+      join cron.job j on j.jobid = d.jobid
+      join hunt_ops.scan_levels l on l.jobname = j.jobname and l.level = 'fast'
+      where l.function_name = $1
+        and d.start_time > $2 - interval '48 hours'
+        and d.start_time <= $2 - interval '10 minutes'
+    $q$ into dispatched using p_function, p_now;
+  end if;
+  if runs < c.min_trusted_runs then reasons := reasons || 'too_few_runs'::text; end if;
+  if runs > 0 and empty::numeric / runs > c.max_empty_run_share then reasons := reasons || 'empty_runs'::text; end if;
+  if avg_valid is null or avg_valid < c.min_plausible_run_bytes then reasons := reasons || 'implausible_bytes'::text; end if;
+  if last_seen is null or last_seen < p_now - make_interval(mins => c.telemetry_max_age_minutes) then reasons := reasons || 'stale'::text; end if;
+  if coalesce(dispatched, 0) > 0 and runs::numeric < dispatched * c.min_dispatch_coverage then reasons := reasons || 'missing_runs_vs_cron'::text; end if;
+  return jsonb_build_object('function', p_function, 'trusted', cardinality(reasons) = 0, 'reasons', to_jsonb(reasons),
+    'runs', runs, 'empty_runs', empty, 'avg_bytes_per_valid_run', round(avg_valid),
+    'last_seen', last_seen, 'cron_dispatched', dispatched);
+end;
+$fn$;
+
+-- Bytes assumed per run. The measured average is used ONLY for trusted
+-- telemetry; otherwise the conservative default (or the measured average if
+-- higher). Zero or missing measurements can never make a level look cheaper.
 create or replace function hunt_ops.function_bytes_per_run(p_function text, p_now timestamptz default now())
-returns numeric language sql stable
+returns numeric language plpgsql stable
 set search_path = pg_catalog, hunt_ops
 as $fn$
-  select case when coalesce(sum(runs), 0) >= 3 then sum(bytes)::numeric / sum(runs)
-              else greatest((select default_run_bytes from hunt_ops.budget_config where singleton = 1),
-                            coalesce(sum(bytes)::numeric / nullif(sum(runs), 0), 0)) end
-  from hunt_ops.function_usage_hourly
-  where function_name = p_function and bucket > p_now - interval '48 hours';
+declare t jsonb := hunt_ops.function_telemetry(p_function, p_now); c hunt_ops.budget_config%rowtype;
+begin
+  select * into c from hunt_ops.budget_config where singleton = 1;
+  if (t->>'trusted')::boolean then
+    return greatest((t->>'avg_bytes_per_valid_run')::numeric, c.min_plausible_run_bytes);
+  end if;
+  return greatest(c.default_run_bytes, coalesce((t->>'avg_bytes_per_valid_run')::numeric, 0));
+end;
 $fn$;
 
 -- Projected bytes per day for a level (metered part, before calibration).
@@ -299,7 +370,8 @@ declare
   factor numeric := hunt_ops.egress_calibration(p_now);
   metered_today numeric; metered_cycle numeric; observed_cycle numeric; observed_days int;
   used_today numeric; used_cycle numeric; pace numeric; effective numeric;
-  projections jsonb;
+  projections jsonb; telemetry jsonb; untrusted jsonb; meter_silent boolean;
+  ctl hunt_ops.scan_control%rowtype; dispatched_today numeric := 0;
 begin
   select * into c from hunt_ops.budget_config where singleton = 1;
   cycle_start := make_date(extract(year from p_now at time zone 'UTC')::int, extract(month from p_now at time zone 'UTC')::int, c.cycle_anchor_day);
@@ -310,7 +382,30 @@ begin
   select coalesce(sum(bytes), 0) into metered_cycle from function_usage_hourly where bucket >= cycle_start::timestamptz;
   select coalesce(sum(uncached_egress_bytes), 0), count(*) into observed_cycle, observed_days
     from observed_egress where day >= cycle_start and day < (p_now at time zone 'UTC')::date;
-  used_today := metered_today * factor + c.unmetered_reserve_bytes * day_fraction;
+  select * into ctl from hunt_ops.scan_control where singleton = 1;
+  select jsonb_agg(hunt_ops.function_telemetry(f, p_now) order by f)
+    into telemetry from (select distinct function_name f from hunt_ops.scan_levels) fs;
+  select coalesce(jsonb_agg(t->'function'), '[]') into untrusted
+    from jsonb_array_elements(telemetry) t where not (t->>'trusted')::boolean;
+  -- The whole meter is silent while scanners have been running long enough.
+  meter_silent := ctl.current_level <> 'paused'
+    and ctl.level_since < p_now - make_interval(mins => c.telemetry_max_age_minutes)
+    and not exists (select 1 from function_usage_hourly
+                    where bucket > p_now - make_interval(mins => c.telemetry_max_age_minutes) and bucket <= p_now);
+  -- Independent of the meter: runs pg_cron dispatched today x assumed cost per
+  -- run (trusted measurement, or the conservative default).
+  if to_regclass('cron.job_run_details') is not null then
+    execute $q$
+      select coalesce(sum(n * hunt_ops.function_bytes_per_run(f, $2)), 0) from (
+        select l.function_name f, count(*) n from cron.job_run_details d
+        join cron.job j on j.jobid = d.jobid
+        join hunt_ops.scan_levels l on l.jobname = j.jobname and l.level = 'fast'
+        where d.start_time >= $1 and d.start_time <= $2 group by 1) x
+    $q$ into dispatched_today using day_start, p_now;
+  end if;
+  -- Use the HIGHER of the metered figure and the dispatch-based figure.
+  used_today := greatest(metered_today * factor, dispatched_today * factor)
+                + c.unmetered_reserve_bytes * day_fraction;
   used_cycle := greatest(
     metered_cycle * factor + c.unmetered_reserve_bytes * extract(epoch from (p_now - cycle_start::timestamptz)) / 86400,
     observed_cycle);
@@ -324,8 +419,16 @@ begin
     'estimate', jsonb_build_object(
       'note', 'metered Edge Function API responses x calibration + unmetered reserve',
       'used_today_bytes', round(used_today), 'used_cycle_bytes', round(used_cycle),
-      'metered_today_bytes', metered_today, 'calibration_factor', factor,
+      'metered_today_bytes', metered_today, 'dispatch_based_today_bytes', round(dispatched_today),
+      'calibration_factor', factor,
       'projected_bytes_per_day_by_level', projections),
+    'telemetry', jsonb_build_object(
+      'note', 'measured costs are used only for trusted functions; others use the conservative default',
+      'meter_silent', meter_silent, 'untrusted_functions', untrusted, 'functions', telemetry),
+    'not_measured', jsonb_build_array(
+      'browser app traffic (PostgREST, Auth, Storage) - covered only by unmetered_reserve_bytes',
+      'gzip: metered bytes are decompressed sizes, billed bytes may be lower',
+      'real Supabase Uncached Egress - not exposed to SQL or Edge Functions; enter it with hunt_ops.record_observed_egress'),
     'observed', jsonb_build_object(
       'note', 'real Supabase Uncached Egress entered from the Usage page',
       'cycle_bytes', observed_cycle, 'days_recorded', observed_days,
@@ -357,7 +460,7 @@ declare
   -- that correct them): the lowest level is the floor. Only usage already
   -- recorded (daily allowance or cycle pace) pauses.
   target text := 'minimal'; reason text := 'no level fits the projection; lowest level keeps measuring';
-  cap text := 'fast'; cur_rank int; target_rank int; r record; projected numeric;
+  cap text := 'fast'; cap_reason text; cur_rank int; target_rank int; r record; projected numeric;
 begin
   select * into c from budget_config where singleton = 1;
   select * into ctl from scan_control where singleton = 1;
@@ -376,13 +479,23 @@ begin
   end if;
   -- Gradual restart after a quota block.
   if ctl.ramp_started_at is not null then
-    if p_now < ctl.ramp_started_at + make_interval(hours => c.ramp_economy_hours) then cap := 'economy';
-    elsif p_now < ctl.ramp_started_at + make_interval(hours => c.ramp_balanced_hours) then cap := 'balanced';
+    if p_now < ctl.ramp_started_at + make_interval(hours => c.ramp_economy_hours) then
+      cap := 'economy'; cap_reason := 'post-recovery ramp';
+    elsif p_now < ctl.ramp_started_at + make_interval(hours => c.ramp_balanced_hours) then
+      cap := 'balanced'; cap_reason := 'post-recovery ramp';
     end if;
+  end if;
+  -- Telemetry guard: missing, stale, empty or implausible measurements never
+  -- allow a faster level.
+  if (s#>>'{telemetry,meter_silent}')::boolean then
+    cap := 'minimal'; cap_reason := 'usage meter silent';
+  elsif jsonb_array_length(s#>'{telemetry,untrusted_functions}') > 0
+        and (select rank from scan_level_rank where level = cap) > 2 then
+    cap := 'economy'; cap_reason := 'telemetry not trusted for ' || (s#>>'{telemetry,untrusted_functions}');
   end if;
   select rank into target_rank from scan_level_rank where level = target;
   if target_rank > (select rank from scan_level_rank where level = cap) then
-    target := cap; reason := reason || '; capped by post-recovery ramp';
+    target := cap; reason := reason || '; capped: ' || cap_reason;
     target_rank := (select rank from scan_level_rank where level = cap);
   end if;
   select coalesce((select rank from scan_level_rank where level = ctl.current_level), 0) into cur_rank;
@@ -444,6 +557,66 @@ begin
   return d;
 end;
 $fn$;
+
+-- --------------------------------------------------------------- alerts ----
+-- Unattended monitoring. The watchdog stores a small alert record every 30
+-- minutes; public.hunt_egress_alert() only READS it (no computation, no user
+-- data, ~300 bytes), so the scheduled GitHub workflow hunt-supabase-guard.yml
+-- can open ONE issue (GitHub e-mails the owner) and close it automatically.
+-- Codes in "alerts" need attention; codes in "info" are reported only.
+alter table hunt_ops.scan_control add column if not exists alert jsonb;
+alter table hunt_ops.scan_control add column if not exists alert_at timestamptz;
+
+create or replace function hunt_ops.compute_alert(p_now timestamptz default now())
+returns jsonb language plpgsql stable
+set search_path = pg_catalog, hunt_ops
+as $fn$
+declare
+  q hunt_ops.quota_control%rowtype; ctl hunt_ops.scan_control%rowtype; c hunt_ops.budget_config%rowtype;
+  s jsonb; alerts text[] := '{}'; info text[] := '{}'; running_since timestamptz;
+begin
+  select * into q from hunt_ops.quota_control where singleton = 1;
+  select * into ctl from hunt_ops.scan_control where singleton = 1;
+  select * into c from hunt_ops.budget_config where singleton = 1;
+  if q.suspended then
+    return jsonb_build_object('ok', false, 'level', 'suspended_402', 'alerts', jsonb_build_array('quota_402_suspended'),
+      'info', '[]'::jsonb, 'computed_at', p_now);
+  end if;
+  s := hunt_ops.egress_status(p_now);
+  running_since := greatest(q.resumed_at, ctl.ramp_started_at);
+  if ctl.current_level = 'paused' then alerts := alerts || 'budget_pause'::text; end if;
+  if (s#>>'{telemetry,meter_silent}')::boolean then alerts := alerts || 'meter_silent'::text; end if;
+  if jsonb_array_length(s#>'{telemetry,untrusted_functions}') > 0 then
+    if running_since is not null and running_since < p_now - interval '24 hours' then
+      alerts := alerts || 'telemetry_untrusted'::text;
+    else info := info || 'telemetry_warming_up'::text; end if;
+  end if;
+  if (s#>>'{estimate,used_cycle_bytes}')::numeric >= c.cycle_quota_bytes * 0.7 then alerts := alerts || 'cycle_usage_high'::text; end if;
+  if (s#>>'{budget,effective_daily_bytes}')::numeric < c.daily_budget_bytes * 0.5 then info := info || 'cycle_pace_tight'::text; end if;
+  if not exists (select 1 from hunt_ops.observed_egress where day > (p_now at time zone 'UTC')::date - 14) then
+    info := info || 'no_recent_observed_egress'::text;
+  end if;
+  return jsonb_build_object('ok', cardinality(alerts) = 0, 'level', ctl.current_level,
+    'alerts', to_jsonb(alerts), 'info', to_jsonb(info), 'computed_at', p_now);
+end;
+$fn$;
+
+create or replace function public.hunt_egress_alert()
+returns jsonb language sql stable security definer
+set search_path = pg_catalog, hunt_ops
+as $fn$
+  select case
+    when c.alert is null then jsonb_build_object('ok', false, 'alerts', jsonb_build_array('guard_not_started'), 'checked_at', null)
+    -- The watchdog runs every 30 minutes; an old record means it stopped.
+    when c.alert_at < now() - interval '90 minutes' then
+      c.alert || jsonb_build_object('ok', false, 'alerts', (c.alert->'alerts') || '["watchdog_not_running"]'::jsonb, 'checked_at', c.alert_at)
+    else c.alert || jsonb_build_object('checked_at', c.alert_at)
+  end
+  from hunt_ops.scan_control c where c.singleton = 1;
+$fn$;
+revoke all on function public.hunt_egress_alert() from public;
+-- Readable with the public (publishable) key: codes and level only.
+grant execute on function public.hunt_egress_alert() to anon, authenticated, service_role;
 
 -- ------------------------------------------------------------ watchdog ----
 -- Same 402 suspension and probe rules as 20261119151000. Changes:
@@ -508,6 +681,9 @@ begin
   if not st.suspended and not resumed_now then
     perform hunt_ops.egress_guard_tick(now());
   end if;
+  -- Persist the state first so compute_alert sees this tick's suspension.
+  update hunt_ops.quota_control set suspended = st.suspended, resumed_at = st.resumed_at where singleton = 1;
+  update hunt_ops.scan_control set alert = hunt_ops.compute_alert(now()), alert_at = now() where singleton = 1;
 
   new_probe := net.http_get(
     url := 'https://dfiokxjfgqoboxckcuut.supabase.co/auth/v1/.well-known/jwks.json',
