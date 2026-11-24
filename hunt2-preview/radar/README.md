@@ -22,6 +22,16 @@ Oltre agli ATS, `refresh.py` sa leggere **feed pubblici ufficiali RSS 2.0 / Atom
 
 Ralph Lauren è configurato ma **disattivato**: il 24/11 il feed rispondeva con una sfida AWS WAF.
 
+## Sitemap ufficiali + pagine annuncio JSON-LD (dal 24/11/2026)
+
+Famiglia `sitemap_jsonld` in `boards.json` (prima fonte: **PVH**, cioè Calvin Klein e Tommy Hilfiger, `careers.pvh.com`). Funzionamento:
+- legge solo le sitemap dichiarate nel `robots.txt` ufficiale del sito, sui domini dichiarati in `link_hosts`;
+- apre le pagine annuncio e tiene un'offerta **solo** se la pagina contiene un `JobPosting` schema.org (titolo, città/regione, Paese, data `datePosted`, marchio da `hiringOrganization`);
+- al massimo `max_pages_per_run` pagine per giro (120 per PVH), con 1 secondo di pausa tra una pagina e l'altra; dopo 5 errori di fila si ferma e riprova al giro successivo; una sfida anti-bot ferma la fonte;
+- `sitemap-state.json` ricorda cosa è già stato controllato (solo indirizzi pubblici, stato e ora): una pagina valida viene ricontrollata dopo 2 giorni, una pubblicata da più di 20 giorni dopo 7, una chiusa (404/410) viene tolta subito dal radar e dimenticata dopo 30 giorni;
+- al primo giro le pagine si aprono in quest'ordine: stage/junior, poi ruoli d'ufficio, poi negozio. Nessun ruolo viene escluso;
+- data sconosciuta resta sconosciuta; `validThrough` scaduto = offerta scartata.
+
 ## Prima esecuzione verificata
 
 **19 novembre 2026 ore 15:44 UTC**: workflow automatico ha prodotto `jobs.json` con **808 offerte pubbliche**, **13/13 board ATS controllate con risposta valida**, di cui **205 record riverificati nel ciclo**; 35 brand complessivi nel catalogo, 43 posti classificati stage/junior nell'area di Milano. I record iniziali da altri portali restano solo fino alla scadenza della loro ultima verifica (massimo 7 giorni) se il loro ATS non è ancora collegato. La frequenza delle nuove *scoperte* non coincide con la data di *pubblicazione*.

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "description": "Public official ATS boards and official public career feeds only; no account tokens, Supabase keys, private user data, bot-challenge bypass or site scraping.",
+  "description": "Public official ATS boards, official public career feeds and official sitemaps with JSON-LD job pages only; no account tokens, Supabase keys, private user data, search endpoints, bot-challenge bypass.",
   "boards": [
     {
       "family": "ats_greenhouse",
@@ -151,6 +151,23 @@
       ],
       "enabled": false,
       "disabled_reason": "24/11/2026: il feed risponde con una sfida anti-bot (AWS WAF challenge, HTTP 202 vuoto). HUNT non la aggira: riattivare solo se il feed torna leggibile senza sfida o con un accesso ufficiale per partner."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "PVH",
+      "sitemap_urls": [
+        "https://careers.pvh.com/us/en/sitemap_index.xml"
+      ],
+      "link_hosts": [
+        "careers.pvh.com"
+      ],
+      "job_url_regex": "^https://careers\\.pvh\\.com/us/en/job/[A-Za-z0-9]+/",
+      "brands_from_hiring_org": [
+        "Calvin Klein",
+        "Tommy Hilfiger"
+      ],
+      "max_pages_per_run": 120,
+      "note": "Sitemap ufficiale dichiarata in careers.pvh.com/robots.txt; ogni annuncio confermato dal JSON-LD JobPosting della sua pagina. Verificato il 24/11/2026: 1.116 annunci in sitemap."
     }
   ],
   "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."
