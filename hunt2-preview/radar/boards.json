@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Public official ATS boards only; no account tokens, Supabase keys, private user data or site scraping.",
   "boards": [
     {
@@ -66,6 +66,82 @@
       "family": "ats_workable",
       "board": "wolfandbadger",
       "brand": "Wolf & Badger"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "reformation",
+      "brand": "Reformation"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "mejuri",
+      "brand": "Mejuri"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "everlane",
+      "brand": "Everlane"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "renttherunway",
+      "brand": "Rent the Runway"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "glossier",
+      "brand": "Glossier"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "khaite",
+      "brand": "KHAITE"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "aimeleondore",
+      "brand": "Aimé Leon Dore"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "stockx",
+      "brand": "StockX"
+    },
+    {
+      "family": "ats_greenhouse",
+      "board": "tatcha",
+      "brand": "Tatcha"
+    },
+    {
+      "family": "ats_ashby",
+      "board": "farfetch",
+      "brand": "Farfetch"
+    },
+    {
+      "family": "ats_ashby",
+      "board": "dweet",
+      "brand": "Dweet"
+    },
+    {
+      "family": "ats_ashby",
+      "board": "jigsaw",
+      "brand": "Jigsaw"
+    },
+    {
+      "family": "ats_smartrecruiters",
+      "board": "SMCP",
+      "brand": "SMCP (Sandro, Maje, Claudie Pierlot)"
+    },
+    {
+      "family": "ats_smartrecruiters",
+      "board": "Primark",
+      "brand": "Primark"
+    },
+    {
+      "family": "ats_smartrecruiters",
+      "board": "LVMH",
+      "brand": "LVMH"
     }
-  ]
+  ],
+  "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."
 }

@@ -22,7 +22,7 @@ now = lambda: dt.datetime.now(UTC)
 UTC_ISO = lambda d: d.astimezone(UTC).isoformat().replace("+00:00", "Z")
 USER_AGENT = "HUNT-Public-Radar/1.0 (independent read-only career links; GitHub Actions)"
 MAX_RESPONSE_BYTES = 7_000_000
-MAX_PAGES = 3
+MAX_PAGES = 10
 MAX_JOBS = 2500
 
 
@@ -150,6 +150,16 @@ def pages(board):
     raise ValueError("Not an approved public ATS family")
 
 
+def smartrecruiters_public_url(board, item):
+    """The postings list API has no public link; the official public posting
+    page is jobs.smartrecruiters.com/<company identifier>/<numeric posting id>."""
+    ident = str((item.get("company") or {}).get("identifier") or board["board"])
+    posting = str(item.get("id") or "")
+    if not re.fullmatch(r"[A-Za-z0-9_-]{2,90}", ident) or not re.fullmatch(r"\d{8,20}", posting):
+        return None
+    return f"https://jobs.smartrecruiters.com/{ident}/{posting}"
+
+
 def parse_jobs(board, payload):
     family = board["family"]
     if family == "ats_greenhouse":
@@ -170,6 +180,7 @@ def parse_jobs(board, payload):
     for item in entries:
         if not isinstance(item, dict):
             continue
+        entry_country = ""
         try:
             if family == "ats_greenhouse":
                 title = item.get("title")
@@ -193,8 +204,11 @@ def parse_jobs(board, payload):
                 title = item.get("name")
                 loc = item.get("location") or {}
                 location = ", ".join(str(v) for v in (loc.get("city"),loc.get("region")) if v)
-                url = item.get("postingUrl") or item.get("applyUrl")
+                url = item.get("postingUrl") or item.get("applyUrl") or smartrecruiters_public_url(board, item)
                 posted = item.get("releasedDate")
+                country = str(loc.get("country") or "").upper()
+                if re.fullmatch(r"[A-Z]{2}", country):
+                    entry_country = country
             else:
                 title = item.get("text")
                 location = (item.get("categories") or {}).get("location")
@@ -207,7 +221,8 @@ def parse_jobs(board, payload):
             if not location:
                 location = "Remote" if item.get("isRemote") else ""
             output.append({"title":title,"city":clean(location,115),
-                           "url":url,"published_at":parse_date(posted)})
+                           "url":url,"published_at":parse_date(posted),
+                           "country":entry_country})
         except (TypeError, KeyError, AttributeError):
             continue
     return output
@@ -229,7 +244,7 @@ def public_job(entry,board,existing,current):
         "level":seniority(title) if seniority(title)!="unspecified" else
             (existing.get("level") if existing else "unspecified"),
         "city":entry["city"] or (existing.get("city") if existing else ""),
-        "country":(existing.get("country") if existing else ""),
+        "country":entry.get("country") or (existing.get("country") if existing else ""),
         "published_at":date,
         "first_seen_at":first,
         "last_verified_at":UTC_ISO(current),

@@ -33,6 +33,22 @@ class PublicRadarSafety(unittest.TestCase):
         self.assertEqual(rows[0]["published_at"],"2026-11-18T09:00:00Z")
         self.assertEqual(rows[0]["city"],"Milano, Lombardia")
 
+    def test_smartrecruiters_list_without_public_link(self):
+        # Real list API shape (24/11/2026): no postingUrl, numeric id + company identifier.
+        b={"family":"ats_smartrecruiters","board":"SMCP","brand":"SMCP"}
+        rows=refresh.parse_jobs(b,{"content":[{
+            "id":"744000163504186","name":"Merchandising Intern",
+            "company":{"identifier":"SMCP","name":"SMCP"},
+            "releasedDate":"2026-11-18T09:00:00Z",
+            "ref":"https://api.smartrecruiters.com/v1/companies/SMCP/postings/744000163504186",
+            "location":{"city":"Rome","region":"Lazio","country":"it"}
+        },{"id":"not-a-number","name":"Broken posting id","company":{"identifier":"SMCP"}}]})
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["url"],"https://jobs.smartrecruiters.com/SMCP/744000163504186")
+        self.assertEqual(rows[0]["country"],"IT")
+        item=refresh.public_job(rows[0],b,None,self.now)
+        self.assertEqual(item["country"],"IT")
+
     def test_no_senior_titles_as_junior(self):
         self.assertEqual(refresh.seniority("Senior HR Business Partner"),"senior_manager")
         self.assertEqual(refresh.seniority("Retail Manager"),"manager")
