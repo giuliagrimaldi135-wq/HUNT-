@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { chooseUniqueJobs, freshnessCutoff } from "./recommendation-guard.mjs";
@@ -239,7 +240,7 @@ function profileEvidence(cv:any,family:string|null){
   return [...new Set(out)].slice(0,2);
 }
 
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-match-refresh",async(req)=>{
   const db=admin();
   const supplied=req.headers.get("x-hunt-cron")||"";
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -559,4 +560,4 @@ Deno.serve(async(req)=>{
   const state=nextState({previous:previousState,mode:plan.mode,engineVersion:ENGINE_VERSION,nowMs,uniqueJobIds,jobFps,userFps,evaluated,matchedKeys,token:changeToken});
   const {error:stateError}=await db.rpc("hunt_match_refresh_state_put",{p_state:state});
   return new Response(JSON.stringify({ok:true,mode:plan.mode,modeReason:plan.reason,changeReasons:plan.reasons,jobsEvaluated:evaluated.size,descriptionsRead:fullRows.size,digestsAvailable,stateSaved:!stateError,readBytesEstimate,priorityOnlyRefreshes,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicatesWithMatches.length,providerOldCandidatesExcluded:provablyOldJobIDs.length,analysisWrites,recommendationWrites,skippedWrites,actualDeletes:[...removeIdsByUser.values()].reduce((n,s)=>n+s.size,0)}),{headers:{"content-type":"application/json"}});
-});
+}));

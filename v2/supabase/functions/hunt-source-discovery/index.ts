@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { chooseCareerScanBatch } from "./source-health-policy.mjs";
@@ -191,7 +192,7 @@ function resolveCompanyId(jp:any,title:string,fallback:string,companies:any[]){
   return fallback;
 }
 
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-source-discovery",async(req)=>{
   const db=admin();
   const supplied=req.headers.get("x-hunt-cron")||"";
   const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -435,4 +436,4 @@ Deno.serve(async(req)=>{
   // Matching is invoked by the dedicated hourly pg_cron job. Never call it
   // once per discovery scan: no new vacancies often means an expensive no-op.
   return new Response(JSON.stringify({ok:true,...summary}),{headers:{"content-type":"application/json"}});
-});
+}));

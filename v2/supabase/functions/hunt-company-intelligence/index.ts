@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {publishedDateInArticleURL,belongsToNamedCompany,labeledPressPublishedDate} from "./article-provenance.mjs";
@@ -126,7 +127,7 @@ function signalType(title:string,desc:string,sourceType:string){
  if(sourceType==="sustainability")return "sustainability";
  return "news";
 }
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-company-intelligence",async(req)=>{
  const db=admin();
  const supplied=req.headers.get("x-hunt-cron")||"";
  const {data:secret}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -191,4 +192,4 @@ Deno.serve(async(req)=>{
    await db.from("intelligence_scan_runs").insert({source_id:source.id,started_at:started,finished_at:new Date().toISOString(),request_ok:requestOk,parser_ok:parserOk,extracted_items:extracted,health_status:requestOk?"healthy":"degraded",metadata:{scanner:"hunt-intelligence-v2"}});
  }
  return new Response(JSON.stringify({ok:true,scanned,signals,errors}),{headers:{"content-type":"application/json"}});
-});
+}));

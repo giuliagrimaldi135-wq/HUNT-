@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { shouldTransitionFromConfirmedRemoval } from "./monitor-policy.mjs";
@@ -58,7 +59,7 @@ function getAdminClient() {
   });
 }
 
-Deno.serve(async (req: Request) => {
+Deno.serve(meterUsage("hunt-vacancy-monitor",async (req: Request) => {
   const admin = getAdminClient();
 
   const supplied = req.headers.get("x-hunt-cron") || "";
@@ -282,4 +283,4 @@ Deno.serve(async (req: Request) => {
   return new Response(JSON.stringify({ ok: true, ...summary }), {
     headers: { "content-type": "application/json" },
   });
-});
+}));

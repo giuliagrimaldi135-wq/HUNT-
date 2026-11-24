@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {isRealCareerPosting,trustedSmartRecruitersIdentity,isEligibleForStaleTransition} from "./ats-ingestion-guard.mjs";
@@ -114,7 +115,7 @@ function mapped(source:any,data:any){
  }
  throw Error("Malformed public ATS response");
 }
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-ats-board-scan",async(req)=>{
  try{
   const db=client(),supplied=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error:secretError}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -360,4 +361,4 @@ Deno.serve(async(req)=>{
   return Response.json({ok:failedBoards===0,partial:failedBoards>0,failedBoards,
     backoffSkipped:skippedBackoff,boards,available,inserted,updated,rejected,unchanged,details});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
-});
+}));

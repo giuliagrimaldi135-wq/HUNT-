@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {scanHealth} from "./scan-health.mjs";
 import {selectCatalogRotation,advanceCatalogCursors} from "./catalog-rotation.mjs";
@@ -77,7 +78,7 @@ function pageInfo(html:string,url:string){
  const jobId=doc.match(/\bID:\s*(\d{3,12})\b/);
  return {title,description:desc,published,city:city?tidy(city[1]):null,country:country?country[1]:null,jobId:jobId?jobId[1]:null,url};
 }
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-successfactors-public",async(req)=>{
  try{
   const client=db(),token=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error}=await client.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -170,4 +171,4 @@ Deno.serve(async(req)=>{
   }
   return Response.json({ok:true,dry_run:dry,backoff_skipped:skippedBackoff.length,backoff_minutes:skippedBackoff.map(x=>({source:x.id,minutes:successFactorsCooldownMinutes(x.consecutive_failures)})),results});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
-});
+}));

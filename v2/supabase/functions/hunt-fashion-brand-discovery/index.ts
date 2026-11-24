@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 import {createClient} from "npm:@supabase/supabase-js@2";
 const enc=new TextEncoder();
 async function sha(v:string){return [...new Uint8Array(await crypto.subtle.digest("SHA-256",enc.encode(v)))].map(x=>x.toString(16).padStart(2,"0")).join("")}
@@ -34,7 +35,7 @@ const categories=["Womenswear","Menswear","Accessories","Footwear","Bags","Jewel
 // Rotate through international public directory filters. A filtered country is not
 // verified proof of head-office location, so no country_code is inferred.
 const markets=countries.flatMap(country=>categories.map(category=>[country,category]));
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-fashion-brand-discovery",async(req)=>{
  try{
   const db=admin(),token=req.headers.get("x-hunt-cron")||"";
   const {data:sec,error}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -88,4 +89,4 @@ Deno.serve(async(req)=>{
   }
   return Response.json({ok:true,route:listing,discovered:created,checked,website_leads:websiteLeads,profiles_on_page:items.length,details:reports});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
-});
+}));
