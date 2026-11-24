@@ -464,6 +464,14 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 | 24/11/2026 | Claude | Creati questo documento e `CLAUDE.md` per la continuità tra sessioni | PR #68, unita |
 | 24/11/2026 | Claude (autorizzato dall'utente) | Connettori Supabase e Vercel collegati. **Migrazioni A e B applicate in produzione** (B in 3 parti). Verificato: scanner ancora fermi, 402 attivo, dati intatti (2 account, 2 CV, 11 candidature, 1.414 offerte). Controllato che il codice delle 13 funzioni in produzione coincidesse con GitHub. Aggiunto il workflow manuale di deploy delle funzioni | Fatto. Poi pubblicate tutte e 13 le funzioni (vedi §6). Verifica a runtime dopo lo sblocco |
 
+**Ricerca fonti del 24/11 (da riprendere nella prossima sessione):**
+- **Provati circa 150 brand di lusso** (Kering, Richemont, LVMH, maison italiane e francesi) su Greenhouse, Lever, Ashby e SmartRecruiters: quasi nessuno li usa. Le grandi maison usano SuccessFactors, Workday, Oracle o siti propri.
+- **Falsi positivi esclusi:** `fay` (Greenhouse, startup tecnologica americana), `ami` (Ashby, laboratorio di ricerca), `vuori` (agenzia), `Essilorluxottica` (SmartRecruiters, account demo). Controllare sempre nome dell'azienda e titoli delle offerte.
+- **Pista migliore:** feed pubblici ufficiali (RSS) dei siti carriere, ad esempio Ralph Lauren `https://careers.ralphlauren.com/CareersCorporate/SearchJobsCorporate/intern/feed`. Serve:
+  1. un nuovo tipo di lettore "feed pubblico" nel radar;
+  2. l'aggiunta del dominio all'ambiente cloud "HUNT" (richiede l'approvazione dell'utente).
+- **Altri siti carriere da analizzare:** careers.pvh.com, tapestry.com/careers, capriholdings.com (Michael Kors, Jimmy Choo). Usare solo formati pubblici (feed, sitemap, pagine annuncio con JSON-LD). **Mai** chiavi di ricerca estratte dal codice dei siti: il sistema di sicurezza lo blocca, e giustamente.
+
 **Prossimi passi concordati:**
 1. ~~Unire #66 e #67~~ (fatto il 24/11).
 2. ~~Collegare i connettori Supabase e Vercel~~ (fatto il 24/11).
