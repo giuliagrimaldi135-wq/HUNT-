@@ -5,9 +5,14 @@ import { chooseRelevantCvProfile } from "./cv-evidence.mjs";
 import { supplierRiskNeedsExplicitInterest, fashionSourcingEvidence } from "./role-specialization.mjs";
 import {seniorityOverrideFromTitle} from "./seniority-guard.mjs";
 import {analysisNeedsWrite,matchNeedsWrite,existingRecommendationKey} from "./match-write-policy.mjs";
+import {LIGHT_JOB_COLUMNS,FULL_JOB_COLUMNS,lightJob,jobFingerprint,userFingerprint,duplicateCandidateIds,planEvaluation,nextState,priorityScore,canSkipRun} from "./incremental-plan.mjs";
 
 const enc=new TextEncoder();
 const DAY=86400000;
+const MODEL_VERSION="eligibility-v2";
+// Bump whenever scoring/eligibility logic below changes: it forces a FULL
+// evaluation of every user and vacancy on the next run.
+const ENGINE_VERSION="match-engine-2026-11-24.1|"+MODEL_VERSION;
 
 async function sha256Hex(v:string){
   const b=await crypto.subtle.digest("SHA-256",enc.encode(v));
@@ -241,16 +246,36 @@ Deno.serve(async(req)=>{
   if(!secret||!supplied||!safeEqual(await sha256Hex(supplied),secret.secret_hash))return new Response('{"error":"unauthorized"}',{status:401});
 
   const cutoff=freshnessCutoff();
+  const params=await req.json().catch(()=>({}));
+  const nowMs=Date.now();
+  let readBytesEstimate=0;
+  const measure=(rows:any)=>{try{readBytesEstimate+=JSON.stringify(rows??null).length}catch{}return rows};
+  // 1) Cheap check first: a Postgres-side digest of every input the matcher
+  // reads (vacancies, users, CVs, preferences, recommendations). It is read
+  // BEFORE the data, so any change made after this point is seen next run.
+  const [stateRead,tokenRead]=await Promise.all([
+    db.rpc("hunt_match_refresh_state_get"),
+    db.rpc("hunt_match_change_token")
+  ]);
+  // State is optional: without it (migration not applied yet) every run is FULL,
+  // exactly like the previous matcher.
+  const previousState=stateRead?.error?null:measure(stateRead?.data??null);
+  const changeToken=tokenRead?.error?null:(measure(tokenRead?.data)?String(tokenRead.data):null);
+  if(canSkipRun({state:previousState,engineVersion:ENGINE_VERSION,token:changeToken,nowMs,forceFull:params?.full===true})){
+    return new Response(JSON.stringify({ok:true,mode:"skipped",modeReason:"no_input_changed",readBytesEstimate}),{headers:{"content-type":"application/json"}});
+  }
   const [{data:jobs,error:jobsError},{data:prefs,error:prefsError},{data:profiles,error:profilesError},{data:personal,error:personalError},{data:cvs,error:cvsError},{data:existingMatches,error:existingMatchesError}]=await Promise.all([
-    db.from("jobs").select("id,company_id,requisition_id,primary_apply_url,canonical_title,role_family,seniority,employment_type,city,remote_mode,description,published_at,first_seen_at,last_verified_at,vacancy_confidence,state,metadata")
+    // Light columns only: descriptions are read below just for vacancies that
+    // must be evaluated again (see incremental-plan.mjs).
+    db.from("jobs").select(LIGHT_JOB_COLUMNS)
       .in("state",["active_verified","active_likely"])
       .or(`published_at.gte.${cutoff},and(published_at.is.null,first_seen_at.gte.${cutoff})`)
-      .gte("last_verified_at",new Date(Date.now()-7*DAY).toISOString())
+      .gte("last_verified_at",new Date(nowMs-7*DAY).toISOString())
       .limit(2000),
     db.from("career_preferences").select("user_id,primary_role_families,preferred_locations,relocation_locations,employment_types,preferences"),
     db.from("profiles").select("user_id,seniority").eq("onboarding_completed",true),
     db.from("user_personalization").select("user_id,interest_areas,avoid_role_traits"),
-    db.from("user_cvs").select("user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true),
+    db.from("user_cvs").select("id,user_id,parsed_profile,is_default,active,target_role_families,updated_at").eq("active",true),
     db.from("user_job_matches").select("user_id,job_id,match_score,priority_score,reasons,gaps,model_version,calculated_at").limit(5000)
   ]);
   // Never transform a transient database error into a false "zero recommendations".
@@ -258,22 +283,72 @@ Deno.serve(async(req)=>{
     console.error("HUNT match-refresh: one or more source reads failed");
     return new Response('{"ok":false,"error":"data_unavailable"}',{status:503,headers:{"content-type":"application/json"}});
   }
+  [jobs,prefs,profiles,personal,cvs,existingMatches].forEach(measure);
+  const lightRows=(jobs||[]).map((row:any)=>lightJob(row));
+  const fullRows=new Map<string,any>();
+  const loadFull=async(ids:string[])=>{
+    const missing=[...new Set(ids.map(String))].filter(id=>!fullRows.has(id));
+    for(let i=0;i<missing.length;i+=100){
+      const {data,error}=await db.from("jobs").select(FULL_JOB_COLUMNS).in("id",missing.slice(i,i+100));
+      if(error)throw Error("full_job_read_failed");
+      for(const row of measure(data)||[])fullRows.set(String(row.id),row);
+    }
+  };
+  const withFull=(rows:any[])=>rows.map((row:any)=>fullRows.get(String(row.id))||row);
+  // Description digests are computed inside Postgres: 32 characters per job
+  // instead of the full description text.
+  const digests=new Map<string,string>();
+  let digestsAvailable=false;
+  if(lightRows.length){
+    const {data:digestRows,error:digestError}=await db.rpc("hunt_job_description_digests",{p_job_ids:lightRows.map((j:any)=>j.id)});
+    if(!digestError&&Array.isArray(digestRows)){
+      for(const row of measure(digestRows))digests.set(String(row.id),String(row.description_md5||""));
+      digestsAvailable=lightRows.every((j:any)=>digests.has(String(j.id)));
+    }
+  }else digestsAvailable=true;
+  try{
+    // Exact canonical choice among duplicates still needs their descriptions.
+    await loadFull([...duplicateCandidateIds(lightRows,Date.parse(cutoff),nowMs)]);
+  }catch{
+    return new Response('{"ok":false,"error":"data_unavailable"}',{status:503,headers:{"content-type":"application/json"}});
+  }
   // The database keeps every observation; personal suggestions only use actionable,
   // recently verified vacancies, with one representative per official requisition.
-  const {jobs:uniqueJobs,duplicateIds}=chooseUniqueJobs(jobs||[],Date.parse(cutoff));
+  const {jobs:uniqueLight,duplicateIds}=chooseUniqueJobs(withFull(lightRows),Date.parse(cutoff),nowMs);
   const storedMatches=new Map((existingMatches||[]).map((m:any)=>[existingRecommendationKey(m.user_id,m.job_id),m]));
   const storedJobIds=new Set((existingMatches||[]).map((m:any)=>String(m.job_id)));
+  const userFps:Record<string,string>={};
+  {
+    const byUser=(rows:any[])=>{const m=new Map<string,any[]>();for(const r of rows||[]){if(!m.has(r.user_id))m.set(r.user_id,[]);m.get(r.user_id)!.push(r)}return m};
+    const profilesBy=byUser(profiles||[]),personalBy=byUser(personal||[]),cvsBy=byUser(cvs||[]);
+    for(const pref of prefs||[])userFps[pref.user_id]=await userFingerprint({
+      pref,profile:(profilesBy.get(pref.user_id)||[])[0]||null,
+      personal:(personalBy.get(pref.user_id)||[])[0]||null,cvs:cvsBy.get(pref.user_id)||[]
+    });
+  }
+  const jobFps=new Map<string,string>();
+  for(const job of uniqueLight)jobFps.set(String(job.id),await jobFingerprint(job,digests.get(String(job.id))));
+  const uniqueJobIds=uniqueLight.map((j:any)=>String(j.id));
+  const plan=planEvaluation({
+    state:previousState,engineVersion:ENGINE_VERSION,nowMs,uniqueJobIds,jobFps,userFps,
+    storedMatchKeys:(existingMatches||[]).filter((m:any)=>m.model_version===MODEL_VERSION&&m.user_id in userFps).map((m:any)=>existingRecommendationKey(m.user_id,m.job_id)),
+    digestsAvailable,forceFull:params?.full===true
+  });
+  try{await loadFull([...plan.evaluate])}catch{
+    return new Response('{"ok":false,"error":"data_unavailable"}',{status:503,headers:{"content-type":"application/json"}});
+  }
+  const uniqueJobs=withFull(uniqueLight);
   const removeIdsByUser=new Map<string,Set<string>>();
   const markForRemoval=(userId:string,jobId:string)=>{
     if(!storedMatches.has(existingRecommendationKey(userId,jobId)))return;
     if(!removeIdsByUser.has(userId))removeIdsByUser.set(userId,new Set());
     removeIdsByUser.get(userId)!.add(jobId);
   };
-  let analysisWrites=0,recommendationWrites=0,skippedWrites=0;
+  let analysisWrites=0,recommendationWrites=0,skippedWrites=0,priorityOnlyRefreshes=0;
   const exactCutoffMs=Date.parse(cutoff);
   const provablyOldJobIDs=(jobs||[]).filter((j:any)=>{
-    if(!j.metadata?.provider_creation_at)return false;
-    const age=Date.parse(String(j.metadata.provider_creation_at));
+    if(!j.provider_creation_at)return false;
+    const age=Date.parse(String(j.provider_creation_at));
     return !Number.isFinite(age)||age<exactCutoffMs;
   }).map((j:any)=>j.id);
   // These matches can have recent first_seen_at despite being created many
@@ -299,7 +374,13 @@ Deno.serve(async(req)=>{
 
   let considered=0,matched=0,rejected=0,missingDetails=0;
   const pendingUpserts:any[]=[];
+  const matchedKeys=new Set<string>();
+  const evaluated=new Set<string>();
   for(const job of uniqueJobs){
+    if(!plan.evaluate.has(String(job.id)))continue;
+    // A partial (light) row must never be evaluated or written back.
+    if(job.__light)return new Response('{"ok":false,"error":"incomplete_job_read"}',{status:503,headers:{"content-type":"application/json"}});
+    evaluated.add(String(job.id));
     const desc=String(job.description||"");
     if(desc.trim().length<250){
       // Do not claim strong CV fit when employer duties or mandatory
@@ -320,18 +401,21 @@ Deno.serve(async(req)=>{
     };
     if(analysisNeedsWrite(job,family,jobSeniority,analysis)){
       const now=new Date().toISOString();
+      const metadata={
+        ...(job.metadata||{}),
+        hard_requirements:{...analysis,analyzed_at:now,analyzer_version:"eligibility-v2"}
+      };
       const {error:writeError}=await db.from("jobs").update({
         role_family:family,
         seniority:jobSeniority,
-        metadata:{
-          ...(job.metadata||{}),
-          hard_requirements:{...analysis,analyzed_at:now,analyzer_version:"eligibility-v2"}
-        },
+        metadata,
         updated_at:now
       }).eq("id",job.id);
       if(writeError)return new Response('{"ok":false,"error":"job_analysis_write_failed"}',
         {status:503,headers:{"content-type":"application/json"}});
       analysisWrites++;
+      // Fingerprint what is now stored, so our own write is not seen as a change.
+      jobFps.set(String(job.id),await jobFingerprint({...job,role_family:family,seniority:jobSeniority,metadata},digests.get(String(job.id))));
     }
 
     for(const pref of prefs||[]){
@@ -407,9 +491,7 @@ Deno.serve(async(req)=>{
       if(specialist.length&&Object.keys(cv||{}).length===0)gaps.push("La vacancy richiede competenze specialistiche che HUNT verificherà sul CV prima di consigliarla con alta confidenza")
       score=Math.max(0,Math.min(100,score));
 
-      const age=Math.max(0,Math.floor((Date.now()-new Date(job.published_at||job.first_seen_at).getTime())/DAY));
-      const fresh=Math.max(20,100-age*4);
-      const priority=Math.min(100,Math.round(score*.7+(job.vacancy_confidence||70)*.2+fresh*.1));
+      const priority=priorityScore(score,job.vacancy_confidence,job.published_at||job.first_seen_at,nowMs);
       const minScore=radar==="explore"?60:radar==="focused"?72:68;
       if(score<minScore){
         markForRemoval(pref.user_id,job.id);
@@ -418,10 +500,31 @@ Deno.serve(async(req)=>{
       const computed={
         user_id:pref.user_id,job_id:job.id,match_score:score,
         priority_score:priority,reasons,gaps,
-        model_version:"eligibility-v2",calculated_at:new Date().toISOString()
+        model_version:MODEL_VERSION,calculated_at:new Date().toISOString()
       };
       const oldMatch=storedMatches.get(existingRecommendationKey(pref.user_id,job.id));
       if(matchNeedsWrite(oldMatch,computed))pendingUpserts.push(computed);
+      else skippedWrites++;
+      matchedKeys.add(existingRecommendationKey(pref.user_id,job.id));
+      matched++;
+    }
+  }
+  // Vacancies and users unchanged since the last evaluation keep their score,
+  // reasons and gaps; only time-dependent priority (posting age, vacancy
+  // confidence) is recomputed, with no description read.
+  for(const job of uniqueJobs){
+    if(evaluated.has(String(job.id)))continue;
+    for(const pref of prefs||[]){
+      const key=existingRecommendationKey(pref.user_id,job.id);
+      const oldMatch=storedMatches.get(key) as any;
+      if(!oldMatch||oldMatch.model_version!==MODEL_VERSION)continue;
+      const computed={
+        user_id:oldMatch.user_id,job_id:oldMatch.job_id,match_score:oldMatch.match_score,
+        priority_score:priorityScore(Number(oldMatch.match_score),job.vacancy_confidence,job.published_at||job.first_seen_at,nowMs),
+        reasons:oldMatch.reasons||[],gaps:oldMatch.gaps||[],
+        model_version:MODEL_VERSION,calculated_at:new Date().toISOString()
+      };
+      if(matchNeedsWrite(oldMatch,computed)){pendingUpserts.push(computed);priorityOnlyRefreshes++}
       else skippedWrites++;
       matched++;
     }
@@ -452,5 +555,8 @@ Deno.serve(async(req)=>{
     if(error)return new Response('{"ok":false,"error":"duplicate_cleanup_failed"}',
       {status:503,headers:{"content-type":"application/json"}});
   }
-  return new Response(JSON.stringify({ok:true,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicatesWithMatches.length,providerOldCandidatesExcluded:provablyOldJobIDs.length,analysisWrites,recommendationWrites,skippedWrites,actualDeletes:[...removeIdsByUser.values()].reduce((n,s)=>n+s.size,0)}),{headers:{"content-type":"application/json"}});
+  // Persist the evaluation state only after every write above succeeded.
+  const state=nextState({previous:previousState,mode:plan.mode,engineVersion:ENGINE_VERSION,nowMs,uniqueJobIds,jobFps,userFps,evaluated,matchedKeys,token:changeToken});
+  const {error:stateError}=await db.rpc("hunt_match_refresh_state_put",{p_state:state});
+  return new Response(JSON.stringify({ok:true,mode:plan.mode,modeReason:plan.reason,changeReasons:plan.reasons,jobsEvaluated:evaluated.size,descriptionsRead:fullRows.size,digestsAvailable,stateSaved:!stateError,readBytesEstimate,priorityOnlyRefreshes,considered,matched,rejected,missingDetails,uniqueVacancies:uniqueJobs.length,duplicateRecommendationsRemoved:duplicatesWithMatches.length,providerOldCandidatesExcluded:provablyOldJobIDs.length,analysisWrites,recommendationWrites,skippedWrites,actualDeletes:[...removeIdsByUser.values()].reduce((n,s)=>n+s.size,0)}),{headers:{"content-type":"application/json"}});
 });
