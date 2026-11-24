@@ -193,7 +193,7 @@ Lo stile è **luxury editoriale**: avorio, toni caldi e charcoal, linee sottili,
 | `hunt-preview-syntax.yml` | Controlli di sintassi e regressione di `hunt2-preview` sulle PR |
 | `hunt-v2-web.yml` | Build dell'app Next.js |
 | `hunt-health.yml` | Watchdog ogni 3 ore: freschezza del radar e sito; un'unica issue per incidente |
-| `hunt-supabase-guard.yml` | *(con la PR #67)* Stato della protezione consumi 4 volte al giorno; un'unica issue |
+| `hunt-supabase-guard.yml` | Stato della protezione consumi 4 volte al giorno; un'unica issue (attivo dal merge della #67) |
 | `push-test.yml` | Test delle notifiche push |
 
 ---
@@ -231,7 +231,7 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
   - l'analisi è lessicale e a regole, non una lettura semantica completa del CV;
   - non c'è ancora il test su 20 CV e 30 coppie CV–annuncio;
   - l'apprendimento dai feedback (salva, nascondi, "troppo senior"…) non è implementato.
-- **PR #66 (in attesa di merge):** matching incrementale. Legge solo ciò che cambia; stessi risultati dimostrati su 19 scenari.
+- **PR #66 (unita il 24/11, non ancora in produzione):** matching incrementale. Legge solo ciò che cambia; stessi risultati dimostrati su 19 scenari.
 
 ### 5.3 Dossier, CV consigliato e cover letter
 - Il dossier funziona nel codice: requisiti prioritari, prove dal CV, scelta del CV, link ufficiale, news del brand. Mancano ancora la QA autenticata end-to-end e la revisione su 30 combinazioni reali.
@@ -282,7 +282,7 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
   - **Sblocco atteso:** rinnovo della quota l'**8 dicembre 2026**, oppure upgrade a pagamento (non autorizzato).
   - Il watchdog `hunt_ops.quota_watchdog` ha sospeso i 13 cron di rete; riparte da solo dopo due controlli riusciti.
 - Già corretti: niente scritture inutili nel matching (PR #60), watchdog (PR #61), ATS senza riletture entro 6 ore (PR #64).
-- **In attesa** (PR #66 e #67, vedi §12): matching incrementale; misuratore dei consumi, budget di 100 MB al giorno, ripartenza graduale e allerta automatica.
+- **Uniti in `main` il 24/11** (PR #66 e #67, vedi §12), **ma non ancora applicati a Supabase**: matching incrementale; misuratore dei consumi, budget di 100 MB al giorno, ripartenza graduale e allerta automatica. Servono le migrazioni e il deploy delle funzioni, con autorizzazione.
 - **Accesso di Claude:** oggi **nessun connettore Supabase** è collegato alle sessioni cloud. Vedi la guida più sotto.
 
 ### Vercel
@@ -340,7 +340,7 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 ## 8. Problemi aperti, in ordine di priorità
 
 1. **Supabase bloccato fino all'8/12.**
-   - Unire #66 e #67, poi, con autorizzazione, applicare le migrazioni e ridistribuire le funzioni.
+   - #66 e #67 sono già unite: con autorizzazione, applicare le migrazioni e ridistribuire le funzioni.
    - Dopo lo sblocco misurare l'egress reale delle prime 24 ore (obiettivo: meno di 100 MB al giorno).
 2. **Test end-to-end autenticato** con 2 account, con e senza CV, desktop e mobile:
    - onboarding;
@@ -405,7 +405,7 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 ## 10. Roadmap verso un prodotto commercializzabile
 
 **Fase 1 — Stabilità e consumi** (ora → 8/12 → metà dicembre)
-- Merge di #66 e #67 e, con autorizzazione, migrazioni e deploy.
+- Merge di #66 e #67 (fatto il 24/11) e, con autorizzazione, migrazioni e deploy.
 - Sblocco e ripartenza graduale; misura dell'egress reale; test end-to-end di 2 account.
 - **Uscita:** 7 giorni consecutivi sotto i 100 MB al giorno, nessun 402, suggerimenti freschi.
 
@@ -453,11 +453,11 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 |---|---|---|---|
 | 8–19/11/2026 | Assistenti precedenti (ChatGPT) | Costruzione di HUNT 2.0, PR fino a #65; dettagli in `HUNT_CONTINUITY_HANDOFF.md` e `HUNT_WORLD_WEB_AUTONOMY_STATUS_2026-11-18.md` | Archivio |
 | 22–23/11/2026 | Automazioni | Aggiunta un'offerta verificata (Veepee), outreach FiveFourFive; commit automatici del radar | — |
-| 24/11/2026 | Claude (responsabile tecnico da questa data) | Analisi completa del progetto. **PR #66**: matching incrementale (gettone di cambiamento, digest delle descrizioni, equivalenza su 19 scenari). **PR #67**: misuratore dei consumi, budget e livelli di scansione, ripartenza graduale, protezione contro telemetria mancante o a zero, allerta automatica con un'unica issue | CI verde, **in attesa di merge** da parte dell'utente (ordine: #66 poi #67). Nessuna modifica a Supabase |
-| 24/11/2026 | Claude | Creati questo documento e `CLAUDE.md` per la continuità tra sessioni | PR documentale |
+| 24/11/2026 | Claude (responsabile tecnico da questa data) | Analisi completa del progetto. **PR #66**: matching incrementale (gettone di cambiamento, digest delle descrizioni, equivalenza su 19 scenari). **PR #67**: misuratore dei consumi, budget e livelli di scansione, ripartenza graduale, protezione contro telemetria mancante o a zero, allerta automatica con un'unica issue | CI verde. **Unite in `main` il 24/11** su richiesta dell'utente (#66 poi #67). Nessuna modifica a Supabase: migrazioni e deploy restano da autorizzare |
+| 24/11/2026 | Claude | Creati questo documento e `CLAUDE.md` per la continuità tra sessioni | PR #68, unita |
 
 **Prossimi passi concordati:**
-1. L'utente unisce #66 e poi #67.
+1. ~~Unire #66 e #67~~ (fatto il 24/11).
 2. L'utente collega i connettori Supabase e Vercel (§6).
 3. Con autorizzazione: migrazioni e deploy, che si possono fare già prima dell'8/12 perché non riavviano gli scanner.
 4. Dall'8/12: verifica dello sblocco, egress delle prime 24 ore, test end-to-end.
