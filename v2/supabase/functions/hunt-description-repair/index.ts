@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { extractOfficialDescription } from "./extract-description.mjs";
 const enc=new TextEncoder();
@@ -10,7 +11,7 @@ function db(){
  if(!url||!key)throw Error("Missing Supabase environment");
  return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
 }
-Deno.serve(async req=>{
+Deno.serve(meterUsage("hunt-description-repair",async req=>{
  if(req.method!=="POST")return Response.json({error:"method_not_allowed"},{status:405});
  const client=db(),token=req.headers.get("x-hunt-cron")||"";
  const {data:secret,error:e}=await client.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -51,4 +52,4 @@ Deno.serve(async req=>{
    await client.from("jobs").update({metadata}).eq("id",job.id);
  }
  return Response.json({ok:true,checked,repaired,unavailable,pending:pending.length});
-});
+}));

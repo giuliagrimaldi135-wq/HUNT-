@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import {createClient} from "npm:@supabase/supabase-js@2";
 const enc=new TextEncoder();
@@ -10,7 +11,7 @@ function admin(){
  if(!url||!key)throw Error("Missing Supabase environment");
  return createClient(url,String(key),{auth:{persistSession:false,autoRefreshToken:false}});
 }
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-news-source-sync",async(req)=>{
  try{
   const db=admin(),token=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -37,4 +38,4 @@ Deno.serve(async(req)=>{
   }
   return Response.json({ok:true,total_companies:companies?.length||0,created,skipped,errors:errors.slice(0,8)});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
-});
+}));

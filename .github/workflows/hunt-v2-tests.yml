@@ -27,7 +27,11 @@ on:
       - "v2/supabase/functions/hunt-description-repair/**"
       - "v2/supabase/functions/hunt-brand-website-repair/**"
       - "v2/supabase/migrations/**"
+      - "v2/supabase/shared/**"
+      - "v2/supabase/tests/**"
+      - "v2/supabase/functions/**"
       - ".github/workflows/hunt-v2-tests.yml"
+      - ".github/workflows/hunt-supabase-guard.yml"
   workflow_dispatch:
 
 permissions:
@@ -71,6 +75,21 @@ jobs:
       - name: Incremental matching equals full evaluation at every step
         working-directory: v2/supabase/functions/hunt-match-refresh
         run: deno test --allow-run --allow-env --allow-read equivalence/equivalence.test.ts
+      - name: Usage meter counts Supabase traffic per run (real supabase-js client)
+        working-directory: v2/supabase/shared
+        run: deno test --allow-net --allow-env --allow-read usage-meter.test.ts
+      - name: Unattended Supabase guard workflow opens, updates and closes one incident
+        working-directory: .
+        run: node --test scripts/test_supabase_guard_workflow.mjs
+      - name: Every scheduled function carries the identical usage meter
+        working-directory: v2/supabase/functions
+        run: |
+          for f in hunt-ats-board-scan hunt-ats-discovery hunt-brand-website-repair hunt-company-intelligence \
+                   hunt-description-repair hunt-fashion-brand-discovery hunt-global-news hunt-intelligence-source-discovery \
+                   hunt-news-source-sync hunt-source-discovery hunt-successfactors-public hunt-vacancy-monitor hunt-match-refresh; do
+            cmp ../shared/usage-meter.mjs "$f/usage-meter.mjs"
+            grep -q "Deno.serve(meterUsage(\"$f\"," "$f/index.ts" || { echo "$f is not metered"; exit 1; }
+          done
       - name: Test original HUNT luxury onboarding, no-CV junior opportunity eligibility and user-targeted outreach
         working-directory: hunt2-preview
         run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs service-health.test.mjs
@@ -198,11 +217,5 @@ jobs:
       PGPASSWORD: postgres
     steps:
       - uses: actions/checkout@v4
-      - name: Apply HUNT egress migrations twice on a stub schema and run SQL tests
-        run: |
-          psql -v ON_ERROR_STOP=1 -q -f v2/supabase/tests/stub_supabase_schema.sql
-          for m in v2/supabase/migrations/20261124120000_hunt_incremental_matching_state.sql; do
-            psql -v ON_ERROR_STOP=1 -q -f "$m"
-            psql -v ON_ERROR_STOP=1 -q -f "$m"
-          done
-          psql -v ON_ERROR_STOP=1 -q -f v2/supabase/tests/incremental_matching_test.sql
+      - name: Apply HUNT egress migrations (twice) on stub schemas and run SQL tests
+        run: v2/supabase/tests/run_sql_tests.sh

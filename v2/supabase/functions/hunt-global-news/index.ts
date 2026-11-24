@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {chooseDueNewsSources} from "./news-source-backoff.mjs";
@@ -78,7 +79,7 @@ function parse(xml:string,source:any){
  }
  return out;
 }
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-global-news",async(req)=>{
  try{
   const client=db();
   const token=req.headers.get("x-hunt-cron")||"";
@@ -117,4 +118,4 @@ Deno.serve(async(req)=>{
     inserted:results.reduce((sum,x)=>sum+x.inserted,0),
     healthy:results.filter(x=>x.status==="healthy").length,results});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
-});
+}));

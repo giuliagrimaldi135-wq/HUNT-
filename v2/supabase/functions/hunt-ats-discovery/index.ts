@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {findMissingWebsiteLeads} from "./website-seed-policy.mjs";
@@ -53,7 +54,7 @@ async function validates(board:Board){
   return Array.isArray(obj)||Array.isArray(obj.jobs)||Array.isArray(obj.content);
  }catch{return false}
 }
-Deno.serve(async(req)=>{
+Deno.serve(meterUsage("hunt-ats-discovery",async(req)=>{
  try{
   const db=client(),supplied=req.headers.get("x-hunt-cron")||"";
   const {data:secret,error:e}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -160,4 +161,4 @@ Deno.serve(async(req)=>{
   }
   return Response.json({ok:true,scanned:tested,discovered,validated,career_pages_discovered:careerPagesDiscovered,failed,website_leads_seeded:seeded,details});
  }catch(e){return Response.json({error:String(e instanceof Error?e.message:e)},{status:500})}
-});
+}));

@@ -1,3 +1,4 @@
+import {meterUsage} from "./usage-meter.mjs";
 import {createClient} from "npm:@supabase/supabase-js@2";
 import {extractDirectoryWebsite,websiteBackfillEligible} from "./website-extraction.mjs";
 const enc=new TextEncoder();
@@ -10,7 +11,7 @@ function client(){
  if(!url||!key)throw Error("Missing server credentials");
  return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
 }
-Deno.serve(async req=>{
+Deno.serve(meterUsage("hunt-brand-website-repair",async req=>{
  if(req.method!=="POST")return Response.json({error:"method_not_allowed"},{status:405});
  const db=client(),token=req.headers.get("x-hunt-cron")||"";
  const {data:secret,error:secretError}=await db.from("internal_runtime_secrets").select("secret_hash").eq("name","hunt_cron_token").single();
@@ -54,4 +55,4 @@ Deno.serve(async req=>{
   await db.from("companies").update({metadata}).eq("id",company.id).is("website_url",null);
  }
  return Response.json({ok:true,checked,linked,unavailable});
-});
+}));
