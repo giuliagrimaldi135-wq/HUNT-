@@ -26,6 +26,7 @@ on:
       - "v2/supabase/functions/hunt-successfactors-public/**"
       - "v2/supabase/functions/hunt-description-repair/**"
       - "v2/supabase/functions/hunt-brand-website-repair/**"
+      - "v2/supabase/migrations/**"
       - ".github/workflows/hunt-v2-tests.yml"
   workflow_dispatch:
 
@@ -58,6 +59,18 @@ jobs:
       - name: Test explicit senior-title protection for entry career profiles
         working-directory: v2/supabase/functions/hunt-match-refresh
         run: node --test seniority-guard.test.mjs
+      - name: Test incremental matching plan (change detection for CV, preferences, vacancies)
+        working-directory: v2/supabase/functions/hunt-match-refresh
+        run: node --test incremental-plan.test.mjs
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.1.4
+      - name: Typecheck the matcher Edge Function
+        working-directory: v2/supabase/functions/hunt-match-refresh
+        run: deno check index.ts
+      - name: Incremental matching equals full evaluation at every step
+        working-directory: v2/supabase/functions/hunt-match-refresh
+        run: deno test --allow-run --allow-env --allow-read equivalence/equivalence.test.ts
       - name: Test original HUNT luxury onboarding, no-CV junior opportunity eligibility and user-targeted outreach
         working-directory: hunt2-preview
         run: node --test onboarding-locations.test.mjs preview-preference-policy.test.mjs service-health.test.mjs
@@ -168,3 +181,28 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Run HUNT 2.0 core tests
         run: python -m pytest -q
+
+  sql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply HUNT egress migrations twice on a stub schema and run SQL tests
+        run: |
+          psql -v ON_ERROR_STOP=1 -q -f v2/supabase/tests/stub_supabase_schema.sql
+          for m in v2/supabase/migrations/20261124120000_hunt_incremental_matching_state.sql; do
+            psql -v ON_ERROR_STOP=1 -q -f "$m"
+            psql -v ON_ERROR_STOP=1 -q -f "$m"
+          done
+          psql -v ON_ERROR_STOP=1 -q -f v2/supabase/tests/incremental_matching_test.sql
