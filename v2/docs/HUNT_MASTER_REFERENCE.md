@@ -217,7 +217,11 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
   - pagine careers renderizzate via JavaScript;
   - 26 annunci attivi con descrizione sotto i 250 caratteri, soprattutto Richemont.
 - **Geografia:** il Paese si assegna solo da indicazioni esplicite o regioni univoche; le località ambigue restano senza Paese.
-- **Radar pubblico temporaneo:** 13 board ATS, circa 660–808 offerte, aggiornato ogni 6 ore. Le preferenze sono locali al browser e non c'è matching CV.
+- **Radar pubblico temporaneo** (dal 24/11, PR #71): 28 portali ufficiali verificati, **1.216 offerte** pubblicate al primo giro (27/28 portali risposti), 283 tra stage/junior/assistant, 147 in Italia; aggiornato ogni 6 ore senza Supabase. Corretto un difetto per cui tutte le offerte SmartRecruiters (Max Mara, Frette…) venivano scartate. Le preferenze sono locali al browser e non c'è matching CV.
+- **LVMH, verificato il 24/11:**
+  - la sitemap pubblica non elenca i singoli annunci;
+  - l'elenco si carica solo dal motore di ricerca interno del sito, che **non va usato**, perché richiederebbe chiavi pensate per il loro sito;
+  - strade corrette: portali propri delle singole maison, verifica delle pagine annuncio trovate per altre vie, in futuro un feed ufficiale per partner.
 
 ### 5.2 Matching basato sui CV
 - **Motore:** `hunt-match-refresh` con `eligibility-v2`. Considera:
@@ -462,6 +466,7 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 | 22–23/11/2026 | Automazioni | Aggiunta un'offerta verificata (Veepee), outreach FiveFourFive; commit automatici del radar | — |
 | 24/11/2026 | Claude (responsabile tecnico da questa data) | Analisi completa del progetto. **PR #66**: matching incrementale (gettone di cambiamento, digest delle descrizioni, equivalenza su 19 scenari). **PR #67**: misuratore dei consumi, budget e livelli di scansione, ripartenza graduale, protezione contro telemetria mancante o a zero, allerta automatica con un'unica issue | CI verde. **Unite in `main` il 24/11** su richiesta dell'utente (#66 poi #67). Nessuna modifica a Supabase: migrazioni e deploy restano da autorizzare |
 | 24/11/2026 | Claude | Creati questo documento e `CLAUDE.md` per la continuità tra sessioni | PR #68, unita |
+| 24/11/2026 | Claude | Radar pubblico: +15 portali verificati, correzione SmartRecruiters, da 661 a 1.216 offerte (PR #71). Creato l'ambiente cloud "HUNT" con accesso alle API pubbliche dei portali (Greenhouse, Lever, SmartRecruiters, Ashby, Workable, lvmh.com). Indagine su LVMH (vedi §5.1). Regola concordata: Claude prepara e testa in autonomia, l'utente risponde "ok" prima di merge e interventi in produzione | Fatto |
 | 24/11/2026 | Claude (autorizzato dall'utente) | Connettori Supabase e Vercel collegati. **Migrazioni A e B applicate in produzione** (B in 3 parti). Verificato: scanner ancora fermi, 402 attivo, dati intatti (2 account, 2 CV, 11 candidature, 1.414 offerte). Controllato che il codice delle 13 funzioni in produzione coincidesse con GitHub. Aggiunto il workflow manuale di deploy delle funzioni | Fatto. Poi pubblicate tutte e 13 le funzioni (vedi §6). Verifica a runtime dopo lo sblocco |
 
 **Prossimi passi concordati:**
