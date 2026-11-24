@@ -1,0 +1,42 @@
+# Minimal Supabase CLI configuration, used only by .github/workflows/hunt-supabase-deploy.yml
+# to publish Edge Functions. Not used for local stacks or migrations.
+project_id = "dfiokxjfgqoboxckcuut"
+
+[functions.hunt-match-refresh]
+verify_jwt = false
+
+[functions.hunt-ats-board-scan]
+verify_jwt = false
+
+[functions.hunt-ats-discovery]
+verify_jwt = false
+
+[functions.hunt-brand-website-repair]
+verify_jwt = false
+
+[functions.hunt-company-intelligence]
+verify_jwt = false
+
+[functions.hunt-description-repair]
+verify_jwt = false
+
+[functions.hunt-fashion-brand-discovery]
+verify_jwt = false
+
+[functions.hunt-global-news]
+verify_jwt = false
+
+[functions.hunt-intelligence-source-discovery]
+verify_jwt = false
+
+[functions.hunt-news-source-sync]
+verify_jwt = false
+
+[functions.hunt-source-discovery]
+verify_jwt = false
+
+[functions.hunt-successfactors-public]
+verify_jwt = false
+
+[functions.hunt-vacancy-monitor]
+verify_jwt = false
