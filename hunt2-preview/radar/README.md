@@ -11,6 +11,17 @@ Questo percorso esiste per permettere di consultare alcune offerte pubbliche dur
 - `.github/workflows/hunt-public-radar.yml`: GitHub Actions ogni 6 ore (*best effort*, non SLA), pulsante manuale e trigger su modifiche allo scanner. Compie test, valida JSON, scrive solo `jobs.json` nel repository pubblico. Se tutte le fonti falliscono, non aggiorna il catalogo né falsifica una data recente.
 - `radar-policy.mjs` e `radar.js`: filtri locali per ruolo/città/livello, link HTTPS alle offerte, etichette oneste e filtro severo sui titoli senior quando si sceglie «Stage e junior». **Non** genera compatibilità CV o dossier.
 
+## Feed pubblici ufficiali (dal 24/11/2026)
+
+Oltre agli ATS, `refresh.py` sa leggere **feed pubblici ufficiali RSS 2.0 / Atom** dei siti carriere (famiglia `feed_public` in `boards.json`, con `feed_url` e `link_hosts`). Regole:
+- il feed deve essere HTTPS e su un dominio ufficiale dichiarato; vengono tenuti solo i link agli annunci su quei domini;
+- data di pubblicazione solo da `pubDate` (RSS) o `published` (Atom); `updated` non è una data di pubblicazione;
+- documenti con DTD/entità rifiutati (protezione XML);
+- se il sito risponde con una **sfida anti-bot** (AWS WAF, Cloudflare, HTTP 202 vuoto) la fonte viene segnata come bloccata e **non** viene aggirata né ritentata;
+- una fonte con `"enabled": false` non viene mai interrogata e deve avere `disabled_reason`.
+
+Ralph Lauren è configurato ma **disattivato**: il 24/11 il feed rispondeva con una sfida AWS WAF.
+
 ## Prima esecuzione verificata
 
 **19 novembre 2026 ore 15:44 UTC**: workflow automatico ha prodotto `jobs.json` con **808 offerte pubbliche**, **13/13 board ATS controllate con risposta valida**, di cui **205 record riverificati nel ciclo**; 35 brand complessivi nel catalogo, 43 posti classificati stage/junior nell'area di Milano. I record iniziali da altri portali restano solo fino alla scadenza della loro ultima verifica (massimo 7 giorni) se il loro ATS non è ancora collegato. La frequenza delle nuove *scoperte* non coincide con la data di *pubblicazione*.
@@ -23,4 +34,4 @@ La modalità è READ-ONLY e non dispone della completa ricerca mondiale: soltant
 
 ## QA
 
-Eseguire `node --test hunt2-preview/radar/radar-policy.test.mjs` e `python -m unittest discover -s hunt2-preview/radar -p 'test_refresh.py'`. Entrambi sono inclusi nella CI principale e nella workflow di aggiornamento pubblico.
+Eseguire `node --test hunt2-preview/radar/radar-policy.test.mjs` e `python -m unittest discover -s hunt2-preview/radar -p 'test_*.py'`. Entrambi sono inclusi nella CI principale e nella workflow di aggiornamento pubblico.

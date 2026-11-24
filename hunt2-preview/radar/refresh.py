@@ -5,6 +5,7 @@ GitHub Actions periodically runs this script and publishes jobs.json.
 """
 from __future__ import annotations
 import datetime as dt
+import email.utils
 import hashlib
 import html
 import json
@@ -13,6 +14,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -119,20 +121,152 @@ def seniority(title):
     return "unspecified"  # Never claim entry-level on title alone.
 
 
+class AntiBotChallenge(RuntimeError):
+    """The site answered with a bot challenge. HUNT never tries to solve or
+    bypass it: the source is reported as failed and left alone."""
+
+
+def challenge_reason(status, headers):
+    headers = {str(k).lower(): str(v).lower() for k, v in (headers or {}).items()}
+    if headers.get("x-amzn-waf-action"):
+        return "AWS WAF challenge"
+    if headers.get("cf-mitigated"):
+        return "Cloudflare challenge"
+    if status == 202:
+        return "HTTP 202 without content (likely bot challenge)"
+    return None
+
+
+def fetch(url, accept):
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": accept})
+    try:
+        with urllib.request.urlopen(req, timeout=19) as resp:
+            reason = challenge_reason(resp.status, dict(resp.headers.items()))
+            if reason:
+                raise AntiBotChallenge(reason)
+            if resp.status != 200:
+                raise RuntimeError(f"HTTP {resp.status}")
+            content = resp.read(MAX_RESPONSE_BYTES + 1)
+    except urllib.error.HTTPError as exc:
+        reason = challenge_reason(exc.code, dict(exc.headers.items()) if exc.headers else {})
+        if reason:
+            raise AntiBotChallenge(reason) from None
+        raise
+    if len(content) > MAX_RESPONSE_BYTES:
+        raise RuntimeError("Source response exceeds download limit")
+    return content
+
+
 def get_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT,
-                        "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=19) as resp:
-        if resp.status != 200:
-            raise RuntimeError(f"HTTP {resp.status}")
-        content = resp.read(MAX_RESPONSE_BYTES + 1)
-        if len(content) > MAX_RESPONSE_BYTES:
-            raise RuntimeError("ATS response exceeds download limit")
-        return json.loads(content)
+    return json.loads(fetch(url, "application/json"))
+
+
+FEED_FAMILY = "feed_public"
+FEED_ACCEPT = "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8"
+
+
+def feed_url(board):
+    """A public feed must be an exact official HTTPS URL on one of the hosts
+    declared for that brand. No query keys taken from a site's code."""
+    url = public_url(board.get("feed_url"))
+    hosts = {h.lower() for h in board.get("link_hosts") or []}
+    if not url or urllib.parse.urlsplit(url).hostname.lower() not in hosts:
+        raise ValueError("Feed URL must be HTTPS on a declared official host")
+    return url
+
+
+def parse_feed_xml(content):
+    """Parse RSS 2.0 / Atom without DTDs or entities (XML bomb protection)."""
+    if isinstance(content, str):
+        content = content.encode("utf-8")
+    if re.search(rb"<!(?:DOCTYPE|ENTITY)", content, re.I):
+        raise ValueError("Feed with DTD/entities refused")
+    try:
+        return ET.fromstring(content)
+    except ET.ParseError as exc:
+        raise ValueError("Feed is not valid XML") from exc
+
+
+def _local(tag):
+    return str(tag).rsplit("}", 1)[-1].lower()
+
+
+def _child_text(node, *names):
+    for child in node:
+        if _local(child.tag) in names and (child.text or "").strip():
+            return child.text.strip()
+    return ""
+
+
+def rss_date(value):
+    """RSS pubDate (RFC 822) or ISO date -> ISO UTC; anything else stays unknown."""
+    if not value:
+        return None
+    iso = parse_date(value)
+    if iso:
+        return iso
+    try:
+        when = email.utils.parsedate_to_datetime(str(value).strip())
+    except (TypeError, ValueError, IndexError):
+        return None
+    if when is None:
+        return None
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=UTC)
+    return parse_date(UTC_ISO(when))
+
+
+def feed_entries(root):
+    """Yield (title, link, published, location) from an RSS or Atom document."""
+    kind = _local(root.tag)
+    if kind == "rss":
+        channel = next((c for c in root if _local(c.tag) == "channel"), None)
+        items = [i for i in (channel if channel is not None else []) if _local(i.tag) == "item"]
+        for item in items:
+            link = _child_text(item, "link")
+            if not link:
+                guid = next((c for c in item if _local(c.tag) == "guid"), None)
+                if guid is not None and (guid.get("isPermaLink", "true").lower() != "false"):
+                    link = (guid.text or "").strip()
+            yield (_child_text(item, "title"), link,
+                   rss_date(_child_text(item, "pubdate")),
+                   _child_text(item, "location", "joblocation", "city"))
+    elif kind == "feed":
+        for entry in (e for e in root if _local(e.tag) == "entry"):
+            link = ""
+            for child in entry:
+                if _local(child.tag) == "link" and child.get("rel", "alternate") == "alternate":
+                    link = child.get("href", "")
+                    break
+            # Atom <updated> is a modification time, NOT a publication date.
+            yield (_child_text(entry, "title"), link,
+                   parse_date(_child_text(entry, "published")),
+                   _child_text(entry, "location", "joblocation", "city"))
+    else:
+        raise ValueError("Unexpected feed format (not RSS or Atom)")
+
+
+def parse_feed(board, content):
+    hosts = {h.lower() for h in board.get("link_hosts") or []}
+    output, seen = [], set()
+    for title, link, published, location in feed_entries(parse_feed_xml(content)):
+        title = clean(title, 165)
+        url = public_url(link)
+        if not title or len(title) < 6 or not url or url in seen:
+            continue
+        if urllib.parse.urlsplit(url).hostname.lower() not in hosts:
+            continue  # Only links to the brand's own official careers site.
+        seen.add(url)
+        output.append({"title": title, "city": clean(location, 115), "url": url,
+                       "published_at": published, "country": ""})
+    return output
 
 
 def pages(board):
-    family, ident = board["family"], board["board"]
+    family = board["family"]
+    if family == FEED_FAMILY:
+        return [feed_url(board)]
+    ident = board["board"]
     if not re.fullmatch(r"[a-zA-Z0-9_-]{2,90}", ident):
         raise ValueError("Invalid board identifier")
     if family == "ats_greenhouse":
@@ -250,7 +384,7 @@ def public_job(entry,board,existing,current):
         "last_verified_at":UTC_ISO(current),
         "url":url,
         "ats":board["family"],
-        "origin":"official_ats"
+        "origin":"official_feed" if board["family"] == FEED_FAMILY else "official_ats"
     }
 
 
@@ -264,13 +398,17 @@ def refresh():
     checked = successful = discovered = refreshed = 0
     errors = []
     for board in configs["boards"]:
+        if board.get("enabled") is False:
+            continue  # Documented in boards.json (e.g. bot challenge); never forced.
         checked += 1
         all_entries = []
         succeeded = False
         try:
             for num,url in enumerate(pages(board)):
-                response = get_json(url)
-                entries = parse_jobs(board,response)
+                if board["family"] == FEED_FAMILY:
+                    entries = parse_feed(board, fetch(url, FEED_ACCEPT))
+                else:
+                    entries = parse_jobs(board,get_json(url))
                 all_entries.extend(entries)
                 succeeded = True
                 # Don't fetch later pages if a page is not full.
@@ -290,6 +428,9 @@ def refresh():
                     discovered += 1
                 by_url[entry["url"]] = updated
             print(f"{board['brand']}: {len(all_entries)} official listings checked")
+        except AntiBotChallenge as exc:
+            errors.append(f"{board['brand']}: AntiBotChallenge ({exc})")
+            print("SOURCE BLOCKED, NOT RETRIED: "+errors[-1],file=sys.stderr)
         except (ValueError,TypeError,urllib.error.URLError,TimeoutError,
                 json.JSONDecodeError,RuntimeError) as exc:
             errors.append(f"{board['brand']}: {type(exc).__name__}")
