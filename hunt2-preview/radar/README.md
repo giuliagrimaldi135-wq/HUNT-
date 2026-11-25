@@ -31,6 +31,7 @@ Famiglia `sitemap_jsonld` in `boards.json` (prima fonte: **PVH**, cioè Calvin K
 - `sitemap-state.json` ricorda cosa è già stato controllato (solo indirizzi pubblici, stato e ora): una pagina valida viene ricontrollata dopo 2 giorni, una pubblicata da più di 20 giorni dopo 7, una chiusa (404/410) viene tolta subito dal radar e dimenticata dopo 30 giorni;
 - al primo giro le pagine si aprono in quest'ordine: stage/junior, poi ruoli d'ufficio, poi negozio. Nessun ruolo viene escluso;
 - data sconosciuta resta sconosciuta; `validThrough` scaduto = offerta scartata.
+- dal 25/11/2026 legge anche i **microdata schema.org** (`itemprop`), il formato usato dai siti carriere SAP SuccessFactors: Prada Group, OTB, Dolce&Gabbana, Valentino. Trussardi (Teamtailor) usa JSON-LD. Quando l'azienda dichiarata è il gruppo (es. "Prada Group"), il marchio si ricava solo da titolo e indirizzo dell'annuncio.
 
 ## Prima esecuzione verificata
 

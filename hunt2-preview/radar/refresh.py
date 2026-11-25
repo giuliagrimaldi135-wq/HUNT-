@@ -372,8 +372,51 @@ def _jsonld_nodes(data):
             yield from _jsonld_nodes(data["@graph"])
 
 
+def java_date(value):
+    """SAP SuccessFactors microdata dates look like 'Mon Nov 16 02:00:00 UTC 2026'."""
+    try:
+        when = dt.datetime.strptime(str(value).strip(), "%a %b %d %H:%M:%S UTC %Y")
+    except (TypeError, ValueError):
+        return parse_date(value)
+    return parse_date(UTC_ISO(when.replace(tzinfo=UTC)))
+
+
+def microdata_job_posting(text):
+    """schema.org JobPosting written as HTML microdata (SAP SuccessFactors
+    career sites). Returns the same shape as JSON-LD, or None."""
+    if not re.search(r'itemtype=["\']https?://schema\.org/JobPosting["\']', text, re.I):
+        return None
+    meta = {}
+    for name, value in re.findall(r'<meta\s+itemprop="(\w+)"\s+content="([^"]*)"', text):
+        meta.setdefault(name, html.unescape(value).strip())
+    title = ""
+    match = re.search(r'itemprop="title"[^>]*>([^<]{1,300})<', text)
+    if match:
+        title = re.sub(r"\s+", " ", html.unescape(match.group(1))).strip()
+    # Two shapes: separate addressLocality/Region/Country, or one
+    # streetAddress such as "Milano, IT".
+    locality = meta.get("addressLocality", "")
+    region = meta.get("addressRegion", "")
+    country = meta.get("addressCountry", "")
+    if not locality and not country:
+        place = meta.get("streetAddress", "")
+        locality = place
+        parts = [x.strip() for x in place.rsplit(",", 1)]
+        if len(parts) == 2 and re.fullmatch(r"[A-Za-z]{2}", parts[1]):
+            locality, country = parts
+    posting = {"@type": "JobPosting", "title": title,
+               "datePosted": java_date(meta.get("datePosted")),
+               "hiringOrganization": {"name": meta.get("hiringOrganization", "")},
+               "jobLocation": {"address": {"addressLocality": locality, "addressRegion": region,
+                                           "addressCountry": country}}}
+    if meta.get("validThrough"):
+        posting["validThrough"] = java_date(meta["validThrough"])
+    return posting if title else None
+
+
 def job_posting_from_html(text):
-    """Extract the schema.org JobPosting declared by the page itself."""
+    """Extract the schema.org JobPosting declared by the page itself
+    (JSON-LD first, then HTML microdata)."""
     if isinstance(text, (bytes, bytearray)):
         text = text.decode("utf-8", "replace")
     for match in re.finditer(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
@@ -387,7 +430,7 @@ def job_posting_from_html(text):
             kinds = kind if isinstance(kind, list) else [kind]
             if "JobPosting" in kinds:
                 return node
-    return None
+    return microdata_job_posting(text)
 
 
 def posting_entry(board, url, posting):
@@ -408,9 +451,13 @@ def posting_entry(board, url, posting):
     # Brand from the official page: employer name, title, then the job URL
     # itself (Workday paths name the store, e.g. ".../Southpark---Coach/...").
     url_words = re.sub(r"[-_/]+", " ", urllib.parse.unquote(urllib.parse.urlsplit(url).path)).lower()
+    # When the employer is the group itself ("Prada Group"), its name says
+    # nothing about the brand: only the title and the URL can.
+    org_is_group = org_name.lower() == board["brand"].lower()
     for known in board.get("brands_from_hiring_org") or []:
         needle = known.lower()
-        if needle in org_name.lower() or needle in title.lower() or f" {needle} " in f" {url_words} ":
+        if ((needle in org_name.lower() and not org_is_group) or needle in title.lower()
+                or f" {needle} " in f" {url_words} "):
             brand = known
             break
     valid = parse_date(posting.get("validThrough"))
