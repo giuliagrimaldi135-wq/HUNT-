@@ -449,8 +449,8 @@ Le metriche sono fotografie con data, non garanzie. Supabase è bloccato dal 18/
 - Ogni sessione inizia leggendo `CLAUDE.md` e questo documento, poi verifica repository, CI e (se collegato) database **prima** di dichiarare uno stato.
 - Ogni intervento importante aggiorna il **§12 Registro delle sessioni** e, se cambia lo stato, le sezioni 5–8.
 - **Decisioni tecniche ordinarie:** Claude in autonomia (branch, test, PR).
-- **Conferma esplicita dell'utente per:**
-  - merge;
+- **Merge (dal 25/11/2026, autorizzazione permanente dell'utente):** Claude unisce da solo le proprie PR quando la CI è verde e non ci sono conflitti, senza chiedere, e lo registra nel §12.
+- **Conferma esplicita dell'utente ancora necessaria per:**
   - produzione (migrazioni, deploy, cron, dati);
   - costi;
   - cambiamenti importanti di prodotto o di UX approvata;
