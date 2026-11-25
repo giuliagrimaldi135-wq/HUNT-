@@ -371,6 +371,27 @@
       ],
       "max_pages_per_run": 40,
       "note": "Sito carriere ufficiale SAP SuccessFactors. La sua sitemap.xml è un feed RSS di ~36 MB con 4.525 annunci (25/11/2026), quasi tutti negozi di ottica in USA/Canada: si usa solo come elenco e si tengono gli annunci in Italia (<g:location> con ', IT', 129 annunci). Dati, data e luogo vengono dai microdata della pagina annuncio."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Hugo Boss",
+      "sitemap_urls": [
+        "https://careers.hugoboss.com/global/en/sitemap_index.xml"
+      ],
+      "link_hosts": [
+        "careers.hugoboss.com"
+      ],
+      "job_url_regex": "^https://careers\\.hugoboss\\.com/global/en/job/\\d+/",
+      "brands_from_hiring_org": [
+        "BOSS",
+        "HUGO"
+      ],
+      "max_pages_per_run": 80,
+      "note": "Sito carriere ufficiale Hugo Boss (Phenom): sitemap dichiarata nel robots.txt (754 annunci il 25/11/2026), JSON-LD JobPosting. Marchio BOSS/HUGO dal titolo o dall'indirizzo dell'annuncio.",
+      "group_names": [
+        "HUGO BOSS AG",
+        "HUGO BOSS"
+      ]
     }
   ],
   "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."

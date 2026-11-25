@@ -273,6 +273,18 @@ class SitemapJsonLd(unittest.TestCase):
             resp.read.side_effect = lambda n: b"x" * min(n, 40)
             self.assertEqual(len(REAL_FETCH("https://x.example.com/a", "text/xml", 45)), 40)
 
+    def test_group_name_never_decides_the_brand(self):
+        board = {"brand": "Hugo Boss", "group_names": ["HUGO BOSS AG", "HUGO BOSS"],
+                 "brands_from_hiring_org": ["BOSS", "HUGO"]}
+        def entry(title, url):
+            html = page(title, "2026-11-20", "Metzingen", "", "DE", "HUGO BOSS AG")
+            return refresh.posting_entry(board, url, refresh.job_posting_from_html(html))
+        base = "https://careers.hugoboss.com/global/en/job/1/"
+        self.assertEqual(entry("Ausbildung Koch (m/w/d)", base + "Ausbildung-Koch")["brand"], "Hugo Boss")
+        self.assertEqual(entry("HUGO BOSS Finance Intern", base + "Finance-Intern")["brand"], "Hugo Boss")
+        self.assertEqual(entry("Internship Design BOSS Menswear", base + "Design")["brand"], "BOSS")
+        self.assertEqual(entry("Key Holder", base + "Part-Time-Key-Holder-HUGO-Outlet")["brand"], "HUGO")
+
     def test_unknown_date_stays_unknown(self):
         html = page("Merchandising Intern", None)
         entry = refresh.posting_entry(PVH, BASE + "R1/x", refresh.job_posting_from_html(html))
