@@ -336,6 +336,10 @@ def sitemap_locs(content):
 def sitemap_job_urls(board):
     """Official job URLs listed in the brand's declared sitemaps."""
     pattern = re.compile(board["job_url_regex"])
+    # Optional: the same posting listed once per language (".../jobs/123?lang=it-it"
+    # and "?lang=en-gb") is kept once, by the posting number the regex group captures.
+    dedupe = re.compile(board["dedupe_regex"]) if board.get("dedupe_regex") else None
+    seen_keys = set()
     queue = []
     for raw in board.get("sitemap_urls") or []:
         url = public_url(raw)
@@ -356,6 +360,10 @@ def sitemap_job_urls(board):
             if kind == "index":
                 queue.append(loc)
             elif pattern.search(loc) and loc not in jobs:
+                key = dedupe.search(loc).group(1) if dedupe and dedupe.search(loc) else loc
+                if key in seen_keys:
+                    continue
+                seen_keys.add(key)
                 jobs.append(loc)
     if not seen_maps:
         raise ValueError("No sitemap configured")
@@ -433,6 +441,15 @@ def job_posting_from_html(text):
     return microdata_job_posting(text)
 
 
+PLACEHOLDERS = {"unavailable", "n/a", "na", "null", "none", "undefined", "-"}
+
+
+def real_value(value, limit):
+    """Some career sites fill empty fields with words like 'UNAVAILABLE'."""
+    txt = clean(value, limit)
+    return "" if txt.lower() in PLACEHOLDERS else txt
+
+
 def posting_entry(board, url, posting):
     title = clean(html.unescape(str(posting.get("title") or "")), 165)
     location = posting.get("jobLocation")
@@ -440,8 +457,8 @@ def posting_entry(board, url, posting):
         location = location[0] if location else {}
     address = (location or {}).get("address") if isinstance(location, dict) else {}
     address = address if isinstance(address, dict) else {}
-    city = ", ".join(v for v in (clean(address.get("addressLocality"), 80),
-                                 clean(address.get("addressRegion"), 40)) if v)
+    city = ", ".join(v for v in (real_value(address.get("addressLocality"), 80),
+                                 real_value(address.get("addressRegion"), 40)) if v)
     country = address.get("addressCountry")
     if isinstance(country, dict):
         country = country.get("name") or country.get("identifier")

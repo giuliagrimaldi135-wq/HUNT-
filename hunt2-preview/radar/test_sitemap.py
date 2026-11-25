@@ -189,6 +189,24 @@ class SitemapJsonLd(unittest.TestCase):
         self.assertEqual((entry["city"], entry["country"]), ("Aventura, FL", "US"))
         self.assertIsNone(refresh.job_posting_from_html("<div itemprop=\"title\">No schema</div>"))
 
+    def test_language_duplicates_and_placeholder_fields(self):
+        sitemap = b"""<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        <url><loc>https://jobs.monclergroup.com/jobs/34711?lang=en-gb</loc></url>
+        <url><loc>https://jobs.monclergroup.com/jobs/34711?lang=it-it</loc></url>
+        <url><loc>https://jobs.monclergroup.com/jobs/34722?lang=en-us</loc></url></urlset>"""
+        board = {"brand": "Moncler Group", "sitemap_urls": ["https://jobs.monclergroup.com/sitemap.xml"],
+                 "link_hosts": ["jobs.monclergroup.com"],
+                 "job_url_regex": r"^https://jobs\.monclergroup\.com/jobs/\d+",
+                 "dedupe_regex": r"/jobs/(\d+)", "brands_from_hiring_org": ["Stone Island", "Moncler"]}
+        with mock.patch.object(refresh, "fetch", return_value=sitemap):
+            urls = refresh.sitemap_job_urls(board)
+        self.assertEqual(urls, ["https://jobs.monclergroup.com/jobs/34711?lang=en-gb",
+                                "https://jobs.monclergroup.com/jobs/34722?lang=en-us"])
+        html = page("E-Tailer Marketing Intern", "2026-11-20", "Milan", "UNAVAILABLE", "IT",
+                    "Moncler S.p.A.")
+        entry = refresh.posting_entry(board, urls[0], refresh.job_posting_from_html(html))
+        self.assertEqual((entry["city"], entry["country"], entry["brand"]), ("Milan", "IT", "Moncler"))
+
     def test_unknown_date_stays_unknown(self):
         html = page("Merchandising Intern", None)
         entry = refresh.posting_entry(PVH, BASE + "R1/x", refresh.job_posting_from_html(html))
