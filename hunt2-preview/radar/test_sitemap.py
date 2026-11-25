@@ -152,6 +152,43 @@ class SitemapJsonLd(unittest.TestCase):
                                          refresh.job_posting_from_html(html))
         self.assertEqual(coaching["brand"], "Tapestry")
 
+    def test_successfactors_microdata_posting(self):
+        html = ("<html><div class=\"jobDisplayShell\" itemscope=\"itemscope\" "
+                "itemtype=\"http://schema.org/JobPosting\">"
+                "<span itemprop=\"jobLocation\" itemscope itemtype=\"http://schema.org/Place\">"
+                "<span itemprop=\"address\" itemscope itemtype=\"http://schema.org/PostalAddress\">"
+                "<meta itemprop=\"streetAddress\" content=\"Milano, IT\">"
+                "<meta itemprop=\"datePosted\" content=\"Mon Nov 16 02:00:00 UTC 2026\">"
+                "<meta itemprop=\"validThrough\" content=\"Sun Dec 20 00:00:00 UTC 2026\">"
+                "<meta itemprop=\"hiringOrganization\" content=\"Prada Group\">"
+                "<span lang=\"en-US\" itemprop=\"title\" class=\"x\">MIU MIU VIP Intern &amp; Events\n</span>"
+                "</div></html>")
+        board = {"brand": "Prada Group", "brands_from_hiring_org": ["Miu Miu", "Versace", "Prada"]}
+        url = "https://jobs.pradagroup.com/job/Milano-MIU-MIU-VIP-Intern/1375244933"
+        posting = refresh.job_posting_from_html(html)
+        entry = refresh.posting_entry(board, url, posting)
+        self.assertEqual(entry["title"], "MIU MIU VIP Intern & Events")
+        self.assertEqual((entry["city"], entry["country"], entry["brand"]), ("Milano", "IT", "Miu Miu"))
+        self.assertEqual(entry["published_at"], "2026-11-16T02:00:00Z")
+        # The group name alone never decides the brand.
+        neutral = html.replace("MIU MIU VIP Intern", "Finance Controller")
+        entry = refresh.posting_entry(board, "https://jobs.pradagroup.com/job/Milano-Finance/1",
+                                      refresh.job_posting_from_html(neutral))
+        self.assertEqual(entry["brand"], "Prada Group")
+        # Expired validThrough is discarded; unknown date format stays unknown.
+        expired = html.replace("Sun Dec 20 00:00:00 UTC 2026", "Sun Nov 01 00:00:00 UTC 2026")
+        self.assertIsNone(refresh.posting_entry(board, url, refresh.job_posting_from_html(expired)))
+        self.assertIsNone(refresh.java_date("next monday"))
+        # Second shape: separate locality, region and country.
+        split = html.replace('<meta itemprop="streetAddress" content="Milano, IT">',
+                             '<meta itemprop="addressLocality" content="Aventura">'
+                             '<meta itemprop="addressRegion" content="FL">'
+                             '<meta itemprop="addressCountry" content="US">')
+        self.assertNotEqual(split, html)
+        entry = refresh.posting_entry(board, url, refresh.job_posting_from_html(split))
+        self.assertEqual((entry["city"], entry["country"]), ("Aventura, FL", "US"))
+        self.assertIsNone(refresh.job_posting_from_html("<div itemprop=\"title\">No schema</div>"))
+
     def test_unknown_date_stays_unknown(self):
         html = page("Merchandising Intern", None)
         entry = refresh.posting_entry(PVH, BASE + "R1/x", refresh.job_posting_from_html(html))

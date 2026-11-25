@@ -188,6 +188,91 @@
       "note": "Workday ufficiale di Tapestry (Coach, Kate Spade, Stuart Weitzman): sitemap dichiarata nel robots.txt con 100 annunci il 25/11/2026.",
       "enabled": false,
       "disabled_reason": "25/11/2026: robots.txt e una pagina annuncio leggibili (JSON-LD completo), ma dopo poche richieste la sitemap ha risposto con una sfida anti-bot Cloudflare. HUNT non la aggira: riattivare solo se un controllo singolo e isolato da GitHub Actions risulta leggibile senza sfida."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Prada Group",
+      "sitemap_urls": [
+        "https://jobs.pradagroup.com/sitemap.xml"
+      ],
+      "link_hosts": [
+        "jobs.pradagroup.com"
+      ],
+      "job_url_regex": "^https://jobs\\.pradagroup\\.com/job/[^/]+/\\d+$",
+      "brands_from_hiring_org": [
+        "Miu Miu",
+        "Versace",
+        "Church's",
+        "Car Shoe",
+        "Luna Rossa",
+        "Marchesi",
+        "Prada"
+      ],
+      "max_pages_per_run": 80,
+      "note": "Sito carriere ufficiale SAP SuccessFactors: sitemap.xml pubblica, annunci confermati dai microdata schema.org JobPosting della pagina. Verificato il 25/11/2026: 286 annunci in sitemap."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "OTB",
+      "sitemap_urls": [
+        "https://careers.otb.net/sitemap.xml"
+      ],
+      "link_hosts": [
+        "careers.otb.net"
+      ],
+      "job_url_regex": "^https://careers\\.otb\\.net/job/[^/]+/\\d+$",
+      "brands_from_hiring_org": [
+        "Maison Margiela",
+        "Jil Sander",
+        "Marni",
+        "Diesel",
+        "Viktor&Rolf",
+        "Amiri"
+      ],
+      "max_pages_per_run": 60,
+      "note": "Sito carriere ufficiale SAP SuccessFactors: sitemap.xml pubblica, annunci confermati dai microdata schema.org JobPosting della pagina. Verificato il 25/11/2026: 162 annunci in sitemap."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Dolce&Gabbana",
+      "sitemap_urls": [
+        "https://jobs.dolcegabbana.com/sitemap.xml"
+      ],
+      "link_hosts": [
+        "jobs.dolcegabbana.com"
+      ],
+      "job_url_regex": "^https://jobs\\.dolcegabbana\\.com/job/[^/]+/\\d+$",
+      "brands_from_hiring_org": [],
+      "max_pages_per_run": 50,
+      "note": "Sito carriere ufficiale SAP SuccessFactors: sitemap.xml pubblica, annunci confermati dai microdata schema.org JobPosting della pagina. Verificato il 25/11/2026: 109 annunci in sitemap."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Valentino",
+      "sitemap_urls": [
+        "https://jobs.valentino.com/sitemap.xml"
+      ],
+      "link_hosts": [
+        "jobs.valentino.com"
+      ],
+      "job_url_regex": "^https://jobs\\.valentino\\.com/job/[^/]+/\\d+$",
+      "brands_from_hiring_org": [],
+      "max_pages_per_run": 40,
+      "note": "Sito carriere ufficiale SAP SuccessFactors: sitemap.xml pubblica, annunci confermati dai microdata schema.org JobPosting della pagina. Verificato il 25/11/2026: 57 annunci in sitemap."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Trussardi",
+      "sitemap_urls": [
+        "https://careers.trussardi.com/sitemap.xml"
+      ],
+      "link_hosts": [
+        "careers.trussardi.com"
+      ],
+      "job_url_regex": "^https://careers\\.trussardi\\.com/jobs/\\d+-",
+      "brands_from_hiring_org": [],
+      "max_pages_per_run": 20,
+      "note": "Sito carriere ufficiale (Teamtailor): sitemap dichiarata nel robots.txt (il divieto totale vale solo per il robot 'aihitdata'), annunci con JSON-LD JobPosting. Verificato il 25/11/2026."
     }
   ],
   "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."
