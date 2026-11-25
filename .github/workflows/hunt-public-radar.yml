@@ -55,9 +55,21 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add hunt2-preview/radar/jobs.json
           if [ -f hunt2-preview/radar/sitemap-state.json ]; then git add hunt2-preview/radar/sitemap-state.json; fi
-          if ! git diff --cached --quiet; then
-            git commit -m "data: refresh independent public fashion radar"
-            git push origin HEAD:main
-          else
+          if git diff --cached --quiet; then
             echo 'No public data changes'
+            exit 0
           fi
+          git commit -m "data: refresh independent public fashion radar"
+          # main may move during a long run (merges, other automations). Only this
+          # workflow writes the radar files and runs are serialized, so rebasing the
+          # single data commit onto the new main cannot conflict.
+          for ATTEMPT in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "::warning::main moved during the run; rebasing and retrying ($ATTEMPT/5)"
+            sleep $((ATTEMPT * 3))
+            git pull --rebase origin main || { git rebase --abort || true; echo "::error::Rebase failed"; exit 1; }
+          done
+          echo "::error::Could not publish the refreshed public radar after 5 attempts"
+          exit 1
