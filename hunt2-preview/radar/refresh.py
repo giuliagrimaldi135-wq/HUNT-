@@ -138,7 +138,11 @@ def challenge_reason(status, headers):
     return None
 
 
-def fetch(url, accept):
+MAX_LISTING_BYTES = 45_000_000  # Upper bound a board may opt into for one big official listing.
+
+
+def fetch(url, accept, max_bytes=None):
+    limit = min(int(max_bytes or MAX_RESPONSE_BYTES), MAX_LISTING_BYTES)
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": accept})
     try:
         with urllib.request.urlopen(req, timeout=19) as resp:
@@ -147,13 +151,13 @@ def fetch(url, accept):
                 raise AntiBotChallenge(reason)
             if resp.status != 200:
                 raise RuntimeError(f"HTTP {resp.status}")
-            content = resp.read(MAX_RESPONSE_BYTES + 1)
+            content = resp.read(limit + 1)
     except urllib.error.HTTPError as exc:
         reason = challenge_reason(exc.code, dict(exc.headers.items()) if exc.headers else {})
         if reason:
             raise AntiBotChallenge(reason) from None
         raise
-    if len(content) > MAX_RESPONSE_BYTES:
+    if len(content) > limit:
         raise RuntimeError("Source response exceeds download limit")
     return content
 
@@ -338,6 +342,26 @@ def sitemap_locs(content):
     return ("index" if kind == "sitemapindex" else "urlset"), locs
 
 
+def rss_listing_locs(content, board):
+    """An official RSS job listing used only as a list of job pages (e.g. the
+    SuccessFactors 'sitemap.xml' of EssilorLuxottica, with Google Jobs
+    <g:location>). Optional 'location_regex' keeps only matching locations."""
+    root = parse_feed_xml(content)
+    if _local(root.tag) != "rss":
+        raise ValueError("Listing is not RSS")
+    keep = re.compile(board["location_regex"]) if board.get("location_regex") else None
+    channel = next((c for c in root if _local(c.tag) == "channel"), None)
+    out = []
+    for item in (channel if channel is not None else []):
+        if _local(item.tag) != "item":
+            continue
+        link = _child_text(item, "link")
+        where = _child_text(item, "location")
+        if link and (keep is None or keep.search(where)):
+            out.append((link, ""))
+    return "urlset", out
+
+
 def sitemap_job_urls(board):
     """Official job URLs listed in the brand's declared sitemaps."""
     pattern = re.compile(board["job_url_regex"])
@@ -357,7 +381,11 @@ def sitemap_job_urls(board):
         if url in seen_maps:
             continue
         seen_maps.add(url)
-        kind, locs = sitemap_locs(fetch(url, "application/xml, text/xml;q=0.9"))
+        content = fetch(url, "application/xml, text/xml;q=0.9", board.get("max_listing_bytes"))
+        if board.get("listing_format") == "rss":
+            kind, locs = rss_listing_locs(content, board)
+        else:
+            kind, locs = sitemap_locs(content)
         for loc, lastmod in locs:
             loc = public_url(encode_url(loc))
             # Opt-in per board: a page not modified for more than 20 days cannot

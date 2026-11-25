@@ -33,6 +33,7 @@ Famiglia `sitemap_jsonld` in `boards.json` (prima fonte: **PVH**, cioè Calvin K
 - data sconosciuta resta sconosciuta; `validThrough` scaduto = offerta scartata.
 - opzione `skip_stale_lastmod` (per fonte): non apre le pagine la cui `lastmod` in sitemap ha più di 20 giorni (usata per Richemont, dove `lastmod` coincide con `datePosted`);
 - tetto del catalogo: 4.000 offerte;
+- opzioni `listing_format: "rss"` + `location_regex` + `max_listing_bytes` (massimo 45 MB): un elenco RSS ufficiale usato solo per sapere quali pagine annuncio aprire, filtrato per luogo (usato per EssilorLuxottica: solo Italia);
 - dal 25/11/2026 legge anche i **microdata schema.org** (`itemprop`), il formato usato dai siti carriere SAP SuccessFactors: Prada Group, OTB, Dolce&Gabbana, Valentino. Trussardi (Teamtailor) usa JSON-LD. Quando l'azienda dichiarata è il gruppo (es. "Prada Group"), il marchio si ricava solo da titolo e indirizzo dell'annuncio.
 
 ## Prima esecuzione verificata

@@ -1,5 +1,6 @@
 """Tests for the official sitemap + JSON-LD JobPosting reader (e.g. PVH)."""
 import datetime as dt
+import io
 import json
 import unittest
 import urllib.error
@@ -7,6 +8,8 @@ from pathlib import Path
 from unittest import mock
 
 import refresh
+
+REAL_FETCH = refresh.fetch  # setUp replaces refresh.fetch with a fake
 
 NOW = dt.datetime(2026, 11, 24, 18, 0, tzinfo=dt.timezone.utc)
 PVH = {"family": "sitemap_jsonld", "brand": "PVH",
@@ -61,7 +64,7 @@ PAGES = {
 }
 
 
-def fake_fetch(url, accept):
+def fake_fetch(url, accept, max_bytes=None):
     if url == BASE + "R4/Closed-Buyer":
         raise urllib.error.HTTPError(url, 410, "Gone", {}, None)
     if url not in PAGES:
@@ -230,13 +233,53 @@ class SitemapJsonLd(unittest.TestCase):
         self.assertEqual(urls, ["https://careers.richemont.com/en/jobs/jr2/new",
                                 "https://careers.richemont.com/en/jobs/jr3/nodate"])
 
+    def test_rss_listing_with_location_filter(self):
+        feed = b"""<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:g="http://base.google.com/ns/1.0"><channel>
+        <item><title>Tech (McDonough, GA, US, 30253)</title><link>https://careers.essilorluxottica.com/job/McDonough-Tech/1455724833/</link><g:location>McDonough, GA, US, 30253</g:location></item>
+        <item><title>Marketing Internship (Milano, IT, 20123)</title><link>https://careers.essilorluxottica.com/job/Milano-Retail-Italia-Marketing-Internship/1415428533/</link><g:location>Milano, IT, 20123</g:location></item>
+        <item><title>PLM Internship (Agordo, IT)</title><link>https://careers.essilorluxottica.com/job/Agordo-PLM-Internship/1415600633/</link><g:location>Agordo, IT</g:location></item>
+        <item><title>Phishing</title><link>https://evil.example.com/job/Milano-X/1/</link><g:location>Milano, IT</g:location></item>
+        </channel></rss>"""
+        board = {"brand": "EssilorLuxottica", "sitemap_urls": ["https://careers.essilorluxottica.com/sitemap.xml"],
+                 "link_hosts": ["careers.essilorluxottica.com"], "listing_format": "rss",
+                 "location_regex": r"(^|, )IT(,|$)", "max_listing_bytes": 40000000,
+                 "job_url_regex": r"^https://careers\.essilorluxottica\.com/job/[^/]+/\d+$"}
+        calls = []
+
+        def fake(url, accept, max_bytes=None):
+            calls.append(max_bytes)
+            return feed
+        with mock.patch.object(refresh, "fetch", side_effect=fake):
+            urls = refresh.sitemap_job_urls(board)
+        self.assertEqual(urls, ["https://careers.essilorluxottica.com/job/Milano-Retail-Italia-Marketing-Internship/1415428533",
+                                "https://careers.essilorluxottica.com/job/Agordo-PLM-Internship/1415600633"])
+        self.assertEqual(calls, [40000000])
+        with mock.patch.object(refresh, "fetch", return_value=b"<urlset/>"):
+            with self.assertRaises(ValueError):
+                refresh.sitemap_job_urls(board)
+
+    def test_listing_size_limit_has_a_hard_ceiling(self):
+        resp = mock.MagicMock()
+        resp.__enter__.return_value = resp
+        resp.status, resp.headers = 200, {}
+        resp.read.side_effect = lambda n: b"x" * min(n, 100)
+        with mock.patch("urllib.request.urlopen", return_value=resp), \
+             mock.patch.object(refresh, "MAX_RESPONSE_BYTES", 10), \
+             mock.patch.object(refresh, "MAX_LISTING_BYTES", 50):
+            with self.assertRaises(RuntimeError):      # default limit (10) exceeded
+                REAL_FETCH("https://x.example.com/a", "text/xml")
+            with self.assertRaises(RuntimeError):      # board asks 10.000, capped at 50
+                REAL_FETCH("https://x.example.com/a", "text/xml", 10_000)
+            resp.read.side_effect = lambda n: b"x" * min(n, 40)
+            self.assertEqual(len(REAL_FETCH("https://x.example.com/a", "text/xml", 45)), 40)
+
     def test_unknown_date_stays_unknown(self):
         html = page("Merchandising Intern", None)
         entry = refresh.posting_entry(PVH, BASE + "R1/x", refresh.job_posting_from_html(html))
         self.assertIsNone(entry["published_at"])
 
     def test_anti_bot_challenge_stops_the_board(self):
-        def challenged(url, accept):
+        def challenged(url, accept, max_bytes=None):
             if "sitemap" in url:
                 return fake_fetch(url, accept)
             raise refresh.AntiBotChallenge("AWS WAF challenge")
@@ -247,7 +290,7 @@ class SitemapJsonLd(unittest.TestCase):
     def test_repeated_errors_stop_politely(self):
         calls = []
 
-        def broken(url, accept):
+        def broken(url, accept, max_bytes=None):
             if "sitemap" in url:
                 return fake_fetch(url, accept)
             calls.append(url)
