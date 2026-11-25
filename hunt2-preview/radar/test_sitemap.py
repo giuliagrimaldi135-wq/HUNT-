@@ -136,6 +136,22 @@ class SitemapJsonLd(unittest.TestCase):
         self.assertIsNone(refresh.job_posting_from_html(
             b'<script type="application/ld+json">{broken</script>'))
 
+    def test_brand_from_workday_url_when_employer_is_the_group(self):
+        board = {"brand": "Tapestry", "brands_from_hiring_org": ["Coach", "Kate Spade", "Stuart Weitzman"]}
+        url = ("https://tapestry.wd108.myworkdayjobs.com/Tapestry_Careers/job/"
+               "Charlotte-North-Carolina-USA-Southpark---Coach/Temporary-Sales-Support-Associate_JR15825")
+        html = page("Temporary Sales Support Associate", "2026-11-23", "Southpark", "",
+                    "United States of America", "Tapestry, Inc.")
+        entry = refresh.posting_entry(board, url, refresh.job_posting_from_html(html))
+        self.assertEqual((entry["brand"], entry["country"]), ("Coach", "US"))
+        other = refresh.posting_entry(board, url.replace("---Coach", "---Corporate"),
+                                      refresh.job_posting_from_html(html))
+        self.assertEqual(other["brand"], "Tapestry")  # never guessed
+        # A word inside another word is not a brand match ("Coaching").
+        coaching = refresh.posting_entry(board, url.replace("---Coach", "---Coaching-Center"),
+                                         refresh.job_posting_from_html(html))
+        self.assertEqual(coaching["brand"], "Tapestry")
+
     def test_unknown_date_stays_unknown(self):
         html = page("Merchandising Intern", None)
         entry = refresh.posting_entry(PVH, BASE + "R1/x", refresh.job_posting_from_html(html))

@@ -168,6 +168,26 @@
       ],
       "max_pages_per_run": 120,
       "note": "Sitemap ufficiale dichiarata in careers.pvh.com/robots.txt; ogni annuncio confermato dal JSON-LD JobPosting della sua pagina. Verificato il 24/11/2026: 1.116 annunci in sitemap."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Tapestry",
+      "sitemap_urls": [
+        "https://tapestry.wd108.myworkdayjobs.com/Tapestry_Careers/siteMap.xml"
+      ],
+      "link_hosts": [
+        "tapestry.wd108.myworkdayjobs.com"
+      ],
+      "job_url_regex": "^https://tapestry\\.wd108\\.myworkdayjobs\\.com/Tapestry_Careers/job/",
+      "brands_from_hiring_org": [
+        "Coach",
+        "Kate Spade",
+        "Stuart Weitzman"
+      ],
+      "max_pages_per_run": 100,
+      "note": "Workday ufficiale di Tapestry (Coach, Kate Spade, Stuart Weitzman): sitemap dichiarata nel robots.txt con 100 annunci il 25/11/2026.",
+      "enabled": false,
+      "disabled_reason": "25/11/2026: robots.txt e una pagina annuncio leggibili (JSON-LD completo), ma dopo poche richieste la sitemap ha risposto con una sfida anti-bot Cloudflare. HUNT non la aggira: riattivare solo se un controllo singolo e isolato da GitHub Actions risulta leggibile senza sfida."
     }
   ],
   "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."

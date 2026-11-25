@@ -405,8 +405,12 @@ def posting_entry(board, url, posting):
     org = posting.get("hiringOrganization")
     org_name = clean(org.get("name") if isinstance(org, dict) else org, 80)
     brand = board["brand"]
+    # Brand from the official page: employer name, title, then the job URL
+    # itself (Workday paths name the store, e.g. ".../Southpark---Coach/...").
+    url_words = re.sub(r"[-_/]+", " ", urllib.parse.unquote(urllib.parse.urlsplit(url).path)).lower()
     for known in board.get("brands_from_hiring_org") or []:
-        if known.lower() in org_name.lower() or known.lower() in title.lower():
+        needle = known.lower()
+        if needle in org_name.lower() or needle in title.lower() or f" {needle} " in f" {url_words} ":
             brand = known
             break
     valid = parse_date(posting.get("validThrough"))
