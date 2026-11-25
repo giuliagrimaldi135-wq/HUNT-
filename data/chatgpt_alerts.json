@@ -1206,5 +1206,34 @@
     "source_name": "Veepee Careers (Lever); prima pubblicazione indicizzata 17 novembre 2026",
     "source_type": "ChatGPT HUNT",
     "recommended_cv": "merch_buying"
+  },
+  {
+    "key": "chatgpt-moncler-menswear-product-development-intern-4486474198",
+    "brand": "Moncler",
+    "title": "Menswear Product Development Intern",
+    "location": "Milano, Italia",
+    "published_at": "2026-11-03",
+    "detected_at": "2026-11-25T16:50:05+01:00",
+    "first_seen_at": "2026-11-25T16:50:05+01:00",
+    "last_seen_at": "2026-11-25T16:50:05+01:00",
+    "priority": "MEDIA",
+    "score": 80,
+    "role_family": "Product",
+    "why_fit": "Stage curriculare di sei mesi nel Product Development Menswear presso l'HQ di Milano, con PLM, schede tecniche, scadenze, costi e coordinamento fornitori. È una vacancy distinta dalle opportunità Moncler già segnalate nell'elenco di esclusione. Profilo più tecnico-operativo che merchandising; verificare l'ammissibilità del percorso Fashion Management.",
+    "reasons": [
+      "Stage curriculare full-time di sei mesi da gennaio",
+      "Sede HQ Milano",
+      "Inserimento e gestione schede tecniche in PLM",
+      "Coordinamento accessori, spedizioni e fornitori",
+      "Rimborso indicato di 800 euro mensili",
+      "Laurea o diploma in fashion o campo correlato"
+    ],
+    "url": "https://it.linkedin.com/jobs/view/menswear-product-development-intern-at-moncler-4486474198",
+    "source_name": "Moncler / LinkedIn vacancy 4486474198; data pubblicazione 3 novembre riscontrata su FashionUnited",
+    "source_type": "ChatGPT HUNT",
+    "recommended_cv": "fashion_mgmt",
+    "provider": "chatgpt_web",
+    "decision": "adjacent",
+    "junior_fit": true
   }
 ]
