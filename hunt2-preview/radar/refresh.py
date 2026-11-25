@@ -100,6 +100,7 @@ ROLE_SPECS = [
      r"collection coordinat\w*|sviluppo prodotto|chef de produit|product lifecycle)\b",
      "Product Management & Development"),
     (r"\b(?:crm|clienteling|client development|client relation\w*|customer care|customer service|"
+     r"customer experience|"
      r"client service|clientele)\b", "CRM & Clienteling"),
     (r"\b(?:pr|communications?|comunicazione|public relations|events?|eventi|vip|"
      r"press|influencer|social media|content)\b", "PR, Communications & Events"),
@@ -118,8 +119,10 @@ ROLE_SPECS = [
     (r"retail operations|retail excellence|retail performance|store operations|\bretail\b|boutique|"
      r"\bstore\b|\bshop\b|negozio|client advisor|client experience|sales (?:associate|assistant|advisor|"
      r"consultant|supervisor|ambassador|specialist)|floor (?:leader|supervisor|manager)|stock ?room|"
-     r"stock ?keeper|cashier|cassier\w*|conseill\w* de vente|vend(?:eur|euse)|verk[äa]uf\w*|"
-     r"addett[oa] (?:alle )?vendit\w*|commess[oa]|consulente (?:alle )?vendit\w*|prodava\w*|"
+     r"stock ?keeper|cashier|cassier\w*|conseill\S* de vente|vend(?:eur|euse)|vendedor\w*|verk[äa]uf\w*|"
+     r"addett\S* (?:alle )?vendit\w*|commess\S*|consulente (?:alle )?vendit\w*|prodava\w*|"
+     r"\bstock (?:associate|assistant|supervisor|coordinator)|\boutlet\b|aushilfe|d[ée]monstrat\w*|"
+     r"stockiste|\bselling\b|department manager|"
      r"obchodní poradce|dependient\w*|asesor\w* de ventas|beauty advisor|personal shopper|"
      r"brand ambassador|stylist|styling", "Retail & Retail Operations"),
 ]
