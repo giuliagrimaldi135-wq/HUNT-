@@ -13,8 +13,8 @@ Claude è il **responsabile tecnico** dello sviluppo di HUNT 2.0 dal 24/11/2026.
 - Mai inventare competenze, requisiti, date, contatti o vacancy. Una data sconosciuta resta sconosciuta.
 - Mai dati personali, CV, token o chiavi nel repository, che è **pubblico**.
 - Mai cancellare CV, account, profili, candidature, bozze o offerte storiche.
+- **Merge:** dal 25/11/2026 l'utente ha dato un'autorizzazione permanente. Claude unisce le proprie PR quando la CI è verde e non ci sono conflitti, poi lo registra nel §12.
 - **Senza autorizzazione esplicita dell'utente, mai:**
-  - fare merge;
   - modificare il database di produzione o applicare migrazioni;
   - fare deploy delle Edge Functions o riattivare cron e scanner;
   - attivare servizi a pagamento;
