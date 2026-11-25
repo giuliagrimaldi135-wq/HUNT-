@@ -207,6 +207,29 @@ class SitemapJsonLd(unittest.TestCase):
         entry = refresh.posting_entry(board, urls[0], refresh.job_posting_from_html(html))
         self.assertEqual((entry["city"], entry["country"], entry["brand"]), ("Milan", "IT", "Moncler"))
 
+    def test_escaped_jsonld_type_and_more_placeholders(self):
+        html = page("Digital & Media Trainee", "2026-11-20", "Milano", "Not", "Italy",
+                    "Cartier").replace(b'type="application/ld+json"', b'type="application/ld&#x2B;json"')
+        posting = refresh.job_posting_from_html(html)
+        self.assertIsNotNone(posting)
+        board = {"brand": "Richemont", "brands_from_hiring_org": ["Montblanc", "Cartier"]}
+        entry = refresh.posting_entry(board, "https://careers.richemont.com/en/jobs/jr1/x", posting)
+        self.assertEqual((entry["city"], entry["country"], entry["brand"]), ("Milano", "IT", "Cartier"))
+
+    def test_stale_lastmod_is_skipped_only_when_enabled(self):
+        sitemap = b"""<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        <url><loc>https://careers.richemont.com/en/jobs/jr1/old/</loc><lastmod>2026-02-19T00:00:00Z</lastmod></url>
+        <url><loc>https://careers.richemont.com/en/jobs/jr2/new/</loc><lastmod>2026-11-20T00:00:00Z</lastmod></url>
+        <url><loc>https://careers.richemont.com/en/jobs/jr3/nodate/</loc></url></urlset>"""
+        board = {"brand": "Richemont", "sitemap_urls": ["https://careers.richemont.com/sitemap.xml"],
+                 "link_hosts": ["careers.richemont.com"],
+                 "job_url_regex": r"^https://careers\.richemont\.com/en/jobs/jr\d+/"}
+        with mock.patch.object(refresh, "fetch", return_value=sitemap):
+            self.assertEqual(len(refresh.sitemap_job_urls(board)), 3)
+            urls = refresh.sitemap_job_urls(dict(board, skip_stale_lastmod=True))
+        self.assertEqual(urls, ["https://careers.richemont.com/en/jobs/jr2/new",
+                                "https://careers.richemont.com/en/jobs/jr3/nodate"])
+
     def test_unknown_date_stays_unknown(self):
         html = page("Merchandising Intern", None)
         entry = refresh.posting_entry(PVH, BASE + "R1/x", refresh.job_posting_from_html(html))
