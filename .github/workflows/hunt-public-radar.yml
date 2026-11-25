@@ -22,7 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
+      # Always start from the latest main, not from the commit that triggered the
+      # run: an earlier queued run may have published newer radar data meanwhile.
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -69,7 +73,9 @@ jobs:
             fi
             echo "::warning::main moved during the run; rebasing and retrying ($ATTEMPT/5)"
             sleep $((ATTEMPT * 3))
-            git pull --rebase origin main || { git rebase --abort || true; echo "::error::Rebase failed"; exit 1; }
+            # During a rebase "theirs" is the commit being replayed: the data this run just
+            # produced from the latest main wins over any older copy of the two data files.
+            git pull --rebase -X theirs origin main || { git rebase --abort || true; echo "::error::Rebase failed"; exit 1; }
           done
           echo "::error::Could not publish the refreshed public radar after 5 attempts"
           exit 1
