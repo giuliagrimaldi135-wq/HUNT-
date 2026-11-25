@@ -76,48 +76,80 @@ def clean(txt, limit=200):
     return html.unescape(re.sub(r"\s+", " ", raw)).strip()[:limit]
 
 
+ROLE_SPECS = [
+    # Most specific first. Families = FAMILIES in personal-radar-policy.mjs.
+    (r"\b(?:accountant|accounting|accounts payable|controller)\b", "Finance & Legal"),
+    (r"visual merchandis|\bvm\b|vitrin|window design|merchandising visivo", "Visual Merchandising"),
+    (r"\b(?:hr|hrbp|recruit\w*|human resources|talent acquisition|people partner|risorse umane|"
+     r"ressources humaines|personalabteilung|payroll|learning and development|l&d)\b", "HR & Talent"),
+    (r"\b(?:buying|buyer|purchasing|acquisti|acheteu\w*|einkauf\w*|compras?)\b", "Buying"),
+    (r"\b(?:(?<!store )planning|planner|allocation|allocator|forecast\w*|replenishment analyst|pianificazione)\b",
+     "Planning & Allocation"),
+    (r"e-?commerce|e-?business|online store|digital merchandis|site merchandis|marketplace|omnichannel",
+     "E-commerce & Digital"),
+    (r"merchandis", "Merchandising"),
+    (r"\b(?:wholesale|commercial operations|key account|account manager|showroom|sales manager area|"
+     r"area manager wholesale)\b", "Wholesale & Commercial"),
+    (r"\b(?:supply chain|logistic\w*|warehouse|transport\w*|distribution|magazzin\w*|entrepôt|lager)\b",
+     "Supply Chain & Logistics"),
+    (r"\b(?:sourcing|production|produzione|manufactur\w*|quality|qualità|qualité|factory|atelier|"
+     r"pattern ?maker|modellist\w*|prototip\w*|sample room|craftsman|artisan\w*|watchmaker|"
+     r"horlog\w*|goldsmith|orafo|tecnic[oa] di prodotto|product engineer|procurement|lab(?:oratory)?)\b",
+     "Production & Sourcing"),
+    (r"\b(?:product development|product developer|product manager|collection development|"
+     r"collection coordinat\w*|sviluppo prodotto|chef de produit|product lifecycle)\b",
+     "Product Management & Development"),
+    (r"\b(?:crm|clienteling|client development|client relation\w*|customer care|customer service|"
+     r"client service|clientele)\b", "CRM & Clienteling"),
+    (r"\b(?:pr|communications?|comunicazione|public relations|events?|eventi|vip|"
+     r"press|influencer|social media|content)\b", "PR, Communications & Events"),
+    (r"\b(?:finance|financial|fp&a|accountant|accounting|account payable|controller|controlling|"
+     r"audit\w*|tax|treasury|legal|lawyer|counsel|compliance|contabil\w*|amministrazione|juridique)\b",
+     "Finance & Legal"),
+    (r"\b(?:marketing|brand management|brand manager|campaign|trade marketing)\b", "Marketing & Brand"),
+    (r"\b(?:data|analyst|analytics|business intelligence|insight\w*|reporting)\b", "Data & Analytics"),
+    (r"\b(?:(?:solution|domain|security|enterprise|software|cloud|data|it|technical) architect\w*|"
+     r"software|developer|engineer\w*|devops|cyber|security engineer\w*|it|ict|sap|cloud|"
+     r"ux|ui|infrastructure|sistemi informativi|informatica|tech lead|technology)\b", "Technology"),
+    (r"\b(?:design|designer|creative|graphic|textile|disegnat\w*|créat\w*)\b",
+     "Design & Creative"),
+    (r"\b(?:facility|facilities|maintenance|store development|store planning|construction|"
+     r"architect\w*|real estate|manutenzione)\b", "Facilities & Store Development"),
+    (r"retail operations|retail excellence|retail performance|store operations|\bretail\b|boutique|"
+     r"\bstore\b|\bshop\b|negozio|client advisor|client experience|sales (?:associate|assistant|advisor|"
+     r"consultant|supervisor|ambassador|specialist)|floor (?:leader|supervisor|manager)|stock ?room|"
+     r"stock ?keeper|cashier|cassier\w*|conseill\w* de vente|vend(?:eur|euse)|verk[äa]uf\w*|"
+     r"addett[oa] (?:alle )?vendit\w*|commess[oa]|consulente (?:alle )?vendit\w*|prodava\w*|"
+     r"obchodní poradce|dependient\w*|asesor\w* de ventas|beauty advisor|personal shopper|"
+     r"brand ambassador|stylist|styling", "Retail & Retail Operations"),
+]
+
+
 def role_family(title):
-    t = title.lower()
-    specs = [
-        (r"visual merchandis", "Visual Merchandising"),
-        (r"\b(?:hr|recruit|human resources|talent acquisition|people partner)\b", "HR & Talent"),
-        (r"\b(?:buying|buyer|purchasing)\b", "Buying"),
-        (r"\b(?:planning|allocation|forecast|inventory|demand planner)\b", "Planning & Allocation"),
-        (r"e-?commerce|digital merchandis|site merchandis", "E-commerce & Digital"),
-        (r"merchandis", "Merchandising"),
-        (r"\b(?:wholesale|commercial operations)\b", "Wholesale & Commercial"),
-        (r"\b(?:supply chain|logistics|warehouse|transport)\b", "Supply Chain & Logistics"),
-        (r"retail operations|retail excellence|retail performance|store operations", "Retail & Retail Operations"),
-        (r"\b(?:product development|product manager|collection development)\b", "Product Management & Development"),
-        (r"\b(?:crm|clienteling)\b", "CRM & Clienteling"),
-        (r"\b(?:pr|communications?|public relations|events?)\b", "PR, Communications & Events"),
-        (r"\b(?:finance|accountant|accounting|controller|legal)\b", "Finance & Legal"),
-        (r"\b(?:marketing|brand management)\b", "Marketing & Brand"),
-        (r"\b(?:data|analyst|analytics|business intelligence)\b", "Data & Analytics"),
-        (r"\b(?:design|creative)\b", "Design & Creative"),
-        (r"\b(?:retail|boutique|store)\b", "Retail & Retail Operations"),
-    ]
-    for pattern, fam in specs:
+    t = str(title or "").lower()
+    for pattern, fam in ROLE_SPECS:
         if re.search(pattern, t):
             return fam
     return ""
 
 
 def seniority(title):
-    t = title.lower()
-    if re.search(r"\b(intern|internship|stage|stagiaire|tirocinio)\b", t):
+    t = str(title or "").lower()
+    if re.search(r"\b(intern|internship|stage|stagiaire|tirocinio|tirocinante|praktikum|praktikant\w*|"
+                 r"pr[áa]cticas|becari[oa]|stagista)\b", t):
         return "internship"
-    if re.search(r"\b(trainee|apprentice|graduate program)\b", t):
+    if re.search(r"\b(trainee|apprentice\w*|apprendist\w*|alternan\w*|apprenti\w*|graduate program\w*|"
+                 r"graduate scheme|ausbildung)\b", t):
         return "trainee"
-    if re.search(r"\b(head of|director|chief|vice president)\b", t):
+    if re.search(r"\b(head of|director|directrice|directeur|chief|vice president|vp)\b", t):
         return "head_director"
     if re.search(r"\b(senior|principal|sr\.)\b", t):
         return "senior_manager"
-    if re.search(r"\b(manager|lead|responsabile)\b", t):
+    if re.search(r"\b(manager|lead|responsabile|leader)\b", t):
         return "manager"
-    if re.search(r"\b(assistant|assistente)\b", t):
+    if re.search(r"\b(assistant|assistente|assistant\(e\)|assistante|assistent\w*)\b", t):
         return "assistant"
-    if re.search(r"\b(junior|jr\.?)\b", t):
+    if re.search(r"\b(junior|jr\.?|fresh graduate|entry level)\b", t):
         return "junior"
     return "unspecified"  # Never claim entry-level on title alone.
 
@@ -828,6 +860,13 @@ def refresh():
             continue
         if dt.datetime.fromisoformat(verified.replace("Z","+00:00")) < current-DAY*7:
             continue
+        # Classification rules improve over time: apply the current ones to every
+        # listed job, keeping the previous value when the new rules know nothing.
+        title = job.get("title") or ""
+        job["role"] = role_family(title) or job.get("role") or ""
+        level = seniority(title)
+        if level != "unspecified":
+            job["level"] = level
         jobs.append(job)
     jobs.sort(key=lambda j:j.get("published_at") or j.get("first_seen_at") or "",reverse=True)
     jobs = jobs[:MAX_JOBS]
