@@ -541,10 +541,16 @@ def posting_entry(board, url, posting):
     url_words = re.sub(r"[-_/]+", " ", urllib.parse.unquote(urllib.parse.urlsplit(url).path)).lower()
     # When the employer is the group itself ("Prada Group"), its name says
     # nothing about the brand: only the title and the URL can.
-    org_is_group = org_name.lower() == board["brand"].lower()
+    # Group names (e.g. "HUGO BOSS AG") are removed before looking for a brand,
+    # so the group's own name never decides between its brands.
+    groups = [g.lower() for g in board.get("group_names") or []] + [board["brand"].lower()]
+    org_text, title_text = org_name.lower(), title.lower()
+    for group in groups:
+        org_text = org_text.replace(group, " ")
+        title_text = title_text.replace(group, " ")
     for known in board.get("brands_from_hiring_org") or []:
         needle = known.lower()
-        if ((needle in org_name.lower() and not org_is_group) or needle in title.lower()
+        if (needle in org_text or needle in title_text
                 or f" {needle} " in f" {url_words} "):
             brand = known
             break
