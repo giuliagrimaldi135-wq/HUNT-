@@ -344,6 +344,33 @@
       "max_pages_per_run": 100,
       "note": "Sito carriere ufficiale Richemont: sitemap dichiarata nel robots.txt (1.365 annunci in inglese il 25/11/2026), JSON-LD JobPosting con tipo scritto 'application/ld&#x2B;json'. La lastmod della sitemap coincide con datePosted: le pagine non modificate da più di 20 giorni non vengono aperte (238 annunci recenti su 1.365).",
       "skip_stale_lastmod": true
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "EssilorLuxottica",
+      "sitemap_urls": [
+        "https://careers.essilorluxottica.com/sitemap.xml"
+      ],
+      "link_hosts": [
+        "careers.essilorluxottica.com"
+      ],
+      "listing_format": "rss",
+      "max_listing_bytes": 40000000,
+      "location_regex": "(^|, )IT(,|$)",
+      "job_url_regex": "^https://careers\\.essilorluxottica\\.com/job/[^/]+/\\d+$",
+      "brands_from_hiring_org": [
+        "Ray-Ban",
+        "Oakley",
+        "Persol",
+        "Oliver Peoples",
+        "Salmoiraghi & Viganò",
+        "Sunglass Hut",
+        "LensCrafters",
+        "Luxottica",
+        "Essilor"
+      ],
+      "max_pages_per_run": 40,
+      "note": "Sito carriere ufficiale SAP SuccessFactors. La sua sitemap.xml è un feed RSS di ~36 MB con 4.525 annunci (25/11/2026), quasi tutti negozi di ottica in USA/Canada: si usa solo come elenco e si tengono gli annunci in Italia (<g:location> con ', IT', 129 annunci). Dati, data e luogo vengono dai microdata della pagina annuncio."
     }
   ],
   "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."
