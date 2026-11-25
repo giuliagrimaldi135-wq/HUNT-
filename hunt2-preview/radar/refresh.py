@@ -26,7 +26,7 @@ UTC_ISO = lambda d: d.astimezone(UTC).isoformat().replace("+00:00", "Z")
 USER_AGENT = "HUNT-Public-Radar/1.0 (independent read-only career links; GitHub Actions)"
 MAX_RESPONSE_BYTES = 7_000_000
 MAX_PAGES = 10
-MAX_JOBS = 2500
+MAX_JOBS = 4000
 
 
 def parse_date(value):
@@ -327,9 +327,14 @@ def sitemap_locs(content):
         raise ValueError("Unexpected sitemap format")
     locs = []
     for node in root:
+        loc = lastmod = ""
         for child in node:
             if _local(child.tag) == "loc" and (child.text or "").strip():
-                locs.append(child.text.strip())
+                loc = child.text.strip()
+            elif _local(child.tag) == "lastmod":
+                lastmod = (child.text or "").strip()
+        if loc:
+            locs.append((loc, lastmod))
     return ("index" if kind == "sitemapindex" else "urlset"), locs
 
 
@@ -353,8 +358,13 @@ def sitemap_job_urls(board):
             continue
         seen_maps.add(url)
         kind, locs = sitemap_locs(fetch(url, "application/xml, text/xml;q=0.9"))
-        for loc in locs:
+        for loc, lastmod in locs:
             loc = public_url(encode_url(loc))
+            # Opt-in per board: a page not modified for more than 20 days cannot
+            # hold a posting published in the last 20 days, so it is not opened.
+            if (kind != "index" and board.get("skip_stale_lastmod") and parse_date(lastmod)
+                    and _older_than(lastmod, DAY * 20, now())):
+                continue
             if not _on_hosts(loc, board):
                 continue
             if kind == "index":
@@ -427,7 +437,7 @@ def job_posting_from_html(text):
     (JSON-LD first, then HTML microdata)."""
     if isinstance(text, (bytes, bytearray)):
         text = text.decode("utf-8", "replace")
-    for match in re.finditer(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+    for match in re.finditer(r'<script[^>]*type=["\']application/ld(?:\+|&#x2B;|&#43;|&plus;)json["\'][^>]*>(.*?)</script>',
                              text, re.S | re.I):
         try:
             data = json.loads(match.group(1).strip())
@@ -441,7 +451,8 @@ def job_posting_from_html(text):
     return microdata_job_posting(text)
 
 
-PLACEHOLDERS = {"unavailable", "n/a", "na", "null", "none", "undefined", "-"}
+PLACEHOLDERS = {"unavailable", "n/a", "na", "null", "none", "undefined", "-",
+                "not", "not applicable", "not available"}
 
 
 def real_value(value, limit):

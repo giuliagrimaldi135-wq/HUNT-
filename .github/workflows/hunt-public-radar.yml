@@ -37,7 +37,7 @@ jobs:
           from pathlib import Path
           p=json.loads(Path('hunt2-preview/radar/jobs.json').read_text())
           assert p['sources_successful'] >= 1
-          assert 1 <= len(p['jobs']) <= 2500
+          assert 1 <= len(p['jobs']) <= 4000
           assert all('email' not in x and 'cv' not in x and 'match_score' not in x for x in p['jobs'])
           assert all(x['url'].startswith('https://') for x in p['jobs'])
           print('Validated', len(p['jobs']), 'public job records')

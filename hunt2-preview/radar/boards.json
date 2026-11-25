@@ -292,6 +292,58 @@
       ],
       "max_pages_per_run": 60,
       "note": "Sito carriere ufficiale Moncler Group: sitemap dichiarata nel robots.txt (310 indirizzi, 242 annunci unici il 25/11/2026: stesso annuncio in più lingue), JSON-LD JobPosting. Il vecchio jobs.moncler.com ha il certificato HTTPS scaduto e non viene usato."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Burberry",
+      "sitemap_urls": [
+        "https://burberrycareers.com/sitemap.xml"
+      ],
+      "link_hosts": [
+        "burberrycareers.com"
+      ],
+      "job_url_regex": "^https://burberrycareers\\.com/job/[^/]+/\\d+$",
+      "brands_from_hiring_org": [],
+      "max_pages_per_run": 60,
+      "note": "Sito carriere ufficiale SAP SuccessFactors: sitemap.xml pubblica (127 annunci il 25/11/2026), microdata schema.org JobPosting."
+    },
+    {
+      "family": "sitemap_jsonld",
+      "brand": "Richemont",
+      "sitemap_urls": [
+        "https://careers.richemont.com/sitemap.xml"
+      ],
+      "link_hosts": [
+        "careers.richemont.com"
+      ],
+      "job_url_regex": "^https://careers\\.richemont\\.com/en/jobs/jr\\d+/",
+      "brands_from_hiring_org": [
+        "Van Cleef & Arpels",
+        "Jaeger-LeCoultre",
+        "Vacheron Constantin",
+        "A. Lange & Söhne",
+        "Baume & Mercier",
+        "Roger Dubuis",
+        "Gianvito Rossi",
+        "Peter Millar",
+        "Cartier",
+        "Montblanc",
+        "Panerai",
+        "IWC",
+        "Piaget",
+        "Chloé",
+        "Alaïa",
+        "Dunhill",
+        "Buccellati",
+        "Vhernier",
+        "Delvaux",
+        "Serapian",
+        "TimeVallée",
+        "Watchfinder"
+      ],
+      "max_pages_per_run": 100,
+      "note": "Sito carriere ufficiale Richemont: sitemap dichiarata nel robots.txt (1.365 annunci in inglese il 25/11/2026), JSON-LD JobPosting con tipo scritto 'application/ld&#x2B;json'. La lastmod della sitemap coincide con datePosted: le pagine non modificate da più di 20 giorni non vengono aperte (238 annunci recenti su 1.365).",
+      "skip_stale_lastmod": true
     }
   ],
   "verified_note": "Each board verified on 2026-11-24: official public ATS API answered HTTP 200 and the company name matched the brand."
