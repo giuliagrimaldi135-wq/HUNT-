@@ -11,6 +11,7 @@ import html
 import json
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -176,7 +177,7 @@ def feed_url(board):
 
 
 def parse_feed_xml(content):
-    """Parse RSS 2.0 / Atom without DTDs or entities (XML bomb protection)."""
+    """Parse RSS 2.0 / Atom / sitemap XML without DTDs or entities (XML bomb protection)."""
     if isinstance(content, str):
         content = content.encode("utf-8")
     if re.search(rb"<!(?:DOCTYPE|ENTITY)", content, re.I):
@@ -262,10 +263,269 @@ def parse_feed(board, content):
     return output
 
 
+# ---------------------------------------------------------------------------
+# Official sitemap + JSON-LD JobPosting pages (e.g. PVH careers on Phenom).
+# The sitemap is the list declared in the site's robots.txt; each job page is
+# opened once and kept only if it contains a schema.org JobPosting. No search
+# endpoints, no keys taken from the site's code, no bot-challenge bypass.
+# ---------------------------------------------------------------------------
+SITEMAP_FAMILY = "sitemap_jsonld"
+STATE_FILE = "sitemap-state.json"
+MAX_SITEMAPS = 20
+DEFAULT_PAGES_PER_RUN = 120
+PAGE_DELAY_SECONDS = 1.0
+RECHECK_OK_AFTER = DAY * 2
+RECHECK_TOO_OLD_AFTER = DAY * 7  # datePosted can be refreshed when re-posted.
+FORGET_GONE_AFTER = DAY * 30
+MAX_CONSECUTIVE_PAGE_ERRORS = 5
+
+COUNTRY_CODES = {
+    "united states of america": "US", "united states": "US", "usa": "US",
+    "canada": "CA", "mexico": "MX", "brazil": "BR",
+    "united kingdom": "GB", "ireland": "IE", "netherlands": "NL", "belgium": "BE",
+    "luxembourg": "LU", "france": "FR", "germany": "DE", "austria": "AT",
+    "switzerland": "CH", "italy": "IT", "spain": "ES", "portugal": "PT",
+    "denmark": "DK", "sweden": "SE", "norway": "NO", "finland": "FI",
+    "poland": "PL", "czech republic": "CZ", "czechia": "CZ", "slovakia": "SK",
+    "hungary": "HU", "romania": "RO", "croatia": "HR", "slovenia": "SI",
+    "greece": "GR", "türkiye": "TR", "turkey": "TR", "united arab emirates": "AE",
+    "china": "CN", "hong kong sar": "HK", "hong kong": "HK", "macau sar": "MO",
+    "taiwan": "TW", "japan": "JP", "south korea": "KR", "korea, republic of": "KR",
+    "singapore": "SG", "malaysia": "MY", "india": "IN", "australia": "AU",
+    "new zealand": "NZ",
+}
+
+
+def country_code(value):
+    txt = clean(value, 60)
+    if re.fullmatch(r"[A-Za-z]{2}", txt):
+        return txt.upper()
+    return COUNTRY_CODES.get(txt.lower(), "")
+
+
+def encode_url(value):
+    """Sitemaps may contain raw accented characters: percent-encode them."""
+    try:
+        parts = urllib.parse.urlsplit(str(value or "").strip())
+        path = urllib.parse.quote(parts.path, safe="/%-._~!$&'()*+,;=:@")
+        query = urllib.parse.quote(parts.query, safe="=&%-._~+")
+        return urllib.parse.urlunsplit((parts.scheme, parts.netloc, path, query, ""))
+    except (ValueError, TypeError):
+        return ""
+
+
+def _on_hosts(url, board):
+    hosts = {h.lower() for h in board.get("link_hosts") or []}
+    return bool(url) and (urllib.parse.urlsplit(url).hostname or "").lower() in hosts
+
+
+def sitemap_locs(content):
+    """Return ('index'|'urlset', [loc, ...]) from a sitemap document."""
+    root = parse_feed_xml(content)
+    kind = _local(root.tag)
+    if kind not in ("sitemapindex", "urlset"):
+        raise ValueError("Unexpected sitemap format")
+    locs = []
+    for node in root:
+        for child in node:
+            if _local(child.tag) == "loc" and (child.text or "").strip():
+                locs.append(child.text.strip())
+    return ("index" if kind == "sitemapindex" else "urlset"), locs
+
+
+def sitemap_job_urls(board):
+    """Official job URLs listed in the brand's declared sitemaps."""
+    pattern = re.compile(board["job_url_regex"])
+    queue = []
+    for raw in board.get("sitemap_urls") or []:
+        url = public_url(raw)
+        if not _on_hosts(url, board):
+            raise ValueError("Sitemap URL must be HTTPS on a declared official host")
+        queue.append(url)
+    seen_maps, jobs = set(), []
+    while queue and len(seen_maps) < MAX_SITEMAPS:
+        url = queue.pop(0)
+        if url in seen_maps:
+            continue
+        seen_maps.add(url)
+        kind, locs = sitemap_locs(fetch(url, "application/xml, text/xml;q=0.9"))
+        for loc in locs:
+            loc = public_url(encode_url(loc))
+            if not _on_hosts(loc, board):
+                continue
+            if kind == "index":
+                queue.append(loc)
+            elif pattern.search(loc) and loc not in jobs:
+                jobs.append(loc)
+    if not seen_maps:
+        raise ValueError("No sitemap configured")
+    return jobs
+
+
+def _jsonld_nodes(data):
+    if isinstance(data, list):
+        for item in data:
+            yield from _jsonld_nodes(item)
+    elif isinstance(data, dict):
+        yield data
+        if isinstance(data.get("@graph"), list):
+            yield from _jsonld_nodes(data["@graph"])
+
+
+def job_posting_from_html(text):
+    """Extract the schema.org JobPosting declared by the page itself."""
+    if isinstance(text, (bytes, bytearray)):
+        text = text.decode("utf-8", "replace")
+    for match in re.finditer(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+                             text, re.S | re.I):
+        try:
+            data = json.loads(match.group(1).strip())
+        except (json.JSONDecodeError, ValueError):
+            continue
+        for node in _jsonld_nodes(data):
+            kind = node.get("@type")
+            kinds = kind if isinstance(kind, list) else [kind]
+            if "JobPosting" in kinds:
+                return node
+    return None
+
+
+def posting_entry(board, url, posting):
+    title = clean(html.unescape(str(posting.get("title") or "")), 165)
+    location = posting.get("jobLocation")
+    if isinstance(location, list):
+        location = location[0] if location else {}
+    address = (location or {}).get("address") if isinstance(location, dict) else {}
+    address = address if isinstance(address, dict) else {}
+    city = ", ".join(v for v in (clean(address.get("addressLocality"), 80),
+                                 clean(address.get("addressRegion"), 40)) if v)
+    country = address.get("addressCountry")
+    if isinstance(country, dict):
+        country = country.get("name") or country.get("identifier")
+    org = posting.get("hiringOrganization")
+    org_name = clean(org.get("name") if isinstance(org, dict) else org, 80)
+    brand = board["brand"]
+    for known in board.get("brands_from_hiring_org") or []:
+        if known.lower() in org_name.lower() or known.lower() in title.lower():
+            brand = known
+            break
+    valid = parse_date(posting.get("validThrough"))
+    if valid and valid < UTC_ISO(now()):
+        return None  # The page itself says the posting has expired.
+    if not title or len(title) < 6:
+        return None
+    return {"title": title, "city": city, "url": url,
+            "published_at": parse_date(posting.get("datePosted")),
+            "country": country_code(country), "brand": brand}
+
+
+def _older_than(stamp, delta, current):
+    when = parse_date(stamp)
+    return not when or dt.datetime.fromisoformat(when.replace("Z", "+00:00")) < current - delta
+
+
+def _page_priority(url):
+    """Office and entry-level roles first (HUNT's focus), store floor after.
+    Only an order of visit: every listed page is opened sooner or later."""
+    slug = urllib.parse.unquote(url.rstrip("/").rsplit("/", 1)[-1]).replace("-", " ")
+    family = role_family(slug)
+    if seniority(slug) in ("internship", "trainee", "junior"):
+        return 0
+    if family and family != "Retail & Retail Operations":
+        return 1
+    return 2
+
+
+def pick_pages(urls, state, current, limit):
+    """Which job pages to open this run: never-seen first, then the oldest
+    verified ones. Skip pages known to be gone or published >20 days ago."""
+    fresh, recheck = [], []
+    for url in urls:
+        info = state.get(url)
+        if not info:
+            fresh.append(url)
+            continue
+        status = info.get("status")
+        if status == "gone" and not _older_than(info.get("checked_at"), FORGET_GONE_AFTER, current):
+            continue
+        if status == "too_old" and not _older_than(info.get("checked_at"), RECHECK_TOO_OLD_AFTER, current):
+            continue
+        if status in ("ok", "no_posting") and not _older_than(info.get("checked_at"), RECHECK_OK_AFTER, current):
+            continue
+        recheck.append(url)
+    fresh.sort(key=_page_priority)
+    recheck.sort(key=lambda u: state[u].get("checked_at") or "")
+    return (fresh + recheck)[:max(0, int(limit))]
+
+
+def scan_sitemap_board(board, state, current):
+    """Returns (entries, gone_urls, opened). Updates `state` in place."""
+    urls = sitemap_job_urls(board)
+    listed = set(urls)
+    for url in list(state):
+        if url not in listed:
+            del state[url]  # No longer in the official sitemap.
+    entries, gone, opened, errors_in_row = [], [], 0, 0
+    for url in pick_pages(urls, state, current, board.get("max_pages_per_run", DEFAULT_PAGES_PER_RUN)):
+        if opened:
+            time.sleep(PAGE_DELAY_SECONDS)
+        opened += 1
+        stamp = UTC_ISO(current)
+        try:
+            posting = job_posting_from_html(fetch(url, "text/html"))
+            errors_in_row = 0
+        except urllib.error.HTTPError as exc:
+            if exc.code in (404, 410):
+                state[url] = {"status": "gone", "checked_at": stamp}
+                gone.append(url)
+                errors_in_row = 0
+                continue
+            errors_in_row += 1
+        except (urllib.error.URLError, TimeoutError, RuntimeError) as exc:
+            if isinstance(exc, AntiBotChallenge):
+                raise
+            errors_in_row += 1
+        else:
+            entry = posting_entry(board, url, posting) if posting else None
+            if not entry:
+                state[url] = {"status": "no_posting", "checked_at": stamp}
+                gone.append(url)
+                continue
+            published = entry.get("published_at")
+            if published and _older_than(published, DAY * 20, current):
+                state[url] = {"status": "too_old", "checked_at": stamp, "date_posted": published}
+                continue
+            state[url] = {"status": "ok", "checked_at": stamp}
+            entries.append(entry)
+            continue
+        if errors_in_row >= MAX_CONSECUTIVE_PAGE_ERRORS:
+            break  # Site in trouble: stop politely, retry next run.
+    return entries, gone, opened
+
+
+def load_state():
+    try:
+        data = json.loads((HERE / STATE_FILE).read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def save_state(state):
+    out = json.dumps({k: state[k] for k in sorted(state)}, ensure_ascii=False,
+                     separators=(",", ":")) + "\n"
+    path = HERE / STATE_FILE
+    temp = path.with_suffix(".json.tmp")
+    temp.write_text(out, encoding="utf-8")
+    temp.replace(path)
+
+
 def pages(board):
     family = board["family"]
     if family == FEED_FAMILY:
         return [feed_url(board)]
+    if family == SITEMAP_FAMILY:
+        return []  # Handled by scan_sitemap_board (sitemap + job pages).
     ident = board["board"]
     if not re.fullmatch(r"[a-zA-Z0-9_-]{2,90}", ident):
         raise ValueError("Invalid board identifier")
@@ -372,7 +632,7 @@ def public_job(entry,board,existing,current):
     url = entry["url"]
     return {
         "id":existing.get("id") if existing else hashlib.sha256(url.encode()).hexdigest()[:20],
-        "brand":(existing.get("brand") if existing else None) or board["brand"],
+        "brand":entry.get("brand") or (existing.get("brand") if existing else None) or board["brand"],
         "title":title,
         "role":role_family(title) or (existing.get("role") if existing else ""),
         "level":seniority(title) if seniority(title)!="unspecified" else
@@ -384,7 +644,8 @@ def public_job(entry,board,existing,current):
         "last_verified_at":UTC_ISO(current),
         "url":url,
         "ats":board["family"],
-        "origin":"official_feed" if board["family"] == FEED_FAMILY else "official_ats"
+        "origin":{FEED_FAMILY:"official_feed",SITEMAP_FAMILY:"official_jobposting"}.get(
+            board["family"],"official_ats")
     }
 
 
@@ -397,6 +658,8 @@ def refresh():
               if public_url(j.get("url")) and isinstance(j,dict)}
     checked = successful = discovered = refreshed = 0
     errors = []
+    sitemap_state = load_state()
+    state_used = False
     for board in configs["boards"]:
         if board.get("enabled") is False:
             continue  # Documented in boards.json (e.g. bot challenge); never forced.
@@ -404,6 +667,13 @@ def refresh():
         all_entries = []
         succeeded = False
         try:
+            if board["family"] == SITEMAP_FAMILY:
+                state_used = True
+                board_state = sitemap_state.setdefault(board["brand"], {})
+                all_entries, gone, opened = scan_sitemap_board(board, board_state, current)
+                for url in gone:
+                    by_url.pop(url, None)  # Official page closed: remove at once.
+                print(f"{board['brand']}: {opened} official job pages opened, {len(gone)} closed")
             for num,url in enumerate(pages(board)):
                 if board["family"] == FEED_FAMILY:
                     entries = parse_feed(board, fetch(url, FEED_ACCEPT))
@@ -414,6 +684,8 @@ def refresh():
                 # Don't fetch later pages if a page is not full.
                 if board["family"] not in ("ats_lever","ats_smartrecruiters") or len(entries)<100:
                     break
+            if board["family"] == SITEMAP_FAMILY:
+                succeeded = True
             if not succeeded:
                 continue
             successful += 1
@@ -463,6 +735,8 @@ def refresh():
     temp = file.with_suffix(".json.tmp")
     temp.write_text(out,encoding="utf-8")
     temp.replace(file)
+    if state_used:
+        save_state(sitemap_state)
     print(f"Public radar: {len(jobs)} listed | {successful}/{checked} boards | "
           f"{discovered} new | {refreshed} reverified, no Supabase API calls.")
 
