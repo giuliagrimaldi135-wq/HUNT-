@@ -15,7 +15,10 @@ ROLE_CASES = {
         "Conseiller.ère de vente - CDD temps plein", "Addetto/a alle vendite - Serravalle",
         "Stock Associate - Part Time", "Studentische Aushilfe Tommy Hilfiger Bayreuth (m/w/d)",
         "Vendedor/a - El Corte Inglés", "Démonstrateur.rice - Printemps", "Stockiste H/F - CDD",
-        "Selling Supervisor", "Department Manager - Menswear"],
+        "Selling Supervisor", "Department Manager - Menswear", "PRADA Team Manager Las Vegas Bellagio",
+        "Assistant Manager", "Full Time Supervisor, Tommy Hilfiger - Swords",
+        "Associé(e) aux ventes - Temps partiel", "Doradca Klienta - BOSS Westfield Mokotów (k/m/n)",
+        "Asesor de Moda - BOSS Interlomas", "Verkoopmedewerker - Antwerp", "PRADA Stock Manager Rodeo Drive"],
     "Merchandising": ["Merchandising Intern (6 months)", "Director, Merchandising - Dresses"],
     "Visual Merchandising": ["VISUAL MERCHANDISER", "Visual Merchandising Manager Enschede"],
     "Buying": ["Purchasing Assistant", "[Fashion] - Acheteur.se Matières Premières H/F - CDI",
@@ -23,29 +26,40 @@ ROLE_CASES = {
     "Planning & Allocation": ["Regional Planner", "Manager, Commercial Planning"],
     "E-commerce & Digital": ["Site Merchandising Associate", "PRADA Manager Ecommerce Performance"],
     "HR & Talent": ["HR Assistant - intern", "Recruiting Coordinator, Palo Alto",
-                    "Gestionnaire Ressources Humaines", "Stage Risorse Umane"],
+                    "Gestionnaire Ressources Humaines", "Stage Risorse Umane",
+                    "P&C ADMINISTRATOR", "People & Culture Intern", "Digital Learning Manager"],
     "Finance & Legal": ["International Tax Manager", "Lead Accountant, Inventory",
-                        "Internal Audit Internship", "Senior Legal Counsel - Privacy"],
+                        "Internal Audit Internship", "Senior Legal Counsel - Privacy",
+                        "Senior Manager, Accounts Receivable", "Governance & Risk Manager (GRC)",
+                        "Comptable Achat Négoce - CDD - (H/F/X)"],
     "Technology": ["Senior Fullstack Engineer", "Cyber Security Specialist", "IT Operations Manager",
-                   "Senior Solution Architect", "VERSACE IT Infrastructure Specialist"],
+                   "Senior Solution Architect", "VERSACE IT Infrastructure Specialist",
+                   "Platform Manager Integrations", "Machine Learning Engineering Manager",
+                   "Governance & Risk Manager - Cyber Security"],
     "Production & Sourcing": ["Sourcing Manager, Kids & Baby", "Quality Laboratory Internship",
-                              "Modellista abbigliamento donna", "Horloger Analyste"],
-    "Product Management & Development": ["Product Development Manager", "Stage Sviluppo Prodotto Calzature"],
+                              "Modellista abbigliamento donna", "Horloger Analyste",
+                              "Team Leader Stone Setting", "Manager, Raw Materials Shoes", "Tailor - Sloane"],
+    "Product Management & Development": ["Product Development Manager", "Stage Sviluppo Prodotto Calzature",
+                                         "Internship Global Product Management BOSS WW (m/f/d)"],
     "CRM & Clienteling": ["CRM Manager", "Customer Service Advisor (English Speaker)",
-                          "Customer Experience Specialist"],
+                          "Customer Experience Specialist", "Loyalty & Customer Growth Manager"],
     "PR, Communications & Events": ["Image Events Intern", "Press Manager", "Digital Content Intern"],
-    "Marketing & Brand": ["Brand Management Trainee (6 to 12 months)", "Trade Marketing Specialist"],
+    "Marketing & Brand": ["Brand Management Trainee (6 to 12 months)", "Trade Marketing Specialist", "Senior SEM Manager"],
     "Data & Analytics": ["Data Engineer", "Head of Business Intelligence"],
-    "Design & Creative": ["Graphic Design Intern", "Senior Designer RTW"],
+    "Design & Creative": ["Graphic Design Intern", "Senior Designer RTW", "Art Director"],
     "Facilities & Store Development": ["Director of Facilities", "CDI - Store Planning Manager H/F",
-                                       "Technicien de Maintenance H/F CDI"],
+                                       "Technicien de Maintenance H/F CDI",
+                                       "Health and Safety Manager"],
     "Wholesale & Commercial": ["Account Manager - New Business", "Showroom Dresser"],
-    "Supply Chain & Logistics": ["Warehouse Associate", "Magazziniere - Max Mara - Milano via Orefici"],
+    "Supply Chain & Logistics": ["Warehouse Associate", "Magazziniere - Max Mara - Milano via Orefici",
+                                 "Ausbildung Fachlagerist (m/w/d)", "Operations Supervisor, 2nd Shift",
+                                 "Process Assistant (Picking)"],
 }
 
 LEVEL_CASES = {
     "internship": ["CAMPAIGN MANAGER (Praktikum) (W/M/X)", "Stage Compliance di Prodotto",
-                   "Prácticas Marketing Madrid", "Merchandising Intern (6 months)", "Tirocinio HR"],
+                   "Prácticas Marketing Madrid", "Merchandising Intern (6 months)", "Tirocinio HR",
+                   "Beca People & Culture", "Thesis Collaboration: Style 3D - Pattern Development (m/f/d)"],
     "trainee": ["Contrat en alternance - Assistant RH", "Apprendista commessa", "HR Trainee (m/w/d)"],
     "head_director": ["Head of UX/UI (H/F/X)", "Directrice de boutique"],
     "senior_manager": ["Senior Finance Analyst"],
@@ -64,7 +78,7 @@ class RoleFamilies(unittest.TestCase):
                     self.assertEqual(refresh.role_family(title), family)
 
     def test_unknown_stays_empty(self):
-        for title in ("Producer", "Supervisor (Concession)", "", None):
+        for title in ("Producer", "Director Administrator", "Vestiarista", "", None):
             self.assertEqual(refresh.role_family(title), "")
 
     def test_families_match_the_page_filter(self):
