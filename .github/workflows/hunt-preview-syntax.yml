@@ -19,6 +19,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check hunt2-preview/app.js
+          node --check hunt2-preview/public-opportunities.mjs
           node --check hunt2-preview/job-actionability.mjs
           node --check hunt2-preview/cv-reader.js
           node --check hunt2-preview/cv-profile.js
@@ -30,4 +31,4 @@ jobs:
           node --check hunt2-preview/job-workspace.js
           node --check hunt2-preview/cv-workspace.js
           node --check hunt2-preview/requirement-priority.js
-          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/job-workspace.test.mjs hunt2-preview/tests/cv-workspace.test.mjs hunt2-preview/tests/requirement-priority.test.mjs hunt2-preview/tests/job-actionability.test.mjs
+          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/job-workspace.test.mjs hunt2-preview/tests/cv-workspace.test.mjs hunt2-preview/tests/requirement-priority.test.mjs hunt2-preview/tests/job-actionability.test.mjs hunt2-preview/tests/public-opportunities.test.mjs
