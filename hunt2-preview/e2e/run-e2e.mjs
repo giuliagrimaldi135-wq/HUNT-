@@ -27,26 +27,26 @@ if(!["fake","live"].includes(MODE)){console.error("Use --mode=fake or --mode=liv
 const DAY=86400000,iso=ms=>new Date(ms).toISOString(),now=Date.now();
 export function seedData(){
  const user="11111111-1111-4111-8111-111111111111";
- const company={id:"c1",name:"Prada Group",careers_url:"https://jobs.pradagroup.com/"};
+ const company={id:"00000000-0000-4000-8000-0000000000c1",name:"Prada Group",careers_url:"https://jobs.pradagroup.com/"};
  const description="The Merchandising Intern supports the Eyewear merchandising team in Milan. Responsibilities: analyse sell-out and stock data, prepare assortment proposals for each collection, update line sheets and coordinate with product development. Requirements: university degree in economics or fashion management, advanced Excel, fluent English and Italian, strong attention to detail.";
- const job=(id,title,role,city,days)=>({id,company_id:"c1",canonical_title:title,role_family:role,seniority:"internship",city,remote_mode:"onsite",
+ const job=(id,title,role,city,days)=>({id,company_id:"00000000-0000-4000-8000-0000000000c1",canonical_title:title,role_family:role,seniority:"internship",city,remote_mode:"onsite",
   vacancy_confidence:0.95,confidence_label:"VERIFIED ACTIVE",last_verified_at:iso(now-3600000),published_at:iso(now-days*DAY),first_seen_at:iso(now-days*DAY),
   primary_apply_url:`https://jobs.pradagroup.com/job/Milano/${id}`,state:"active_verified",description,metadata:{public_ats:"ats_successfactors"},companies:company});
- const jobs=[job("j1","Eyewear Collection Merchandising Intern","Merchandising","Milano",1),
-  job("j2","Buying Intern - Womenswear","Buying","Milano",3),job("j3","Merchandising Planning Intern","Merchandising","Milano",6)];
+ const jobs=[job("00000000-0000-4000-8000-0000000000a1","Eyewear Collection Merchandising Intern","Merchandising","Milano",1),
+  job("00000000-0000-4000-8000-0000000000a2","Buying Intern - Womenswear","Buying","Milano",3),job("00000000-0000-4000-8000-0000000000a3","Merchandising Planning Intern","Merchandising","Milano",6)];
  return {
   auth_users:[{id:user,email:"giulia.prova@example.test",password:"prova-e2e-123"}],
   profiles:[{user_id:user,first_name:"Giulia",last_name:"Prova",display_name:"Giulia Prova",seniority:"internship",onboarding_completed:true}],
   career_preferences:[{user_id:user,primary_role_families:["Merchandising","Buying"],secondary_role_families:[],preferred_locations:["Milano"],relocation_locations:["Parigi"],employment_types:["internship"],preferences:{radar_scope:"smart"}}],
   user_personalization:[{user_id:user,interest_areas:["product_assortment"],next_experience_drivers:["skills"],company_preference:"both",avoid_role_traits:[],completed:true}],
-  user_cvs:[{id:"cv1",user_id:user,name:"CV Merchandising",storage_path:user+"/cv1.pdf",target_role_families:["Merchandising"],is_default:true,active:true,created_at:iso(now-10*DAY),updated_at:iso(now-10*DAY),
+  user_cvs:[{id:"00000000-0000-4000-8000-0000000000f1",user_id:user,name:"CV Merchandising",storage_path:user+"/cv1.pdf",target_role_families:["Merchandising"],is_default:true,active:true,created_at:iso(now-10*DAY),updated_at:iso(now-10*DAY),
    parsed_profile:{raw_text:"Giulia Prova. Laurea in Economia e Management della Moda. Stage in merchandising presso un brand di accessori: analisi sell-out, Excel avanzato, inglese fluente.",profile_confirmed_by_user:true,
     experience:[{role:"Merchandising Intern",company:"Brand accessori",bullets:["Analisi sell-out settimanale","Aggiornamento line sheet"]}],education:[{degree:"Laurea in Economia e Management della Moda"}],tools:["Excel avanzato"],languages:["Italiano madrelingua","Inglese fluente"]}}],
   jobs,
-  user_job_matches:jobs.map((j,i)=>({id:"m"+i,user_id:user,job_id:j.id,match_score:86-i*4,priority_score:90-i*5,reasons:["Area professionale scelta","Città scelta"],gaps:[],jobs:j})),
+  user_job_matches:jobs.map((j,i)=>({id:"00000000-0000-4000-8000-00000000009"+i,user_id:user,job_id:j.id,match_score:86-i*4,priority_score:90-i*5,reasons:["Area professionale scelta","Città scelta"],gaps:[],jobs:j})),
   applications:[],user_job_feedback:[],user_job_dossiers:[],repost_events:[],user_news_reads:[],user_outreach_drafts:[],
-  company_signals:[{id:"s1",company_id:"c1",signal_type:"news",title:"Prada Group pubblica i risultati del trimestre",summary:"Comunicato ufficiale.",source_name:"Prada Group",source_url:"https://www.pradagroup.com/",published_at:iso(now-2*DAY),detected_at:iso(now-2*DAY),relevance_score:0.8,companies:{name:"Prada Group"}}],
-  world_news_items:[{id:"n1",theme:"industry",title:"Il lusso in Europa a fine 2026",summary:"Analisi di mercato.",url:"https://example.org/news/1",published_at:iso(now-DAY),detected_at:iso(now-DAY),relevance_score:0.7,evidence:{},world_news_sources:{publisher:"Testata di prova",region:"europe",language:"it"}}]
+  company_signals:[{id:"00000000-0000-4000-8000-0000000000e1",company_id:"00000000-0000-4000-8000-0000000000c1",signal_type:"news",title:"Prada Group pubblica i risultati del trimestre",summary:"Comunicato ufficiale.",source_name:"Prada Group",source_url:"https://www.pradagroup.com/",published_at:iso(now-2*DAY),detected_at:iso(now-2*DAY),relevance_score:0.8,companies:{name:"Prada Group"}}],
+  world_news_items:[{id:"00000000-0000-4000-8000-0000000000d1",theme:"industry",title:"Il lusso in Europa a fine 2026",summary:"Analisi di mercato.",url:"https://example.org/news/1",published_at:iso(now-DAY),detected_at:iso(now-DAY),relevance_score:0.7,evidence:{},world_news_sources:{publisher:"Testata di prova",region:"europe",language:"it"}}]
  };
 }
 
@@ -176,8 +176,10 @@ async function main(){
    const fake=await readFile(join(HERE,"fake-supabase.mjs"),"utf8");
    const seed=seedData();
    prepare=async context=>{
-    await context.route("https://cdn.jsdelivr.net/npm/@supabase/**",route=>route.fulfill({contentType:"text/javascript",body:fake}));
-    await context.route(/^https?:\/\/(?!127\.0\.0\.1)/,route=>route.abort());
+    // One handler: the fake replaces supabase-js, every other outside request is refused.
+    await context.route(/^https?:\/\/(?!127\.0\.0\.1)/,route=>
+     route.request().url().startsWith("https://cdn.jsdelivr.net/npm/@supabase/")
+      ?route.fulfill({contentType:"text/javascript",body:fake}):route.abort());
     await context.addInitScript(s=>{globalThis.__HUNT_FAKE_SEED__=s},seed);
    };
    await memberJourney(browser,base,{email:"giulia.prova@example.test",password:"prova-e2e-123",mobile:false,label:"Iscritta con CV (computer, dati finti)",expectJobs:true});
