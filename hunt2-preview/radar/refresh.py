@@ -91,6 +91,7 @@ ROLE_SPECS = [
      "E-commerce & Digital"),
     (r"merchandis", "Merchandising"),
     (r"\b(?:wholesale|commercial operations|key account|account manager|showroom|sales manager area|"
+     r"sales representative|sales distributors?|"
      r"area manager wholesale)\b", "Wholesale & Commercial"),
     (r"\b(?:supply chain|logisti\w*|warehouse|transport\w*|distribution|magazzin\w*|entrepôt|lager|"
      r"\w*lagerist\w*|picking|putaway|forklift|\d\w* shift|supply (?:&|and) demand)\b",
@@ -98,7 +99,7 @@ ROLE_SPECS = [
     (r"\b(?:sourcing|production|produzione|manufactur\w*|quality|qualità|qualité|factory|atelier|"
      r"pattern ?maker|modellist\w*|prototip\w*|sample room|craftsman|artisan\w*|watchmaker|"
      r"horlog\w*|goldsmith|orafo|tecnic[oa] di prodotto|product engineer|procurement|lab(?:oratory)?|"
-     r"ateliers?|raw materials?|trim|product assurance|product traceability|stone sett\w*|jewell?er|piercer|"
+     r"ateliers?|raw materials?|materials? development|trim|product assurance|product traceability|stone sett\w*|jewell?er|piercer|"
      r"tailor|embroider\w*|cadran|constructeur|pattern development)\b",
      "Production & Sourcing"),
     (r"\b(?:product development|product developer|product manager|collection development|"
@@ -116,7 +117,7 @@ ROLE_SPECS = [
      "Finance & Legal"),
     (r"^(?!.*(?:cyber|data)).*\b(?:risk|grc|governance)\b", "Finance & Legal"),
     (r"\b(?:marketing|brand management|brand manager|campaign|trade marketing|sem|seo|m[ée]dia|"
-     r"brand performance)\b", "Marketing & Brand"),
+     r"brand performance|brand experience)\b", "Marketing & Brand"),
     (r"\b(?:data|analyst|analytics|business intelligence|insight\w*|reporting)\b", "Data & Analytics"),
     (r"\b(?:(?:solution|domain|security|enterprise|software|cloud|data|it|technical) architect\w*|"
      r"software|developer|engineer\w*|devops|cyber|security engineer\w*|it|ict|sap|cloud|"
