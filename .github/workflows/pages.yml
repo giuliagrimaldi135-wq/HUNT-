@@ -41,6 +41,7 @@ jobs:
         continue-on-error: true
         run: |
           node --check hunt2-preview/app.js
+          node --check hunt2-preview/public-opportunities.mjs
           node --check hunt2-preview/job-actionability.mjs
           node --check hunt2-preview/cv-profile.js
           node --check hunt2-preview/cv-reader.js
@@ -54,7 +55,7 @@ jobs:
           node --check hunt2-preview/cv-workspace.js
           node --check hunt2-preview/requirement-priority.js
           node --check hunt2-preview/dossier-intelligence.js
-          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/job-workspace.test.mjs hunt2-preview/tests/cv-workspace.test.mjs hunt2-preview/tests/outreach-intelligence.test.mjs hunt2-preview/tests/outreach-ui-flow.test.mjs hunt2-preview/tests/requirement-priority.test.mjs hunt2-preview/tests/job-actionability.test.mjs
+          node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/job-workspace.test.mjs hunt2-preview/tests/cv-workspace.test.mjs hunt2-preview/tests/outreach-intelligence.test.mjs hunt2-preview/tests/outreach-ui-flow.test.mjs hunt2-preview/tests/requirement-priority.test.mjs hunt2-preview/tests/job-actionability.test.mjs hunt2-preview/tests/public-opportunities.test.mjs
       # Invalid code or broken public-data generation must never replace the last good release.
       # Record one incident rather than sending a new failure email for every radar update.
       - name: Quarantine invalid release and register one quality incident

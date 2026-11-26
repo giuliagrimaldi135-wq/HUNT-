@@ -10,12 +10,17 @@ import {buildOutreachLeads,attachBrandNews,enrichOutreachLeads,chooseOutreachCv,
 import {addChosenCity,findCitySuggestions} from "./onboarding-locations.mjs?v=20261118-1";
 import {safeWithoutCvJob,requiresSeniorExperience,filterOutreachForMember} from "./preview-preference-policy.mjs?v=20261118-1";
 import {serviceErrorMessage,radarFreshness} from "./service-health.mjs?v=20261119-1";
+import {PUBLIC_JOBS_URL,PUBLIC_FAMILIES,publicFreshness,readPublicPrefs,writePublicPrefs,profileFromForm,publicReady,publicRecommendations,publicCardHtml} from "./public-opportunities.mjs?v=20261126-1";
 
 const SUPABASE_URL="https://dfiokxjfgqoboxckcuut.supabase.co";
 const SUPABASE_KEY="sb_publishable_9F3UoJWHMYSKSGqTibcZDg_VMRCGsI_";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
 const app=document.getElementById("app");
 let currentUser=null;
+// Public mode: the official HUNT shows the public radar of official sources
+// without an account (no Supabase calls). Account features stay behind login.
+let publicMode=false;
+let publicEditing=false;
 let currentView=new URLSearchParams(window.location.search).get("view")==="outreach"?"outreach":"opportunities";
 let selectedJobId=null;
 let selectedDossierCvId=null;
@@ -81,10 +86,12 @@ function authView(message="",bad=false){
      <div class="actions"><button class="btn primary" id="loginBtn" type="button">Accedi</button><button class="btn" id="signupBtn" type="button">Crea account</button></div>
    </form>
    <p class="muted" style="font-size:12px;margin-top:14px">Beta preview HUNT 2 · i CV sono salvati nel bucket privato del tuo account.</p>
-   <p class="muted" style="font-size:12px;margin-top:14px"><a href="./radar/" style="color:#426449;text-decoration:underline">Esplora il radar pubblico senza login →</a><span style="display:block;font-size:11px;margin-top:4px">Modalità temporanea: annunci ufficiali, senza CV o dati personali.</span></p>
+   <div class="actions"><button class="btn green" id="publicBtn" type="button">Esplora le opportunità senza account</button></div>
+   <p class="muted" style="font-size:11px;margin-top:6px">Annunci da fonti ufficiali, scelti in base alle aree e alle città che indichi. Nessun CV e nessun dato personale.</p>
  </div></section>`;
  document.getElementById("loginBtn").onclick=login;
  document.getElementById("signupBtn").onclick=signup;
+ document.getElementById("publicBtn").onclick=()=>renderPublicOpportunities();
 }
 
 async function login(){
@@ -131,6 +138,7 @@ async function bootstrap(){
   if(sessionError)throw sessionError;
   currentUser=session?.user||null;
   if(!currentUser){authView();return}
+  publicMode=false;
   const profile=await getProfile();
   if(!profile?.onboarding_completed){onboardingView(profile);return}
   const personalization=await getPersonalization();
@@ -434,7 +442,7 @@ async function savePersonalization(e){
 function shell(inner){
  return `<div class="shell"><aside class="side"><div class="logo">HUNT<span>.</span></div><div class="sub">Fashion & Luxury Career Intelligence</div>
  <div class="nav">${["opportunities","outreach","radar","applications","profile"].map(v=>`<button data-view="${v}" class="${currentView===v?"active":""}">${({opportunities:"Opportunità",outreach:"Brand da contattare",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</div>
- <div class="sideFoot">Beta connected · Supabase</div></aside><main class="main">${inner}</main></div>
+ <div class="sideFoot">${publicMode?'Modalità senza account · <button type="button" data-public-login style="border:0;background:none;color:#fff;text-decoration:underline;font:inherit;padding:0;cursor:pointer">Accedi</button>':"Beta connected · Supabase"}</div></aside><main class="main">${inner}</main></div>
  <nav class="mobileNav">${["opportunities","outreach","radar","applications","profile"].map(v=>`<button data-view="${v}">${({opportunities:"Opportunità",outreach:"Brand",radar:"Fashion News",applications:"Candidature",profile:"Profilo"})[v]}</button>`).join("")}</nav>`;
 }
 
@@ -695,7 +703,110 @@ app.addEventListener("click",event=>{
  openOpportunityFolder(target.dataset.openDossier);
 });
 function bindNav(){
+ if(publicMode){
+  document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{
+   if(b.dataset.view==="opportunities"){renderPublicOpportunities();return}
+   publicMode=false;
+   authView("Questa sezione richiede l'accesso al tuo account. Senza account puoi consultare le Opportunità.");
+  });
+  document.querySelectorAll("[data-public-login]").forEach(b=>b.onclick=()=>{publicMode=false;authView()});
+  return;
+ }
  document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{currentView=b.dataset.view;renderShell()});
+}
+
+let publicPayload=null;
+let publicMemoryPrefs=null; // Used when the browser blocks local storage.
+function storageOrNull(){try{return window.localStorage}catch{return null}}
+async function loadPublicPayload(){
+ if(publicPayload)return publicPayload;
+ const res=await fetch(PUBLIC_JOBS_URL+"?ts="+Date.now(),{cache:"no-store"});
+ if(!res.ok)throw new Error("Elenco delle offerte non disponibile (HTTP "+res.status+").");
+ publicPayload=await res.json();
+ return publicPayload;
+}
+function publicPrefsForm(profile){
+ const roles=PUBLIC_FAMILIES.map(r=>`<label class="choice"><input type="checkbox" name="publicRole" value="${esc(r)}" ${profile.roles.includes(r)?"checked":""}><span>${esc(r)}</span></label>`).join("");
+ const tags=(items,kind)=>items.map((c,i)=>`<span class="locationTag">${esc(c)}<button type="button" data-public-remove="${kind}" data-index="${i}" aria-label="Rimuovi ${esc(c)}">×</button></span>`).join("");
+ return `<form id="publicPrefs" class="card section stack">
+  <div class="eyebrow">La tua ricerca · salvata solo su questo dispositivo</div>
+  <h2>Cosa cerchi e dove.</h2>
+  <p class="lead">Scegli una o più aree professionali e almeno una città. HUNT ordina gli annunci solo in base a queste scelte: senza CV non stima alcuna compatibilità.</p>
+  <div class="choiceGrid">${roles}</div>
+  <div class="grid2">
+   <label><div class="eyebrow">Città in cui vuoi lavorare</div><input class="input" id="publicCity" placeholder="Es. Milano" autocomplete="off"></label>
+   <label><div class="eyebrow">Città per un possibile trasferimento</div><input class="input" id="publicReloc" placeholder="Es. Parigi" autocomplete="off"></label>
+  </div>
+  <div class="grid2"><div id="publicCityTags" class="tagList">${tags(profile.cities,"cities")}</div><div id="publicRelocTags" class="tagList">${tags(profile.relocations,"relocations")}</div></div>
+  <label><div class="eyebrow">Livello</div><select class="input" id="publicLevel">
+   <option value="early" ${profile.level==="early"?"selected":""}>Inizio carriera (stage, trainee, assistant, junior)</option>
+   <option value="internship" ${profile.level==="internship"?"selected":""}>Solo stage</option>
+   <option value="all" ${profile.level==="all"?"selected":""}>Tutti i livelli</option></select></label>
+  <div id="publicPrefsMsg"></div>
+  <div class="actions"><button class="btn green" type="submit">Mostra le opportunità</button></div>
+ </form>`;
+}
+async function renderPublicOpportunities(){
+ publicMode=true;currentView="opportunities";selectedJobId=null;
+ const storage=storageOrNull();
+ const prefs=publicMemoryPrefs||readPublicPrefs(storage);
+ const ready=publicReady(prefs.profile);
+ let payload=null,loadError=null;
+ try{payload=await loadPublicPayload()}catch(e){loadError=e}
+ const recs=payload&&ready?publicRecommendations(payload,prefs):[];
+ const checked=payload?publicFreshness(payload.last_ats_scan_at||payload.generated_at):null;
+ const showForm=!ready||publicEditing;
+ const summary=ready?`${prefs.profile.roles.join(", ")} · ${prefs.profile.cities.concat(prefs.profile.relocations).join(", ")}`:"";
+ app.innerHTML=shell(`<div class="opportunitiesPage">
+ <div class="eyebrow">Il tuo radar · senza account</div><h1>Opportunità</h1>
+ <p class="lead">Annunci recenti da fonti ufficiali dei brand, scelti in base alle aree e alle città che indichi. Apri l'annuncio originale per candidarti.</p>
+ <p class="msg good">Accesso senza account: il servizio privato è momentaneamente limitato. Dossier, CV, candidature salvate e compatibilità con il CV tornano disponibili quando potrai accedere al tuo account.</p>
+ ${checked?`<p class="${checked.stale?"msg bad":"locationHint"}">${esc(checked.text)}</p>`:""}
+ ${!storage?'<p class="locationHint">Il browser non permette di salvare le preferenze: dovrai sceglierle di nuovo alla prossima visita.</p>':""}
+ ${showForm?publicPrefsForm(prefs.profile):`<div class="feedToolbar section"><strong>${recs.length} ${recs.length===1?"posizione":"posizioni"} · ${esc(summary)}</strong><button type="button" class="btn" id="publicEdit">Modifica ricerca</button></div>`}
+ ${loadError?`<div class="msg bad section">${esc(loadError.message||String(loadError))}</div>`:""}
+ ${ready&&!showForm&&payload?`<section class="section stack opportunityList">${recs.length?recs.map(r=>publicCardHtml(r,esc)).join(""):'<div class="emptyState"><h3>Nessuna posizione recente con queste scelte.</h3><p>HUNT non riempie il feed con ruoli non coerenti. Prova ad aggiungere un\'area o una città, oppure a scegliere «Tutti i livelli».</p></div>'}</section>`:""}
+ <p class="locationHint section">La copertura è parziale: non tutti i brand pubblicano le offerte in un formato verificabile. Una posizione può chiudere prima del controllo successivo.</p>
+ </div>`);
+ bindNav();
+ const edit=document.getElementById("publicEdit");
+ if(edit)edit.onclick=()=>{publicEditing=true;renderPublicOpportunities()};
+ const form=document.getElementById("publicPrefs");
+ if(!form)return;
+ const draft={cities:[...prefs.profile.cities],relocations:[...prefs.profile.relocations]};
+ const drawTags=()=>{
+  for(const [kind,id] of [["cities","publicCityTags"],["relocations","publicRelocTags"]])
+   document.getElementById(id).innerHTML=draft[kind].map((c,i)=>`<span class="locationTag">${esc(c)}<button type="button" data-public-remove="${kind}" data-index="${i}" aria-label="Rimuovi ${esc(c)}">×</button></span>`).join("");
+ };
+ const addFrom=(inputId,kind)=>{
+  const input=document.getElementById(inputId);
+  const next=profileFromForm({[kind]:[...draft[kind],input.value]})[kind];
+  draft[kind]=next;input.value="";drawTags();
+ };
+ for(const [inputId,kind] of [["publicCity","cities"],["publicReloc","relocations"]]){
+  const input=document.getElementById(inputId);
+  input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addFrom(inputId,kind)}});
+  input.addEventListener("change",()=>{if(input.value.trim())addFrom(inputId,kind)});
+ }
+ form.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-public-remove]");
+  if(!btn)return;
+  draft[btn.dataset.publicRemove].splice(Number(btn.dataset.index),1);drawTags();
+ });
+ form.onsubmit=e=>{
+  e.preventDefault();
+  for(const [inputId,kind] of [["publicCity","cities"],["publicReloc","relocations"]])
+   if(document.getElementById(inputId).value.trim())addFrom(inputId,kind);
+  const roles=[...form.querySelectorAll('input[name="publicRole"]:checked')].map(x=>x.value);
+  const profile=profileFromForm({roles,cities:draft.cities,relocations:draft.relocations,level:document.getElementById("publicLevel").value});
+  if(!publicReady(profile)){
+   document.getElementById("publicPrefsMsg").innerHTML='<div class="msg bad">Scegli almeno un\'area professionale e una città.</div>';return;
+  }
+  publicMemoryPrefs={...prefs,profile};
+  if(storage)writePublicPrefs(storage,publicMemoryPrefs);
+  publicEditing=false;
+  renderPublicOpportunities();
+ };
 }
 
 async function renderOpportunities(){
@@ -1579,7 +1690,9 @@ window.addEventListener("popstate",(event)=>{
  const jobId=event.state?.huntFolder;
  if(jobId){openOpportunityFolder(jobId,false);return}
  currentView="opportunities";
+ if(publicMode){renderPublicOpportunities();return}
  renderOpportunities();
 });
-supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user&&!currentUser){currentUser=session.user;setTimeout(bootstrap,0)}});
-bootstrap();
+supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user&&!currentUser){currentUser=session.user;publicMode=false;setTimeout(bootstrap,0)}});
+if(new URLSearchParams(window.location.search).get("view")==="public")renderPublicOpportunities();
+else bootstrap();
