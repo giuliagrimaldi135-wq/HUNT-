@@ -27,7 +27,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,12 +96,22 @@ jobs:
         if: steps.feed.outcome == 'success' && steps.quality.outcome == 'success'
         with:
           path: "."
+      # GitHub sometimes cannot find the artifact it has just stored ("Found 0 artifact(s)",
+      # runs 839 and 841 on 26/11). Wait and try once more instead of leaving the site stale.
       - name: Deploy to GitHub Pages
         if: steps.feed.outcome == 'success' && steps.quality.outcome == 'success'
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      - name: Wait before retrying a failed deployment
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 45
+      - name: Deploy to GitHub Pages (second attempt)
+        if: steps.deployment.outcome == 'failure'
+        id: deployment_retry
         uses: actions/deploy-pages@v4
       - name: Resolve the quality incident after a successful deployment
-        if: steps.deployment.outcome == 'success'
+        if: steps.deployment.outcome == 'success' || steps.deployment_retry.outcome == 'success'
         continue-on-error: true
         uses: actions/github-script@v7
         with:
