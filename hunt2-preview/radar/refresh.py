@@ -109,6 +109,8 @@ ROLE_SPECS = [
     (r"\b(?:crm|clienteling|client development|client relation\w*|customer care|customer service|"
      r"customer experience|"
      r"client service|clientele|loyalty|relation visiteurs)\b", "CRM & Clienteling"),
+    (r"\b(?:ehs|hse|environment,? health,? (?:&|and) safety|health,? (?:&|and) safety)\b",
+     "Facilities & Store Development"),  # Before PR: "EHS Communication" is safety work.
     (r"\b(?:pr|communications?|comunicazione|public relations|events?|eventi|vip|"
      r"press|influencer|social media|content)\b", "PR, Communications & Events"),
     (r"\b(?:finance|financial|fp&a|accountant|accounting|account payable|controller|controlling|"
