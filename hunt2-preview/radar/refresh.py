@@ -81,7 +81,9 @@ ROLE_SPECS = [
     (r"\b(?:accountant|accounting|accounts payable|controller)\b", "Finance & Legal"),
     (r"visual merchandis|\bvm\b|vitrin|window design|merchandising visivo", "Visual Merchandising"),
     (r"\b(?:hr|hrbp|recruit\w*|human resources|talent acquisition|people partner|risorse umane|"
-     r"ressources humaines|personalabteilung|payroll|learning and development|l&d)\b", "HR & Talent"),
+     r"ressources humaines|personalabteilung|payroll|learning and development|l&d|p&c|"
+     r"people (?:&|and) culture|(?<!machine )learning(?! retail)|culture & education|relazioni sindacali|diritto del lavoro)\b",
+     "HR & Talent"),
     (r"\b(?:buying|buyer|purchasing|acquisti|acheteu\w*|einkauf\w*|compras?)\b", "Buying"),
     (r"\b(?:(?<!store )planning|planner|allocation|allocator|forecast\w*|replenishment analyst|pianificazione)\b",
      "Planning & Allocation"),
@@ -90,32 +92,41 @@ ROLE_SPECS = [
     (r"merchandis", "Merchandising"),
     (r"\b(?:wholesale|commercial operations|key account|account manager|showroom|sales manager area|"
      r"area manager wholesale)\b", "Wholesale & Commercial"),
-    (r"\b(?:supply chain|logistic\w*|warehouse|transport\w*|distribution|magazzin\w*|entrepôt|lager)\b",
+    (r"\b(?:supply chain|logisti\w*|warehouse|transport\w*|distribution|magazzin\w*|entrepôt|lager|"
+     r"\w*lagerist\w*|picking|putaway|forklift|\d\w* shift|supply (?:&|and) demand)\b",
      "Supply Chain & Logistics"),
     (r"\b(?:sourcing|production|produzione|manufactur\w*|quality|qualità|qualité|factory|atelier|"
      r"pattern ?maker|modellist\w*|prototip\w*|sample room|craftsman|artisan\w*|watchmaker|"
-     r"horlog\w*|goldsmith|orafo|tecnic[oa] di prodotto|product engineer|procurement|lab(?:oratory)?)\b",
+     r"horlog\w*|goldsmith|orafo|tecnic[oa] di prodotto|product engineer|procurement|lab(?:oratory)?|"
+     r"ateliers?|raw materials?|trim|product assurance|product traceability|stone sett\w*|jewell?er|piercer|"
+     r"tailor|embroider\w*|cadran|constructeur|pattern development)\b",
      "Production & Sourcing"),
     (r"\b(?:product development|product developer|product manager|collection development|"
-     r"collection coordinat\w*|sviluppo prodotto|chef de produit|product lifecycle)\b",
+     r"collection coordinat\w*|sviluppo prodotto|chef de produit|product lifecycle|"
+     r"product (?:management|assistant))\b",
      "Product Management & Development"),
     (r"\b(?:crm|clienteling|client development|client relation\w*|customer care|customer service|"
      r"customer experience|"
-     r"client service|clientele)\b", "CRM & Clienteling"),
+     r"client service|clientele|loyalty|relation visiteurs)\b", "CRM & Clienteling"),
     (r"\b(?:pr|communications?|comunicazione|public relations|events?|eventi|vip|"
      r"press|influencer|social media|content)\b", "PR, Communications & Events"),
     (r"\b(?:finance|financial|fp&a|accountant|accounting|account payable|controller|controlling|"
-     r"audit\w*|tax|treasury|legal|lawyer|counsel|compliance|contabil\w*|amministrazione|juridique)\b",
+     r"audit\w*|tax|treasury|legal|lawyer|counsel|compliance|contabil\w*|amministrazione|juridique|"
+     r"comptab\w*|accounts receivable|pension|referendariat)\b",
      "Finance & Legal"),
-    (r"\b(?:marketing|brand management|brand manager|campaign|trade marketing)\b", "Marketing & Brand"),
+    (r"^(?!.*(?:cyber|data)).*\b(?:risk|grc|governance)\b", "Finance & Legal"),
+    (r"\b(?:marketing|brand management|brand manager|campaign|trade marketing|sem|seo|m[ée]dia|"
+     r"brand performance)\b", "Marketing & Brand"),
     (r"\b(?:data|analyst|analytics|business intelligence|insight\w*|reporting)\b", "Data & Analytics"),
     (r"\b(?:(?:solution|domain|security|enterprise|software|cloud|data|it|technical) architect\w*|"
      r"software|developer|engineer\w*|devops|cyber|security engineer\w*|it|ict|sap|cloud|"
-     r"ux|ui|infrastructure|sistemi informativi|informatica|tech lead|technology)\b", "Technology"),
-    (r"\b(?:design|designer|creative|graphic|textile|disegnat\w*|créat\w*)\b",
+     r"ux|ui|infrastructure|sistemi informativi|informatica|tech lead|technology|platform|"
+     r"automation|idam|ai)\b", "Technology"),
+    (r"\b(?:design|designer|creative|graphic|textile|disegnat\w*|créat\w*|art direct\w*|studio)\b",
      "Design & Creative"),
     (r"\b(?:facility|facilities|maintenance|store development|store planning|construction|"
-     r"architect\w*|real estate|manutenzione)\b", "Facilities & Store Development"),
+     r"architect\w*|real estate|manutenzione|ehs|arbeitssicherheit|health (?:&|and) safety)\b",
+     "Facilities & Store Development"),
     (r"retail operations|retail excellence|retail performance|store operations|\bretail\b|boutique|"
      r"\bstore\b|\bshop\b|negozio|client advisor|client experience|sales (?:associate|assistant|advisor|"
      r"consultant|supervisor|ambassador|specialist)|floor (?:leader|supervisor|manager)|stock ?room|"
@@ -124,7 +135,12 @@ ROLE_SPECS = [
      r"\bstock (?:associate|assistant|supervisor|coordinator)|\boutlet\b|aushilfe|d[ée]monstrat\w*|"
      r"stockiste|\bselling\b|department manager|"
      r"obchodní poradce|dependient\w*|asesor\w* de ventas|beauty advisor|personal shopper|"
-     r"brand ambassador|stylist|styling", "Retail & Retail Operations"),
+     r"brand ambassador|stylist|styling|team manager|team lead\w*|assistant (?:general )?manager|"
+     r"\w*supervis\w*|sales (?:manager|assocaite|support)|stock manager|concession manager|"
+     r"associé\S* aux ventes|doradca klienta|asesor\w* de moda|verkoopmedewerker|lucrător comercial|"
+     r"asistent v prodaji|セールス|watch advisor|brand specialist|product specialist|cash office|"
+     r"\brunner\b|responsable adjoint|responsable de département|seasonal replenishment|"
+     r"returns associate|operations associate", "Retail & Retail Operations"),
 ]
 
 
@@ -139,7 +155,7 @@ def role_family(title):
 def seniority(title):
     t = str(title or "").lower()
     if re.search(r"\b(intern|internship|stage|stagiaire|tirocinio|tirocinante|praktikum|praktikant\w*|"
-                 r"pr[áa]cticas|becari[oa]|stagista)\b", t):
+                 r"pr[áa]cticas|becari[oa]|beca|stagista|thesis)\b", t):
         return "internship"
     if re.search(r"\b(trainee|apprentice\w*|apprendist\w*|alternan\w*|apprenti\w*|graduate program\w*|"
                  r"graduate scheme|ausbildung)\b", t):
