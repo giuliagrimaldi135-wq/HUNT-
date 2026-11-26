@@ -32,3 +32,28 @@ jobs:
           node --check hunt2-preview/cv-workspace.js
           node --check hunt2-preview/requirement-priority.js
           node --test hunt2-preview/tests/dossier-regression.test.mjs hunt2-preview/tests/dossier-intelligence.test.mjs hunt2-preview/tests/letter-editorial.test.mjs hunt2-preview/tests/cv-interpreter.test.mjs hunt2-preview/tests/cv-display.test.mjs hunt2-preview/tests/cv-ranking.test.mjs hunt2-preview/tests/opportunity-similarity.test.mjs hunt2-preview/tests/cv-profile-smoke.test.mjs hunt2-preview/tests/job-workspace.test.mjs hunt2-preview/tests/cv-workspace.test.mjs hunt2-preview/tests/requirement-priority.test.mjs hunt2-preview/tests/job-actionability.test.mjs hunt2-preview/tests/public-opportunities.test.mjs
+  # Rehearsal of the account journey (login, feed, dossier, every section,
+  # onboarding of a new member) on an in-memory fake Supabase: no network,
+  # no production data. The same script runs read-only on a real test
+  # account after the Supabase unlock (see hunt2-preview/e2e/README.md).
+  account-journey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Playwright with Chromium
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Run the account journey on fake data
+        env:
+          NODE_PATH: ${{ runner.temp }}/pw/node_modules
+        run: node hunt2-preview/e2e/run-e2e.mjs --mode=fake --out="$RUNNER_TEMP/hunt-e2e"
+      - name: Keep screenshots of failed steps
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hunt-e2e-report
+          path: ${{ runner.temp }}/hunt-e2e
