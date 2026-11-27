@@ -82,7 +82,7 @@ ROLE_SPECS = [
     (r"visual merchandis|\bvm\b|vitrin|window design|merchandising visivo", "Visual Merchandising"),
     (r"\b(?:hr|hrbp|recruit\w*|human resources|talent acquisition|people partner|risorse umane|"
      r"ressources humaines|personalabteilung|payroll|learning and development|l&d|p&c|"
-     r"people (?:&|and) culture|(?<!machine )learning(?! retail)|culture & education|relazioni sindacali|diritto del lavoro)\b",
+     r"people (?:&|and) culture|(?<!machine )learning(?! retail)|culture & education|relazioni sindacali|diritto del lavoro|rh|recrutement|(?<!store )training manager)\b",
      "HR & Talent"),
     (r"\b(?:buying|buyer|purchasing|acquisti|acheteu\w*|einkauf\w*|compras?)\b", "Buying"),
     (r"\b(?:(?<!store )planning|planner|allocation|allocator|forecast\w*|replenishment analyst|pianificazione)\b",
@@ -91,16 +91,18 @@ ROLE_SPECS = [
      "E-commerce & Digital"),
     (r"merchandis", "Merchandising"),
     (r"\b(?:wholesale|commercial operations|key account|account manager|showroom|sales manager area|"
-     r"sales representative|sales distributors?|"
+     r"sales representative|sales distributors?|account executive|business development representative|"
      r"area manager wholesale)\b", "Wholesale & Commercial"),
     (r"\b(?:supply chain|logisti\w*|warehouse|transport\w*|distribution|magazzin\w*|entrepôt|lager|"
-     r"\w*lagerist\w*|picking|putaway|forklift|\d\w* shift|supply (?:&|and) demand)\b",
+     r"\w*lagerist\w*|picking|putaway|forklift|\d\w* shift|supply (?:&|and) demand|customs|import|siop|wh admin)\b",
      "Supply Chain & Logistics"),
     (r"\b(?:sourcing|production|produzione|manufactur\w*|quality|qualità|qualité|factory|atelier|"
      r"pattern ?maker|modellist\w*|prototip\w*|sample room|craftsman|artisan\w*|watchmaker|"
      r"horlog\w*|goldsmith|orafo|tecnic[oa] di prodotto|product engineer|procurement|lab(?:oratory)?|"
      r"ateliers?|raw materials?|materials? development|trim|product assurance|product traceability|stone sett\w*|jewell?er|piercer|"
-     r"tailor|embroider\w*|cadran|constructeur|pattern development)\b",
+     r"tailor|embroider\w*|cadran|constructeur|pattern development|orlatura|taglio|laboratorio|"
+     r"(?:garment|product) technologist|knitwear machine|machine programmer|graveur|diamant\w*|trimmings|"
+     r"packaging (?:&|and) labelling|^mtm specialist)\b",
      "Production & Sourcing"),
     (r"\b(?:product development|product developer|product manager|collection development|"
      r"collection coordinat\w*|sviluppo prodotto|chef de produit|product lifecycle|"
@@ -108,24 +110,24 @@ ROLE_SPECS = [
      "Product Management & Development"),
     (r"\b(?:crm|clienteling|client development|client relation\w*|customer care|customer service|"
      r"customer experience|"
-     r"client service|clientele|loyalty|relation visiteurs)\b", "CRM & Clienteling"),
-    (r"\b(?:ehs|hse|environment,? health,? (?:&|and) safety|health,? (?:&|and) safety)\b",
+     r"client service|clientele|loyalty|relation visiteurs|private client|customer contact)\b", "CRM & Clienteling"),
+    (r"\b(?:ehs|hse|environment,? health,? (?:&|and) safety|health,? (?:&|and)? ?safety\w*)\b",
      "Facilities & Store Development"),  # Before PR: "EHS Communication" is safety work.
     (r"\b(?:pr|communications?|comunicazione|public relations|events?|eventi|vip|"
-     r"press|influencer|social media|content)\b", "PR, Communications & Events"),
+     r"press|influencer|social media|content|community (?:project )?manager)\b", "PR, Communications & Events"),
     (r"\b(?:finance|financial|fp&a|accountant|accounting|account payable|controller|controlling|"
      r"audit\w*|tax|treasury|legal|lawyer|counsel|compliance|contabil\w*|amministrazione|juridique|"
-     r"comptab\w*|accounts receivable|pension|referendariat)\b",
+     r"comptab\w*|accounts receivable|pension|referendariat|tre?a?sury|cash banking|m&a|book to report|licensing)\b",
      "Finance & Legal"),
     (r"^(?!.*(?:cyber|data)).*\b(?:risk|grc|governance)\b", "Finance & Legal"),
     (r"\b(?:marketing|brand management|brand manager|campaign|trade marketing|sem|seo|m[ée]dia|"
-     r"brand performance|brand experience)\b", "Marketing & Brand"),
+     r"brand performance|brand experience|brand partnerships|campagne publicitaire)\b", "Marketing & Brand"),
     (r"\b(?:data|analyst|analytics|business intelligence|insight\w*|reporting)\b", "Data & Analytics"),
     (r"\b(?:(?:solution|domain|security|enterprise|software|cloud|data|it|technical) architect\w*|"
      r"software|developer|engineer\w*|devops|cyber|security engineer\w*|it|ict|sap|cloud|"
      r"ux|ui|infrastructure|sistemi informativi|informatica|tech lead|technology|platform|"
-     r"automation|idam|ai)\b", "Technology"),
-    (r"\b(?:design|designer|creative|graphic|textile|disegnat\w*|créat\w*|art direct\w*|studio)\b",
+     r"automation|idam|ai|sre|full ?stack|d[ée]veloppeu\w*|qa|product owner|enterprise applications|ia)\b", "Technology"),
+    (r"\b(?:design|designer|creative|graphic|textile|disegnat\w*|créat\w*|art direct\w*|studio|graphiste|video editor)\b",
      "Design & Creative"),
     (r"\b(?:facility|facilities|maintenance|store development|store planning|construction|"
      r"architect\w*|real estate|manutenzione|ehs|arbeitssicherheit|health (?:&|and) safety)\b",
@@ -143,7 +145,9 @@ ROLE_SPECS = [
      r"associé\S* aux ventes|doradca klienta|asesor\w* de moda|verkoopmedewerker|lucrător comercial|"
      r"asistent v prodaji|セールス|watch advisor|brand specialist|product specialist|cash office|"
      r"\brunner\b|responsable adjoint|responsable de département|seasonal replenishment|"
-     r"returns associate|operations associate", "Retail & Retail Operations"),
+     r"returns associate|operations? associate|seasonal associate|concession leader|promotor de corner|"
+     r"piso de venta|subgerente|temp sales|^sales\b|h[ôo]te\.?s*s*e? de caisse|verka[üu]f\w*|mini-jobber|elad[óo]|stockist|"
+     r"responsable de plancher|(?:prada|miu miu|store|boutique) general manager|client & operations advisor|boh specialist", "Retail & Retail Operations"),
 ]
 
 
